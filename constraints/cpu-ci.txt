@@ -1,0 +1,13 @@
+# Pinned working set: CPU CI (S01 pin decision — see REFERENCES.lock [[ref]] icon4py/gt4py).
+# icon4py v0.2.0 (tag 28d32c45afb4dbea1da6b6e5170202f08b4adb88) is the latest tagged release,
+# published on PyPI; its metadata pins gt4py==1.1.10 exactly. Changing a pin here is a trunk
+# decision (AGENTS.md).
+gt4py==1.1.10
+icon4py-common==0.2.0
+icon4py-atmosphere-advection==0.2.0
+icon4py-atmosphere-diffusion==0.2.0
+icon4py-atmosphere-dycore==0.2.0
+icon4py-atmosphere-microphysics==0.2.0
+icon4py-atmosphere-muphys==0.2.0
+icon4py-driver==0.2.0
+icon4py-testing==0.2.0

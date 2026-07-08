@@ -32,9 +32,7 @@ def test_failure_reports_worst_offender_index_values_and_name() -> None:
 
 def test_failure_reports_name_pair() -> None:
     with pytest.raises(AssertionError) as excinfo:
-        assert_allclose(
-            np.array([1.0]), np.array([2.0]), rtol=1e-6, atol=0.0, names=("t0", "t1")
-        )
+        assert_allclose(np.array([1.0]), np.array([2.0]), rtol=1e-6, atol=0.0, names=("t0", "t1"))
     assert "'t0' vs 't1'" in str(excinfo.value)
 
 

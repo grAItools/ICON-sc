@@ -60,9 +60,7 @@ def violating_tree(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 def test_forbidden_contract_detects_core_to_icon_import(
     violating_tree: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    passed = lint_imports(
-        config_filename=str(violating_tree), cache_dir=str(tmp_path / ".cache")
-    )
+    passed = lint_imports(config_filename=str(violating_tree), cache_dir=str(tmp_path / ".cache"))
     assert passed is False
     assert "fakesym.core -> fakesym.icon" in capsys.readouterr().out
 
@@ -75,6 +73,4 @@ def test_symcon_packages_importable_without_each_other() -> None:
             sys.modules.pop(mod)
     import symcon.core  # noqa: F401
 
-    assert not any(
-        m.startswith(("symcon.icon", "symcon.bridges")) for m in sys.modules
-    )
+    assert not any(m.startswith(("symcon.icon", "symcon.bridges")) for m in sys.modules)

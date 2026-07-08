@@ -62,10 +62,11 @@ mypy_path = [
   "packages/symcon-bridges/src",
 ]
 
-# mypy --strict applies to symcon-core only (AGENTS.md gate); icon/bridges tighten later.
+# The AGENTS.md gate is `mypy --strict -p symcon.core` (strict is not a per-module
+# option); icon/bridges tighten later.
 [[tool.mypy.overrides]]
-module = "symcon.core.*"
-strict = true
+module = "cupy.*"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["packages"]

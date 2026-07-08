@@ -1,0 +1,29 @@
+# Skeleton (S01): marker plumbing only. mpi-marked tests are skipped by pytest-mpi
+# unless run with --with-mpi under mpirun; real np=4 runs activate when comm/ lands.
+name: test-mpi
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  mpi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: install OpenMPI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi-dev
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.10"
+      - run: uv sync --locked
+      - name: mpi-marked tests skip without --with-mpi
+        run: uv run pytest packages -m mpi -ra
+      - name: np=4 launch smoke (activates once mpi-marked tests exist)
+        run: |
+          # mpirun -n 4 uv run pytest packages -m mpi --with-mpi -ra
+          echo "skeleton: no mpi-marked tests yet (S01)"

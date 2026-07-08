@@ -6,15 +6,13 @@ conftest. The ``backend`` values are plain strings until S02 gives them meaning.
 
 from __future__ import annotations
 
-from typing import Union
-
 import pytest
 
 from symcon.core.testing import register_markers
 
 #: Backend parametrization stub (PLAN S01 item 4). ``gtfn_gpu`` carries the gpu marker
 #: so it skips cleanly on machines without a CUDA device.
-BACKEND_PARAMS: tuple[Union[str, "pytest.ParameterSet"], ...] = (
+BACKEND_PARAMS: tuple[object, ...] = (
     "embedded",
     "gtfn_cpu",
     pytest.param("gtfn_gpu", marks=pytest.mark.gpu),
@@ -27,7 +25,7 @@ def pytest_configure(config: pytest.Config) -> None:
 
 def _gpu_available() -> bool:
     try:
-        import cupy  # noqa: PLC0415
+        import cupy
 
         return bool(cupy.cuda.runtime.getDeviceCount() > 0)
     except Exception:  # ImportError or any CUDA runtime error

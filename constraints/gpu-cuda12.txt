@@ -1,0 +1,13 @@
+# Pinned working set: single-node CUDA 12 (S01). Same gt4py/icon4py pair as cpu-ci.txt;
+# adds the GPU stack the [gpu]/[cuda12] extras pull in. icon4py-common[cuda12] requires
+# cupy-cuda12x>=13.0; we pin the newest 13.x (14.x untested against this pair).
+gt4py==1.1.10
+icon4py-common==0.2.0
+icon4py-atmosphere-advection==0.2.0
+icon4py-atmosphere-diffusion==0.2.0
+icon4py-atmosphere-dycore==0.2.0
+icon4py-atmosphere-microphysics==0.2.0
+icon4py-atmosphere-muphys==0.2.0
+icon4py-driver==0.2.0
+icon4py-testing==0.2.0
+cupy-cuda12x==13.6.0

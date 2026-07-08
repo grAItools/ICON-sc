@@ -12,7 +12,7 @@ so that importing this module needs numpy only.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 import numpy.typing as npt
@@ -31,7 +31,7 @@ MARKERS: dict[str, str] = {
 }
 
 
-def register_markers(config: "pytest.Config") -> None:
+def register_markers(config: pytest.Config) -> None:
     """Register the canonical symcon markers on a pytest config."""
     for name, description in MARKERS.items():
         config.addinivalue_line("markers", f"{name}: {description}")
@@ -42,7 +42,7 @@ def assert_allclose(
     desired: npt.ArrayLike,
     rtol: float = 1e-7,
     atol: float = 0.0,
-    names: Union[str, tuple[str, str], None] = None,
+    names: str | tuple[str, str] | None = None,
     equal_nan: bool = True,
 ) -> None:
     """``numpy.testing.assert_allclose`` with worst-offender reporting.
@@ -75,9 +75,7 @@ def assert_allclose(
         )
     except AssertionError as exc:
         raise AssertionError(
-            _worst_offender_report(
-                actual_arr, desired_arr, rtol, atol, actual_name, desired_name
-            )
+            _worst_offender_report(actual_arr, desired_arr, rtol, atol, actual_name, desired_name)
             + "\n\n"
             + str(exc)
         ) from None
@@ -99,8 +97,9 @@ def _worst_offender_report(
     header = f"assert_allclose failed for {label} (rtol={rtol:g}, atol={atol:g})"
 
     try:
-        a = np.broadcast_to(np.asarray(actual, dtype=np.float64), desired.shape
-                            if desired.shape else actual.shape)
+        a = np.broadcast_to(
+            np.asarray(actual, dtype=np.float64), desired.shape if desired.shape else actual.shape
+        )
         d = np.broadcast_to(np.asarray(desired, dtype=np.float64), a.shape)
     except (TypeError, ValueError):
         return header  # non-numeric or non-broadcastable; numpy's message has the rest

@@ -1,0 +1,57 @@
+name: test-cpu
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Acceptance path: clean checkout -> uv sync -> pytest (workspace lockfile).
+  locked:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.10"
+      - run: uv sync --locked
+      - run: uv run pytest packages -m "not gpu and not mpi" -ra
+
+  # Constraint-set path: editable installs against each pinned environment set.
+  constraints:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        constraints: [cpu-ci]
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python }}
+      - name: install under constraints/${{ matrix.constraints }}.txt
+        run: |
+          uv venv --python ${{ matrix.python }}
+          uv pip install --prerelease=allow \
+            -e packages/symcon-core -e packages/symcon-icon -e packages/symcon-bridges \
+            -c constraints/${{ matrix.constraints }}.txt \
+            pytest pytest-mpi
+      - name: pinned icon4py imports (SPEC S01 acceptance 5)
+        run: .venv/bin/python -c "import icon4py.model.common"
+      - run: .venv/bin/pytest packages -m "not gpu and not mpi" -ra
+
+  # Standalone-install path: core must install and import without icon/bridges.
+  core-standalone:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.10"
+      - run: |
+          uv venv
+          uv pip install -e packages/symcon-core
+          .venv/bin/python -c "import symcon.core, symcon.core.testing"
