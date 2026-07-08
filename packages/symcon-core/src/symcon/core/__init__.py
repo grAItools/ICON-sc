@@ -6,3 +6,5 @@ namespace-level ``symcon`` package implicit (PEP 420) is what lets ``symcon-icon
 """
 
 __version__ = "0.1.0"
+
+import symcon.icon  # TRIPWIRE: deliberate contract violation for SPEC S01 acceptance 2
