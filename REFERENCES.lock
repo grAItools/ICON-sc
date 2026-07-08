@@ -1,0 +1,13 @@
+# REFERENCES.lock — provenance ledger (append-only; one [[ref]] per consulted source)
+# Agents: append at mining time, not at PR time. Schema:
+#
+# [[ref]]
+# id = "icon4py"                        # short handle used in code comments/tests
+# url = "https://github.com/C2SM/icon4py"
+# commit = "<full sha>"                  # or tag; never a branch name alone
+# paths = ["model/atmosphere/..."]       # files/modules actually read or depended on
+# taken = "graupel granule invocation pattern + test tolerances (rtol=..., atol=...)"
+# step = "S08"
+# date = "YYYY-MM-DD"
+#
+# Pinned-version decisions (gt4py/icon4py pair) additionally land in constraints/ (S01).

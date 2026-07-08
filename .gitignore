@@ -1,0 +1,29 @@
+# python / tooling
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage*
+# uv
+uv.lock.bak
+# data & caches (never in git — AGENTS.md)
+validation/data/cache/
+*.nc
+*.grb
+*.grb2
+*.zarr/
+# plan artifacts & agent-local files
+plan/steps/*/artifacts/
+.claude/settings.local.json
+# local reference documents
+references/*
+!references/README.md
+# native-driver build cache never lands in-repo, but belt and braces
+*.sdfg
+*.so
