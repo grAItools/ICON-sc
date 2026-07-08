@@ -1,0 +1,72 @@
+# symcon workspace root — virtual project (not installable); members under packages/.
+# Dependency pins live in constraints/ (S01); packages declare lower bounds only.
+
+[project]
+name = "symcon-workspace"
+version = "0.0.0"
+description = "symcon monorepo workspace root"
+# Upper bound from gt4py 1.1.10 (requires-python <3.15); see constraints/README.md.
+requires-python = ">=3.10,<3.15"
+dependencies = [
+  "symcon-core",
+  "symcon-icon",
+  "symcon-bridges",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+  "pytest-mpi>=0.6",
+  "ruff>=0.9",
+  "mypy>=1.13",
+  "import-linter>=2.1",
+  "pre-commit>=4.0",
+]
+
+[tool.uv]
+package = false
+# gt4py depends on dace with only pre-release 2.x on PyPI (dace>=2.0.0a3).
+prerelease = "allow"
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+symcon-core = { workspace = true }
+symcon-icon = { workspace = true }
+symcon-bridges = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = [
+  "packages/symcon-core/src",
+  "packages/symcon-icon/src",
+  "packages/symcon-bridges/src",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["symcon"]
+
+[tool.mypy]
+python_version = "3.10"
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = [
+  "packages/symcon-core/src",
+  "packages/symcon-icon/src",
+  "packages/symcon-bridges/src",
+]
+
+# mypy --strict applies to symcon-core only (AGENTS.md gate); icon/bridges tighten later.
+[[tool.mypy.overrides]]
+module = "symcon.core.*"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["packages"]
+addopts = ["-ra", "--strict-markers"]

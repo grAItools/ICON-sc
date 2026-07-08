@@ -1,0 +1,22 @@
+# S01 note: this package ships pure-Python placeholders only. When the first CFFI-wrapped
+# Fortran bridge lands (per layout doc §3), the build system moves to scikit-build-core +
+# CMake; that change is scoped to the step introducing it.
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "symcon-bridges"
+version = "0.1.0"
+description = "symcon Fortran bridge components (CFFI): ecRad reference, Tiedtke-Bechtold, TERRA"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.10"
+dependencies = [
+  "symcon-core",
+  "cffi>=1.16",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/symcon"]
