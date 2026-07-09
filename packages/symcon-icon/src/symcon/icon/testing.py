@@ -17,6 +17,7 @@ applied before ``icon4py.model.testing`` reads the environment.
 
 from __future__ import annotations
 
+import importlib.util
 import os
 import pathlib
 from typing import Any
@@ -173,12 +174,15 @@ def moist_test_column(
 
 # --- icon4py datatest bridge ----------------------------------------------------------
 
-#: Default download/cache location for icon4py serialized test data; must be set
-#: before ``icon4py.model.testing.config`` is imported (it reads the env once).
-os.environ.setdefault(
-    "ICON4PY_TEST_DATA_PATH",
-    str(pathlib.Path.home() / ".cache" / "symcon" / "icon4py-testdata"),
-)
+# Default download/cache location for icon4py serialized test data; must be set
+# before ``icon4py.model.testing.config`` is imported (it reads the env once).
+# Guarded so that importing this module for the column builders alone (no
+# ``symcon-icon[datatest]`` extra installed) mutates no process env.
+if importlib.util.find_spec("icon4py.model.testing") is not None:
+    os.environ.setdefault(
+        "ICON4PY_TEST_DATA_PATH",
+        str(pathlib.Path.home() / ".cache" / "symcon" / "icon4py-testdata"),
+    )
 
 try:
     import pytest as _pytest

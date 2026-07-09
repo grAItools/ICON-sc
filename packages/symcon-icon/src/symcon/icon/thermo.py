@@ -56,7 +56,8 @@ def exner_from_pressure(pressure: Array) -> Array:
 def pressure_from_exner(exner: Array) -> Array:
     """Pressure from the Exner function — inverse of the pressure (cpd) path.
 
-    ``p = p0ref * exner**(cpd/rd)`` (ICON ``p0ref*EXP(cpd_o_rd*LOG(exner))`` form,
+    ``p = p0ref * exner**(cpd/rd)`` (plain form: ``mo_nh_vert_extrap_utils.f90:754``;
+    the fused ``EXP(cpd_o_rd*LOG(exner)+...)`` surface-pressure variant lives in
     ``mo_nh_diagnose_pres_temp.f90``).
     """
     return P0REF * exner**CPD_O_RD

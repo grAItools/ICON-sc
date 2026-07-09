@@ -135,3 +135,16 @@
 - `docs/names_registry.md` (generated registry table, committed).
 - REFERENCES.lock: two new S06 entries (icon4py v0.2.0 mining scope; icon-fortran
   DKRZ mirror `8597da45`).
+
+## Review fixes (round 1)
+
+- **MINOR-2 (fixed)** — `symcon.icon.testing` no longer mutates process env as an
+  unconditional import side effect: the `ICON4PY_TEST_DATA_PATH` setdefault now runs only
+  when `icon4py.model.testing` is importable (i.e. the `symcon-icon[datatest]` extra is
+  installed), where it is required before icon4py's config module reads the env.
+- **MINOR-1 (declared)** — follow-up: the `names.py` re-assert consistency check compares
+  `units` and `icon_name` only; extend it to `cf_name` (and the GRIB2 triplet when that
+  column is populated) so core-seed drift in those columns cannot pass silently.
+- **INFO-3 (fixed)** — `pressure_from_exner` docstring now cites the plain-form source
+  (`mo_nh_vert_extrap_utils.f90:754`) and notes the fused surface-pressure variant's
+  location separately.
