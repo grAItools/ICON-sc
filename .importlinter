@@ -1,0 +1,25 @@
+[importlinter]
+root_packages =
+    symcon.core
+    symcon.icon
+    symcon.bridges
+
+; The composition layer is model-agnostic; ICON is a client of it (layout doc §0).
+[importlinter:contract:core-independence]
+name = symcon.core must not import symcon.icon or symcon.bridges
+type = forbidden
+source_modules =
+    symcon.core
+forbidden_modules =
+    symcon.icon
+    symcon.bridges
+
+; Bridge components arrive via the component registry: scheme selection is a config
+; string, not an import (layout doc §5).
+[importlinter:contract:icon-no-bridges]
+name = symcon.icon must not import symcon.bridges
+type = forbidden
+source_modules =
+    symcon.icon
+forbidden_modules =
+    symcon.bridges

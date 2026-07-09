@@ -11,3 +11,21 @@
 # date = "YYYY-MM-DD"
 #
 # Pinned-version decisions (gt4py/icon4py pair) additionally land in constraints/ (S01).
+
+[[ref]]
+id = "icon4py"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["pyproject.toml", "uv.lock", "model/common/pyproject.toml", "model/common/src/icon4py/model/common/"]
+taken = "Pin decision: icon4py 0.2.0 is the latest tagged release and every subpackage distribution (icon4py-common, icon4py-atmosphere-{advection,diffusion,dycore,microphysics,muphys}, icon4py-driver, icon4py-standalone-driver, icon4py-testing, icon4py-tools) is published on PyPI at 0.2.0. Its published metadata pins gt4py==1.1.10 exactly, so that is the tested pair. Import root verified as icon4py.model.common. GPU extra spelling: icon4py-common[cuda12] -> cupy-cuda12x>=13.0 + gt4py[cuda12]. Symbolic names used by later SPECs: icon4py.common -> icon4py-common, icon4py.dycore -> icon4py-atmosphere-dycore, etc. Repo HEAD at mining time (7341a32954d6db5d982fe3d69363f63198844cf2) pins gt4py==1.1.11; we pin the released pair, not HEAD."
+step = "S01"
+date = "2026-07-08"
+
+[[ref]]
+id = "gt4py"
+url = "https://github.com/GridTools/gt4py"
+commit = "v1.1.10"  # PyPI release consumed as sdist/wheel, not from git
+paths = ["PyPI metadata gt4py==1.1.10"]
+taken = "gt4py 1.1.10 chosen because icon4py-common 0.2.0 pins it exactly. requires-python: >=3.10,<3.15 (excl. 3.13.10, 3.14.1). cuda12 extra -> cupy-cuda12x>=12.0."
+step = "S01"
+date = "2026-07-08"
