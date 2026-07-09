@@ -12,6 +12,21 @@ requires-python = ">=3.10"
 dependencies = [
   "symcon-core",
   "icon4py-common>=0.2.0",
+  # thermo.py array-namespace genericity (numpy/cupy now, JAX in S10 — PLAN S06 item 3).
+  "array-api-compat>=1.4",
+  "numpy>=1.23.3",
+]
+
+[project.optional-dependencies]
+# icon4py serialbox datatest bridge (symcon.icon.testing); versions pinned by
+# constraints/cpu-ci.txt. icon4py-testing imports diffusion/dycore/microphysics and the
+# standalone driver at import time, hence the transitive members appear explicitly.
+datatest = [
+  "icon4py-testing>=0.2.0",
+  "icon4py-atmosphere-diffusion>=0.2.0",
+  "icon4py-atmosphere-dycore>=0.2.0",
+  "icon4py-atmosphere-microphysics>=0.2.0",
+  "icon4py-standalone-driver>=0.2.0",
 ]
 
 [tool.hatch.build.targets.wheel]
