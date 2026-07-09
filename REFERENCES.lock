@@ -119,3 +119,21 @@ paths = ["SS2.3 (eqs 2.8-2.13)", "SS2.4.1 (Table 2.1 second-order clauses)", "SS
 taken = "Coupling definitions implemented verbatim: FC (2.8) E0(psi,dt;D+P); LFC (2.9) E0(psi,dt;D+P^n) with P^n frozen at the step-initial state; PS (2.10) each process integrated independently from psi^n, recombination psi^{n+1}=sum_l psi_l^{n+1}-L*psi^n (2.10d); STS (2.11) psi_0=E0(psi^n,dt;D), psi_l=E_l(psi^n,dt;P_l+(psi_{l-1}^{n+1}-psi^n)/dt) — the forcing always uses the step-initial psi^n; SUS (2.12) chained correctors; SSUS (2.13a-e) reverse pass over lam*dt with E_l^*, core over dt, forward pass over (1-lam)*dt, E_l^* != E_l explicitly legal (SS2.3.5). Expected measured orders (Table 2.1 + SS2.4.1 discussion): FC unconditionally 2; LFC/PS/STS/SUS effectively 1 (their second-order clauses rarely hold); SSUS second-order iff lam=1/2. DynamicalCore (SS3.5, Fig 3.9/3.10): slow tendencies enter as an input port held constant across the step; fast_tendency_component (ConcurrentCoupling) evaluated once per stage on the latest provisional state; super-fast tier substeps each stage with substep dt = dt/N and per-stage substep counts proportional to the stage fractions (Fig 3.10: N=6, 3-stage WS-RK fractions 1/3,1/2,1 -> 2,3,6 substeps). Burgers experiment (SS2.5.2): diffusion treated as the parameterization, advection as dynamics, EOC measured over a dt ladder — symcon's acceptance 2 transposes this to 1-D with a relaxation physics term and self-convergence pairs."
 step = "S04"
 date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/utils/xarrayx.py", "src/tasmania/framework/subclasses/stencil_definitions/algorithms.py", "src/tasmania/framework/steppers.py", "src/tasmania/framework/parallel_splitting.py", "src/tasmania/framework/sequential_tendency_splitting.py"]
+taken = "Op-algebra donor for the S05 plan ops: DataArrayDictOperator's kernel set (iadd/iaddsub 'inout_a += in_b - in_c'/fma 'out = in_a + f*in_b'/sts_rk2_0 'out = 0.5*(in_field + in_field_prv + dt*in_tnd)') is the closed set of dict-arithmetic shapes the T0 coupling algebra needs; symcon's Axpy op generalizes fma/iadd/iaddsub to one k-ary assign-or-accumulate multi-axpy with an optional trailing divisor (covers ssprk3's '(psi + 2*(psi_2 + dt*k3))/3' without a new op) and DiffScale realizes the STS forcing '(psi_prv - psi_n)/dt' that tasmania fuses into sts_*_0 stage kernels. PS recombination op order re-derived from parallel_splitting.py: accumulator seeded by the first section's provisional state, then per further section (+psi_l, -psi_n) — the k-ary Axpy term order T1 must replay for bitwise T0 equivalence."
+step = "S05"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_core/wrappers.py"]
+taken = "UpdateFrequencyWrapper firing rule re-consulted for the cadence-mask compilation: fires when state['time'] >= last_update_time + update_timedelta, first call always fires (last_update_time None). With the S03 rounding-to-multiple rule (period = nearest positive integer multiple m of the loop dt) a fresh wrapper therefore fires exactly at step indices == 0 (mod m), which is the per-signature mask the S05 compiler precomputes; the cached output becomes persistent vault/tendency slots that replay by simply not being rewritten on non-fire steps."
+step = "S05"
+date = "2026-07-09"
