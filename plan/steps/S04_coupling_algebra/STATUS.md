@@ -117,6 +117,33 @@ isolation.
 - **Diagnostics of a stepper are those of the first (ψⁿ) evaluation** (tasmania's
   convention); later stage evaluations feed the scheme only. Documented in the
   module docstring and asserted in tests.
+- **SSUS constraint validation covers the forward order only** (review INFO 3).
+  Constraints are validated on `[core, *sections]` under the `"ssus"` label; the
+  pre-pass necessarily executes the sections *before* the core, in reverse —
+  that inversion is inherent to SSUS symmetry (thesis eq. 2.13a–e), not an
+  ordering violation, and is stated in the class docstring. Components that
+  cannot tolerate running before the core should exclude `"ssus"` via
+  `admissible_operators`.
+
+## Review fixes (round 1)
+
+- **MINOR 1 — constraints now bind through wrapper chains.**
+  `validate_composition` matches `must_follow`/`must_precede` names against the
+  *innermost* component of a `ComponentWrapper` chain (`_constraint_name` walks
+  `.component`), so `CallingFrequency(Convection, …)` no longer sheds
+  constraints declared against `Convection` (the S09/S12 slow-physics pattern).
+  The reverse direction (a wrapped component carrying its own constraints)
+  already worked via attribute delegation. Regression:
+  `test_constraints_bind_through_wrappers` — both directions, violating order
+  raises naming both components, correct order constructs, doubly-wrapped
+  chains covered.
+- **MINOR 2 — `dict_axpy`/`dict_fma` are no longer untested dead exports.** The
+  PS recombination now accumulates `ψⁿ⁺¹ = Σψₗ − L·ψⁿ` through `dict_axpy`
+  (option (a); PLAN item 3 as written), and both helpers gained unit tests
+  (`test_coupling_dictops.py`: in-place buffer identity, shared-fields default
+  with `time` excluded, explicit field selection, out-of-place `dict_fma`). The
+  existing PS hand-check tests pin the numerics unchanged.
+- **INFO 3 — recorded** above under deviations (SSUS forward-order validation).
 
 ## Follow-ups
 

@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 
 from symcon.core.components.base import Stepper
+from symcon.core.components.wrappers import CallingFrequency
 from symcon.core.coupling import (
     SSUS,
     CouplingConstraintError,
@@ -283,6 +284,46 @@ def test_sus_honors_must_follow() -> None:
 def test_must_follow_binds_only_when_present() -> None:
     microphysics = Microphysics(tau=timedelta(seconds=50))
     SequentialUpdateSplitting([(microphysics, "rk2")])  # no Convection: fine
+
+
+def test_constraints_bind_through_wrappers() -> None:
+    """Review round 1 (MINOR 1): wrapping must not shed constraints in either direction.
+
+    ``CallingFrequency`` renames its component; constraint matching unwraps the
+    wrapper chain, so constraints declared *against* a wrapped component (the
+    S09/S12 pattern: CallingFrequency-wrapped slow physics) still bind — and a
+    wrapped *constrained* component still carries its own constraints.
+    """
+    period = timedelta(seconds=60)
+
+    # Direction 1: the referenced component enters wrapped.
+    wrapped_convection = CallingFrequency(Convection(tau=timedelta(seconds=100)), period)
+    microphysics = Microphysics(tau=timedelta(seconds=50))
+    with pytest.raises(CouplingConstraintError) as excinfo:
+        SequentialUpdateSplitting([(microphysics, "rk2"), (wrapped_convection, "rk2")])
+    message = str(excinfo.value)
+    assert "Microphysics" in message
+    assert "Convection" in message
+    # Correct order constructs (doubly wrapped, for the chain walk).
+    SequentialUpdateSplitting(
+        [
+            (CallingFrequency(wrapped_convection, period), "rk2"),
+            (microphysics, "rk2"),
+        ]
+    )
+
+    # Direction 2: the constrained component enters wrapped.
+    wrapped_microphysics = CallingFrequency(Microphysics(tau=timedelta(seconds=50)), period)
+    with pytest.raises(CouplingConstraintError) as excinfo:
+        SequentialUpdateSplitting(
+            [(wrapped_microphysics, "rk2"), (Convection(tau=timedelta(seconds=100)), "rk2")]
+        )
+    message = str(excinfo.value)
+    assert "Microphysics" in message
+    assert "Convection" in message
+    SequentialUpdateSplitting(
+        [(Convection(tau=timedelta(seconds=100)), "rk2"), (wrapped_microphysics, "rk2")]
+    )
 
 
 def test_admissible_operators_checked_per_federation() -> None:

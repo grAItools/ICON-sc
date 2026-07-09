@@ -48,6 +48,7 @@ from symcon.core.coupling.concurrent import (
     parsed_properties_of,
 )
 from symcon.core.coupling.constraints import validate_composition
+from symcon.core.coupling.dictops import dict_axpy
 from symcon.core.coupling.steppers import SequentialTendencyStepper, TendencyStepper
 from symcon.core.registry import Factory
 
@@ -284,17 +285,21 @@ class ParallelSplitting(_FederationBase):
         """One PS step from ``state`` over ``timestep``."""
         self._validate_out(out)
         diagnostics: DataArrayDict = {}
-        accumulated: dict[str, Any] = {}
+        accumulated: DataArrayDict = {}
         for section in self._sections:
             section_diags, section_state = _call_stepper(section.stepper, state, timestep)
             diagnostics.update(section_diags)
+            # ψⁿ⁺¹ = Σψₗ - L·ψⁿ (2.10d): the first section stepping a field seeds
+            # the accumulator with its (freshly allocated) ψₗ; every further
+            # section over the same field adds ψₗ - ψⁿ as two axpys (a fused
+            # multi-axpy vault op at T1, PLAN item 3).
+            overlap = [field for field in section_state if field in accumulated]
             for field, array in section_state.items():
-                held = accumulated.get(field)
-                if held is None:
-                    accumulated[field] = array.data
-                else:
-                    # ψⁿ⁺¹ = Σψₗ - L·ψⁿ, accumulated one axpy at a time (2.10d).
-                    accumulated[field] = held + (array.data - state[field].data)
+                if field not in accumulated:
+                    accumulated[field] = array
+            if overlap:
+                dict_axpy(accumulated, 1.0, section_state, overlap)
+                dict_axpy(accumulated, -1.0, state, overlap)
         return self._package(state, diagnostics, accumulated, out)
 
 

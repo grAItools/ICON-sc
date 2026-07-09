@@ -24,6 +24,7 @@ import dataclasses
 from collections.abc import Sequence
 from typing import Any
 
+from symcon.core.components.wrappers import ComponentWrapper
 from symcon.core.coupling.concurrent import name_of
 
 __all__ = [
@@ -60,6 +61,19 @@ def constraints_of(component: Any) -> CouplingConstraints:
     return declared
 
 
+def _constraint_name(component: Any) -> str:
+    """The name constraints match against: the innermost wrapped component's.
+
+    Control-flow wrappers rename (``CallingFrequency(Convection)``); constraints
+    declared *against* a component must still bind when it enters a composition
+    wrapped, so wrapper chains are walked to the scientific component.
+    """
+    inner = component
+    while isinstance(inner, ComponentWrapper):
+        inner = inner.component
+    return name_of(inner)
+
+
 def validate_composition(components: Sequence[Any], *, operator: str, ordered: bool = True) -> None:
     """Check a composition against every member's constraints (SPEC S04).
 
@@ -68,12 +82,18 @@ def validate_composition(components: Sequence[Any], *, operator: str, ordered: b
     ``ordered=False`` (parallel splitting: order carries no semantics) skips the
     ordering constraints and checks ``admissible_operators`` only.
 
+    Constraint names are matched against the **innermost** component of a
+    wrapper chain (see :func:`_constraint_name`), so wrapping a component —
+    ``CallingFrequency``-wrapped slow physics being the canonical case — neither
+    sheds the constraints it declares (attribute delegation) nor the constraints
+    declared against it (name unwrapping).
+
     ``must_follow``/``must_precede`` bind only when the named component is present:
     for a component at position ``i``, every name in ``must_follow`` present in the
     composition must first occur before ``i``, and every name in ``must_precede``
     must last occur after ``i``.
     """
-    names = [name_of(component) for component in components]
+    names = [_constraint_name(component) for component in components]
     for index, component in enumerate(components):
         constraints = constraints_of(component)
         if (
