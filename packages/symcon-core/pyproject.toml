@@ -11,6 +11,11 @@ license = { text = "BSD-3-Clause" }
 requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.23.3",
+  # S02 state layer: boundary DataArrays, canonical-units identity checks (negotiation
+  # only), cftime-aware time handling. Lower bounds only; constraints/ pins exact sets.
+  "xarray>=2024.1",
+  "pint>=0.23",
+  "cftime>=1.6",
 ]
 
 # Extras per the repo layout document §1. Lower bounds only; constraints/ pins exact sets.

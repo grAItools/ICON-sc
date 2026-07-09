@@ -29,3 +29,39 @@ paths = ["PyPI metadata gt4py==1.1.10"]
 taken = "gt4py 1.1.10 chosen because icon4py-common 0.2.0 pins it exactly. requires-python: >=3.10,<3.15 (excl. 3.13.10, 3.14.1). cuda12 extra -> cupy-cuda12x>=12.0."
 step = "S01"
 date = "2026-07-08"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_core/units.py", "sympl/_core/time.py", "sympl/_core/dataarray.py"]
+taken = "Upstream property/units semantics: pint UnitRegistry with %/degree cleanup and degrees_north/degrees_east/percent definitions; units_are_same == identity via registry equality (1 K vs 2 K compare unequal quantities -> non-identity); cftime-aware datetime() factory keyed by calendar string ('proleptic_gregorian' -> stdlib datetime, else cftime.Datetime* classes). symcon drops the implicit any-unit conversion path (data_array_to_units) in favor of canonical units + strict mode."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl-oop"
+url = "https://github.com/stubbiali/sympl"
+commit = "5491978331ef7d6b7dc7995b9a5726713b5de7a7"  # branch oop
+paths = ["sympl/_core/factory.py", "sympl/_core/static_checkers.py", "sympl/_core/dynamic_checkers.py", "sympl/_core/dynamic_operators.py", "sympl/_core/units.py"]
+taken = "Checker/Operator/Factory mechanisms ported as semantics (thesis Fig. 3.5): MetaFactory registers subclasses on class creation keyed by class attr `name`, duplicate name -> error, Factory.factory(name) resolves through per-base subregistry with informative error on unknown name. Static checkers validate property dicts from definitions only (dict type, units present, dims present, alias bijectivity); dynamic checkers cross definitions with actual data (missing/extra fields, actual-vs-target dims, dim-length consistency) with errors naming field + component. Dynamic operators own target-dims resolution and raw-field extraction. lru_cache on the pint registry call = the cached identity check pattern."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/utils/timex.py"]
+taken = "Ubbiali Timer: class-level tree of labelled nested sections (Node with parent/children/level/total_calls/total_runtime), only-nested-stops asserted, cupy device synchronize before tic/toc. symcon ports the idea with an injectable sync callback instead of a hard cupy dependency, and instance-based (not class-global) state."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "icon4py"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/src/icon4py/model/common/states/data.py", "model/common/src/icon4py/model/common/states/model.py", "model/common/src/icon4py/model/common/states/metadata.py"]
+taken = "Seed rows for the canonical names/units registry (S02 state/names.py): CF standard names, canonical unit strings and ICON Fortran short names for prognostics (air_density kg m-3/rho, virtual_potential_temperature K/theta_v, dimensionless exner 1/exner, upward_air_velocity m s-1/w, normal/tangential velocity m s-1/vn,vt), common tracers (specific_humidity 1/qv, specific_{cloud,ice,rain,snow,graupel}_content 1/qc..qg) and diagnostics (eastward_wind u, northward_wind v, air_temperature K/temp, air_virtual_temperature K/tempv, air_pressure Pa/pres, air_pressure_at_ground_level Pa/pres_sfc). FieldMetaData TypedDict (standard_name+units required; long_name/icon_var_name optional) confirms the registry columns. '_on_interface_levels' naming ('height_on_interface_levels') confirms the suffix convention. NOTE: icon4py files exner/theta_v/vn under CF-style standard names; symcon per architecture doc S2.5 namespaces solver-internal quantities as icon:exner_function, icon:normal_wind, icon:virtual_potential_temperature — units/short names taken from icon4py, namespacing from the architecture doc."
+step = "S02"
+date = "2026-07-09"
