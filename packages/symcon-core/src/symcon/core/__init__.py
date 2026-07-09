@@ -9,6 +9,7 @@ taxonomy + wrappers + context + T0 driver/monitors). Keeping the namespace-level
 from symcon.core.components import (
     CallingFrequency,
     Component,
+    ComponentWrapper,
     DiagnosticComponent,
     ImplicitTendencyComponent,
     Monitor,
@@ -62,6 +63,7 @@ __all__ = [
     "Allocator",
     "CallingFrequency",
     "Component",
+    "ComponentWrapper",
     "ComputeContext",
     "Config",
     "ContractViolation",

@@ -9,11 +9,17 @@ from symcon.core.components.base import (
     Stepper,
     TendencyComponent,
 )
-from symcon.core.components.wrappers import CallingFrequency, ScalingWrapper, Subcycle
+from symcon.core.components.wrappers import (
+    CallingFrequency,
+    ComponentWrapper,
+    ScalingWrapper,
+    Subcycle,
+)
 
 __all__ = [
     "CallingFrequency",
     "Component",
+    "ComponentWrapper",
     "DiagnosticComponent",
     "ImplicitTendencyComponent",
     "Monitor",
