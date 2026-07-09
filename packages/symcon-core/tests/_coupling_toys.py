@@ -48,8 +48,12 @@ EQUILIBRIUM = 0.5 - 0.3j  # relaxation target (u_eq, v_eq); the b-term that
 ZETA_0 = 1.0 + 0.5j
 
 
+#: Hoisted: per-call typing subscription would allocate on the kernel hot path (S05).
+_F64Array = npt.NDArray[np.float64]
+
+
 def _np(buffer: FieldBuffer) -> npt.NDArray[np.float64]:
-    return cast(npt.NDArray[np.float64], buffer)
+    return cast(_F64Array, buffer)
 
 
 def plane_state(u0: float, v0: float) -> dict[str, Any]:

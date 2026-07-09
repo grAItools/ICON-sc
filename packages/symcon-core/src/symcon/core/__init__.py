@@ -61,11 +61,20 @@ from symcon.core.coupling import (
 )
 from symcon.core.driver import timeloop
 from symcon.core.io import MemoryMonitor, NetCDFMonitor
+from symcon.core.plan import (
+    ExecutionPlan,
+    PlanBuilder,
+    PlanCompileError,
+    PlanDriftError,
+    StalePlanError,
+    renegotiate_and_diff,
+)
 from symcon.core.profiling import Timer
 from symcon.core.registry import Factory, MetaFactory, RegistrationError
 from symcon.core.state import (
     NamesRegistryError,
     QuantityDef,
+    StateVault,
     UnitsError,
     canonical_units,
     convert_array,
@@ -100,6 +109,7 @@ __all__ = [
     "DynamicChecker",
     "DynamicalCore",
     "EgressPlan",
+    "ExecutionPlan",
     "Factory",
     "FieldBuffer",
     "FieldSchema",
@@ -115,6 +125,9 @@ __all__ = [
     "NetCDFMonitor",
     "OutputSchema",
     "ParallelSplitting",
+    "PlanBuilder",
+    "PlanCompileError",
+    "PlanDriftError",
     "PropertyDictError",
     "PropertySpec",
     "QuantityDef",
@@ -124,7 +137,9 @@ __all__ = [
     "SequentialTendencyStepper",
     "SequentialUpdateSplitting",
     "SlowTendencyBus",
+    "StalePlanError",
     "StateSchema",
+    "StateVault",
     "StaticChecker",
     "Stepper",
     "Subcycle",
@@ -143,6 +158,7 @@ __all__ = [
     "parse_properties",
     "provenance_stamp",
     "register_quantity",
+    "renegotiate_and_diff",
     "timeloop",
     "units_identical",
     "validate_composition",

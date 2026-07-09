@@ -35,7 +35,7 @@ import re
 from collections.abc import Callable, Mapping
 from dataclasses import replace
 from datetime import timedelta
-from typing import Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import xarray as xr
 
@@ -48,6 +48,9 @@ from symcon.core.coupling.concurrent import (
     parsed_properties_of,
 )
 from symcon.core.registry import Factory
+
+if TYPE_CHECKING:
+    from symcon.core.plan.bind import PlanBuilder
 
 __all__ = ["SequentialTendencyStepper", "TendencyStepper"]
 
@@ -257,6 +260,10 @@ class TendencyStepper(_StepperBase, Factory):
     ``(state, timestep, *, out=None) -> (diagnostics, new_state)``.
     """
 
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: stage arithmetic as Axpy ops (§8.2)."""
+        plan_builder.visit_tendency_stepper(self)
+
     def __call__(
         self,
         state: Mapping[str, Any],
@@ -281,6 +288,10 @@ class SequentialTendencyStepper(_StepperBase, Factory):
     enters as the constant forcing ``(ψ_prov - ψⁿ)/Δt`` added to every tendency
     evaluation.
     """
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook (only meaningful as an STS section, §8.2)."""
+        plan_builder.visit_sequential_tendency_stepper(self)
 
     def __call__(
         self,

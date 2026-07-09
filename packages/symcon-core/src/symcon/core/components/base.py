@@ -30,10 +30,13 @@ import abc
 import dataclasses
 from collections.abc import Mapping
 from datetime import timedelta
-from typing import Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import numpy as np
 import xarray as xr
+
+if TYPE_CHECKING:
+    from symcon.core.plan.bind import PlanBuilder
 
 from symcon.core.context import ComputeContext
 from symcon.core.contracts.checkers import (
@@ -201,6 +204,12 @@ class Component(abc.ABC):
     def functional_state(self) -> Mapping[str, PropertySpec]:
         """Schema of the private carry surfaced to the F-tier (§8.5; default empty)."""
         return {}
+
+    # -- plan-compiler walk (S05, PLAN item 3) -------------------------------------
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """Double-dispatch hook of the S05 plan compiler (and later tree walks)."""
+        plan_builder.visit_component(self)
 
     # -- T0 negotiation-per-call -------------------------------------------------
 

@@ -68,9 +68,19 @@ def test_forbidden_contract_detects_core_to_icon_import(
 def test_symcon_packages_importable_without_each_other() -> None:
     # core must be importable with icon/bridges absent (acceptance 3 in miniature):
     # its module graph may not even reference them.
-    for mod in list(sys.modules):
-        if mod.startswith("symcon"):
-            sys.modules.pop(mod)
-    import symcon.core  # noqa: F401
+    #
+    # The original module objects are restored afterwards: leaving freshly
+    # re-imported symcon modules in sys.modules gives later tests *duplicate
+    # class identities* (isinstance checks across old/new classes fail — the
+    # S05 plan compiler's scheme dispatch tripped over exactly this).
+    saved = {name: sys.modules[name] for name in list(sys.modules) if name.startswith("symcon")}
+    for name in saved:
+        sys.modules.pop(name)
+    try:
+        import symcon.core  # noqa: F401
 
-    assert not any(m.startswith(("symcon.icon", "symcon.bridges")) for m in sys.modules)
+        assert not any(m.startswith(("symcon.icon", "symcon.bridges")) for m in sys.modules)
+    finally:
+        for name in [m for m in sys.modules if m.startswith("symcon")]:
+            sys.modules.pop(name)
+        sys.modules.update(saved)

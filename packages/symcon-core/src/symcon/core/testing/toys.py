@@ -44,9 +44,14 @@ __all__ = ["Damping", "ImplicitDamping", "Relaxation", "WindSpeed", "column_stat
 _COLUMN_DIMS = ["cell", "height"]
 
 
+#: Hoisted: subscripting npt.NDArray per call would allocate through typing's
+#: parametrized-generic cache on the kernel hot path (S05 zero-alloc contract).
+_F64Array = npt.NDArray[np.float64]
+
+
 def _np(buffer: FieldBuffer) -> npt.NDArray[np.float64]:
     """The toys are numpy-only by design; narrow the boundary type."""
-    return cast(npt.NDArray[np.float64], buffer)
+    return cast(_F64Array, buffer)
 
 
 def _seconds(period: timedelta, *, name: str, label: str) -> float:
