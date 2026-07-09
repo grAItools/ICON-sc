@@ -40,7 +40,7 @@ from __future__ import annotations
 import abc
 from collections.abc import Callable, Mapping
 from datetime import timedelta
-from typing import Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import numpy as np
 
@@ -49,6 +49,9 @@ from symcon.core.context import ComputeContext
 from symcon.core.coupling.concurrent import ConcurrentCoupling
 from symcon.core.state.dataarray import make_dataarray
 from symcon.core.typing import FieldBuffer
+
+if TYPE_CHECKING:
+    from symcon.core.plan.bind import PlanBuilder
 
 __all__ = ["DynamicalCore"]
 
@@ -164,6 +167,10 @@ class DynamicalCore(Component):
     def substep_fractions(self) -> tuple[float, ...]:
         """``substep_fraction`` normalized to one entry per stage."""
         return self._fractions
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: unroll the stage/substep tiers (§8.2)."""
+        plan_builder.visit_dynamical_core(self)
 
     # -- subclass hooks (frozen contract, SPEC S04) ------------------------------------
 

@@ -35,7 +35,7 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Callable, Mapping, Sequence
 from datetime import timedelta
-from typing import Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import xarray as xr
 
@@ -51,6 +51,9 @@ from symcon.core.coupling.constraints import validate_composition
 from symcon.core.coupling.dictops import dict_axpy
 from symcon.core.coupling.steppers import SequentialTendencyStepper, TendencyStepper
 from symcon.core.registry import Factory
+
+if TYPE_CHECKING:
+    from symcon.core.plan.bind import PlanBuilder
 
 __all__ = [
     "SSUS",
@@ -275,6 +278,10 @@ class ParallelSplitting(_FederationBase):
         )
         super().__init__(normalized, name=name)
 
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: one k-ary Axpy recombination (§8.2)."""
+        plan_builder.visit_parallel_splitting(self)
+
     def __call__(
         self,
         state: Mapping[str, Any],
@@ -329,6 +336,10 @@ class SequentialUpdateSplitting(_FederationBase):
         if _validate:
             validate_composition([section.carrier for section in normalized], operator=label)
         super().__init__(normalized, name=name)
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: flatten into the op list (§8.2)."""
+        plan_builder.visit_sequential_update_splitting(self)
 
     def __call__(
         self,
@@ -392,6 +403,10 @@ class SequentialTendencySplitting(_FederationBase):
             )
         validate_composition([section.carrier for section in normalized], operator=self.kind)
         super().__init__(normalized, name=name)
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: provisional slots + DiffScale forcings (§8.2)."""
+        plan_builder.visit_sequential_tendency_splitting(self)
 
     def __call__(
         self,
@@ -500,6 +515,25 @@ class SSUS(_FederationBase):
     def lam(self) -> float:
         """The λ split; ½ is Strang splitting (second-order coupling error)."""
         return self._lam
+
+    @property
+    def pre(self) -> SequentialUpdateSplitting:
+        """The reverse-order λΔt pass (2.13a-b), as a SUS (S05 accessor)."""
+        return self._pre
+
+    @property
+    def post(self) -> SequentialUpdateSplitting:
+        """The forward-order (1-λ)Δt pass (2.13d-e), as a SUS (S05 accessor)."""
+        return self._post
+
+    @property
+    def core(self) -> Any:
+        """The dynamics core stepper run over the full Δt (2.13c; S05 accessor)."""
+        return self._core.stepper
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: doubled reversed λ-scaled op list (§8.2)."""
+        plan_builder.visit_ssus(self)
 
     def __call__(
         self,

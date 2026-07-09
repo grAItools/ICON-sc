@@ -21,12 +21,15 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Callable, Mapping, Sequence
 from datetime import timedelta
-from typing import Any, ClassVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import xarray as xr
 
 from symcon.core.components.base import DataArrayDict
 from symcon.core.contracts.properties import PropertyDictError, PropertySpec
+
+if TYPE_CHECKING:
+    from symcon.core.plan.bind import PlanBuilder
 
 __all__ = ["ConcurrentCoupling"]
 
@@ -164,6 +167,10 @@ class ConcurrentCoupling:
         lines = [f"instance of {type(self).__name__}"]
         lines.extend(f"    {name_of(member)}" for member in self._components)
         return "\n".join(lines)
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: serial member walk (§8.2)."""
+        plan_builder.visit_concurrent_coupling(self)
 
     # -- the call path -------------------------------------------------------------
 

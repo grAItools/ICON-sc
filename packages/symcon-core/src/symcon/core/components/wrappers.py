@@ -15,10 +15,13 @@ from __future__ import annotations
 import dataclasses
 from collections.abc import Callable, Mapping
 from datetime import timedelta
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 import xarray as xr
+
+if TYPE_CHECKING:
+    from symcon.core.plan.bind import PlanBuilder
 
 from symcon.core.components.base import Component, DataArrayDict, Stepper
 from symcon.core.contracts.properties import PropertySpec
@@ -73,6 +76,21 @@ class ComponentWrapper:
     def __getattr__(self, item: str) -> Any:
         return getattr(self._component, item)
 
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """Refuse plan compilation for unknown wrappers (S05).
+
+        Defined on the base so ``__getattr__`` can never silently delegate the
+        walk to the wrapped component (which would dissolve the wrapper's
+        semantics); the three known wrappers override with their real hooks.
+        """
+        from symcon.core.plan.guards import PlanCompileError
+
+        del plan_builder
+        raise PlanCompileError(
+            f"{type(self).__name__} implements no plan-compilation hook; "
+            f"the S05 compiler cannot dissolve it."
+        )
+
     def _call_component(
         self,
         state: Mapping[str, Any],
@@ -119,6 +137,20 @@ class CallingFrequency(ComponentWrapper):
         period_us = self._dt // _MICROSECOND
         multiples = max(1, (2 * period_us + step_us) // (2 * step_us))
         return timedelta(microseconds=multiples * step_us)
+
+    @property
+    def update_period(self) -> timedelta:
+        """The raw per-process ``dt`` (pre rounding-to-multiple; S05 accessor)."""
+        return self._dt
+
+    @property
+    def last_update_time(self) -> Any:
+        """The firing phase (``None`` until the first call; S05 bind accessor)."""
+        return self._last_update_time
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: dissolve into a cadence mask (§8.2)."""
+        plan_builder.visit_calling_frequency(self)
 
     def __call__(
         self,
@@ -264,6 +296,20 @@ class Subcycle(ComponentWrapper):
         self._n = n
         self._ratio_provider = ratio_provider
 
+    @property
+    def n(self) -> int | None:
+        """The static substep count (``None`` under a ratio_provider; S05 accessor)."""
+        return self._n
+
+    @property
+    def ratio_provider(self) -> Callable[[Mapping[str, Any]], int] | None:
+        """The adaptive substep-count provider (S05 accessor)."""
+        return self._ratio_provider
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: unroll with bound dt (§8.2)."""
+        plan_builder.visit_subcycle(self)
+
     def __call__(
         self,
         state: Mapping[str, Any],
@@ -332,6 +378,15 @@ class ScalingWrapper(ComponentWrapper):
                     f"{component.name}.{dict_name} (declared: {sorted(declared)})."
                 )
         self._factors = given
+
+    @property
+    def scale_factors(self) -> Mapping[str, Mapping[str, float]]:
+        """The validated scale-factor dicts, keyed by factor-dict name (S05 accessor)."""
+        return self._factors
+
+    def visit(self, plan_builder: PlanBuilder) -> None:
+        """S05 plan-compiler hook: fold into bound constants (§8.2)."""
+        plan_builder.visit_scaling_wrapper(self)
 
     def __call__(
         self,
