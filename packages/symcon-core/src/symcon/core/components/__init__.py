@@ -1,4 +1,4 @@
-"""Component taxonomy (§4.1) and control-flow wrappers (§4.2), T0 dispatch."""
+"""Component taxonomy (§4.1), control-flow wrappers and the dynamical-core base (§4.2)."""
 
 from symcon.core.components.base import (
     Component,
@@ -9,6 +9,7 @@ from symcon.core.components.base import (
     Stepper,
     TendencyComponent,
 )
+from symcon.core.components.dycore import DynamicalCore
 from symcon.core.components.wrappers import (
     CallingFrequency,
     ComponentWrapper,
@@ -21,6 +22,7 @@ __all__ = [
     "Component",
     "ComponentWrapper",
     "DiagnosticComponent",
+    "DynamicalCore",
     "ImplicitTendencyComponent",
     "Monitor",
     "OutputSchema",
