@@ -23,7 +23,7 @@ from symcon.core.state.names import lookup_quantity
 if TYPE_CHECKING:
     import pint
 
-__all__ = ["UnitsError", "canonical_units", "units_identical", "verify_noop"]
+__all__ = ["UnitsError", "canonical_units", "convert_array", "units_identical", "verify_noop"]
 
 
 class UnitsError(ValueError):
@@ -73,6 +73,23 @@ def units_identical(units_a: str, units_b: str) -> bool:
         return bool(_parse(units_a) == _parse(units_b))
     except Exception:  # offset units, undefined units, … — never identical
         return False
+
+
+def convert_array(values: Any, source: str, target: str) -> Any:
+    """Convert an array from ``source`` to ``target`` units via Pint (allocating).
+
+    **Negotiation-time only** (non-strict ingress executing a
+    :class:`~symcon.core.contracts.operators.ConversionPlan`, S03); strict mode
+    forbids the call sites, and nothing on the apply path may reach this. Raises
+    :class:`UnitsError` when Pint cannot convert (undefined/incompatible units).
+    """
+    if units_identical(source, target):
+        return values
+    quantity = _registry().Quantity(values, _clean(source))
+    try:
+        return quantity.to(_clean(target)).magnitude
+    except Exception as exc:
+        raise UnitsError(f"cannot convert {source!r} to {target!r}: {exc}") from None
 
 
 def verify_noop(component_units: str, canonical: str) -> None:

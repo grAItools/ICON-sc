@@ -8,6 +8,7 @@ from symcon.core.contracts.checkers import (
     StateSchema,
     StaticChecker,
 )
+from symcon.core.contracts.conversion import ConversionError, apply_conversion_plan
 from symcon.core.contracts.operators import ConversionPlan, ConversionStep, EgressPlan, IngressPlan
 from symcon.core.contracts.properties import (
     Differentiable,
@@ -20,6 +21,7 @@ from symcon.core.contracts.properties import (
 __all__ = [
     "ContractViolation",
     "ContractViolationError",
+    "ConversionError",
     "ConversionPlan",
     "ConversionStep",
     "Differentiable",
@@ -32,5 +34,6 @@ __all__ = [
     "PropertySpec",
     "StateSchema",
     "StaticChecker",
+    "apply_conversion_plan",
     "parse_properties",
 ]
