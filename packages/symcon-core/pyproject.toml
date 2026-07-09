@@ -16,6 +16,9 @@ dependencies = [
   "xarray>=2024.1",
   "pint>=0.23",
   "cftime>=1.6",
+  # S03 io/netcdf.py (NetCDFMonitor): xarray's netcdf4 engine. Generic I/O is part of
+  # symcon-core's mandate (package description); lower bound only.
+  "netcdf4>=1.6",
 ]
 
 # Extras per the repo layout document §1. Lower bounds only; constraints/ pins exact sets.
