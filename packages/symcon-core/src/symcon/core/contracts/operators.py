@@ -64,20 +64,23 @@ class IngressPlan:
         state_schema: StateSchema | Mapping[str, Any],
         *,
         component: str = "<component>",
+        device: tuple[int, int] | None = None,
     ) -> IngressPlan:
         """Build the plan at bind time; strict by construction.
 
         Runs the strict dynamic checker: a state that would need any allocating
         conversion cannot be pre-resolved (run the
         :class:`~symcon.core.contracts.checkers.DynamicChecker` with
-        ``strict=False`` and execute its plan first).
+        ``strict=False`` and execute its plan first). ``device`` is the DLPack
+        device expectation forwarded to the checker; ``None`` falls back to the
+        checker's first-field baseline (see its docstring).
         """
         schema = (
             state_schema
             if isinstance(state_schema, StateSchema)
             else StateSchema.from_state(state_schema)
         )
-        DynamicChecker(spec, schema, component=component, strict=True)
+        DynamicChecker(spec, schema, component=component, strict=True, device=device)
         fields = tuple(spec)
         names: list[str] = []
         for name in fields:

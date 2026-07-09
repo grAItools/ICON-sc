@@ -264,8 +264,27 @@ class Component(abc.ABC):
             if plan is None:
                 # IngressPlan.build is annotated on the parent; the subclass build
                 # constructs an EgressPlan (classmethod on cls).
-                plan = cast(EgressPlan, EgressPlan.build(sub_spec, out_schema, component=self.name))
+                plan = cast(
+                    EgressPlan,
+                    EgressPlan.build(
+                        sub_spec, out_schema, component=self.name, device=self._ctx.device
+                    ),
+                )
                 self._egress_cache[egress_key] = plan
+            # Shape check per call (schemas are shape-free, so the cached plan can't
+            # carry it): a wrong-shaped buffer with the right dim names would silently
+            # broadcast inside array_call and corrupt the reference tier.
+            sizes = _dim_sizes(state, component=self.name)
+            for name, array in provided.items():
+                for dim, length in zip(specs[name].dims, array.shape, strict=False):
+                    expected = sizes.get(dim)
+                    if expected is not None and length != expected:
+                        raise ValueError(
+                            f"component {self.name!r}: out[{name!r}] has length "
+                            f"{length} along dim {dim!r}, but the state has "
+                            f"{expected}; refusing to broadcast into an output "
+                            f"buffer."
+                        )
             for name, buffer in zip(plan.fields, plan.apply(provided), strict=True):
                 buffers[name] = buffer
                 wrapped[name] = provided[name]

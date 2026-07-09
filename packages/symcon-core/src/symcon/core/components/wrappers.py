@@ -24,13 +24,14 @@ from symcon.core.components.base import Component, DataArrayDict, Stepper
 from symcon.core.contracts.properties import PropertySpec
 from symcon.core.typing import Location
 
-__all__ = ["CallingFrequency", "ScalingWrapper", "Subcycle"]
+__all__ = ["CallingFrequency", "ComponentWrapper", "ScalingWrapper", "Subcycle"]
 
 _MICROSECOND = timedelta(microseconds=1)
 
 #: restart_state key of the CallingFrequency phase.
 _PHASE_KEY = "calling_frequency/last_update_time"
 _ARITY_KEY = "calling_frequency/cache_is_tuple"
+_PARTS_KEY = "calling_frequency/cache_parts"
 _CACHE_PREFIX = "calling_frequency/cache"
 _INNER_PREFIX = "component"
 
@@ -50,15 +51,22 @@ def _scalar_value(array: xr.DataArray) -> Any:
     return array.attrs["value"]
 
 
-class _ComponentWrapper:
-    """Shared delegation: property dicts, names, attributes -> wrapped component."""
+class ComponentWrapper:
+    """Shared delegation base of the control-flow wrappers.
 
-    def __init__(self, component: Component) -> None:
+    Property dicts, names and every other attribute delegate to the wrapped
+    component via ``__getattr__``. Wrappers accept ``Component | ComponentWrapper``
+    so they compose (``CallingFrequency(Subcycle(...), ...)``) without casts.
+    """
+
+    name: str
+
+    def __init__(self, component: Component | ComponentWrapper) -> None:
         self._component = component
         self.name = f"{type(self).__name__}({component.name})"
 
     @property
-    def component(self) -> Component:
+    def component(self) -> Component | ComponentWrapper:
         """The wrapped component."""
         return self._component
 
@@ -76,7 +84,7 @@ class _ComponentWrapper:
         return call(state, timestep, out=out)
 
 
-class CallingFrequency(_ComponentWrapper):
+class CallingFrequency(ComponentWrapper):
     """Reduced calling frequency with piecewise-constant cached output (§4.2 LFC).
 
     ``CallingFrequency(component, dt)`` calls the wrapped component only when
@@ -92,7 +100,7 @@ class CallingFrequency(_ComponentWrapper):
     declared in :meth:`functional_state` (S10 relies on this being carry).
     """
 
-    def __init__(self, component: Component, dt: timedelta) -> None:
+    def __init__(self, component: Component | ComponentWrapper, dt: timedelta) -> None:
         super().__init__(component)
         if dt <= timedelta(0):
             raise ValueError(f"{self.name}: dt must be positive, got {dt!r}.")
@@ -161,6 +169,10 @@ class CallingFrequency(_ComponentWrapper):
             assert self._cached is not None
             result[_PHASE_KEY] = _scalar_dataarray(self._last_update_time)
             result[_ARITY_KEY] = _scalar_dataarray(self._cache_is_tuple)
+            # The part count is persisted explicitly: a part may legitimately be an
+            # empty dict (e.g. a component with no diagnostics), which would leave
+            # no per-field key and silently change the cache arity on restore.
+            result[_PARTS_KEY] = _scalar_dataarray(len(self._cached))
             for index, part in enumerate(self._cached):
                 for name, array in part.items():
                     result[f"{_CACHE_PREFIX}/{index}/{name}"] = array.copy(deep=True)
@@ -171,6 +183,7 @@ class CallingFrequency(_ComponentWrapper):
         parts: dict[int, DataArrayDict] = {}
         phase: xr.DataArray | None = None
         arity: xr.DataArray | None = None
+        n_parts: xr.DataArray | None = None
         for key, value in restart.items():
             if key.startswith(f"{_INNER_PREFIX}/"):
                 inner[key[len(_INNER_PREFIX) + 1 :]] = value
@@ -178,6 +191,8 @@ class CallingFrequency(_ComponentWrapper):
                 phase = value
             elif key == _ARITY_KEY:
                 arity = value
+            elif key == _PARTS_KEY:
+                n_parts = value
             elif key.startswith(f"{_CACHE_PREFIX}/"):
                 index_str, _, name = key[len(_CACHE_PREFIX) + 1 :].partition("/")
                 parts.setdefault(int(index_str), {})[name] = value.copy(deep=True)
@@ -185,14 +200,24 @@ class CallingFrequency(_ComponentWrapper):
                 raise ValueError(f"{self.name}: unknown restart key {key!r}.")
         self._component.load_restart_state(inner)
         if phase is None:
-            if parts or arity is not None:
+            if parts or arity is not None or n_parts is not None:
                 raise ValueError(f"{self.name}: cache present but phase missing.")
             self._last_update_time = None
             self._cached = None
             return
+        if n_parts is None:
+            raise ValueError(f"{self.name}: restart cache is missing {_PARTS_KEY!r}.")
+        count = int(_scalar_value(n_parts))
+        if parts and max(parts) >= count:
+            raise ValueError(
+                f"{self.name}: restart cache has part index {max(parts)} but "
+                f"declares only {count} part(s)."
+            )
         self._last_update_time = _scalar_value(phase)
         self._cache_is_tuple = bool(_scalar_value(arity)) if arity is not None else True
-        self._cached = tuple(parts[index] for index in sorted(parts))
+        # Reconstruct by declared count: empty parts (components with an empty
+        # output dict) leave no per-field keys but must keep their slot.
+        self._cached = tuple(parts.get(index, {}) for index in range(count))
 
     def functional_state(self) -> Mapping[str, PropertySpec]:
         schema: dict[str, PropertySpec] = {
@@ -209,7 +234,7 @@ class CallingFrequency(_ComponentWrapper):
         return schema
 
 
-class Subcycle(_ComponentWrapper):
+class Subcycle(ComponentWrapper):
     """Run a :class:`Stepper` ``n`` times over ``timestep / n`` (§4.2 combinator).
 
     Exactly one of ``n`` (static) and ``ratio_provider`` (adaptive: called once
@@ -218,11 +243,16 @@ class Subcycle(_ComponentWrapper):
     semantics); ``out=`` is forwarded to the **final** substep only, so earlier
     substeps never alias the caller's buffers. ``state["time"]`` is not advanced
     between substeps (deliberately dumb at T0; the plan compiler owns cadence).
+
+    .. note:: Because time does not advance between substeps, a time-triggered
+       wrapper inside a subcycle — ``Subcycle(CallingFrequency(...), ...)`` —
+       degenerates to at most one effective fire per outer step: every substep
+       after the first sees an unchanged ``state["time"]`` and replays the cache.
     """
 
     def __init__(
         self,
-        stepper: Stepper,
+        stepper: Stepper | ComponentWrapper,
         n: int | None = None,
         ratio_provider: Callable[[Mapping[str, Any]], int] | None = None,
     ) -> None:
@@ -231,7 +261,6 @@ class Subcycle(_ComponentWrapper):
             raise ValueError(f"{self.name}: give exactly one of n and ratio_provider.")
         if n is not None and n < 1:
             raise ValueError(f"{self.name}: n must be >= 1, got {n}.")
-        self._stepper = stepper
         self._n = n
         self._ratio_provider = ratio_provider
 
@@ -255,12 +284,12 @@ class Subcycle(_ComponentWrapper):
         new_state: DataArrayDict = {}
         for index in range(ratio):
             sub_out = out if index == ratio - 1 else None
-            diagnostics, new_state = self._stepper(current, sub_timestep, out=sub_out)
+            diagnostics, new_state = self._call_component(current, sub_timestep, sub_out)
             current.update(new_state)
         return diagnostics, new_state
 
 
-class ScalingWrapper(_ComponentWrapper):
+class ScalingWrapper(ComponentWrapper):
     """Scale selected inputs/outputs of a wrapped component (sympl semantics).
 
     Scale-factor dict keys are validated against the wrapped component's property
@@ -279,7 +308,7 @@ class ScalingWrapper(_ComponentWrapper):
 
     def __init__(
         self,
-        component: Component,
+        component: Component | ComponentWrapper,
         *,
         input_scale_factors: Mapping[str, float] | None = None,
         tendency_scale_factors: Mapping[str, float] | None = None,

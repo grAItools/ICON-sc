@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 
 from symcon.core import CallingFrequency, ScalingWrapper, Subcycle, make_dataarray
-from symcon.core.testing.toys import Damping, Relaxation, column_state
+from symcon.core.testing.toys import Damping, ImplicitDamping, Relaxation, column_state
 from symcon.core.time import datetime
 
 DT = timedelta(minutes=1)
@@ -319,3 +319,30 @@ class TestScalingWrapper:
             ScalingWrapper(Relaxation(tau=TAU), input_scale_factors={"not_a_field": 2.0})
         with pytest.raises(ValueError, match="output_scale_factors"):
             ScalingWrapper(Relaxation(tau=TAU), output_scale_factors={"air_temperature": 2.0})
+
+
+class TestCallingFrequencyEmptyPartRestart:
+    """Regression (review round 1, M1): empty output-dict parts must survive restart."""
+
+    def test_restart_round_trip_with_empty_diagnostics_part(self) -> None:
+        # ImplicitDamping declares tendencies but no diagnostics: its empty part
+        # leaves no per-field cache key, so the part count must be persisted
+        # explicitly or replay after restore crashes on cache arity.
+        state = column_state()
+        wrapper = CallingFrequency(ImplicitDamping(tau=TAU), 3 * DT)
+        primed = wrapper(state, DT)  # fire once, cache both parts
+
+        twin = CallingFrequency(ImplicitDamping(tau=TAU), 3 * DT)
+        twin.load_restart_state(wrapper.restart_state())
+
+        later = column_state(time=state["time"] + DT)  # inside the window: replay
+        replay_original = wrapper(later, DT)
+        replay_twin = twin(later, DT)
+
+        assert len(replay_twin) == len(primed) == len(replay_original)
+        for index, (part_a, part_b) in enumerate(zip(replay_original, replay_twin, strict=True)):
+            assert set(part_a) == set(part_b), f"part {index}"
+            for name in part_a:
+                np.testing.assert_array_equal(
+                    part_a[name].data, part_b[name].data, err_msg=f"part {index}/{name}"
+                )

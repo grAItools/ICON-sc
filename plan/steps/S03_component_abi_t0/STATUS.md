@@ -163,3 +163,34 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
   upstream NetCDFMonitor semantics + Fig. 1/2 usage pattern; tasmania substep semantics),
   appended at mining time. Reference clones reused from S02 (same SHAs, verified).
 - No benchmarks/plots required by the SPEC.
+
+## Review fixes (round 1)
+
+- **M1 (MAJOR, fixed)** — `CallingFrequency` restart round trip crashed on replay for any
+  wrapped component with an empty output dict (e.g. `ImplicitDamping`: tendencies, no
+  diagnostics): empty parts left no per-field cache key, so `load_restart_state`
+  reconstructed a shorter cache tuple. The part count is now persisted explicitly
+  (`calling_frequency/cache_parts`) and reconstruction is by declared count with empty
+  parts keeping their slot; corrupt counts (part index ≥ count) are rejected. Regression
+  test: `TestCallingFrequencyEmptyPartRestart` (bit-exact replay on original and restored
+  twin).
+- **m1 (fixed)** — caller-provided `out=` buffers are now shape-checked per call against
+  the state's dim sizes (schemas are shape-free, so the cached `EgressPlan` cannot carry
+  this); a wrong-shaped buffer with correct dim names raises instead of silently
+  broadcasting. Tests: `TestOutBufferShapeCheck` (reject + accept directions).
+- **m2 (fixed)** — `out=` egress now validates against the context device symmetrically
+  with ingress: `IngressPlan.build`/`EgressPlan.build` gained an optional keyword-only
+  `device` (additive to the S02 frozen interface, default preserves old behaviour) and
+  `_resolve_outputs` forwards `ctx.device`. Tests: synthetic CUDA-vs-CPU rejection at the
+  operators level (`test_egress_build_enforces_device_expectation`) + a spy asserting the
+  component forwards `ctx.device` (`TestEgressDeviceForwarding`).
+- **INFO items** — `_ComponentWrapper` is now public (`ComponentWrapper`) and wrapper
+  constructors accept `Component | ComponentWrapper`, so mypy-strict user code composes
+  `CallingFrequency(Subcycle(...))` without casts; `Subcycle`'s docstring notes that
+  `Subcycle(CallingFrequency(...))` degenerates to at most one effective fire per outer
+  step (time does not advance between substeps). The "`__init_subclass__` import-identity
+  fix" mentioned in the implementer's interim report was folded into the original
+  `base.py` commit during development (module-level `StaticChecker` import); it was never
+  a separate post-review change — recorded here to reconcile the reports.
+- Gate after fixes: 198 passed, 1 skipped (mpi), 4 deselected (gpu); ruff/format clean;
+  mypy --strict 27 files clean; import contracts 2 kept.

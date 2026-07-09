@@ -237,3 +237,48 @@ class TestNegotiationCache:
         speed(state)
         speed(state)
         assert captured[0] is captured[1] is state["eastward_wind"].data
+
+
+class TestOutBufferShapeCheck:
+    """Regression (review round 1, m1): wrong-shaped out= buffers must not broadcast."""
+
+    def test_out_buffer_shape_mismatch_rejected(self) -> None:
+        state = column_state(n_cell=1, n_height=10)
+        damping = Damping(tau=timedelta(minutes=30))
+        bad = {
+            "upward_air_velocity": _out_field("upward_air_velocity", "m s-1", (10, 10)),
+        }
+        with pytest.raises(ValueError, match=r"refusing to broadcast.*|has length"):
+            damping(state, DT, out=bad)
+
+    def test_out_buffer_matching_shape_accepted(self) -> None:
+        state = column_state(n_cell=1, n_height=10)
+        damping = Damping(tau=timedelta(minutes=30))
+        good = {
+            "upward_air_velocity": _out_field("upward_air_velocity", "m s-1", (1, 10)),
+        }
+        _, outputs = damping(state, DT, out=good)
+        assert outputs["upward_air_velocity"] is good["upward_air_velocity"]
+
+
+class TestEgressDeviceForwarding:
+    """Regression (review round 1, m2): out= egress must validate against ctx device."""
+
+    def test_resolve_outputs_forwards_ctx_device(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        from symcon.core.contracts.operators import EgressPlan
+
+        captured: list[Any] = []
+        real_build = EgressPlan.build.__func__  # underlying classmethod function
+
+        def spy(cls: type, spec: Any, schema: Any, *, component: str, device: Any = None) -> Any:
+            captured.append(device)
+            return real_build(cls, spec, schema, component=component, device=device)
+
+        monkeypatch.setattr(EgressPlan, "build", classmethod(spy))
+        state = column_state(n_cell=1, n_height=10)
+        damping = Damping(tau=timedelta(minutes=30))
+        out = {
+            "upward_air_velocity": _out_field("upward_air_velocity", "m s-1", (1, 10)),
+        }
+        damping(state, DT, out=out)
+        assert captured == [damping._ctx.device]
