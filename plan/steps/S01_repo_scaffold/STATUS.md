@@ -26,8 +26,10 @@
   BROKEN) and revert `ad76822` demonstrate acceptance 2 end-to-end.
 - **CI**: `lint.yml` (ruff check/format, `mypy --strict -p symcon.core`, lint-imports),
   `test-cpu.yml` (locked-sync job, constraints-matrix job incl. the acceptance-5 icon4py
-  import probe, core-standalone job), `test-gpu.yml`/`test-mpi.yml` skeletons whose marked
-  tests skip cleanly without hardware. `.pre-commit-config.yaml` with ruff, ruff-format,
+  import probe, core-standalone job), `test-gpu.yml`/`test-mpi.yml` skeletons. Placeholder
+  gpu/mpi-marked tests (`test_markers.py`) keep `pytest -m gpu|mpi` collecting ≥1 test each,
+  so those jobs skip cleanly (exit 0, not pytest's no-tests exit 5) without hardware —
+  verified locally in both marker modes. `.pre-commit-config.yaml` with ruff, ruff-format,
   mypy-on-core, lint-imports.
 - **Top-level tree**: `examples/ validation/(data/) benchmarks/ tools/ docs/api envs/(spack/)`
   placeholder READMEs.
@@ -66,8 +68,8 @@
 - S02+: give `backend` fixture values meaning; wire gpu-marked tests to the real device CI.
 - `tools/constraints_update.py` + scheduled CI job (layout §5 pin-refresh discipline) — not in
   S01 scope.
-- When the first mpi-marked test lands, activate the commented `mpirun -n 4 … --with-mpi`
-  block in `test-mpi.yml`.
+- When the first real mpi-marked test lands (comm/, S02+), activate the commented
+  `mpirun -n 4 … --with-mpi` block in `test-mpi.yml` (needs mpi4py in that job's env).
 - gt4py 1.1.10's `dace` pre-release dependency is worth revisiting at the next pin bump; if a
   stable dace 2.x appears, drop `prerelease = "allow"`.
 
