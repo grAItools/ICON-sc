@@ -102,3 +102,22 @@ def test_egress_plan_resolves_output_buffers() -> None:
     plan = EgressPlan.build(output_spec, state, component="Turbulence")
     (out,) = plan.apply(state)
     assert out is state["icon:normal_wind"].data  # caller-provided output, zero-copy
+
+
+def test_egress_build_enforces_device_expectation() -> None:
+    """Regression (review round 1, m2): EgressPlan.build honours the device kwarg."""
+    from symcon.core.contracts.checkers import FieldSchema
+
+    cpu, cuda = (1, 0), (2, 0)
+    spec = parse_properties({"air_temperature": {"dims": ["cell", "height"], "units": "K"}})
+    schema = StateSchema(
+        fields={
+            "air_temperature": FieldSchema(
+                dims=("cell", "height"), units="K", dtype=np.dtype(np.float64), device=cuda
+            )
+        }
+    )
+    with pytest.raises(ContractViolationError, match=r"device.*air_temperature"):
+        EgressPlan.build(spec, schema, component="Turbulence", device=cpu)
+    plan = EgressPlan.build(spec, schema, component="Turbulence", device=cuda)
+    assert plan.fields == ("air_temperature",)

@@ -65,3 +65,30 @@ paths = ["model/common/src/icon4py/model/common/states/data.py", "model/common/s
 taken = "Seed rows for the canonical names/units registry (S02 state/names.py): CF standard names, canonical unit strings and ICON Fortran short names for prognostics (air_density kg m-3/rho, virtual_potential_temperature K/theta_v, dimensionless exner 1/exner, upward_air_velocity m s-1/w, normal/tangential velocity m s-1/vn,vt), common tracers (specific_humidity 1/qv, specific_{cloud,ice,rain,snow,graupel}_content 1/qc..qg) and diagnostics (eastward_wind u, northward_wind v, air_temperature K/temp, air_virtual_temperature K/tempv, air_pressure Pa/pres, air_pressure_at_ground_level Pa/pres_sfc). FieldMetaData TypedDict (standard_name+units required; long_name/icon_var_name optional) confirms the registry columns. '_on_interface_levels' naming ('height_on_interface_levels') confirms the suffix convention. NOTE: icon4py files exner/theta_v/vn under CF-style standard names; symcon per architecture doc S2.5 namespaces solver-internal quantities as icon:exner_function, icon:normal_wind, icon:virtual_potential_temperature — units/short names taken from icon4py, namespacing from the architecture doc."
 step = "S02"
 date = "2026-07-09"
+
+[[ref]]
+id = "sympl-oop"
+url = "https://github.com/stubbiali/sympl"
+commit = "5491978331ef7d6b7dc7995b9a5726713b5de7a7"  # branch oop
+paths = ["sympl/_core/core_components.py", "sympl/_core/steppers.py", "sympl/_core/wrappers.py", "sympl/_core/monitors.py", "sympl/_core/base_component.py"]
+taken = "Ubbiali component ABI shapes (thesis SS4.1-4.2 via architecture doc): __call__ with caller-provided out DataArray dicts; array_call receiving BOTH input and output raw-buffer dicts and writing in place; allocate_diagnostic/allocate_tendency/allocate_output hooks invoked exactly for the output fields the caller did not provide; call sequence = inflow checks -> raw extract -> out checks -> allocate missing -> array_call -> outflow checks -> DataArray wrap (checks skippable via enable_checks; symcon routes them through S02 Static/DynamicChecker + Ingress/EgressPlan instead). UpdateFrequencyWrapper = CallingFrequency donor: fires when state['time'] >= last_update_time + update_timedelta, else returns cached output verbatim; last_update_time is the phase. ScalingWrapper: per-category scale-factor dicts validated against the wrapped component's property dicts at construction, inputs scaled into attr-preserving copies, outputs/tendencies/diagnostics scaled after the call, __getattr__ delegation. Monitor base = abstract store(state). symcon deviations: single flat out= mapping instead of out_tendencies/out_diagnostics/out_state (SPEC S03 frozen interface), timestep passed into array_call uniformly, tendencies_in_diagnostics/TracerPacker not ported (out of S03 scope)."
+step = "S03"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_components/netcdf.py", "sympl/_core/wrappers.py", "docs/timestepping.rst", "docs/monitors.rst"]
+taken = "NetCDFMonitor semantics donor: Monitor caching stored states keyed by time and writing one NetCDF file, store_names selection of a variable subset, write_on_store synchronous mode, aliases out of scope. symcon S03 keeps the store(state)->one-file contract but reimplements xarray-based (dependency: netcdf4 engine) with a full-file rewrite per store (T0-dumb) and provenance global attrs. Upstream UpdateFrequencyWrapper cross-checked against the oop fork (identical firing rule). Docs quickstart/timestepping give the paper Fig.1/Fig.2 usage pattern reproduced by the S03 acceptance test: standalone diagnostic call; loop of diagnostic update -> tendencies -> stepper -> monitor.store -> advance time."
+step = "S03"
+date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/framework/sequential_update_splitting.py", "src/tasmania/framework/options.py"]
+taken = "Substepping semantics donor for symcon Subcycle: per-section integer substeps clamped to >=1 (max(substeps, 1)); a substepped section integrates with timestep/substeps applied substeps times, chaining each provisional state into the next call. symcon S03 lifts this into a standalone Subcycle(stepper, n=None, ratio_provider=None) wrapper (architecture SS4.2: the generic combinator survives outside DynamicalCore); ratio_provider (CFL-adaptive style) is symcon's addition per SPEC, called once per outer step with the current state."
+step = "S03"
+date = "2026-07-09"
