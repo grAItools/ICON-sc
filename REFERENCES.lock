@@ -92,3 +92,30 @@ paths = ["src/tasmania/framework/sequential_update_splitting.py", "src/tasmania/
 taken = "Substepping semantics donor for symcon Subcycle: per-section integer substeps clamped to >=1 (max(substeps, 1)); a substepped section integrates with timestep/substeps applied substeps times, chaining each provisional state into the next call. symcon S03 lifts this into a standalone Subcycle(stepper, n=None, ratio_provider=None) wrapper (architecture SS4.2: the generic combinator survives outside DynamicalCore); ratio_provider (CFL-adaptive style) is symcon's addition per SPEC, called once per outer step with the current state."
 step = "S03"
 date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/framework/concurrent_coupling.py", "src/tasmania/framework/steppers.py", "src/tasmania/framework/parallel_splitting.py", "src/tasmania/framework/sequential_tendency_splitting.py", "src/tasmania/framework/sequential_update_splitting.py", "src/tasmania/framework/dycore.py", "src/tasmania/framework/subclasses/tendency_steppers/{forward_euler,rk2,rk3ws}.py", "src/tasmania/framework/subclasses/sequential_tendency_steppers/{forward_euler,rk2,rk3ws}.py", "src/tasmania/framework/subclasses/stencil_definitions/algorithms.py", "src/tasmania/utils/xarrayx.py"]
+taken = "Coupling-algebra reference implementations (architecture S4.2): ConcurrentCoupling serial policy (diagnostics of earlier members visible to later members via aux state; tendencies accumulated into shared out_tendencies); TendencyStepper/SequentialTendencyStepper as name-keyed factories wrapping one ConcurrentCoupling (multi-arg constructor collapses args into a CC); scheme coefficients: forward_euler psi+dt*k; rk2 = midpoint (0.5*dt provisional then full-dt update; symcon deviates -> Heun per SPEC S04, cross-checked against sympl SSPRungeKutta 2-stage); rk3ws provisional fractions 1/3 then 1/2 then full dt (Wicker-Skamarock per Doms/Baldauf COSMO doc); STS stepper first-stage recombinations sts_rk2_0 out=0.5*(psi_n+psi_prv+dt*tnd) and sts_rk3ws_0 out=(2*psi_n+psi_prv+dt*tnd)/3 == E(psi_n,dt;P+(psi_prv-psi_n)/dt) stage forms (symcon implements the equivalent generic forcing G=(psi_prv-psi_n)/dt added to every tendency evaluation); ParallelSplitting recombination via iaddsub state_prv+=(psi_l-psi_n) per shared field (eq 2.10d thesis); STS federation: every section integrates from the step-initial state with the previous section's provisional output as forcing, diagnostics written onto the provisional state, state['time'] pinned back to the current level between sections; SUS federation: sections chained in place, each stepping the state left by its predecessor, time re-pinned per section; per-section TimeIntegrationOptions(component, scheme) -> symcon's (component, stepper_name) pairs; DynamicalCore: fast_tendency_component called once per stage on the latest provisional state before stage_array_call, substep tier with per-stage substep_fractions (fraction of the total substep count; substep dt = dt/N), stages/substep_fractions abstract properties, allocate_stage_output hooks. Not ported: execution policies ('as_parallel'), enforce_horizontal_boundary, promoter components, substepped PS/STS/SUS sections (tasmania raises NotImplementedError there too), DataArrayDictOperator gt4py stencil dispatch (symcon: numpy-level dict_axpy at T0)."
+step = "S04"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_components/timesteppers.py"]
+taken = "SSP Runge-Kutta coefficients (Shu & Osher 1988, via Durran 2nd ed as cited in the sympl docstring): 3-stage ssprk3 psi1=psi+dt*f(psi); psi2=3/4*psi+1/4*(psi1+dt*f(psi1)); psi_np1=1/3*psi+2/3*(psi2+dt*f(psi2)). 2-stage variant psi_np1=1/2*(psi+psi1+dt*f(psi1)) == Heun == SPEC S04's 'rk2 (Heun)' (cross-check that Heun is SSPRK2; tasmania's rk2 is the midpoint scheme instead — deviation recorded in STATUS)."
+step = "S04"
+date = "2026-07-09"
+
+[[ref]]
+id = "ubbiali-thesis"
+url = "https://doi.org/10.3929/ethz-b-000546695"
+commit = "ETH diss. no. 28022 (local references/phd_thesis_ubbiali.pdf)"
+paths = ["SS2.3 (eqs 2.8-2.13)", "SS2.4.1 (Table 2.1 second-order clauses)", "SS2.5.2 (Burgers experiment design)", "SS3.5 + Fig. 3.8-3.10 (DynamicalCore tiers and call pipeline)"]
+taken = "Coupling definitions implemented verbatim: FC (2.8) E0(psi,dt;D+P); LFC (2.9) E0(psi,dt;D+P^n) with P^n frozen at the step-initial state; PS (2.10) each process integrated independently from psi^n, recombination psi^{n+1}=sum_l psi_l^{n+1}-L*psi^n (2.10d); STS (2.11) psi_0=E0(psi^n,dt;D), psi_l=E_l(psi^n,dt;P_l+(psi_{l-1}^{n+1}-psi^n)/dt) — the forcing always uses the step-initial psi^n; SUS (2.12) chained correctors; SSUS (2.13a-e) reverse pass over lam*dt with E_l^*, core over dt, forward pass over (1-lam)*dt, E_l^* != E_l explicitly legal (SS2.3.5). Expected measured orders (Table 2.1 + SS2.4.1 discussion): FC unconditionally 2; LFC/PS/STS/SUS effectively 1 (their second-order clauses rarely hold); SSUS second-order iff lam=1/2. DynamicalCore (SS3.5, Fig 3.9/3.10): slow tendencies enter as an input port held constant across the step; fast_tendency_component (ConcurrentCoupling) evaluated once per stage on the latest provisional state; super-fast tier substeps each stage with substep dt = dt/N and per-stage substep counts proportional to the stage fractions (Fig 3.10: N=6, 3-stage WS-RK fractions 1/3,1/2,1 -> 2,3,6 substeps). Burgers experiment (SS2.5.2): diffusion treated as the parameterization, advection as dynamics, EOC measured over a dt ladder — symcon's acceptance 2 transposes this to 1-D with a relaxation physics term and self-convergence pairs."
+step = "S04"
+date = "2026-07-09"

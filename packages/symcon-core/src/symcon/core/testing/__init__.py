@@ -2,6 +2,8 @@
 
 Exports:
 - :func:`assert_allclose` — numpy.testing wrapper with worst-offender reporting.
+- :func:`measure_order` / :class:`OrderFit` — convergence-order harness (S04; used
+  again by the L7 validation ladder).
 - :data:`MARKERS` — canonical pytest marker names/descriptions (``gpu``, ``mpi``,
   ``slow``, ``data``).
 - :func:`register_markers` — hook helper used by the pytest plugin.
@@ -17,10 +19,12 @@ from typing import TYPE_CHECKING
 import numpy as np
 import numpy.typing as npt
 
+from symcon.core.testing.order import OrderFit, measure_order
+
 if TYPE_CHECKING:
     import pytest
 
-__all__ = ["MARKERS", "assert_allclose", "register_markers"]
+__all__ = ["MARKERS", "OrderFit", "assert_allclose", "measure_order", "register_markers"]
 
 #: Canonical marker names; registered via the plugin, referenced by CI job filters.
 MARKERS: dict[str, str] = {
