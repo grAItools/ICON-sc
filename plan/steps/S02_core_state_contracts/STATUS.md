@@ -77,7 +77,9 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
 
 ## Gate results (local)
 
-- `uv run pytest packages -m "not gpu" -q`: **129 passed, 1 skipped (mpi), 2 deselected (gpu)**.
+- `uv run pytest packages -m "not gpu" -q`: **129 passed, 1 skipped (mpi), 3 deselected
+  (gpu)** (post-review; the third deselected test is the new cupy device test, which
+  skips cleanly — reason "no CUDA device available" — when run without the marker filter).
 - `uv run ruff check .`: clean. `uv run ruff format --check .`: 36 files already formatted.
 - `uv run mypy --strict -p symcon.core`: **Success: no issues found in 16 source files**.
 - `uv run lint-imports`: 2 contracts kept, 0 broken.
@@ -111,7 +113,9 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
   definition; later steps mutate the attr.
 - **CF-exponent normalization in units.py** (`m s-1` → `m s**-1`) is an addition not in
   sympl: canonical strings mined from icon4py are CF/UDUNITS-style, which Pint cannot
-  parse. The normalization is shared (and re-derived independently) by the test oracle.
+  parse. The test oracle copies this normalization regex from the implementation — only
+  the Pint *identity decision* (made by the oracle's own independently constructed
+  registry) is independent; the spelling convention itself is not oracle-checked.
 - **StaticChecker does not require every name to be registered** in the canonical registry
   (the S02 seed table is deliberately small); canonical-units verification applies to
   known names only. Whether unregistered names should hard-fail at composition time is an
@@ -143,3 +147,19 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
 - `REFERENCES.lock`: +4 entries (sympl upstream, sympl-oop fork, tasmania, icon4py v0.2.0
   states metadata), appended at mining time.
 - No benchmarks/plots required by the SPEC.
+
+## Review fixes (round 1)
+
+- **M1**: step branch actually points at the S02 commits now; local `main` restored to the
+  S01 merge (`daf9e17`). Nothing had been pushed.
+- **m1**: `@settings(deadline=None)` on `test_verify_noop_matches_pint_identity` — the
+  first drawn example pays the lazy Pint `UnitRegistry` construction (~290 ms).
+- gpu-marked `test_field_schema_from_cupy_dataarray_and_strict_device_check` added
+  (acceptance 2(d) over a real cupy buffer; skips cleanly without a device via the S01
+  collection hook + `importorskip`).
+- `DynamicChecker` docstring now spells out the `device=None` semantics (first spec'd
+  field in property-dict order sets the expectation; pass `device` explicitly when a
+  backend-mandated device exists) — S03/S05 inherit these semantics.
+- `test_registry.py` uses a save/restore registry fixture (order-independent).
+- Softened the STATUS claim about the CF-exponent test oracle (regex is copied, not
+  re-derived; only the Pint identity decision is independent).

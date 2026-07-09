@@ -233,6 +233,13 @@ class DynamicChecker:
     (each named by field + component) and are collected into ``self.plan`` (a
     :class:`~symcon.core.contracts.operators.ConversionPlan`) under
     ``strict=False``.
+
+    Device expectation: ``device`` (a DLPack device tuple) is normally supplied by
+    the caller (S03's ComputeContext / S05's plan compiler). With ``device=None``
+    the checker only enforces that all spec'd fields share **one** device, adopting
+    the device of the *first field in property-dict order* as the expectation — so
+    which field gets flagged on a mixed-device state depends on property-dict
+    order. Pass ``device`` explicitly whenever a backend-mandated device exists.
     """
 
     def __init__(

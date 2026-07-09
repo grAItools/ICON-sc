@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+
 import pytest
 
 from symcon.core.registry import Factory, RegistrationError
@@ -28,6 +30,17 @@ class OtherRoot(Factory):
 
 class OtherImpl(OtherRoot):
     name = "other"
+
+
+@pytest.fixture(autouse=True)
+def _restore_registries() -> Iterator[None]:
+    # Tests below register throwaway classes; snapshot/restore keeps every test
+    # independent of execution order.
+    saved = {root: dict(root.registry) for root in (Stepper, OtherRoot)}
+    yield
+    for root, snapshot in saved.items():
+        root.registry.clear()
+        root.registry.update(snapshot)
 
 
 def test_registry_populated_on_import() -> None:
@@ -68,7 +81,6 @@ def test_unnamed_intermediate_stays_unregistered() -> None:
 
     assert Stepper.registry["rk3ws"] is RK3WS
     assert not any(cls is AbstractRK for cls in Stepper.registry.values())
-    del Stepper.registry["rk3ws"]  # keep module-level expectations stable
 
 
 def test_named_class_without_root_rejected() -> None:

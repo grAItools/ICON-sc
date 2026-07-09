@@ -236,3 +236,38 @@ def test_non_strict_plan_is_empty_for_matching_state() -> None:
     checker = DynamicChecker(SPEC, make_state(), component="Turbulence", strict=False)
     assert not checker.plan
     assert checker.plan.steps == ()
+
+
+# --- device identity over a real cupy buffer (SPEC acceptance 2(d), gpu tier) ----------
+
+
+@pytest.mark.gpu
+def test_field_schema_from_cupy_dataarray_and_strict_device_check() -> None:
+    cupy = pytest.importorskip("cupy")
+    buffer = cupy.zeros((3, 4), dtype=cupy.float64)
+    array = make_dataarray(
+        buffer, name="air_temperature", dims=("cell", "height"), units="K", location="cell"
+    )
+    assert array.data is buffer  # no coercion of the duck array (§4.2)
+
+    schema = FieldSchema.from_dataarray(array)
+    assert schema.device[0] == CUDA[0]  # kDLCUDA, straight from __dlpack_device__
+    assert schema.dtype == np.dtype(np.float64)
+
+    # cupy-vs-numpy: strict mode flags the transfer, naming field + component.
+    with pytest.raises(ContractViolationError, match=r"device.*air_temperature.*Turbulence"):
+        DynamicChecker(
+            SPEC,
+            StateSchema(fields={"air_temperature": schema}),
+            component="Turbulence",
+            device=CPU,
+        )
+
+    # ... and on the field's own device the contract passes.
+    checker = DynamicChecker(
+        SPEC,
+        StateSchema(fields={"air_temperature": schema}),
+        component="Turbulence",
+        device=(schema.device[0], schema.device[1]),
+    )
+    assert not checker.violations

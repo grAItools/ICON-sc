@@ -10,7 +10,7 @@ import functools
 import re
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from symcon.core.state.units import UnitsError, canonical_units, units_identical, verify_noop
@@ -61,6 +61,7 @@ def _pint_identity(units_a: str, units_b: str) -> bool:
         return False
 
 
+@settings(deadline=None)  # first example pays lazy Pint UnitRegistry construction
 @given(st.sampled_from(UNIT_POOL), st.sampled_from(UNIT_POOL))
 def test_verify_noop_matches_pint_identity(units_a: str, units_b: str) -> None:
     if _pint_identity(units_a, units_b):
