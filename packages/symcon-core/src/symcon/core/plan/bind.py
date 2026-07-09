@@ -797,9 +797,13 @@ class _Compiler:
             )
         if id(wrapper) in self._seen_cf:
             raise PlanCompileError(
-                f"plan compiler: CallingFrequency {name_of(wrapper)!r} occurs more than "
-                f"once in the composition; T0 would fire once and replay the cache on "
-                f"later occurrences within one step (S05 restriction)."
+                f"plan compiler: CallingFrequency {name_of(wrapper)!r} is evaluated more "
+                f"than once per step — either it occurs twice in the composition or a "
+                f"multi-stage scheme (rk2/rk3ws/ssprk3) re-evaluates its coupling per "
+                f"stage. T0 fires once and replays the cache; expressing that replay at "
+                f"T1 needs per-stage cache-slot aliasing the S05 compiler does not "
+                f"implement (S05 restriction — use forward_euler around "
+                f"CallingFrequency, or lift it out of the multi-stage section)."
             )
         self._seen_cf.add(id(wrapper))
         if wrapper.last_update_time is not None:

@@ -101,6 +101,14 @@
 
 ## Deviations and interpretations (with rationale)
 
+> **⚠ HUMAN SIGN-OFF REQUIRED (PR):** deviations 4–5 below reinterpret the wording of
+> acceptance criterion 3 (the zero-traffic settrace/tracemalloc operationalization —
+> CPython cannot observe C-level `dict.__getitem__` via `sys.settrace`, and strict
+> every-step-zero allocation is not attainable). The reviewer judged the
+> operationalization faithful to §8.2's intent, but per AGENTS.md this
+> acceptance-wording reinterpretation needs explicit human sign-off in the PR.
+
+
 1. **`ComputeContext` extended additively** with keyword fields
    `tier="interpret"` and `timestep=None` (defaults preserve S03 behavior). The
    frozen `bind(composition, schema, ctx)` signature has no Δt parameter, and
@@ -191,6 +199,22 @@
 
 ## Follow-ups
 
+- **CF under multi-stage schemes (review round 1, MINOR-1):** a single
+  `CallingFrequency` occurrence whose section uses rk2/rk3ws/ssprk3 is re-evaluated once
+  per stage by T0 (cache replay on stage > 0). The T1 compiler refuses this loudly — the
+  stage>0 re-visit would re-register the cadence-masked diagnostic cells under a second
+  path and corrupt the persistent-cache slots; supporting it needs per-stage cache-slot
+  aliasing. Restriction is tested (`test_calling_frequency_under_multi_stage_scheme_is_
+  rejected_loudly`, all three schemes + T0-accepts control) and the error message names
+  the cause and the workarounds (forward_euler around CF, or lift CF out of the section).
+- **`plan_hash` is blind to component constructor parameters (review round 1, MINOR-2):**
+  two compositions differing only in a component's scalar config (e.g. `Relaxation(tau)`)
+  hash identically — `_DraftCall` carries tag/slots/dt, not component config. Acceptance 4
+  (config field/order/schema sensitivity) is satisfied as specified, but T3's
+  cache-by-plan-hash and `renegotiate_and_diff`'s hash-first comparison inherit the blind
+  spot; S10/S14 should fold a stable component-config digest into the hash before caching
+  compiled artifacts by it.
+
 - S14: dycore fast tier, adaptive substep ratios via the T2 signature cache,
   SlowTendencyBus/LFC publication pattern through the plan, plan-through-dycore.
 - Scheme-emitter registration protocol so user-registered `TendencyStepper`
@@ -204,3 +228,19 @@
 
 - `benchmarks/s05_dispatch.py` (checked in; report-only). Numbers above; the
   gitignored `artifacts/` dir is unused — no data files were produced.
+
+## Review fixes (round 1)
+
+- **MINOR-1** — chose option (b): keeping the one-evaluation-per-step guard, with an
+  accurate error message naming the multi-stage cause and workarounds. Option (a) was
+  attempted first (keying `_seen_cf` by (instance, stage)): the deeper cell-write
+  corruption guard then correctly rejects the stage>0 re-registration of cadence-masked
+  diagnostic cells — genuine per-stage cache-slot aliasing work, out of S05 scope.
+  Declared under Follow-ups; regression tests added for the loud rejection (3 schemes)
+  and for the forward_euler variant of the same composite staying bitwise (even+odd
+  step counts).
+- **MINOR-2** — declared under Follow-ups (no code change; acceptance 4 unaffected).
+- **INFO-1** — human-sign-off banner added at the top of Deviations for the zero-traffic
+  operationalization (deviations 4–5).
+- **INFO-2** — equivalence-suite module docstring now warns that reduction-order
+  detection rests on the PS/FC matrix rows.

@@ -33,6 +33,7 @@ __all__ = [
     "ODE_DT",
     "SCHEMES",
     "assert_states_bitwise_equal",
+    "make_cf_multistage",
     "make_cf_subcycle_composite",
     "make_federation",
     "make_scaling_composite",
@@ -101,6 +102,28 @@ def make_cf_subcycle_composite() -> Any:
                 "forward_euler",
             ),
             Subcycle(Damping(tau=TAU_DAMP), n=3),
+        ]
+    )
+
+
+def make_cf_multistage(scheme: str) -> Any:
+    """Review round 1 (MINOR-1): one CF occurrence under a multi-stage scheme.
+
+    The stepper re-evaluates its coupling once per stage; T0 replays the CF
+    cache on stage > 0 (state time unchanged), so T1's stage-0-only firing must
+    reproduce it bitwise.
+    """
+    return SequentialUpdateSplitting(
+        [
+            (
+                ConcurrentCoupling(
+                    [
+                        CallingFrequency(Relaxation(tau=TAU_RELAX), timedelta(minutes=3)),
+                        WindSpeed(),
+                    ]
+                ),
+                scheme,
+            ),
         ]
     )
 

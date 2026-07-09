@@ -4,6 +4,10 @@
 schemes; (c) a CallingFrequency + Subcycle composite. Same kernels, same order
 ⇒ bitwise is required: every comparison is exact (``assert_array_equal``),
 never ``allclose`` (AGENTS.md: no tolerance creep, no reduction-order changes).
+
+Do not slim the (b) matrix: reduction-order-perturbation detection rests on the
+PS and FC rows (the ssus/ssprk3 Axpys are ≤2-term and reversal-neutral), so a
+reduced matrix without ps/fc would no longer pin the k-ary term order.
 """
 
 from __future__ import annotations
@@ -17,6 +21,7 @@ from _plan_toys import (
     ODE_DT,
     SCHEMES,
     assert_states_bitwise_equal,
+    make_cf_multistage,
     make_cf_subcycle_composite,
     make_federation,
     make_scaling_composite,
@@ -28,6 +33,7 @@ from _plan_toys import (
 
 from symcon.core import ComputeContext
 from symcon.core.components.dycore import DynamicalCore
+from symcon.core.plan.guards import PlanCompileError
 from symcon.core.state.dataarray import make_dataarray
 
 N_STEPS = 100
@@ -167,3 +173,43 @@ def test_plan_signatures_reflect_cadence() -> None:
     )
     # CF period 2 steps x ping-pong parity 2 -> 2 signatures (lcm).
     assert plan.signatures == ("step 0 (mod 2)", "step 1 (mod 2)")
+
+
+@pytest.mark.parametrize("scheme", ("rk2", "rk3ws", "ssprk3"))
+def test_calling_frequency_under_multi_stage_scheme_is_rejected_loudly(scheme: str) -> None:
+    """Review round 1 (MINOR-1): CF under a multi-stage scheme is a declared
+    S05 restriction — the compiler must refuse with an accurate message (T0 runs
+    it fine; T1 support needs per-stage cache-slot aliasing, a follow-up).
+
+    Guard against silent acceptance in either direction: forward_euler around the
+    same composite compiles and stays bitwise (covered below), and the multi-stage
+    variants raise PlanCompileError mentioning the multi-stage cause.
+    """
+    with pytest.raises(PlanCompileError, match="multi-stage"):
+        run_tier(
+            "plan", lambda: make_cf_multistage(scheme), toy_state(), timestep=COLUMN_DT, n_steps=3
+        )
+    # T0 accepts the identical composition — the restriction is T1-only.
+    run_tier(
+        "interpret", lambda: make_cf_multistage(scheme), toy_state(), timestep=COLUMN_DT, n_steps=3
+    )
+
+
+def test_calling_frequency_forward_euler_variant_of_multistage_composite_bitwise() -> None:
+    """The forward_euler variant of the same composite must compile and match."""
+    for n_steps in (N_STEPS, N_STEPS + 1):
+        t0 = run_tier(
+            "interpret",
+            lambda: make_cf_multistage("forward_euler"),
+            toy_state(),
+            timestep=COLUMN_DT,
+            n_steps=n_steps,
+        )
+        t1 = run_tier(
+            "plan",
+            lambda: make_cf_multistage("forward_euler"),
+            toy_state(),
+            timestep=COLUMN_DT,
+            n_steps=n_steps,
+        )
+        assert_states_bitwise_equal(t0, t1)
