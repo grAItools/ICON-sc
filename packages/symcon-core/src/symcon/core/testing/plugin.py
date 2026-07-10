@@ -6,6 +6,9 @@ conftest. The ``backend`` values are plain strings until S02 gives them meaning.
 
 from __future__ import annotations
 
+import os
+import pathlib
+
 import pytest
 
 from symcon.core.testing import register_markers
@@ -21,6 +24,18 @@ BACKEND_PARAMS: tuple[object, ...] = (
 
 def pytest_configure(config: pytest.Config) -> None:
     register_markers(config)
+    # gt4py's compiled-program build cache defaults to SESSION lifetime (destroyed
+    # at interpreter exit), so every test process recompiles its gtfn programs —
+    # for the S08 graupel K-scan that is ~2 minutes per (grid-size, nlev) variant.
+    # Persist the cache under the shared symcon cache root instead (never in the
+    # repo — gt4py's default *directory* would be ``$CWD/.gt4py_cache``).
+    # pytest_configure runs before collection imports any test module, hence
+    # before ``gt4py.next.config`` reads the environment once; ``setdefault``
+    # keeps explicit user/CI overrides authoritative.
+    os.environ.setdefault("GT4PY_BUILD_CACHE_LIFETIME", "persistent")
+    os.environ.setdefault(
+        "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "symcon" / "gt4py")
+    )
 
 
 def _gpu_available() -> bool:
