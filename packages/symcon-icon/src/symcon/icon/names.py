@@ -92,6 +92,17 @@ _ROWS: Final[tuple[tuple[str, str, str | None, str | None], ...]] = (
     # slow-forcing temperature slot consumed by the S09 SCM bus demo (symcon-only
     # slot: no ICON Fortran symbol, hence no short name).
     ("icon:ddt_temperature_slow", "K s-1", None, None),
+    # --- microphysics (S08; gscp granule + ICON prm_nwp_diag naming) -----------------
+    # cloud droplet number concentration consumed by the one-moment graupel scheme
+    # (icon4py granule input ``qnc`` [1/m3]; ICON ``qnc_s``/``cloud_num``,
+    # mo_nwp_gscp_interface.f90 — REFERENCES.lock icon-fortran-graupel).
+    ("icon:qnc", "m-3", None, "qnc"),
+    # grid-scale surface precipitation rates [kg/m2/s] (ICON prm_nwp_diag,
+    # mo_nwp_phy_types.f90:277-280; icon4py exit-savepoint fields *_gsp_rate).
+    ("icon:rain_gsp_rate", "kg m-2 s-1", None, "rain_gsp_rate"),
+    ("icon:snow_gsp_rate", "kg m-2 s-1", None, "snow_gsp_rate"),
+    ("icon:ice_gsp_rate", "kg m-2 s-1", None, "ice_gsp_rate"),
+    ("icon:graupel_gsp_rate", "kg m-2 s-1", None, "graupel_gsp_rate"),
 )
 
 

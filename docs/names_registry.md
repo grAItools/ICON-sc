@@ -47,3 +47,8 @@ quantity's canonical units.
 | `icon:ddt_qg` | `s-1` | — | `ddt_qg` | — |
 | `icon:ddt_exner_phy` | `s-1` | — | `ddt_exner_phy` | — |
 | `icon:ddt_temperature_slow` | `K s-1` | — | — | — |
+| `icon:qnc` | `m-3` | — | `qnc` | — |
+| `icon:rain_gsp_rate` | `kg m-2 s-1` | — | `rain_gsp_rate` | — |
+| `icon:snow_gsp_rate` | `kg m-2 s-1` | — | `snow_gsp_rate` | — |
+| `icon:ice_gsp_rate` | `kg m-2 s-1` | — | `ice_gsp_rate` | — |
+| `icon:graupel_gsp_rate` | `kg m-2 s-1` | — | `graupel_gsp_rate` | — |
