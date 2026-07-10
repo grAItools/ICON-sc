@@ -41,6 +41,7 @@ from symcon.core.coupling.constraints import CouplingConstraints
 from symcon.core.ingress.gt4py import Backend, resolve_backend
 from symcon.core.typing import FieldBuffer
 from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
+from symcon.icon.components.fast._column_grid import column_icon4py_grid
 from symcon.icon.grid.vertical import VerticalGrid
 
 __all__ = ["SaturationAdjustment", "SaturationAdjustmentConfig"]
@@ -61,40 +62,6 @@ class SaturationAdjustmentConfig:
     max_iter: int = 10
     #: Convergence tolerance on the iterated temperature [K].
     tolerance: float = 1.0e-3
-
-
-def _column_icon4py_grid(n_cell: int, num_levels: int) -> Any:
-    """A trivial pointwise icon4py grid hosting ``n_cell`` columns.
-
-    satad's stencils are pointwise on (Cell, K) — no connectivities are consumed
-    — so the horizontal grid degenerates to sizes plus the zone index functions
-    (the ``simple_grid`` precedent, REFERENCES.lock ``icon4py-satad``:
-    ``start_index`` is 0 except for halo zones, ``end_index`` is the dim size).
-    """
-    import gt4py.next as gtx
-    from icon4py.model.common import dimension as i4_dims
-    from icon4py.model.common.grid import base as i4_base
-
-    sizes = {i4_dims.CellDim: n_cell, i4_dims.EdgeDim: 0, i4_dims.VertexDim: 0}
-
-    def start_index(domain: Any) -> Any:
-        return gtx.int32(sizes[domain.dim]) if domain.zone.is_halo() else gtx.int32(0)
-
-    def end_index(domain: Any) -> Any:
-        return gtx.int32(sizes[domain.dim])
-
-    config = i4_base.GridConfig(
-        horizontal_config=i4_base.HorizontalGridSize(num_vertices=0, num_edges=0, num_cells=n_cell),
-        vertical_size=num_levels,
-        limited_area=False,
-    )
-    return i4_base.Grid(
-        id="symcon_column",
-        config=config,
-        connectivities={},
-        start_index=start_index,
-        end_index=end_index,
-    )
 
 
 class SaturationAdjustment(Stepper):
@@ -184,7 +151,7 @@ class SaturationAdjustment(Stepper):
 
             grid = self._i4_grid
             if grid is None:
-                grid = _column_icon4py_grid(n_cell, self._nlev)
+                grid = column_icon4py_grid(n_cell, self._nlev)
             elif int(grid.num_cells) != n_cell:
                 raise ValueError(
                     f"component {self.name!r}: state has {n_cell} cells but the "
