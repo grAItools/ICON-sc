@@ -60,6 +60,7 @@ from symcon.core.coupling import (
     validate_composition,
 )
 from symcon.core.driver import timeloop
+from symcon.core.ingress import Backend, make_backend
 from symcon.core.io import MemoryMonitor, NetCDFMonitor
 from symcon.core.plan import (
     ExecutionPlan,
@@ -90,6 +91,7 @@ __version__ = "0.1.0"
 __all__ = [
     "SSUS",
     "Allocator",
+    "Backend",
     "BusError",
     "CallingFrequency",
     "Component",
@@ -154,6 +156,7 @@ __all__ = [
     "convert_array",
     "dict_axpy",
     "dict_fma",
+    "make_backend",
     "make_dataarray",
     "parse_properties",
     "provenance_stamp",

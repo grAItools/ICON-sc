@@ -23,6 +23,9 @@ dependencies = [
 
 # Extras per the repo layout document §1. Lower bounds only; constraints/ pins exact sets.
 [project.optional-dependencies]
+# S07 ingress/gt4py.py (Backend + zero-copy as_field); imported lazily, so core
+# works without it. Exact pin (gt4py==1.1.10, the icon4py-0.2.0 pair) in constraints/.
+gt4py = ["gt4py>=1.1.10"]
 gpu = ["cupy-cuda12x>=13.0"]
 jax = ["jax>=0.6.0", "mpi4jax>=0.6.0"]
 mpi = ["mpi4py>=3.1.5", "ghex>=0.7.0"]
