@@ -43,6 +43,19 @@ jobs:
         run: .venv/bin/python -c "import icon4py.model.common"
       - run: .venv/bin/pytest packages -m "not gpu and not mpi" -ra
 
+  # Example smoke (SPEC S09 acceptance 1): the SCM run script must stay green
+  # and fast (< 60 s CPU on the embedded backend; generous CI-jitter timeout).
+  examples-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          python-version: "3.10"
+      - run: uv sync --locked
+      - run: timeout 300 uv run python examples/01_scm_column.py --hours 1 --output /tmp/scm_column.nc
+
   # Standalone-install path: core must install and import without icon/bridges.
   core-standalone:
     runs-on: ubuntu-latest
