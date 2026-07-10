@@ -27,6 +27,9 @@ from typing import TYPE_CHECKING, Any, Final
 from symcon.core.typing import FieldBuffer
 
 if TYPE_CHECKING:
+    # Typing-only: gt4py stays behind the symcon-core[gt4py] extra at runtime.
+    from gt4py.next import Dimension as GtxDimension
+
     from symcon.core.context import Allocator
 
 __all__ = ["Backend", "make_backend"]
@@ -70,7 +73,7 @@ class Backend:
     allocator: Allocator
     offset_provider: Mapping[str, Any] = _NO_OFFSETS
 
-    def as_field(self, dims: tuple[str, ...], buffer: FieldBuffer) -> Any:
+    def as_field(self, dims: tuple[str | GtxDimension, ...], buffer: FieldBuffer) -> Any:
         """Wrap ``buffer`` as a gt4py field over ``dims`` — zero-copy (§2.3).
 
         ``dims`` are gt4py dimension *values* (``gt4py.next.Dimension``) or

@@ -47,9 +47,11 @@
 1. **L2 parity** — `packages/symcon-icon/tests/test_satad_datatest.py` (marker
    `data`): WEISMAN_KLEMP_TORUS satad-init/satad-exit savepoints (the only archive
    carrying them; GAUSS3D has none, so the S06 default experiment is overridden for
-   this file), 2 locations × 3 dates × {embedded, gtfn_cpu} = 12 cases, at icon4py's
-   own tolerances `rtol=1e-12` (dallclose default), `atol=1e-13` (their explicit
-   argument) — provenance comments at the constants. All 12 pass locally.
+   this file), 2 locations × 3 dates × {embedded, gtfn_cpu, gtfn_gpu (`gpu`-marked)}
+   = 18 cases, at icon4py's own tolerances `rtol=1e-12` (dallclose default),
+   `atol=1e-13` (their explicit argument) — provenance comments at the constants.
+   The 12 CPU cases pass locally; the 6 gtfn_gpu cases skip cleanly without a CUDA
+   device (hardware-unvalidated locally — no cupy on this machine).
 2. **Zero-copy** — `test_ingress_gt4py.py::test_as_field_is_zero_copy_{numpy,cupy}`
    (`field.ndarray is buf`; cupy under `gpu` marker) plus the component-path identity
    check in `test_satad_component.py`.
@@ -107,13 +109,38 @@ constraint test, config-transcription test.
   cache; acceptable for the gate, worth persistent-cache attention when more gt4py
   components accumulate.
 
-## Artifacts / gate results (local)
+## Artifacts / gate results (local, after review round 1)
 
 - `uv run pytest packages -m "not gpu" -q` — **491 passed, 1 skipped** (mpi opt-in),
-  11 deselected (data/gpu), 89.7 s.
-- `uv run pytest packages/symcon-icon -m data -q` — **14 passed** (12 new satad L2
-  cases + 2 S06 vertical-grid), 34.9 s. WK-torus archive (~1.6 GB) downloaded once
-  into `~/.cache/symcon/icon4py-testdata` via icon4py's own machinery; no data in git.
+  17 deselected (data/gpu), 77.2 s.
+- `uv run pytest packages/symcon-icon -m data -q` — **14 passed, 6 skipped** (the
+  gpu-marked L2 cases skip without a CUDA device; 12 new satad L2 CPU cases + 2 S06
+  vertical-grid pass), 34.2 s. WK-torus archive (~1.6 GB) downloaded once into
+  `~/.cache/symcon/icon4py-testdata` via icon4py's own machinery; no data in git.
+- `uv run pytest packages/symcon-icon/tests/test_satad_datatest.py -q` (no marker
+  filter) — **12 passed, 6 skipped** ("no CUDA device available"): the gpu leg
+  skips, never fails, without a device.
 - `uv run ruff check .` / `uv run ruff format --check .` — clean.
 - `uv run mypy --strict -p symcon.core` — clean (45 files).
 - `uv run lint-imports` — 2 contracts kept.
+
+## Review fixes (round 1)
+
+- **MAJOR 1 — gtfn_gpu leg missing from the L2 datatest** (module docstring falsely
+  claimed it existed): added `pytest.param("gtfn_gpu", marks=pytest.mark.gpu)` to
+  the backend parametrization — the matrix is now 2 locations × 3 dates ×
+  {embedded, gtfn_cpu, gtfn_gpu} = 18 cases — and the docstring plus the
+  acceptance-1 mapping above now state the actual matrix. To make the gpu leg
+  device-*correct* rather than merely present, `_state_from_savepoint` now
+  allocates its buffers through the component's `ComputeContext` (strict mode
+  rejects host buffers under a cupy context — this is state construction, the
+  S06-builder role, not component ingress) and result comparisons go through a
+  `_host()` helper (`cupy.ndarray.get()` on device, `np.asarray` otherwise).
+  Verified: run without a marker filter → 12 passed, 6 skipped ("no CUDA device
+  available"); with `-m data` → the 12 CPU cases still pass. The gpu leg remains
+  hardware-unvalidated here (no cupy locally); first GPU run should watch it.
+- **MINOR 2 — `Backend.as_field` annotation contradicted its contract/callers**:
+  widened `dims: tuple[str, ...]` to `tuple[str | GtxDimension, ...]` via a
+  `TYPE_CHECKING`-only `from gt4py.next import Dimension as GtxDimension` (gt4py
+  ships `py.typed`; the runtime lazy-import discipline is unchanged — gt4py stays
+  behind the `symcon-core[gt4py]` extra). `mypy --strict -p symcon.core` green.

@@ -11,8 +11,8 @@ The symcon state is built from the init savepoint, the component hosts the
 granule on the savepoint's icon grid, and the adjusted state is compared to the
 exit savepoint at **icon4py's own tolerances**.
 
-Backends: embedded + gtfn_cpu (the CPU pair of the component suite); gtfn_gpu
-under the ``gpu`` marker.
+Matrix: 2 locations x 3 dates x {embedded, gtfn_cpu, gtfn_gpu (``gpu``-marked,
+skips cleanly without a CUDA device)}.
 """
 
 from __future__ import annotations
@@ -75,8 +75,13 @@ LOCATIONS = ["nwp-gscp-interface", "interface-nwp"]
 _DIMS = ("cell", "height")
 
 
-def _state_from_savepoint(satad_init: Any) -> dict[str, Any]:
-    """A symcon state (canonical names/units, S06 registry) from satad-init."""
+def _state_from_savepoint(satad_init: Any, ctx: ComputeContext) -> dict[str, Any]:
+    """A symcon state (canonical names/units, S06 registry) from satad-init.
+
+    Buffers are allocated through the context so the state lives on the
+    backend's device (strict mode rejects host buffers under a cupy context);
+    this is *state construction* (the S06-builder role), not component ingress.
+    """
     fields = {
         "air_temperature": satad_init.temperature(),
         "specific_humidity": satad_init.qv(),
@@ -85,16 +90,26 @@ def _state_from_savepoint(satad_init: Any) -> dict[str, Any]:
     }
     state: dict[str, Any] = {"time": datetime(2008, 9, 1)}
     for name, field in fields.items():
-        buffer = np.ascontiguousarray(field.asnumpy(), dtype=np.float64)
+        host = np.ascontiguousarray(field.asnumpy(), dtype=np.float64)
+        buffer: Any = ctx.require_allocator.empty(host.shape, host.dtype)
+        buffer[...] = host  # numpy: aliasing-free copy; cupy: host->device upload
         state[name] = make_dataarray(
             buffer, name=name, dims=_DIMS, units=canonical_units(name), location="cell"
         )
     return state
 
 
+def _host(buffer: Any) -> np.ndarray:
+    """Bring a state buffer back to the host for comparison (cupy ``.get()``)."""
+    return buffer.get() if hasattr(buffer, "get") else np.asarray(buffer)
+
+
 @pytest.mark.parametrize("date", DATES)
 @pytest.mark.parametrize("location", LOCATIONS)
-@pytest.mark.parametrize("symcon_backend", ["embedded", "gtfn_cpu"])
+@pytest.mark.parametrize(
+    "symcon_backend",
+    ["embedded", "gtfn_cpu", pytest.param("gtfn_gpu", marks=pytest.mark.gpu)],
+)
 def test_satad_l2_parity_against_icon4py_savepoints(
     symcon_backend: str,
     location: str,
@@ -121,33 +136,34 @@ def test_satad_l2_parity_against_icon4py_savepoints(
         vct_b=grid_savepoint.vct_b(),
     )
 
+    ctx = ComputeContext(backend=make_backend(symcon_backend))
     satad = SaturationAdjustment(
         (icon_grid, vertical_params),
         SaturationAdjustmentConfig(),
-        ComputeContext(backend=make_backend(symcon_backend)),
+        ctx,
     )
-    state = _state_from_savepoint(satad_init)
+    state = _state_from_savepoint(satad_init, ctx)
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")  # icon4py embedded-execution warnings
         _, new_state = satad(state, timedelta(seconds=dtime))
 
     assert_allclose(
-        np.asarray(new_state["specific_humidity"].data),
+        _host(new_state["specific_humidity"].data),
         satad_exit.qv().asnumpy(),
         rtol=ICON4PY_RTOL,
         atol=ICON4PY_ATOL,
         names=("symcon qv", "icon4py satad-exit qv"),
     )
     assert_allclose(
-        np.asarray(new_state["specific_cloud_content"].data),
+        _host(new_state["specific_cloud_content"].data),
         satad_exit.qc().asnumpy(),
         rtol=ICON4PY_RTOL,
         atol=ICON4PY_ATOL,
         names=("symcon qc", "icon4py satad-exit qc"),
     )
     assert_allclose(
-        np.asarray(new_state["air_temperature"].data),
+        _host(new_state["air_temperature"].data),
         satad_exit.temperature().asnumpy(),
         rtol=ICON4PY_RTOL,
         atol=ICON4PY_ATOL,
