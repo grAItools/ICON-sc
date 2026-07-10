@@ -155,3 +155,57 @@ paths = ["src/shared/mo_physical_constants.f90", "src/atm_dyn_iconam/mo_vertical
 taken = "Scientific ground truth for S06. mo_physical_constants.f90: rd=287.04_wp, cpd=1004.64_wp, cvd=cpd-rd, rv=461.51_wp, cpv=1869.46_wp, cvv=cpv-rv, rhoh2o=1000._wp, alv=2.5008e6_wp, als=2.8345e6_wp, alf=als-alv, tmelt=273.15_wp, t3=273.16_wp, rdv=rd/rv, o_m_rdv=1-rd/rv, vtmpc1=rv/rd-1, vtmpc2=cpv/cpd-1, rcpl=3.1733_wp, clw=(rcpl+1)*cpd, rd_o_cpd=rd/cpd, cvd_o_rd=cvd/rd, grav=9.80665_wp, p0ref=100000._wp, p0sl_bg=101325._wp, dtdz_standardatm=-6.5e-3_wp, earth_radius=6.371229e6_wp, earth_angular_velocity=7.29212e-5_wp (byte-compare table committed in packages/symcon-icon/tests/test_constants_fortran.py). mo_vertical_grid.f90 (module-level PARAMETERs): h_scal_bg=10000._wp, t0sl_bg=288.15_wp, del_t_bg=75._wp; reference-state loops at lines ~1043-1059 match icon4py reference_atmosphere.py formulas. mo_nh_diagnose_pres_temp.f90 diag_temp: tempv=theta_v*exner, temp=tempv/(1+vtmpc1*qv-qsum); diag_pres: pres_sfc=p0ref*exp(cpd_o_rd*log(exner(nlev-2))+grav_o_rd*(...)), downward hydrostatic integration. Exner relations: exner=(p/p0ref)**rd_o_cpd (mo_nh_vert_extrap_utils.f90:731, cpd path) and exner=exp(rd_o_cvd*log(rd_o_p0ref*rho*theta_v)) (mo_nh_nest_utilities.f90:1657, cvd path) — both exposed and named unambiguously in symcon.icon.thermo per PLAN pitfall. Tendency-slot naming: t_nh_diag%ddt_exner_phy/ddt_vn_phy (mo_nonhydro_types.f90:156-158), prm_nwp_tend%ddt_temp_*/ddt_tracer_* (mo_nwp_phy_types.f90) -> registry rows icon:ddt_temp, icon:ddt_q[vcirsg], icon:ddt_exner_phy; pres_ifc/temp_ifc field names (mo_nonhydro_types.f90:67-69)."
 step = "S06"
 date = "2026-07-09"
+
+[[ref]]
+id = "icon4py-satad"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair, S01)
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/saturation_adjustment.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/saturation_adjustment_stencils.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/microphysical_processes.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/microphysics_constants.py", "model/common/src/icon4py/model/common/constants.py", "model/common/src/icon4py/model/common/model_options.py", "model/common/src/icon4py/model/common/utils/data_allocation.py", "model/common/src/icon4py/model/common/grid/base.py", "model/common/src/icon4py/model/common/grid/simple.py", "model/common/src/icon4py/model/common/grid/vertical.py"]
+taken = "The satad granule S07 wraps: SaturationAdjustment(config, grid, vertical_params, metric_state, backend) with SaturationAdjustmentConfig(max_iter=10, tolerance=1e-3 — 'in ICON, 10/1.e-3 are always used when satad_v_3D is called'). run(dtime, rho, temperature, qv, qc, temperature_tendency, qv_tendency, qc_tendency) mutates the three *_tendency fields in place on the domain [start_index(Cell NUDGING):end_index(Cell LOCAL)] x [vertical_params.kstart_moist:grid.num_levels]; outside that domain the tendency fields are NOT written (granule allocates them zeroed in its own test). Host-side while-loop over 3 pointwise gt4py programs + TimeStepPair swap; ConvergenceError raised past max_iter. Formulation is T-based (temperature/qv/qc/rho), NOT theta_v/exner — the granule is 'originally inspired from satad_v_3D of ICON' and uses cvd bookkeeping: lwdocvd = latent_heat_vaporization(T)/cvd (PLAN pitfall confirmed: no cpd conversion anywhere). Newton: f(T)=T-T0+lwdocvd*(qsat_rho(T,rho)-qv), f'(T)=1+lwdocvd*dqsatdT_rho; subsaturated shortcut T_test=T-lwdocvd*qc when qv+qc<=qsat_rho(T_test,rho); tendency egress ((T_new-T)/dt, (qsat-qv)/dt, (max(qv+qc-qsat, zqwmin=1e-20)-qc)/dt). Thermo closures (microphysical_processes.py): Tetens psat=610.78*exp(17.269*(T-273.15)/(T-35.86)); qsat_rho=psat/(rho*rv*T); dqsatdT_rho=qsat*((tmelt-bw)*aw/(T-bw)^2-1/T); latent_heat_vaporization L(T)=2.5008e6+(1850.0-cpl)*(T-tmelt)-rv*T (Kirchhoff; 1850.0 is a local cpv-like literal distinct from cpv=1869.46). PhysicsConstants.cvd=cpd-rd with cpd=1004.64, rd=287.04 == symcon.icon._constants.CVD bitwise; SPECIFIC_HEAT_CAPACITY_ICE=2108.0 (S06 flag) is NOT used by satad — no ice/cpi term anywhere in the granule, so the S06 ci disagreement does not touch S07. metric_state.ddqz_z_full is stored but never used by run() at v0.2.0 -> not a property-contract input of the symcon component (dummy zeros suffice). model_options.setup_program(backend=None) = embedded path (skips compile); grid contract consumed: num_levels, size dict, start_index/end_index callables (simple.py precedent: start=0/end=size zone-independent factory for non-halo zones, connectivities may be {} for these pointwise stencils). data_allocation.zero_field/import_array_ns for device-generic allocation."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-satad-test"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/tests/microphysics/integration_tests/test_saturation_adjustment.py", "model/testing/src/icon4py/model/testing/serialbox.py", "model/testing/src/icon4py/model/testing/definitions.py", "model/testing/src/icon4py/model/testing/datatest_utils.py"]
+taken = "L2 verification target + tolerances for SPEC S07 acceptance 1. icon4py's own satad integration test: experiment WEISMAN_KLEMP_TORUS (exclaim_nh_weisman_klemp, torus 50000x5000, archive mpitask1_exclaim_nh_weisman_klemp_v04.tar.gz ~1.6 GB at https://rgw.cscs.ch/c2sm:testdata/experiments/), savepoints satad-init/satad-exit via from_savepoint_satad_init/exit(location, date) at locations ['nwp-gscp-interface', 'interface-nwp'] and dates ['2008-09-01T01:59:48.000', '2008-09-01T01:59:52.000', '2008-09-01T01:59:56.000']; dtime from from_savepoint_weisman_klemp_graupel_entry(date).dtime(); vertical_params = v_grid.VerticalGrid(experiment.config.vertical_grid, grid_savepoint.vct_a(), vct_b()); ddqz_z_full from metrics_savepoint. Assert pattern: updated_x = x_init + x_tendency*dtime compared against satad-exit fields with test_utils.dallclose atol=1.0e-13 (rtol left at dallclose default 1e-12) for qv, qc, temperature — these are the tolerance contracts ported into symcon's test constants. GAUSS3D carries no satad savepoints, hence the S06 default experiment is overridden for this one test."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-muphys-satad"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/subgrid_scale_physics/muphys/src/icon4py/model/atmosphere/subgrid_scale_physics/muphys/core/saturation_adjustment.py", "model/atmosphere/subgrid_scale_physics/muphys/tests/muphys/stencil_tests/test_saturation_adjustment.py"]
+taken = "The variant NOT chosen (PLAN pitfall: formulation mismatch between granule variants). muphys satad is the ICON-C++ 'muphys' port: single fused field_operator, fixed 6 unrolled Newton-Raphson steps (no convergence mask/tolerance), full moist heat-capacity bookkeeping (cvc with clw/ci terms, internal-energy closure), validated against muphys netCDF sequences, not against ICON serialbox savepoints. The microphysics-package granule (see icon4py-satad) is the satad_v_3D-equivalent with serialized ICON reference data and is what S07 wraps; recorded here so the choice is auditable."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-fortran-satad"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_phy_schemes/mo_satad.f90"]
+taken = "Algorithm ground truth for the wrapped granule: satad_v_3D/satad_v_3D_gpu — Newton on T at constant total density with latent-heat closure lwdocvd=latent_heat_vaporization(te)/cvd (cvd, NOT cpd — PLAN pitfall check passes), zqwmin=1e-20, subsaturated shortcut Ttest=te-lwdocvd*qce with qw=qve+qce<=qsat_rho(Ttest,rhotot), Newton fT=twork-te+lwdocvd*(qwd-qve), dfT=1+lwdocvd*dqwd, egress qce=MAX(qw-qwa,zqwmin), qve=qw-qce; iteration triggered by tworkold=twork+10. Matches the icon4py granule structure 1:1 EXCEPT: (a) this ICON tag adds a supersaturation factor supsatfac driven by tune_supsat_limfac (namelist, default path supsatfac=1 when tune_supsat_limfac<=0) and takes w as input — absent from icon4py v0.2.0; with the default namelist both reduce to the same algorithm; icon4py's serialized data is the verification target per AGENTS.md, disagreement recorded in S07 STATUS.md; (b) ICON iterates while count<maxiter and raises nothing, icon4py raises ConvergenceError past max_iter. mo_satad at this tag also no longer exposes satad-internal thermo functions (moved to mo_thdyn_functions); Tetens/latent-heat closures cross-checked against icon4py microphysical_processes.py instead."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "gt4py-field-ctor"
+url = "https://github.com/GridTools/gt4py"
+commit = "v1.1.10"  # PyPI release consumed as installed package (site-packages inspection)
+paths = ["src/gt4py/next/constructors.py", "src/gt4py/next/common.py", "src/gt4py/next/embedded/nd_array_field.py"]
+taken = "Zero-copy ingress decision for symcon.core.ingress.gt4py: public gtx.as_field ALWAYS allocates ('Note: we do not support a copy argument as we want to avoid creating fields aliasing other data/fields' — constructors.py docstring), verified empirically (field.ndarray is buf == False). The zero-copy wrap the architecture's §2.3 ingress contract requires is the singledispatch common._field(ndarray, domain=domain) -> NumPyArrayField/CuPyArrayField, which aliases the buffer (verified: field.ndarray is buf == True, writes through). Private-API risk recorded in S07 STATUS.md follow-ups. Backend objects: gtx.gtfn_cpu/gtx.gtfn_gpu are gt4py.next.backend.Backend instances; embedded execution = backend None (icon4py convention throughout)."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-tutorial-2025"
+url = "https://www.dwd.de/EN/ourservices/nwv_icon_tutorial/nwv_icon_tutorial.html"
+commit = "2025 edition (local PDF references/icon-model-tutorial-2025.pdf; see references/README.md)"
+paths = ["§3.7.2 Fast and Slow Processes (pp. 92-93)"]
+taken = "Coupling-position ground truth for SaturationAdjustment.coupling_constraints (SPEC S07): fast processes are treated with time splitting ('also known as sequential-update split'), each sequentially updating the state — hence admissible_operators={'sequential_update_splitting'}. Calling sequence: surface transfer -> saturation adjustment -> land-surface -> turbulent diffusion -> microphysics -> saturation adjustment again, 'in order to ensure that vapor and liquid phase are in equilibrium before entering the slow physics parameterizations'; satad thus appears twice per step (architecture §4.3 NWP_FAST_ORDER). Exceptions (surface transfer + land at old time level) do not involve satad."
+step = "S07"
+date = "2026-07-10"

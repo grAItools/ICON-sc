@@ -1,11 +1,13 @@
 """``ComputeContext`` with the S05 execution-tier surface (architecture §5.2, §8.2).
 
-The one object threaded through component construction. It carries an **opaque
-backend name** (real backend objects arrive with the first gt4py component,
-S07), the **strict-mode flag** (§2.4), an **allocator** choosing numpy or cupy,
-and — since S05 — the **execution tier** (``"interpret"`` = T0 reference
-dispatch, ``"plan"`` = the §8.2 bind + T1 interpreter) plus the bound loop
-``timestep`` the plan compiler treats as a bind-time constant.
+The one object threaded through component construction. It carries the
+**backend** — an opaque name string, or (since S07, the first real gt4py
+component) a :class:`~symcon.core.ingress.gt4py.Backend` object bundling the
+gt4py program processor and allocator — the **strict-mode flag** (§2.4), an
+**allocator** choosing numpy or cupy, and — since S05 — the **execution tier**
+(``"interpret"`` = T0 reference dispatch, ``"plan"`` = the §8.2 bind + T1
+interpreter) plus the bound loop ``timestep`` the plan compiler treats as a
+bind-time constant.
 
 ``ctx.timeloop(state, composition, ...)`` is the canonical entry of §5.1's run
 script: under ``tier="interpret"`` it is the plain T0 loop over the composed
@@ -25,6 +27,7 @@ from typing import TYPE_CHECKING, Any, Protocol, cast, runtime_checkable
 
 import numpy as np
 
+from symcon.core.ingress.gt4py import Backend
 from symcon.core.typing import FieldBuffer
 
 if TYPE_CHECKING:
@@ -32,8 +35,9 @@ if TYPE_CHECKING:
 
 __all__ = ["Allocator", "ComputeContext"]
 
-#: Backend-name substrings that select the cupy allocator (T0 rule: the backend is
-#: an opaque string; S07 replaces this with real backend objects).
+#: Backend-name substrings that select the cupy allocator on the opaque-string
+#: path (a :class:`~symcon.core.ingress.gt4py.Backend` object carries its own
+#: allocator instead, S07).
 _GPU_MARKERS: tuple[str, ...] = ("gpu", "cuda")
 
 #: The execution tiers of §8.3 available in this slice.
@@ -89,11 +93,12 @@ class ComputeContext:
     """Compute context (frozen interface, SPEC S03; S05 adds ``tier``/``timestep``).
 
     ``ComputeContext(backend, strict=True, allocator=..., tier=..., timestep=...)``
-    — ``backend`` is an opaque string in this slice (``embedded``/``gtfn_cpu``/
-    ``gtfn_gpu``); when ``allocator`` is not given it is derived from the backend
-    name (cupy for GPU-flavoured backends, numpy otherwise). ``strict`` is the
-    §2.4 strict-mode flag consumed by the dynamic checkers on every component
-    call.
+    — ``backend`` is an opaque string (``embedded``/``gtfn_cpu``/``gtfn_gpu``)
+    or, since S07, a :class:`~symcon.core.ingress.gt4py.Backend` object; when
+    ``allocator`` is not given it is derived from the backend (a ``Backend``
+    contributes its own allocator; a name string selects cupy for GPU-flavoured
+    backends, numpy otherwise). ``strict`` is the §2.4 strict-mode flag consumed
+    by the dynamic checkers on every component call.
 
     ``tier`` selects the execution tier of :meth:`timeloop` (§8.3): T0
     ``"interpret"`` (default) or T1 ``"plan"``. ``timestep`` is the loop Δt the
@@ -105,7 +110,7 @@ class ComputeContext:
     :class:`~symcon.core.contracts.checkers.DynamicChecker`.
     """
 
-    backend: str
+    backend: str | Backend
     strict: bool = True
     allocator: Allocator | None = None
     tier: str = "interpret"
@@ -116,12 +121,20 @@ class ComputeContext:
         if self.tier not in _TIERS:
             raise ValueError(f"tier must be one of {_TIERS!r}, got {self.tier!r}.")
         if self.allocator is None:
-            gpu = any(marker in self.backend.lower() for marker in _GPU_MARKERS)
-            allocator: Allocator = _CupyAllocator() if gpu else _NumpyAllocator()
+            if isinstance(self.backend, Backend):
+                allocator: Allocator = self.backend.allocator
+            else:
+                gpu = any(marker in self.backend.lower() for marker in _GPU_MARKERS)
+                allocator = _CupyAllocator() if gpu else _NumpyAllocator()
             object.__setattr__(self, "allocator", allocator)
         probe = self.require_allocator.empty((0,), np.float64)
         raw_device = probe.__dlpack_device__()
         object.__setattr__(self, "device", (int(raw_device[0]), int(raw_device[1])))
+
+    @property
+    def backend_name(self) -> str:
+        """The backend name string (``backend`` itself on the opaque-string path)."""
+        return self.backend if isinstance(self.backend, str) else self.backend.name
 
     @property
     def require_allocator(self) -> Allocator:

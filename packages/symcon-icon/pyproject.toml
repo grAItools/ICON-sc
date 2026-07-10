@@ -12,6 +12,9 @@ requires-python = ">=3.10"
 dependencies = [
   "symcon-core",
   "icon4py-common>=0.2.0",
+  # S07 satad component wraps the icon4py saturation-adjustment granule (already
+  # pinned at 0.2.0 by constraints/; a new member of the pinned set, not a bump).
+  "icon4py-atmosphere-microphysics>=0.2.0",
   # thermo.py array-namespace genericity (numpy/cupy now, JAX in S10 — PLAN S06 item 3).
   "array-api-compat>=1.4",
   "numpy>=1.23.3",
