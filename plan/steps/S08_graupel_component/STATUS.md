@@ -77,9 +77,13 @@
    qc ≤ 3e-3, qi/qr/qs/qg ≤ 1e-3), budget
    `Σq·rho·dz + total_ground_flux·Δt = const`:
    - mixed-phase/warm regime (condensate at T > 233 K): closes to fp round-off,
-     contract `rtol=1e-13` (observed ≤ 3e-17);
+     contract `rtol=1e-13` (observed ≤ 4e-16 across the domain, incl. the
+     qv_scale=0.1 edge);
    - any-column bound (condensate everywhere, incl. supercooled qc at T ≤ 233 K):
-     documented `rtol=1e-5` (observed ≤ 4e-6) — see *Deviations/findings*;
+     documented `rtol=1e-3` (measured in-domain worst case 4.32e-4; corrected in
+     review round 1) — see *Deviations/findings* and *Review fixes*; the four
+     leak corners are pinned as `@example` regressions and the hypothesis
+     settings are derandomized;
    - negativity: no tracer < −QMIN (= −1e-15) on any tested column (observed
      ≥ −2.2e-19).
 3. **Performance smoke** — `test_perf_smoke_gtfn_cpu_vs_embedded` (`slow` marker):
@@ -106,17 +110,36 @@
   if a user sets `use_constant_latent_heat=False`; recorded here per AGENTS.md
   (icon4py remains the verification target).
 - **Water-budget leak in the cold glaciation corner** (found by the hypothesis
-  test): supercooled cloud water seeded at T ≲ 233 K near the top of the moist
-  domain gains total water — up to ~4e-6 of the column water path in one Δt=30 s
-  step (e.g. uniform qc=1.95e-3: +1.6e-4 kg/m²). Localized by probing: a *single*
-  seeded level closes exactly; pairs of cold levels near the domain top do not —
-  the fresh-ice glaciation + ice-sedimentation interplay across levels in the
-  granule's scan. This is granule behavior (symcon adds only the `x + dx/dt·Δt`
-  arithmetic, which cannot create mass; warm/mixed-phase columns close to 1e-17).
-  Encoded as a *documented* any-column tolerance (`CONSERVATION_RTOL_COLD=1e-5`)
-  next to the strict round-off contract for the admissible mixed-phase regime —
-  not a loosening of a SPEC tolerance (the SPEC delegates to "scheme-documented
-  tolerance"); worth an upstream icon4py issue (follow-up).
+  test; characterization corrected in review round 1): supercooled cloud water
+  seeded at T ≲ 233 K near the top of the moist domain gains total water. The
+  leak is a **fixed absolute amount per column** — independent of the qc
+  magnitude for any qc in (QMIN, 3e-3] — that *grows as the column dries*:
+  +1.59e-4 kg/m² per Δt=30 s step at qv_scale=1, **+1.050e-3 kg/m² at
+  qv_scale=0.1** (the strategy's lower edge). Any coexisting ice-phase seed
+  (qi/qs/qg > QMIN) suppresses it entirely, and it vanishes for qc ≤ QMIN.
+  Because the absolute leak is qc-independent while the water path shrinks with
+  qv and qc, the relative defect over the declared strategy domain peaks at the
+  dry edge with qc → 0+: **measured in-domain worst case 4.32e-4** (grid sweep
+  over qv_scale ∈ [0.1, 3] × qc ∈ [5e-15, 3e-3], cold seeds; converged for
+  qc ≤ 1e-8). Localized by probing: a *single* seeded level closes exactly;
+  cold levels near the domain top in combination do not — the fresh-ice
+  glaciation + ice-sedimentation interplay across levels in the granule's scan.
+  This is granule behavior — reproduced **wrapper-free** at the same magnitude
+  by invoking the bare icon4py granule with its own `x + dx/dt·Δt` verification
+  arithmetic (committed as `test_cold_leak_reproduces_in_bare_granule`) —
+  symcon's arithmetic cannot create mass; warm/mixed-phase columns close to
+  ≤ 4e-16 across the whole domain. Encoded as a *documented* any-column
+  tolerance (`CONSERVATION_RTOL_COLD = 1e-3` ≈ measured worst × 2.3) next to
+  the strict round-off contract (`1e-13`) for the admissible mixed-phase
+  regime — not a loosening of a SPEC tolerance (the SPEC delegates to
+  "scheme-documented tolerance", and this section *is* that documentation);
+  worth an upstream icon4py issue (follow-up).
+  **HUMAN SIGN-OFF REQUIRED**: `CONSERVATION_RTOL_COLD = 1e-3` is the
+  scheme-documented-tolerance contract for SPEC S08 acceptance 2 (any-column
+  regime). It is set from the measured in-domain worst case (4.32e-4) with
+  ~2.3× margin, replacing the round-1 value 1e-5 that was violated inside the
+  strategy domain. Please confirm this bound (or direct a strategy-domain
+  restriction instead) in the PR review.
 - **ICON Fortran vs icon4py**: `gscp_graupel.f90` at icon-2026.04-public takes
   `l_cv` as an input (the NWP interface passes `.TRUE.` — isochoric `cvd` heating,
   matching icon4py's hardcoded `RCVD`); ground precip rate
@@ -173,3 +196,49 @@
 - `uv run mypy --strict -p symcon.core` — clean (45 files).
 - `uv run lint-imports` — 2 contracts kept.
 - No data files in git; WK archive reused from the S07 cache.
+
+## Review fixes (round 1)
+
+- **MAJOR M1 — `CONSERVATION_RTOL_COLD=1e-5` violated inside the strategy
+  domain** (reviewer corners qv_scale=0.1/qc=1.953125e-3 → 4.80e-5,
+  0.1/3e-3 → 3.25e-5, 0.15/2.5e-3 → 3.08e-5; the suite passed only because
+  max_examples=10 hadn't drawn the corner):
+  1. *Systematic characterization*: grid sweep over qv_scale ∈ {0.1…3} ×
+     qc ∈ {5e-15…3e-3} with cold seeds, plus hydrometeor combos. Findings: the
+     leak is a fixed **absolute** amount (+1.050e-3 kg/m² at qv_scale=0.1,
+     +1.59e-4 at qv_scale=1), qc-independent above QMIN, suppressed by any
+     ice-phase seed, zero for qc ≤ QMIN; the **in-domain relative worst case is
+     4.32e-4** at the dry edge (qv_scale=0.1, qc → 0+; converged for qc ≤ 1e-8).
+  2. *New bound*: `CONSERVATION_RTOL_COLD = 1e-3` (measured worst × ~2.3),
+     justification rewritten at the constant and in the findings section;
+     **HUMAN SIGN-OFF REQUIRED flag added** (this documented bound is the
+     SPEC-acceptance-2 tolerance contract).
+  3. *Pinned regressions*: the three reviewer corners plus the measured worst
+     corner (0.1, qc=1e-6) are `@example`s on **both** hypothesis tests (on the
+     strict test their cold qc is masked → they double as proof the strict
+     regime is leak-free at the dry edge), and the hypothesis settings now use
+     `derandomize=True` (deterministic example sequence on every run/CI).
+     Verified: 3 consecutive isolation runs identical (18 passed, 5 gpu-skips).
+  4. *Strict contract re-verified over the whole domain*: T>233-seeded columns
+     close to ≤ 4e-16 relative including qv_scale=0.1 (constant note and STATUS
+     updated from the earlier "≤ 3e-17" spot observation).
+- **MINOR m1 — no committed evidence for "granule property, not wrapper bug"**:
+  added `test_cold_leak_reproduces_in_bare_granule` +
+  `_raw_granule_budget_defect`: the bare icon4py granule (public
+  `gtx.as_field`/`data_alloc` fields, direct `granule.run(...)`, icon4py's own
+  `x + dx/dt·Δt` arithmetic — no symcon component in the loop) leaks
+  +1.59e-4 kg/m² (3.64e-6 relative) at qv_scale=1/qc=1.953125e-3, asserted
+  within (5e-5, 5e-4) kg/m² / (1e-6, 1e-5) relative so the tolerance split
+  stays justified (and visibly collapses if an icon4py bump fixes the leak).
+
+### Round-1 gate results
+
+- `test_graupel_component.py` isolation ×3 (not slow): **18 passed, 5 skipped**
+  (gpu), ~25 s each, identical outcomes (derandomized).
+- `uv run pytest packages -m "not gpu and not slow" -q` — **488 passed,
+  1 skipped** (mpi opt-in), 53 deselected (gpu/slow), 8:45 — includes the 20
+  CPU data-marked cases.
+- `uv run pytest packages/symcon-icon/tests/test_graupel_datatest.py -q` —
+  **6 passed, 3 skipped** ("no CUDA device available"), 7:31 (warm cache).
+- ruff check / ruff format --check / mypy --strict -p symcon.core /
+  lint-imports — clean.

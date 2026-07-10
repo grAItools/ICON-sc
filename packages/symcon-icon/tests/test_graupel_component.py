@@ -19,7 +19,7 @@ from typing import Any
 
 import numpy as np
 import pytest
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, example, given, settings
 from hypothesis import strategies as st
 
 from symcon.core import (
@@ -40,15 +40,24 @@ from symcon.icon.testing import moist_test_column
 #: |Δ(Σq·rho·dz) + total_ground_flux·Δt| ≤ rtol · Σq·rho·dz.
 #: In the mixed-phase/warm regime (condensate at T > 233 K) the scheme's
 #: flux-form sedimentation closes the discrete column water budget to fp
-#: round-off (observed ≤ 3e-17 relative) — CONSERVATION_RTOL leaves margin for
-#: fp accumulation only. Supercooled cloud water at T ≤ 233 K near the top of
-#: the moist domain leaks mass through the fresh-ice glaciation/sedimentation
-#: corner of the granule's scan (observed ≤ 4e-6 of the water path per step;
-#: reproduced by the icon4py granule itself — symcon only adds x + dx/dt·Δt;
-#: see STATUS.md), so the any-admissible-column bound is the *documented*
-#: CONSERVATION_RTOL_COLD.
+#: round-off — verified over the whole strategy domain including the
+#: qv_scale=0.1 edge (observed ≤ 4e-16 relative) — so CONSERVATION_RTOL
+#: leaves margin for fp accumulation only.
+#:
+#: Supercooled cloud water at T ≤ 233 K (no coexisting ice-phase seed — any
+#: qi/qs/qg > QMIN suppresses it) leaks a *fixed absolute* amount of water
+#: through the fresh-ice glaciation/sedimentation corner of the granule's scan:
+#: +1.050e-3 kg/m² per step at qv_scale=0.1 for ANY qc in (QMIN, 3e-3]
+#: (+1.59e-4 kg/m² at qv_scale=1). Because the absolute leak is
+#: qc-independent while the water path shrinks with qv and qc, the relative
+#: defect over the declared strategy domain is largest at qv_scale=0.1 with
+#: qc → 0+: measured in-domain worst case 4.32e-4 (grid sweep over
+#: qv_scale x qc down to qc=5e-15; see STATUS.md "Review fixes"). The
+#: documented any-admissible-column bound is that worst case with ~2.3x
+#: margin. Reproduced wrapper-free in the bare granule (raw probe test
+#: below); symcon only adds x + dx/dt·Δt.
 CONSERVATION_RTOL = 1e-13
-CONSERVATION_RTOL_COLD = 1e-5
+CONSERVATION_RTOL_COLD = 1e-3
 #: Coldest temperature at which the strict (round-off) contract applies [K].
 STRICT_CONSERVATION_TMIN = 233.0
 #: Negativity contract: no tracer below the scheme's own clipping epsilon
@@ -184,35 +193,61 @@ _CONDENSATE = st.tuples(
     st.floats(0.0, 1e-3),  # qs
     st.floats(0.0, 1e-3),  # qg
 )
+#: ``derandomize=True``: CI stability — the generated example sequence is a pure
+#: function of the strategy, so every run (local and CI) exercises the same
+#: cases; the pinned ``@example`` corners below run on top of that, always.
 _HYPOTHESIS_SETTINGS = settings(
     max_examples=10,
     deadline=None,
+    derandomize=True,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
 
+#: Pinned leak corners (review round 1): the three reviewer-found violations of
+#: the old 1e-5 bound and the measured in-domain worst case (qc → 0+ at the
+#: qv_scale floor). Measured relative defects: 4.80e-5, 3.25e-5, 3.08e-5,
+#: 4.30e-4 respectively — all must stay under CONSERVATION_RTOL_COLD.
+_COLD_LEAK_CORNERS = (
+    (0.1, (1.953125e-3, 0.0, 0.0, 0.0, 0.0)),
+    (0.1, (3e-3, 0.0, 0.0, 0.0, 0.0)),
+    (0.15, (2.5e-3, 0.0, 0.0, 0.0, 0.0)),
+    (0.1, (1e-6, 0.0, 0.0, 0.0, 0.0)),
+)
+
+
+def _corner_examples(func: Any) -> Any:
+    for qv_scale, condensate in _COLD_LEAK_CORNERS:
+        func = example(qv_scale=qv_scale, condensate=condensate)(func)
+    return func
+
 
 @given(qv_scale=st.floats(0.1, 3.0), condensate=_CONDENSATE)
+@_corner_examples
 @_HYPOTHESIS_SETTINGS
 def test_total_water_conservation_and_negativity(
     graupel: Microphysics, qv_scale: float, condensate: tuple[float, float, float, float, float]
 ) -> None:
     """SPEC acceptance 2 on hypothesis-generated admissible columns: with
     condensate in the mixed-phase/warm regime (T > 233 K) the budget closes to
-    fp round-off."""
+    fp round-off — including at the leak corners, whose qc lives below 233 K
+    and is therefore masked out here (verified ≤ 4e-16 across the domain)."""
     _budget_check(
         graupel, qv_scale, condensate, tmin=STRICT_CONSERVATION_TMIN, rtol=CONSERVATION_RTOL
     )
 
 
 @given(qv_scale=st.floats(0.1, 3.0), condensate=_CONDENSATE)
+@_corner_examples
 @_HYPOTHESIS_SETTINGS
 def test_total_water_conservation_cold_documented_bound(
     graupel: Microphysics, qv_scale: float, condensate: tuple[float, float, float, float, float]
 ) -> None:
     """SPEC acceptance 2, any-column bound: condensate everywhere (including
-    supercooled cloud water above the glaciation corner near the moist-domain
+    supercooled cloud water in the glaciation corner near the moist-domain
     top) leaks ≤ the *documented* CONSERVATION_RTOL_COLD (see constant note +
-    STATUS.md — a granule property, not symcon arithmetic)."""
+    STATUS.md — a granule property, not symcon arithmetic; the pinned
+    ``@example`` corners are the reviewer-found violations of the previous
+    bound plus the measured worst case)."""
     _budget_check(graupel, qv_scale, condensate, tmin=0.0, rtol=CONSERVATION_RTOL_COLD)
 
 
@@ -314,6 +349,88 @@ def test_scheme_constants_match_icon4py() -> None:
     )
 
     assert float(MicrophysicsConstants.QMIN) == GRAUPEL_QMIN
+
+
+def _raw_granule_budget_defect(qv_scale: float, qc0: float) -> tuple[float, float]:
+    """Water-budget defect of the BARE icon4py granule — no symcon component in
+    the loop: fields via public ``gtx.as_field``/``data_alloc.zero_field``,
+    ``granule.run(...)`` invoked directly, tendencies applied with icon4py's own
+    verification arithmetic ``x_new = x + dx/dt·dtime``. Returns
+    ``(absolute defect [kg/m²], defect relative to the initial water path)``."""
+    import gt4py.next as gtx
+    from icon4py.model.atmosphere.subgrid_scale_physics.microphysics import (
+        single_moment_six_class_gscp_graupel as i4_graupel,
+    )
+    from icon4py.model.common import dimension as i4_dims
+    from icon4py.model.common.utils import data_allocation as data_alloc
+
+    from symcon.icon.components.fast._column_grid import column_icon4py_grid
+
+    dims = (i4_dims.CellDim, i4_dims.KDim)
+    dtime = DT.total_seconds()
+    profile = moist_test_column("reference_moist", nlev=NLEV, n_cell=1)  # raw profiles only
+    qv = np.ascontiguousarray(profile["specific_humidity"].data, np.float64) * qv_scale
+    qc = np.full_like(qv, qc0)
+    zeros = np.zeros_like(qv)
+    tracers_in = {"qv": qv, "qc": qc, "qi": zeros, "qr": zeros, "qs": zeros, "qg": zeros}
+    rho = np.ascontiguousarray(profile["air_density"].data, np.float64)
+    dz = np.ascontiguousarray(profile["icon:ddqz_z_full"].data, np.float64)
+
+    grid_i4 = column_icon4py_grid(1, NLEV)
+    vertical_i4 = VerticalGrid.from_config(SleveConfig(num_levels=NLEV))._i4_grid
+    granule = i4_graupel.SingleMomentSixClassIconGraupel(
+        graupel_config=i4_graupel.SingleMomentSixClassIconGraupelConfig(),
+        grid=grid_i4,
+        metric_state=i4_graupel.MetricStateIconGraupel(ddqz_z_full=gtx.as_field(dims, dz)),
+        vertical_params=vertical_i4,
+        backend=None,
+    )
+    tendencies = {
+        short: data_alloc.zero_field(
+            grid_i4, i4_dims.CellDim, i4_dims.KDim, dtype=np.float64, allocator=None
+        )
+        for short in ("t", *tracers_in)
+    }
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        granule.run(
+            dtime=dtime,
+            rho=gtx.as_field(dims, rho),
+            temperature=gtx.as_field(
+                dims, np.ascontiguousarray(profile["air_temperature"].data, np.float64)
+            ),
+            pressure=gtx.as_field(
+                dims, np.ascontiguousarray(profile["air_pressure"].data, np.float64)
+            ),
+            qnc=gtx.as_field((i4_dims.CellDim,), np.full((1,), CLOUD_NUM)),
+            **{short: gtx.as_field(dims, buf) for short, buf in tracers_in.items()},
+            temperature_tendency=tendencies["t"],
+            **{f"{short}_tendency": tendencies[short] for short in tracers_in},
+        )
+    new = {short: buf + tendencies[short].asnumpy() * dtime for short, buf in tracers_in.items()}
+    path_before = float((sum(tracers_in.values()) * rho * dz).sum())
+    path_after = float((sum(new.values()) * rho * dz).sum())
+    ground_flux = float(
+        sum(
+            getattr(granule, f"{species}_precipitation_flux").asnumpy()[0, -1]
+            for species in ("rain", "snow", "graupel", "ice")
+        )
+    )
+    defect = path_after + ground_flux * dtime - path_before
+    return defect, defect / path_before
+
+
+def test_cold_leak_reproduces_in_bare_granule() -> None:
+    """Review round 1 (m1): the cold-glaciation water-budget leak exists at the
+    same magnitude in the bare icon4py granule — committed evidence that the
+    CONSERVATION_RTOL / CONSERVATION_RTOL_COLD split documents *scheme*
+    behavior, not a symcon wrapping defect. Measured wrapper-free at
+    (qv_scale=1, qc=1.953125e-3): defect +1.59e-4 kg/m², 3.64e-6 of the water
+    path. If this test starts failing after an icon4py bump, re-derive the
+    documented bound; if the granule ever closes exactly, collapse the split."""
+    abs_defect, rel_defect = _raw_granule_budget_defect(qv_scale=1.0, qc0=1.953125e-3)
+    assert 5e-5 < abs_defect < 5e-4, f"raw-granule absolute defect {abs_defect:+.3e} kg/m2"
+    assert 1e-6 < rel_defect < 1e-5, f"raw-granule relative defect {rel_defect:+.3e}"
 
 
 @pytest.mark.slow
