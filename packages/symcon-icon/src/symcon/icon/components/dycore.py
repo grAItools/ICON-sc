@@ -529,6 +529,7 @@ class NonhydroSolver(DynamicalCore):
         backend) or ready icon4py fields/scalars (used as-is — the savepoint path).
         """
         import gt4py.next as gtx
+        from gt4py.next import common as gtx_common
         from icon4py.model.atmosphere.dycore import dycore_states
 
         def convert(registry_name: str) -> Any:
@@ -543,6 +544,21 @@ class NonhydroSolver(DynamicalCore):
                 data = value.data
                 if isinstance(data, np.ndarray):
                     data = np.ascontiguousarray(data)
+                if registry_name in ("icon:wgtfacq_c", "icon:wgtfacq_e"):
+                    # The quadratic surface-extrapolation weights are 3-level fields
+                    # whose K DOMAIN is [nlev-3, nlev): both the metrics factory and
+                    # the serialized savepoint produce them domain-shifted, and the
+                    # consuming stencils read K = nlev-3..nlev-1. Rebuilding them at
+                    # K = [0, 3) sends every such read out of the field's domain
+                    # (heap garbage — rebuild-dependent, unbounded): the root cause
+                    # of the S12 "pentagon" trajectory contamination on factory-fed
+                    # grids. Diagnosed + fixed in S13 (STATUS §5). Anchored at the
+                    # surface: K-domain = [nlev - k_extent, nlev).
+                    nlev = int(self._i4_grid.num_levels)
+                    domain = gtx_common.domain(
+                        {dims[0]: (0, data.shape[0]), dims[1]: (nlev - data.shape[1], nlev)}
+                    )
+                    return gtx.as_field(domain, data, allocator=self._backend.gt4py_backend)
                 return gtx.as_field(dims, data, allocator=self._backend.gt4py_backend)
             return value  # a ready icon4py field
 
