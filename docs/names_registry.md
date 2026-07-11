@@ -46,6 +46,7 @@ quantity's canonical units.
 | `icon:ddt_qs` | `s-1` | — | `ddt_qs` | — |
 | `icon:ddt_qg` | `s-1` | — | `ddt_qg` | — |
 | `icon:ddt_exner_phy` | `s-1` | — | `ddt_exner_phy` | — |
+| `icon:ddt_vn_phy` | `m s-2` | — | `ddt_vn_phy` | — |
 | `icon:ddt_temperature_slow` | `K s-1` | — | — | — |
 | `icon:qnc` | `m-3` | — | `qnc` | — |
 | `icon:rain_gsp_rate` | `kg m-2 s-1` | — | `rain_gsp_rate` | — |
