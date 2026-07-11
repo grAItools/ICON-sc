@@ -84,6 +84,16 @@ class SleveConfig:
     rayleigh_damping_height: float = 45000.0
     #: ``htop_moist_proc``: height above which moist physics is switched off [m].
     htop_moist_proc: float = 22500.0
+    # SLEVE decay parameters of the 3-d terrain-following surfaces (``mo_sleve_nml``;
+    # consumed by the S11 metrics factory when topography is present; irrelevant over
+    # flat terrain). Additive keyword extension declared in STATUS S11; defaults =
+    # icon4py v0.2.0 ``VerticalGridConfig`` = the ICON namelist defaults.
+    #: ``decay_scale_1``: decay scale of the large-scale topography component [m].
+    decay_scale_1: float = 4000.0
+    #: ``decay_scale_2``: decay scale of the small-scale topography component [m].
+    decay_scale_2: float = 2500.0
+    #: ``decay_exp``: exponent of the SLEVE decay function.
+    decay_exponent: float = 1.2
 
 
 def _icon4py_config(config: SleveConfig) -> Any:
@@ -103,6 +113,9 @@ def _icon4py_config(config: SleveConfig) -> Any:
         "stretch_factor": config.stretch_factor,
         "rayleigh_damping_height": config.rayleigh_damping_height,
         "htop_moist_proc": config.htop_moist_proc,
+        "SLEVE_decay_scale_1": config.decay_scale_1,
+        "SLEVE_decay_scale_2": config.decay_scale_2,
+        "SLEVE_decay_exponent": config.decay_exponent,
     }
     return _i4.VerticalGridConfig(**kwargs)
 
@@ -143,6 +156,7 @@ class VerticalGrid:
         flat_height: float = 16000.0,
         rayleigh_damping_height: float = 45000.0,
         htop_moist_proc: float = 22500.0,
+        config: SleveConfig | None = None,
     ) -> None:
         vct_a_arr = np.array(vct_a, dtype=np.float64)  # copy: table is frozen below
         if vct_a_arr.ndim != 1 or vct_a_arr.shape[0] != nlev + 1:
@@ -163,12 +177,23 @@ class VerticalGrid:
         self._vct_a = vct_a_arr
         self._vct_b = vct_b_arr
         self._nlev = int(nlev)
-        self._config = SleveConfig(
-            num_levels=self._nlev,
-            flat_height=flat_height,
-            rayleigh_damping_height=rayleigh_damping_height,
-            htop_moist_proc=htop_moist_proc,
-        )
+        # ``config`` (additive keyword, declared in STATUS S11) carries the full SLEVE
+        # namelist when an ingested table belongs to a known experiment configuration;
+        # the metrics factory reads model_top_height / lowest_layer_thickness / decay
+        # parameters off it. When given it wins over the three shortcut kwargs.
+        if config is not None:
+            if config.num_levels != self._nlev:
+                raise ValueError(
+                    f"config.num_levels={config.num_levels} does not match nlev={self._nlev}."
+                )
+            self._config = config
+        else:
+            self._config = SleveConfig(
+                num_levels=self._nlev,
+                flat_height=flat_height,
+                rayleigh_damping_height=rayleigh_damping_height,
+                htop_moist_proc=htop_moist_proc,
+            )
         self._vct_a.setflags(write=False)
         if self._vct_b is not None:
             self._vct_b.setflags(write=False)
@@ -238,6 +263,22 @@ class VerticalGrid:
     def layer_thickness(self) -> _F64:
         """Nominal layer thickness [m] (``ddqz_z_full`` over flat terrain)."""
         return self._vct_a[:-1] - self._vct_a[1:]
+
+    @property
+    def config(self) -> SleveConfig:
+        """The SLEVE namelist parameters this grid was built with."""
+        return self._config
+
+    @property
+    def icon4py_grid(self) -> Any:
+        """The wrapped icon4py ``VerticalGrid`` (public accessor, declared S11).
+
+        S07 flagged the ``_i4_grid`` friend access; the S11 metrics factory is the
+        first out-of-module consumer, so the accessor becomes part of the surface.
+        Lane-B wrappers hand this object to pinned icon4py machinery; symcon-side
+        code should keep using the numpy-speaking properties above.
+        """
+        return self._i4_grid
 
     # --- special level indices (ICON semantics via icon4py) --------------------------
 

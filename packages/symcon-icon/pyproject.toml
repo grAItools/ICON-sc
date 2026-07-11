@@ -18,6 +18,9 @@ dependencies = [
   # thermo.py array-namespace genericity (numpy/cupy now, JAX in S10 — PLAN S06 item 3).
   "array-api-compat>=1.4",
   "numpy>=1.23.3",
+  # S11 grid/reader.py ingests ICON grid NetCDF directly (same floor as symcon-core's
+  # io/netcdf.py; already in the resolved lock via symcon-core — a declaration, not a bump).
+  "netcdf4>=1.6",
 ]
 
 [project.optional-dependencies]
