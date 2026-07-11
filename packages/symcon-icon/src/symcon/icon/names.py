@@ -89,6 +89,11 @@ _ROWS: Final[tuple[tuple[str, str, str | None, str | None], ...]] = (
     ("icon:ddt_qs", "s-1", None, "ddt_qs"),
     ("icon:ddt_qg", "s-1", None, "ddt_qg"),
     ("icon:ddt_exner_phy", "s-1", None, "ddt_exner_phy"),
+    # normal-wind slow-tendency slot consumed by the S12 dycore (ICON t_nh_diag,
+    # mo_nonhydro_types.f90; icon4py DiagnosticStateNonHydro
+    # normal_wind_tendency_due_to_slow_physics_process — REFERENCES.lock
+    # icon4py-solve-nonhydro).
+    ("icon:ddt_vn_phy", "m s-2", None, "ddt_vn_phy"),
     # slow-forcing temperature slot consumed by the S09 SCM bus demo (symcon-only
     # slot: no ICON Fortran symbol, hence no short name).
     ("icon:ddt_temperature_slow", "K s-1", None, None),
