@@ -11,3 +11,4 @@ icon4py-atmosphere-microphysics==0.2.0
 icon4py-atmosphere-muphys==0.2.0
 icon4py-driver==0.2.0
 icon4py-testing==0.2.0
+jax==0.6.2  # S10: CPU jax for the F-tier (jaxlib==0.6.2); [jax]-extra lower bound jax>=0.6.0 (S01)
