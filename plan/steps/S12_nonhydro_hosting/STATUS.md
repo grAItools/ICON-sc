@@ -258,3 +258,20 @@ linear-response; details in §3).
   the combined allclose criterion; raw |Δ|>5e-13 counts 1866/1878) and softens
   "bitwise" to "measured bit-identical, asserted at rtol=1e-12"; collected-count
   corrected (now 14 data tests / 21 component tests).
+
+## Reviewer dossier refinements (round 2, carried into S13's opening notes)
+
+1. **"Process-dependent" is imprecise — it is rebuild/allocation-dependent:** the reviewer's
+   probe showed two identical build+run cycles WITHIN ONE PROCESS differ bitwise
+   (max|vn−ref| 8.9e-5 vs 0.174 m/s; >1e-3 on 26169/30720 edges on the bad rebuild) —
+   consistent with heap-layout-dependent reads through retained `-1` indices (fresh
+   buffers per rebuild → different out-of-bounds garbage).
+2. **The "padding disproven" experiment carries a caveat:** padding must demonstrably reach
+   the buffers the compiled gtfn programs consume; the persistent program cache
+   (~/.cache/symcon/gt4py) was warmed by savepoint-grid runs whose connectivities carry no
+   skip values — if compiled-variant dispatch does not key on the connectivity
+   skip-value property, a no-skip variant could be reused for the file grid. S13 should
+   re-test padding applied before grid construction (inside/at GridManager level) with a
+   cold program cache.
+3. **Extent:** the reviewer measured a bad rebuild at 85% of edges >1e-3 — worse than the
+   dossier's 6% worst case; "unbounded" stands.
