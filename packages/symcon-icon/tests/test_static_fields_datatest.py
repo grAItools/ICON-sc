@@ -214,6 +214,12 @@ def _start_index(grid: Any, which: str | None) -> int:
 def _check(name: str, produced: Any, reference: Any, grid: Any, case: dict[str, Any]) -> None:
     actual = np.asarray(produced.data)
     desired = np.asarray(reference.asnumpy() if hasattr(reference, "asnumpy") else reference)
+    if desired.size == 1 and actual.size > 1:
+        # ICON serializes a (1,1) dummy when a field was never allocated (the zd_*
+        # terrain-diffusion fields on the flat aquaplanet). icon4py's dallclose
+        # broadcasts silently; symcon broadcasts *explicitly* — the parity statement
+        # becomes "the factory reproduces the constant the dummy stands for" (zeros).
+        desired = np.broadcast_to(desired.reshape(()), actual.shape)
     start = _start_index(grid, case.get("start"))
     actual, desired = actual[start:], desired[start:]
     assert actual.shape == desired.shape, f"{name}: {actual.shape} != {desired.shape}"
