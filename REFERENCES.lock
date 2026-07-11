@@ -425,3 +425,12 @@ paths = ["src/atm_dyn_iconam/mo_nh_diffusion.f90", "src/testcases/mo_nh_jabw_exp
 taken = "Cross-check only (icon4py is the verification target). mo_nh_diffusion.f90: the Fortran original of the hosted granule (hdiff_order=5 Smagorinsky + 4th-order background path; diffusion called once per physics timestep after the dynamics substepping, matching the driver order). mo_nh_jabw_exp.f90 init_nh_state_prog_jabw(..., p_sfc, up, u0, temp0): module PARAMETERs eta_0=0.252, etat=0.2, gamma=0.005, dtemp=4.8e5, lonC=pi/9, latC=2*pi/9 and the same Newton-on-eta fit against geopotential with the etat tropopause branch (log(zeta/etat)+137/60 series, lines 229-238) - byte-for-byte the constants icon4py's model_initialization_jabw transcribes; up/u0/temp0 are namelist inputs in ICON (nh_test_nml jw_up etc.), confirming a perturbation-amplitude config knob (symcon cfg.perturbation_amplitude) is the faithful parameterization rather than an invention; 'jabw'/'jabw_s' testcase selection in mo_nh_testcases.f90:288."
 step = "S13"
 date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-wgtfacq-domain"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/testing/src/icon4py/model/testing/serialbox.py", "model/common/src/icon4py/model/common/metrics/metrics_factory.py", "model/common/src/icon4py/model/common/metrics/compute_wgtfacq.py"]
+taken = "The S12-dossier root cause (S13 STATUS section 5). wgtfacq_c/wgtfacq_e are 3-level fields with a SHIFTED K-domain [nlev-3, nlev): serialbox.py:828-890 builds them via an embedded KDim shift by (nlev-3) + flip ('the Fortran array stores the surface levels in reversed order'), and the metrics factory's field carries the same domain (measured Domain(Cell=(0:20480), K=(57:60)) on EXCLAIM_APE; a scan over every consumed metrics/interpolation factory output shows these two are the ONLY fields with non-zero domain starts). The consuming solve_nonhydro surface-extrapolation stencils index K=nlev-3..nlev-1 through the field domain, so any re-import of the raw (N,3) array at K-domain [0,3) sends every read out of bounds -> gtfn reads unallocated memory (rebuild-dependent, unbounded garbage). symcon fix: dycore convert() anchors the rebuilt fields at the surface, K-domain [nlev-k_extent, nlev)."
+step = "S13"
+date = "2026-07-11"
