@@ -59,10 +59,11 @@ as icon4py's own integration tests and driver do — REFERENCES.lock
   `exner_pr = exner − exner_ref_mc` (mo_nh_stepping.f90 l.396-400).
 - **Names registry:** one new row `icon:ddt_vn_phy` ("m s-2", ICON `ddt_vn_phy`).
 
-Tests: `tests/test_nonhydro_component.py` (17 tests, stubbed granule on the icon4py
+Tests: `tests/test_nonhydro_component.py` (21 tests, stubbed granule on the icon4py
 `SimpleGrid` — config/static/restart contracts, acceptance-2 hook-order recording,
-bus plumbing, fast tier, standalone call) and `tests/test_nonhydro_datatest.py`
-(11 collected, markers `data`+`slow` — savepoint parity, restart bitwise, bus
+bus plumbing, fast tier, standalone call, T1 bind smoke) and
+`tests/test_nonhydro_datatest.py` (14 collected, markers `data`+`slow` — savepoint
+parity incl. substep-boundary and production-path legs, restart bitwise, bus
 linear-response; details in §3).
 
 ## 2. Deviations (and why)
@@ -109,20 +110,25 @@ linear-response; details in §3).
    replicate icon4py's own sub-step-level test entries, which have no public symcon
    equivalent by design (the public boundary is the full Δt).
 7. **Restart schema scope.** `grf_tend_*` (LAM nesting inputs) and the IAU increment
-   fields are *not* serialized: they are external inputs (zeroed; IAU is
-   config-rejected in this slice), not private carry. The z_* intermediates *are*
-   serialized (cheap relative to a mid-experiment bitwise guarantee and needed by
-   the corrector-only parity replay).
+   fields are *not* serialized: they are external inputs, not private carry — the
+   nesting inputs are zeroed, and `NonhydroConfig` **rejects `iau_init=True` at
+   construction** (`NotImplementedError`; the hosted stages are always invoked with
+   `is_iau_active=False` in this slice — review round 1, MINOR 1). The z_*
+   intermediates *are* serialized (cheap relative to a mid-experiment bitwise
+   guarantee and needed by the corrector-only parity replay).
 8. **⚠ Tolerance adaptation — needs human sign-off.** The multi-substep parity test
    uses **vn atol=1e-11** where upstream `test_run_solve_nonhydro_multi_step` uses
    `atol=5e-13` — *for MCH_CH_R04B09*, the only experiment upstream runs the
    multi-substep loop on (their own comment: "# why is this not run for APE?"). On
    EXCLAIM_APE the measured vn deviation after two substeps is 4.9e-12 (first
-   timestep) / 7.2e-12 (mid-run), 387/1.84M points above 5e-13. Root cause isolated
-   (not an orchestration bug): `test_substep_boundary_matches_icon` proves the
-   component's state after substep 1 + swap equals ICON's substep-2 *init*
+   timestep) / 7.2e-12 (mid-run); 387/1.84M points violate the combined
+   `allclose` criterion `|Δ| > atol + rtol·|ref|` at (5e-13, 1e-12) — counting the
+   raw `|Δ| > 5e-13` alone it is 1866/1878 points (first/mid-run). Root cause
+   isolated (not an orchestration bug): `test_substep_boundary_matches_icon` proves
+   the component's state after substep 1 + swap equals ICON's substep-2 *init*
    savepoint at the single-substep deviation class (vn 2.9e-14, w 3.9e-15,
-   rho/exner 2.2e-16, exner_pr **bitwise**, theta_v rel 9.4e-16) — the growth to
+   rho/exner 2.2e-16, exner_pr measured bit-identical — asserted at the dallclose
+   default rtol=1e-12 — theta_v rel 9.4e-16) — the growth to
    ~5e-12 happens inside the second icon4py substep from those legitimate
    single-substep deltas (divergence damping of 2Δx components). Every other
    multi-substep field passes at the upstream MCH values (w 7.9e-14 < 1e-13,
@@ -151,24 +157,24 @@ linear-response; details in §3).
 | 4 | Constant `ddt_vn_phy` shifts vn by ≈ Δt·c | `test_nonhydro_datatest.py::test_bus_constant_vn_tendency_linear_response` (5% smoke bound, divdamp zeroed — deviation 9) |
 | 5 | Standalone, federation-free construct + call | `test_nonhydro_component.py::test_standalone_call_without_federation` (+ every datatest drives the bare component) |
 
-## 4. Gates (all green, 2026-07-11)
+## 4. Gates (all green, re-run after review round 1, 2026-07-11)
 
-- `uv run pytest packages -m "not gpu and not slow" -q` — **684 passed, 1 skipped**
-  (mpi marker), 126 deselected, 8m07s.
-- `uv run pytest packages -m "slow and not gpu" -q` — **95 passed**, 716 deselected,
-  6m33s.
+- `uv run pytest packages -m "not gpu and not slow" -q` — **688 passed, 1 skipped**
+  (mpi marker), 127 deselected, 8m12s.
+- `uv run pytest packages -m "slow and not gpu" -q` — **96 passed**, 720 deselected,
+  7m06s.
 - `uv run pytest packages/symcon-icon -m data -q` — run split (one process exceeds
   the 10-min sandbox cap; the two halves partition `data` exactly):
   `-m "data and not slow"` — **37 passed, 11 skipped** (gpu legs, no CUDA device),
-  6m51s; `-m "data and slow"` — **65 passed, 3 skipped** (gpu legs), 2m05s →
-  **data total: 102 passed, 14 skipped**. No new archives: S12 reuses the S11
+  8m37s; `-m "data and slow"` — **66 passed, 3 skipped** (gpu legs), 2m19s →
+  **data total: 103 passed, 14 skipped**. No new archives: S12 reuses the S11
   EXCLAIM_APE archive (`mpitask1_exclaim_ape_R02B04_v04`, ~4.0 GB compressed,
   already cached).
 - `uv run ruff check .` — clean; `uv run ruff format --check .` — 154 files clean.
 - `uv run mypy --strict -p symcon.core` — no issues in 50 files.
 - `uv run lint-imports` — 2 contracts kept, 0 broken.
-- New test files in isolation: `test_nonhydro_component.py` **17 passed** (6s);
-  `test_nonhydro_datatest.py` **10 passed, 3 skipped** (gpu), 1m50s warm
+- New test files in isolation: `test_nonhydro_component.py` **21 passed** (9s);
+  `test_nonhydro_datatest.py` **11 passed, 3 skipped** (gpu), ~2m10s warm, twice
   (first-ever run compiles the dycore gtfn programs, ~10 min into the persistent
   cache `~/.cache/symcon/gt4py`).
 
@@ -176,8 +182,79 @@ linear-response; details in §3).
 
 - S14: teach the plan compiler the ICON substep-outer nesting (deviation 1/5) and
   decide plan-tier semantics for adaptive `ratio_provider`.
+- Plan tier: under `tier="plan"` the `__call__` bus zero-fill convenience is
+  bypassed — the bound state must carry `icon:ddt_vn_phy`/`icon:ddt_exner_phy`
+  explicitly (verified by the T1 bind smoke); decide in S13/S14 whether the plan
+  compiler should synthesize default-zero slots.
+- Δt/N exactness: `array_call` now refuses timesteps the substep count does not
+  divide at timedelta (μs) resolution; S13/S14 must pick Δt-vs-adaptive-ratio
+  policy (e.g. quantize ratios to divisors) before CFL escalation lands.
 - CFL-adaptive `ratio_provider` preset (`cfl_adaptive(base, max_ratio)` of §5.1)
   once the velocity-advection CFL diagnostics are exposed per substep.
 - Consider a public constructor path that builds the static mapping internally from
   `metrics(grid, vgrid) | interpolation(grid)` when `static is None`.
 - P5: distributed `exchange` (constructor already accepts one; single-node default).
+- **S13 blocker-candidate — pentagon skip values on file-built grids.** The grid
+  built by `from_file(..., keep_skip_values=False)` retains 12 `-1` entries in
+  V2C/V2E (+V2E2V) at the icosahedron pentagon points — icon4py's
+  `GridManager(keep_skip_values=False)` does not pad the file-sourced vertex
+  tables, whereas ICON's *serialized* patch (the savepoint grid all parity tests
+  host on) arrives pre-padded with duplicate neighbors and contains no `-1`.
+  Hosting the solver on the file grid then shows **process-dependent, unbounded**
+  trajectory contamination seeded near the pentagon points: repeated identical
+  runs gave vn-vs-archive deviations of ~1.8e-5 in most processes but 0.16-0.17
+  m/s on 1.6-1.7% of edges in others and, in one run, 10 m/s on 6% of edges
+  (worst offenders 1-7 vertex-hops from a pentagon). Everything feeding the
+  solver was verified deterministic and archive-equal: static fields bit-stable
+  across in-process rebuilds, derived geometry == savepoint geometry ≤ 1.6e-14,
+  interpolation coefficients *including the pentagon rows* equal to the archive
+  (geofac_rot pentagon slot exactly 0; rbf_vec_coeff_v ≤ 3.3e-13), connectivity
+  tables equal except the 12 `-1`s. **ICON-style padding of the pentagon rows
+  (duplicate valid neighbor, applied after the factories so the coefficient
+  slots keep their exact zeros) was tried and does NOT remove the effect**
+  (0.164 m/s recurrence measured with fully padded, write-through-verified
+  tables) — so unguarded `-1` reads are not the whole story. One further lead:
+  the RBF factory emits `RuntimeWarning: invalid value encountered in divide`
+  (NaN intermediates) at the pentagon rows (`rbf_interpolation.py:182`).
+  Deterministic difference on the same path: GridGeometry's computed
+  `mean_cell_area` differs from ICON's serialized value by 4e-5 relative (scales
+  the 2nd-order divdamp coefficient). S13 (JW driver on file grids) must
+  root-cause this — likely upstream (`GridManager` vertex-table padding, gtfn
+  skip handling, or the RBF NaN path) — before any trajectory-level claim on
+  file-built grids; the S12 production test consequently asserts only
+  deterministic properties (construction, geometry parity, owner mask, and that
+  a full Δt executes with the declared output schema).
+
+## 6. Review fixes (round 1)
+
+- **MINOR 1** — `NonhydroConfig.__post_init__` now raises `NotImplementedError` on
+  `iau_init=True` (the icon4py granule would accept it while the component
+  hard-wires `is_iau_active=False`); test `test_config_rejects_iau`; deviation 7
+  wording corrected ("config-rejected" is now actually true).
+- **MINOR 2** — new data test `test_production_path_from_s11_grid_and_factories`:
+  symcon `IconGrid` from the grid *file* (`keep_skip_values=False`, the dycore
+  hosting setting), static from S11 `metrics()`/`interpolation()`, geometry/owner
+  mask derived inside the component (`_geometry_from_grid`/`_owner_mask_from_grid`
+  now covered). Asserts deterministically: the derived `EdgeParams`/`CellParams`
+  equal the savepoint geometry at atol 1e-13 (measured ≤ 1.6e-14;
+  `mean_cell_area` rel 1e-4, measured 4e-5), owner mask equal, and a cold-start
+  full Δt executes returning the declared output schema. Trajectory *values* are
+  deliberately not asserted: investigating the initially-observed flakiness of
+  such bounds uncovered a process-dependent, unbounded deviation on file-built
+  grids seeded near the icosahedron pentagon points — root-cause not yet
+  established (ICON-style table padding was tried and disproven as a fix) —
+  documented with the full measurement dossier as an S13 blocker-candidate in
+  §5. Trajectory verification of the hosted solver remains the savepoint-grid
+  parity tests' job.
+- **MINOR 3** — fast tier now evaluates on the **latest provisional state**
+  (`.next` after the predictor, per Fig. 3.9); observable test
+  `test_fast_tendency_sees_the_latest_provisional_state` with a state-dependent
+  tendency.
+- **MINOR 4** — `array_call` raises on Δt not divisible by N at timedelta (μs)
+  resolution (test `test_inexact_substep_split_raises`); follow-up above.
+- **MINOR 5** — T1 bindability verified: `test_plan_tier_binds_and_runs_the_component`
+  (ExecutionPlan.bind + run_step on the stubbed granule; bus slots explicit).
+- **INFO 6/7** — deviation 8 now states the violation criterion (387/1.84M under
+  the combined allclose criterion; raw |Δ|>5e-13 counts 1866/1878) and softens
+  "bitwise" to "measured bit-identical, asserted at rtol=1e-12"; collected-count
+  corrected (now 14 data tests / 21 component tests).

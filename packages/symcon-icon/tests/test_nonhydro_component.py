@@ -319,6 +319,14 @@ def test_config_rejects_out_of_slice_knobs() -> None:
         NonhydroConfig(igradp_method=1).to_icon4py()
 
 
+def test_config_rejects_iau() -> None:
+    """iau_init=True fails loudly at construction: the icon4py granule would accept
+    it, but this slice hard-wires is_iau_active=False into every stage invocation
+    (review round 1, MINOR 1)."""
+    with pytest.raises(NotImplementedError, match="iau_init"):
+        NonhydroConfig(iau_init=True)
+
+
 # -- static-state enumeration (the S11 coordination point) --------------------------------
 
 
@@ -438,7 +446,7 @@ def test_ratio_provider_drives_substep_count() -> None:
     )
     _stub_stages(solver)
     solver.hook_log = []
-    solver(_state(solver), DT)
+    solver(_state(solver), timedelta(seconds=9))  # divisible by the resolved ratio 3
     predictors = [entry for entry in solver.hook_log if entry[0] == "predictor"]
     assert [entry[1] for entry in predictors] == [0, 1, 2]
 
@@ -534,6 +542,71 @@ def test_fast_tendency_component_sums_onto_the_slow_port() -> None:
     assert seen == pytest.approx([3.0e-4, 3.0e-4])  # slow 1e-4 + fast 2e-4, each substep
 
 
+class _VnDependentTendency(TendencyComponent):
+    """State-dependent fast-tier probe: tendency = 0.1 · vn (per point)."""
+
+    input_properties: ClassVar[Mapping[str, Any]] = {
+        "icon:normal_wind": {"dims": ("edge", "height"), "units": "m s-1"},
+    }
+    tendency_properties: ClassVar[Mapping[str, Any]] = {
+        "icon:normal_wind": {"dims": ("edge", "height"), "units": "m s-2"},
+    }
+    diagnostic_properties: ClassVar[Mapping[str, Any]] = {}
+
+    def array_call(self, inputs: Any, outputs: Any, timestep: Any) -> None:
+        outputs["icon:normal_wind"][...] = 0.1 * inputs["icon:normal_wind"]
+
+
+def test_fast_tendency_sees_the_latest_provisional_state() -> None:
+    """Fig. 3.9 contract (review round 1, MINOR 3): the fast coupling is evaluated
+    on the substep-start time level before the predictor and on the *predictor's
+    output* before the corrector — observable with a state-dependent tendency."""
+    solver = _make_solver(fast_tendency_component=ConcurrentCoupling([_VnDependentTendency()]))
+    seen: list[tuple[str, float]] = []
+
+    def predictor(**kwargs: Any) -> None:
+        diag = solver._diag_state
+        seen.append(
+            ("P", float(diag.normal_wind_tendency_due_to_slow_physics_process.ndarray[0, 0]))
+        )
+        # the predictor's provisional output, visible to the corrector-stage fast call
+        solver._prognostic_states.next.vn.ndarray[...] = 3.0
+
+    def corrector(**kwargs: Any) -> None:
+        diag = solver._diag_state
+        seen.append(
+            ("C", float(diag.normal_wind_tendency_due_to_slow_physics_process.ndarray[0, 0]))
+        )
+
+    solver._solve.run_predictor_step = predictor
+    solver._solve.run_corrector_step = corrector
+    solver._solve._update_theta_and_exner_in_halo = lambda **kwargs: None
+
+    solver(_state(solver, bus={"icon:ddt_vn_phy": 1.0e-4}), DT)  # ingested vn = 1.0
+    assert [label for label, _ in seen] == ["P", "C", "P", "C"]
+    assert [value for _, value in seen] == pytest.approx(
+        [
+            1.0e-4 + 0.1 * 1.0,  # substep 0 predictor: substep-start vn = 1.0
+            1.0e-4 + 0.1 * 3.0,  # substep 0 corrector: predictor output vn = 3.0
+            1.0e-4 + 0.1 * 3.0,  # substep 1 predictor: swapped-in vn = 3.0
+            1.0e-4 + 0.1 * 3.0,
+        ]
+    )
+
+
+def test_inexact_substep_split_raises() -> None:
+    """Δτ = Δt/N quantizes to whole microseconds (review round 1, MINOR 4): an
+    inexact split would silently run the granule with N·Δτ ≠ Δt — refuse it."""
+    solver = _make_solver(cfg=NonhydroConfig(ndyn_substeps=3))
+    _stub_stages(solver)
+    with pytest.raises(ValueError, match="not divisible"):
+        solver(_state(solver), timedelta(seconds=1))  # 1 s / 3 is not whole microseconds
+    # the exactly divisible case runs
+    solver.hook_log = []
+    solver(_state(solver), timedelta(seconds=3))
+    assert len([e for e in solver.hook_log if e[0] == "predictor"]) == 3
+
+
 # -- acceptance 5: standalone first-class component ----------------------------------------
 
 
@@ -616,3 +689,39 @@ def test_load_restart_state_rejects_schema_mismatch() -> None:
     extra["nope"] = blob["carry/vt"]
     with pytest.raises(ValueError, match="nope"):
         solver.load_restart_state(extra)
+
+
+# -- T1 bindability (deviation 5: visit() compiles as an opaque Stepper op) -----------------
+
+
+def test_plan_tier_binds_and_runs_the_component() -> None:
+    """The S05 plan compiler accepts NonhydroSolver (opaque ``array_call`` op via
+    the ``visit`` override) and ``run_step`` executes it (review round 1, MINOR 5).
+
+    Under the plan tier the ``__call__`` zero-fill convenience is bypassed, so the
+    bound state must carry the bus slots explicitly (declared in STATUS §2).
+    """
+    import dataclasses as _dataclasses
+
+    from symcon.core.contracts.checkers import StateSchema
+    from symcon.core.plan.bind import ExecutionPlan
+    from symcon.core.state.vault import StateVault
+    from symcon.core.time import datetime
+
+    solver = _make_solver()
+    _stub_stages(solver)
+
+    def corrector(**kwargs: Any) -> None:
+        solver._prognostic_states.next.vn.ndarray[...] = 42.0
+
+    solver._solve.run_corrector_step = corrector
+
+    state = _state(solver, bus={"icon:ddt_vn_phy": 0.0, "icon:ddt_exner_phy": 0.0})
+    state["time"] = datetime(2000, 1, 1)
+    bind_ctx = _dataclasses.replace(solver.ctx, tier="plan", timestep=DT)
+    vault = StateVault.from_state(state)
+    plan = ExecutionPlan.bind(solver, StateSchema.from_state(state), bind_ctx)
+    plan.run_step(vault, 0)
+
+    facade = vault.facade()
+    np.testing.assert_array_equal(np.asarray(facade["icon:normal_wind"].data), 42.0)

@@ -60,6 +60,7 @@ if DATATEST_AVAILABLE:
         experiment,
         grid_savepoint,
         process_props,
+        topography_savepoint,
     )
 
     @pytest.fixture(params=[icon4py_definitions.Experiments.EXCLAIM_APE], ids=lambda e: e.name)
@@ -832,3 +833,153 @@ def test_bus_constant_vn_tendency_linear_response(
         names=("vn response to constant ddt_vn_phy", "analytic Δt·c"),
         equal_nan=False,
     )
+
+
+# -- production path: S11 IconGrid + factory static state (review round 1, MINOR 2) -----------
+
+
+def _sleve_config(vertical_config: Any) -> Any:
+    """icon4py VerticalGridConfig -> S06 SleveConfig (as in the S11 parity tests)."""
+    from symcon.icon.grid import SleveConfig
+
+    return SleveConfig(
+        num_levels=vertical_config.num_levels,
+        lowest_layer_thickness=vertical_config.lowest_layer_thickness,
+        maximal_layer_thickness=vertical_config.maximal_layer_thickness,
+        top_height_limit_for_maximal_layer_thickness=(
+            vertical_config.top_height_limit_for_maximal_layer_thickness
+        ),
+        model_top_height=vertical_config.model_top_height,
+        flat_height=vertical_config.flat_height,
+        stretch_factor=vertical_config.stretch_factor,
+        rayleigh_damping_height=vertical_config.rayleigh_damping_height,
+        htop_moist_proc=vertical_config.htop_moist_proc,
+        decay_scale_1=vertical_config.SLEVE_decay_scale_1,
+        decay_scale_2=vertical_config.SLEVE_decay_scale_2,
+        decay_exponent=vertical_config.SLEVE_decay_exponent,
+    )
+
+
+def test_production_path_from_s11_grid_and_factories(
+    data_provider: Any,
+    experiment: Any,
+    grid_savepoint: Any,
+    topography_savepoint: Any,
+) -> None:
+    """The §5.1 production construction: symcon ``IconGrid`` from the grid *file*
+    (geometry + owner mask derived inside the component) and the static state from
+    the S11 ``metrics()``/``interpolation()`` factories — cold start (no savepoint
+    carry), one full Δt (review round 1, MINOR 2).
+
+    Assertions are **deterministic only**: the component-derived
+    ``EdgeParams``/``CellParams`` equal the archive's serialized geometry to
+    ≤ 1.6e-14 per field (except ``mean_cell_area``, where GridGeometry's computed
+    mean differs from ICON's serialized value by 4e-5 relative — deterministic),
+    the owner mask matches, and one full Δt *executes* and returns the declared
+    output set with the ingested shapes.
+
+    The stepped trajectory carries **no value assertions**: on file-built grids
+    the hosted solver shows process-dependent, unbounded deviations seeded near
+    the 12 icosahedron pentagon points (identical reruns measured anywhere from
+    ≤ 1.8e-5 up to 10 m/s over 6% of edges, while every input — static fields,
+    interpolation coefficients including the pentagon rows, geometry,
+    connectivities — is verified bit-stable and archive-equal in clean
+    processes; ICON-style padding of the residual ``-1`` V2C/V2E/V2E2V entries
+    does *not* remove the effect). Root-causing this is an S13
+    blocker-candidate with a full dossier in STATUS §5; trajectory verification
+    of the hosted solver is the job of the savepoint-grid parity tests above.
+    """
+    from symcon.icon.grid import VerticalGrid as SymconVerticalGrid
+    from symcon.icon.grid import from_file, interpolation, metrics
+    from symcon.icon.testing import download_grid_file
+
+    sp_init = data_provider.from_savepoint_nonhydro_init(istep=1, date=DATE_FIRST, substep=1)
+    dt_substep = float(sp_init.get_metadata("dtime").get("dtime"))
+
+    vertical_config = experiment.config.vertical_grid
+    ctx = ComputeContext(backend=make_backend("gtfn_cpu"))
+    # keep_skip_values=False is the dycore hosting setting (icon4py's own tests build
+    # the savepoint grid the same way); True would also change the gtfn codegen and
+    # force a full recompile of the dycore programs.
+    grid = from_file(
+        download_grid_file(experiment.grid),
+        ctx,
+        num_levels=vertical_config.num_levels,
+        keep_skip_values=False,
+    )
+    vgrid = SymconVerticalGrid(
+        np.asarray(grid_savepoint.vct_a().asnumpy(), dtype=np.float64),
+        np.asarray(grid_savepoint.vct_b().asnumpy(), dtype=np.float64),
+        vertical_config.num_levels,
+        config=_sleve_config(vertical_config),
+    )
+    static = dict(
+        metrics(
+            grid,
+            vgrid,
+            topography=np.asarray(topography_savepoint.topo_c().asnumpy(), dtype=np.float64),
+            config=experiment.config.metrics,
+            interpolation_config=experiment.config.interpolation,
+        )
+    )
+    static.update(interpolation(grid, config=experiment.config.interpolation))
+    config = NonhydroConfig.from_icon4py(
+        experiment.config.nonhydrostatic,
+        ndyn_substeps=int(experiment.config.diffusion.ndyn_substeps),
+        second_order_divdamp_factor=float(sp_init.divdamp_fac_o2()),
+        prepare_advection=bool(sp_init.get_metadata("prep_adv").get("prep_adv")),
+    )
+    # the production constructor path: no explicit geometry/owner mask/exchange.
+    solver = NonhydroSolver(grid, vgrid, static, config, ctx)
+
+    # -- strict: derived geometry == serialized geometry (measured <= 1.6e-14) -------
+    from symcon.icon.components.dycore import _geometry_from_grid, _owner_mask_from_grid
+
+    cell_params, edge_params = _geometry_from_grid(grid)
+    ref_edge = grid_savepoint.construct_edge_geometry()
+    ref_cell = grid_savepoint.construct_cell_geometry()
+    geometry_checks: list[tuple[str, Any, Any]] = [
+        (attr, getattr(edge_params, attr), getattr(ref_edge, attr))
+        for attr in (
+            "tangent_orientation",
+            "inverse_primal_edge_lengths",
+            "inverse_dual_edge_lengths",
+            "inverse_vertex_vertex_lengths",
+            "edge_areas",
+            "coriolis_frequency",
+        )
+    ]
+    for attr in (
+        "primal_normal_vert",
+        "dual_normal_vert",
+        "primal_normal_cell",
+        "dual_normal_cell",
+    ):
+        for k in (0, 1):
+            geometry_checks.append(
+                (f"{attr}[{k}]", getattr(edge_params, attr)[k], getattr(ref_edge, attr)[k])
+            )
+    geometry_checks.append(("cell_area", cell_params.area, ref_cell.area))
+    for name, produced, reference in geometry_checks:
+        assert_allclose(
+            produced.asnumpy(),
+            reference.asnumpy(),
+            rtol=0.0,
+            atol=1e-13,
+            names=(f"derived geometry {name}", "grid-savepoint geometry"),
+            equal_nan=False,
+        )
+    # GridGeometry's computed mean vs ICON's serialized value (deterministic, 4e-5).
+    assert cell_params.mean_cell_area == pytest.approx(ref_cell.mean_cell_area, rel=1e-4)
+    np.testing.assert_array_equal(
+        _owner_mask_from_grid(grid, solver._backend).asnumpy(),
+        grid_savepoint.c_owner_mask().asnumpy(),
+    )
+
+    # -- execution smoke: one full Δt runs; declared outputs, ingested shapes ---------
+    # (no trajectory-value assertions on file-built grids — see docstring/STATUS §5)
+    state = _state_from_savepoint(sp_init, ctx)
+    _, new_state = solver(state, timedelta(seconds=dt_substep * 2))
+    assert set(new_state) == {name for name, _accessor, _dims in _PROGNOSTICS}
+    for name, _accessor, _dims in _PROGNOSTICS:
+        assert new_state[name].data.shape == state[name].data.shape, name

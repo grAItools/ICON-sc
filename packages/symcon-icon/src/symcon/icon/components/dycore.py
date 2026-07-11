@@ -126,6 +126,19 @@ class NonhydroConfig:
     #: ICON derives lprep_adv from ltransport; S12 hosts no transport — default off.
     prepare_advection: bool = _knob(False, "derived: run_nml:ltransport -> lprep_adv")
 
+    def __post_init__(self) -> None:
+        # The icon4py granule *accepts* iau_init (it only gates program variants),
+        # but this slice hard-wires is_iau_active=False / iau_wgt_dyn=0.0 into every
+        # stage invocation (IAU is an S-later component, architecture §4.3) — a
+        # request for IAU must fail loudly here, not silently no-op.
+        if self.iau_init:
+            raise NotImplementedError(
+                "NonhydroConfig: iau_init=True is not supported in this slice — the "
+                "hosted solver is always invoked with is_iau_active=False (the "
+                "incremental analysis update arrives with its own component, "
+                "architecture §4.3)."
+            )
+
     def to_icon4py(self) -> Any:
         """The icon4py ``NonHydrostaticConfig`` (runs the granule's own validation)."""
         from icon4py.model.atmosphere.dycore import dycore_states, solve_nonhydro
@@ -702,6 +715,16 @@ class NonhydroSolver(DynamicalCore):
             )
         self._current_call_substeps = n_substeps
         sub_dt = timestep / n_substeps
+        # timedelta division quantizes to whole microseconds: for a Δt that N does
+        # not divide, the granule would silently run with N·Δτ ≠ Δt (and a dtime
+        # different from ICON's fp64 dt_dyn). Refuse inexact splits (the S05
+        # cadence-mask precedent); adaptive-ratio Δt/N policy is an S13/S14 topic.
+        if sub_dt * n_substeps != timestep:
+            raise ValueError(
+                f"component {self.name!r}: timestep {timestep} is not divisible into "
+                f"{n_substeps} substeps at timedelta (microsecond) resolution; choose "
+                f"a compatible Δt/ndyn_substeps pair."
+            )
 
         self._ingest(inputs)
         diag = self._diag_state
@@ -715,7 +738,7 @@ class NonhydroSolver(DynamicalCore):
                 diag.normal_wind_advective_tendency.swap()
                 self._record("swap_vn_adv_pair", substep)
             for stage in range(self.n_stages):
-                effective = self._effective_bus(inputs, sub_dt)
+                effective = self._effective_bus(inputs, sub_dt, stage)
                 if effective is not None:
                     self._load_bus(effective)
                 self.substep_array_call(stage, substep, inputs, outputs, sub_dt)
@@ -858,17 +881,19 @@ class NonhydroSolver(DynamicalCore):
         diag.exner_tendency_due_to_slow_physics.ndarray[...] = values["icon:ddt_exner_phy"]
 
     def _effective_bus(
-        self, inputs: dict[str, FieldBuffer], sub_dt: timedelta
+        self, inputs: dict[str, FieldBuffer], sub_dt: timedelta, stage: int
     ) -> dict[str, Any] | None:
         """Slow port + one fast-coupling evaluation (the per-stage fast tier).
 
         Empty in the ICON preset (returns ``None``: the slow values loaded at ingress
         stand). With a ``fast_tendency_component``, its tendencies are evaluated on
-        the latest provisional state and summed onto the slow values (Fig. 3.9).
+        the **latest provisional state** (Fig. 3.9): the substep-start time level
+        before the predictor (stage 0), the predictor's output before the corrector
+        (stage 1) — and summed onto the slow values.
         """
         if self._fast is None:
             return None
-        state = self._wrap_provisional_state()
+        state = self._wrap_provisional_state(stage)
         tendencies, _diagnostics = self._fast(state, sub_dt)
         effective = {
             "icon:ddt_vn_phy": inputs["icon:ddt_vn_phy"],
@@ -879,10 +904,15 @@ class NonhydroSolver(DynamicalCore):
             effective[slot] = effective[slot] + array.data
         return effective
 
-    def _wrap_provisional_state(self) -> dict[str, Any]:
-        """The latest provisional prognostics as boundary DataArrays (fast tier)."""
+    def _wrap_provisional_state(self, stage: int) -> dict[str, Any]:
+        """The latest provisional prognostics as boundary DataArrays (fast tier).
+
+        At stage 0 (predictor) the latest provisional state is the substep-start
+        time level (``current``); at stage 1 (corrector) it is the predictor's
+        output (``next``) — the S04/Fig. 3.9 "latest provisional state" contract.
+        """
         specs = self._parsed_properties["input_properties"]
-        current = self._prognostic_states.current
+        current = self._prognostic_states.next if stage == 1 else self._prognostic_states.current
         state: dict[str, Any] = {}
         for field_name, input_name in (
             ("vn", "icon:normal_wind"),
