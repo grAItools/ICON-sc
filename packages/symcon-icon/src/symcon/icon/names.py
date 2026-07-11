@@ -144,6 +144,9 @@ _ROWS: Final[tuple[tuple[str, str, str | None, str | None], ...]] = (
     ("icon:zd_diffcoef", "1", None, "zd_diffcoef"),  # terrain-diffusion coefficient
     ("icon:zd_intcoef", "1", None, "zd_intcoef"),
     ("icon:zd_vertoffset", "1", None, "zd_vertoffset"),  # int level offsets
+    # geopotential at full-level cell centers (ICON t_nh_metrics%geopot; consumed by
+    # the S13 JW initializer's Newton fit — REFERENCES.lock icon4py-driver-jw).
+    ("icon:geopot", "m2 s-2", None, "geopot"),
     # --- S11 static state: interpolation factory outputs (ICON t_int_state; icon4py --
     # interpolation_attributes.py). geofac_* carry the 1/length(s) of their stencils.
     ("icon:c_lin_e", "1", None, "c_lin_e"),
