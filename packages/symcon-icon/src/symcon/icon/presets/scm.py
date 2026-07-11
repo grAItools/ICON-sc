@@ -225,7 +225,13 @@ def build_scm(
         component = sections_by_name[section_name]
         # Preserve the class-declared admissible_operators (S07/S08 contracts).
         declared = constraints_of(component)
-        assert constraints.admissible_operators == declared.admissible_operators
+        if constraints.admissible_operators != declared.admissible_operators:
+            raise RuntimeError(
+                f"build_scm: preset constraints for {section_name!r} would change the "
+                f"class-declared admissible_operators "
+                f"({declared.admissible_operators!r} -> {constraints.admissible_operators!r}); "
+                f"the S07/S08 class contracts are frozen — update the preset table instead."
+            )
         component.coupling_constraints = constraints
     unknown = set(order) - set(sections_by_name)
     if unknown:

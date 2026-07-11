@@ -163,3 +163,11 @@ deliberate chaining bug would still "run" but fails this test).
 - Probe logs (48 h budget/negativity characterization) under the session scratchpad;
   measured numbers are committed into the test constants/docstrings
   (`CONSERVATION_RTOL`, negativity bound, accumulated precip). No data files in git.
+
+## Review fixes (round 1)
+
+- **MINOR-3 (fixed)** — the class-constraint invariant guard in `build_scm` is now a real
+  `RuntimeError` (was a bare `assert`, stripped under `python -O`).
+- MINOR-1 (negativity contract ≥ −QMIN) and MINOR-2 (whole-run CONSERVATION_RTOL=1e-11)
+  remain the flagged human-sign-off items for the PR — no code change; the reviewer
+  reproduced both characterizations exactly.
