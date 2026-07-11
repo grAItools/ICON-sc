@@ -15,8 +15,9 @@ running the *real* stages against serialized data is ``test_nonhydro_datatest.py
 from __future__ import annotations
 
 import dataclasses
+from collections.abc import Mapping
 from datetime import timedelta
-from typing import Any, ClassVar, Mapping
+from typing import Any, ClassVar
 
 import numpy as np
 import pytest
@@ -153,7 +154,6 @@ def _stub_geometry(grid: Any) -> tuple[Any, Any, Any]:
     cell_params = grid_states.CellParams(
         cell_center_lat=cell(), cell_center_lon=cell(), area=cell(), mean_cell_area=1.0
     )
-    import gt4py.next as gtx  # noqa: PLC0415 (local by convention in tests)
 
     mask = gtx.as_field((dims.CellDim,), np.ones(grid.num_cells, dtype=bool))
     return cell_params, edge_params, mask
@@ -185,12 +185,28 @@ def _stub_stages(solver: NonhydroSolver) -> list[dict[str, Any]]:
     calls: list[dict[str, Any]] = []
 
     def predictor(**kwargs: Any) -> None:
-        calls.append({"stage": "predictor", **{k: v for k, v in kwargs.items() if k in
-                     ("at_initial_timestep", "at_first_substep", "dtime")}})
+        calls.append(
+            {
+                "stage": "predictor",
+                **{
+                    k: v
+                    for k, v in kwargs.items()
+                    if k in ("at_initial_timestep", "at_first_substep", "dtime")
+                },
+            }
+        )
 
     def corrector(**kwargs: Any) -> None:
-        calls.append({"stage": "corrector", **{k: v for k, v in kwargs.items() if k in
-                     ("at_first_substep", "at_last_substep", "dtime", "ndyn_substeps_var")}})
+        calls.append(
+            {
+                "stage": "corrector",
+                **{
+                    k: v
+                    for k, v in kwargs.items()
+                    if k in ("at_first_substep", "at_last_substep", "dtime", "ndyn_substeps_var")
+                },
+            }
+        )
 
     solver._solve.run_predictor_step = predictor
     solver._solve.run_corrector_step = corrector
@@ -247,8 +263,10 @@ def test_config_carries_icon_namelist_origins() -> None:
     assert origins["rayleigh_type"] == "nonhydrostatic_nml:rayleigh_type"
     assert origins["ndyn_substeps"] == "nonhydrostatic_nml:ndyn_substeps"
     # every origin names its namelist (or documents a runtime-derived source)
-    assert all("_nml:" in origin or "derived" in origin or "config" in origin
-               for origin in origins.values())
+    assert all(
+        "_nml:" in origin or "derived" in origin or "config" in origin
+        for origin in origins.values()
+    )
 
 
 def test_config_defaults_match_icon4py() -> None:
@@ -415,8 +433,9 @@ def test_hook_order_matches_icon_sequence_for_two_substeps() -> None:
 
 
 def test_ratio_provider_drives_substep_count() -> None:
-    solver = _make_solver(cfg=NonhydroConfig(ndyn_substeps=2), substeps=0,
-                          ratio_provider=lambda state: 3)
+    solver = _make_solver(
+        cfg=NonhydroConfig(ndyn_substeps=2), substeps=0, ratio_provider=lambda state: 3
+    )
     _stub_stages(solver)
     solver.hook_log = []
     solver(_state(solver), DT)
@@ -425,8 +444,11 @@ def test_ratio_provider_drives_substep_count() -> None:
 
 
 def test_ratio_provider_bounded_by_ndyn_substeps_max() -> None:
-    solver = _make_solver(cfg=NonhydroConfig(ndyn_substeps=2, ndyn_substeps_max=4),
-                          substeps=0, ratio_provider=lambda state: 5)
+    solver = _make_solver(
+        cfg=NonhydroConfig(ndyn_substeps=2, ndyn_substeps_max=4),
+        substeps=0,
+        ratio_provider=lambda state: 5,
+    )
     _stub_stages(solver)
     with pytest.raises(ValueError, match="ndyn_substeps_max"):
         solver(_state(solver), DT)
@@ -444,8 +466,9 @@ def test_bus_slots_default_to_zeros() -> None:
         diag = solver._diag_state
         seen.append(
             (
-                float(np.max(np.abs(
-                    diag.normal_wind_tendency_due_to_slow_physics_process.ndarray))),
+                float(
+                    np.max(np.abs(diag.normal_wind_tendency_due_to_slow_physics_process.ndarray))
+                ),
                 float(np.max(np.abs(diag.exner_tendency_due_to_slow_physics.ndarray))),
             )
         )
@@ -496,16 +519,12 @@ class _ConstantVnTendency(TendencyComponent):
 
 def test_fast_tendency_component_sums_onto_the_slow_port() -> None:
     """The per-stage fast tier (empty in the ICON preset) adds to the bus values."""
-    solver = _make_solver(
-        fast_tendency_component=ConcurrentCoupling([_ConstantVnTendency()])
-    )
+    solver = _make_solver(fast_tendency_component=ConcurrentCoupling([_ConstantVnTendency()]))
     seen: list[float] = []
 
     def predictor(**kwargs: Any) -> None:
         diag = solver._diag_state
-        seen.append(
-            float(diag.normal_wind_tendency_due_to_slow_physics_process.ndarray[0, 0])
-        )
+        seen.append(float(diag.normal_wind_tendency_due_to_slow_physics_process.ndarray[0, 0]))
 
     solver._solve.run_predictor_step = predictor
     solver._solve.run_corrector_step = lambda **kwargs: None
@@ -554,8 +573,15 @@ def test_restart_roundtrip_and_functional_schema() -> None:
     blob = solver.restart_state()
     assert set(blob) == {key for key, _, _ in _RESTART_SCHEMA}
     # both time levels + the velocity-advection carry are present (SPEC S12)
-    assert {"nnow/vn", "nnew/vn", "carry/ddt_vn_apc_predictor", "carry/ddt_w_adv_corrector",
-            "carry/vt", "carry/vn_ie", "meta/at_initial_timestep"} <= set(blob)
+    assert {
+        "nnow/vn",
+        "nnew/vn",
+        "carry/ddt_vn_apc_predictor",
+        "carry/ddt_w_adv_corrector",
+        "carry/vt",
+        "carry/vn_ie",
+        "meta/at_initial_timestep",
+    } <= set(blob)
     assert float(blob["meta/at_initial_timestep"].data) == 0.0  # one step done
 
     # mutate, restore, compare bitwise

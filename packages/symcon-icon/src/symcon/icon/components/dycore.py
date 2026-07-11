@@ -1,7 +1,7 @@
 """``NonhydroSolver(DynamicalCore)`` — icon4py ``solve_nonhydro`` hosted on symcon (S12).
 
 The icon4py nonhydrostatic solver + velocity advection as **one** symcon component
-(architecture §4.3): the predictor–corrector is the stage structure, ``ndyn_substeps``
+(architecture §4.3): the predictor-corrector is the stage structure, ``ndyn_substeps``
 is the super-fast tier, slow physics enters through the tendency-bus port, and the
 two prognostic time levels plus the velocity-advection carry-over are component-private
 state behind the restart/functional-state protocols.
@@ -134,9 +134,7 @@ class NonhydroConfig:
         return solve_nonhydro.NonHydrostaticConfig(
             itime_scheme=dycore_states.TimeSteppingScheme(self.itime_scheme),
             iadv_rhotheta=dycore_states.RhoThetaAdvectionType(self.iadv_rhotheta),
-            igradp_method=dycore_states.HorizontalPressureDiscretizationType(
-                self.igradp_method
-            ),
+            igradp_method=dycore_states.HorizontalPressureDiscretizationType(self.igradp_method),
             rayleigh_type=i4_constants.RayleighType(self.rayleigh_type),
             divdamp_order=dycore_states.DivergenceDampingOrder(self.divdamp_order),
             divdamp_type=dycore_states.DivergenceDampingType(self.divdamp_type),
@@ -487,9 +485,7 @@ class NonhydroSolver(DynamicalCore):
             cell_geometry=cell_geometry,
             owner_mask=owner_mask,
             backend=self._backend.gt4py_backend,
-            exchange=(
-                exchange if exchange is not None else i4_decomposition.single_node_exchange
-            ),
+            exchange=(exchange if exchange is not None else i4_decomposition.single_node_exchange),
         )
         self._exner_ref_mc = metric_state.reference_exner_at_cells_on_model_levels
 
@@ -514,9 +510,8 @@ class NonhydroSolver(DynamicalCore):
         Entries may be S11 DataArrays (converted to gt4py fields on this component's
         backend) or ready icon4py fields/scalars (used as-is — the savepoint path).
         """
-        from icon4py.model.atmosphere.dycore import dycore_states
-
         import gt4py.next as gtx
+        from icon4py.model.atmosphere.dycore import dycore_states
 
         def convert(registry_name: str) -> Any:
             value = static[registry_name]
@@ -530,9 +525,7 @@ class NonhydroSolver(DynamicalCore):
                 data = value.data
                 if isinstance(data, np.ndarray):
                     data = np.ascontiguousarray(data)
-                return gtx.as_field(
-                    dims, data, allocator=self._backend.gt4py_backend
-                )
+                return gtx.as_field(dims, data, allocator=self._backend.gt4py_backend)
             return value  # a ready icon4py field
 
         metric = dycore_states.MetricStateNonHydro(
@@ -576,12 +569,8 @@ class NonhydroSolver(DynamicalCore):
             max_vertical_cfl=data_alloc.scalar_like_array(0.0, allocator),
             theta_v_at_cells_on_half_levels=field(dims.CellDim, dims.KDim, half=True),
             perturbed_exner_at_cells_on_model_levels=field(dims.CellDim, dims.KDim),
-            rho_at_cells_on_half_levels=field(
-                dims.CellDim, dims.KDim, half=True, dtype=ta.vpfloat
-            ),
-            exner_tendency_due_to_slow_physics=field(
-                dims.CellDim, dims.KDim, dtype=ta.vpfloat
-            ),
+            rho_at_cells_on_half_levels=field(dims.CellDim, dims.KDim, half=True, dtype=ta.vpfloat),
+            exner_tendency_due_to_slow_physics=field(dims.CellDim, dims.KDim, dtype=ta.vpfloat),
             grf_tend_rho=field(dims.CellDim, dims.KDim),
             grf_tend_thv=field(dims.CellDim, dims.KDim),
             grf_tend_w=field(dims.CellDim, dims.KDim, half=True),
@@ -956,9 +945,7 @@ class NonhydroSolver(DynamicalCore):
             "carry/ddt_w_adv_corrector": diag.vertical_wind_advective_tendency.corrector.ndarray,
             "carry/vt": diag.tangential_wind.ndarray,
             "carry/vn_ie": diag.vn_on_half_levels.ndarray,
-            "carry/w_concorr_c": (
-                diag.contravariant_correction_at_cells_on_half_levels.ndarray
-            ),
+            "carry/w_concorr_c": (diag.contravariant_correction_at_cells_on_half_levels.ndarray),
             "carry/theta_v_ic": diag.theta_v_at_cells_on_half_levels.ndarray,
             "carry/rho_ic": diag.rho_at_cells_on_half_levels.ndarray,
             "carry/exner_pr": diag.perturbed_exner_at_cells_on_model_levels.ndarray,
@@ -976,13 +963,9 @@ class NonhydroSolver(DynamicalCore):
             "z/gradh_exner": z_fields.horizontal_pressure_gradient.ndarray,
             "z/rho_e": z_fields.rho_at_edges_on_model_levels.ndarray,
             "z/theta_v_e": z_fields.theta_v_at_edges_on_model_levels.ndarray,
-            "z/kin_hor_e": (
-                z_fields.horizontal_kinetic_energy_at_edges_on_model_levels.ndarray
-            ),
+            "z/kin_hor_e": (z_fields.horizontal_kinetic_energy_at_edges_on_model_levels.ndarray),
             "z/vt_ie": z_fields.tangential_wind_on_half_levels.ndarray,
-            "z/graddiv_vn": (
-                z_fields.horizontal_gradient_of_normal_wind_divergence.ndarray
-            ),
+            "z/graddiv_vn": (z_fields.horizontal_gradient_of_normal_wind_divergence.ndarray),
             "z/dwdz_dd": z_fields.dwdz_at_cells_on_model_levels.ndarray,
         }
 
@@ -1031,9 +1014,7 @@ class NonhydroSolver(DynamicalCore):
         """The restart schema as PropertySpecs (F-tier declaration; consumption is P6)."""
         specs: dict[str, PropertySpec] = {}
         for key, dims, units in _RESTART_SCHEMA:
-            specs[key] = PropertySpec(
-                name=key, dims=dims, units=units, location=_location_of(dims)
-            )
+            specs[key] = PropertySpec(name=key, dims=dims, units=units, location=_location_of(dims))
         return MappingProxyType(specs)
 
 
