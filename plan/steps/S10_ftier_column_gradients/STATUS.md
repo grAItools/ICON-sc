@@ -114,7 +114,11 @@ mixing-ratio-valued fields contain points at ~1e-18…1e-22 kg/kg (residuals of
 the `max(tend, -q/dt)` clip), where a last-ulp difference between XLA and
 gtfn/numpy arithmetic is *relatively* unbounded. The tests therefore assert
 `rtol=1e-10` **plus an absolute floor `atol = GRAUPEL_QMIN = 1e-15`** on
-mixing-ratio-valued fields (temperature keeps `atol=0`). Justification: QMIN is
+mixing-ratio-valued fields. Temperature keeps `atol=0` in the datatest and the
+T0↔F equivalence tests; the always-on synthetic parity guard
+(`test_graupel_functional.py`) applies the QMIN floor to all fields including
+temperature — numerically immaterial there (1e-15 ≪ rtol·250 K ≈ 2.5e-8) but
+stated for accuracy. Justification: QMIN is
 the scheme's own "threshold for lowest detectable mixing ratios" — every branch
 of the granule treats values below it as zero — and icon4py's own L2 tests use
 a *looser* `atol=1e-12` on the same fields (S08 provenance). This is an
@@ -193,3 +197,24 @@ of it; flagged here per AGENTS.md for sign-off in the PR.
 - data-marked: `test_graupel_functional_datatest.py` 3/3 dates passed
   (cached WK archive, gtfn_cpu reference); gpu-marked tests skip without a
   device.
+
+## Review fixes (round 1)
+
+- **MINOR-1 (fixed)** — `examples/07_gradient_scm.py` chose the "optimal FD step" as the
+  h closest to the AD gradient (selection-by-agreement with the quantity under test).
+  Now chosen by ladder self-consistency (the h agreeing best with its neighbouring
+  steps), removing the circularity; the assert threshold (rel_err ≤ 1e-6) is unchanged.
+- **MINOR-2 (declared)** — mechanism deviation, previously undeclared: the functional
+  compiler derives the `CallingFrequency` carry from `restart_state()` + output specs
+  (`compile.py`), not from the `functional_state()` declaration the S03 wrappers
+  implement, although the SPEC's in-scope wording says the carry comes "from
+  `functional_state()`". Carry content is identical (phase + cache) and is
+  equivalence-tested (mid-run compile from a pre-fired phase). Follow-up: either route
+  through `functional_state()` or align the wording at trunk level.
+- **MINOR-3 (fixed)** — the temperature-atol sentence above now states precisely where
+  atol=0 holds (datatest + equivalence) vs the QMIN floor (synthetic guard, all fields).
+- **INFO-5 (declared)** — CI coverage asymmetry: only the `locked` job (py3.10,
+  jax==0.6.2 via uv.lock) exercises the F-tier; the constraints-matrix jobs install no
+  jax so S10 tests skip there, and dev environments on py≥3.11 resolve jax 0.10.2
+  (unverified vs the 0.6.2 probe). Follow-up: constrain dev jax or add a jax leg to the
+  constraints matrix at trunk level.

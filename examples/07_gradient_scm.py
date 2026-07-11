@@ -65,13 +65,23 @@ def main(n_steps: int = 10) -> dict[str, Any]:
     gradient = float(gradient)  # dJ/dscale = kcau0 * dJ/dkcau
 
     # Central-difference cross-check on the same scalar functional, scanning a
-    # small step ladder; the best step is the acceptance-4 "optimal FD step".
+    # small step ladder. The acceptance-4 "optimal FD step" is chosen by
+    # SELF-CONSISTENCY of the ladder (the h whose FD value agrees best with its
+    # neighbouring steps) — never by closeness to the AD gradient, which would
+    # make the cross-check circular.
+    steps = (1e-4, 1e-5, 1e-6)
     fd_by_step: dict[float, float] = {}
-    for h in (1e-4, 1e-5, 1e-6):
+    for h in steps:
         plus = float(accumulated_precipitation(jnp.asarray(1.0 + h)))
         minus = float(accumulated_precipitation(jnp.asarray(1.0 - h)))
         fd_by_step[h] = (plus - minus) / (2.0 * h)
-    best_h, fd = min(fd_by_step.items(), key=lambda kv: abs(kv[1] - gradient))
+
+    def ladder_disagreement(h: float) -> float:
+        others = [fd_by_step[o] for o in steps if o != h]
+        return max(abs(fd_by_step[h] - value) for value in others)
+
+    best_h = min(steps, key=ladder_disagreement)
+    fd = fd_by_step[best_h]
     rel_err = abs(fd - gradient) / abs(gradient)
 
     print(f"accumulated precipitation over {n_steps} steps : {float(j0):.6e} kg m-2")
