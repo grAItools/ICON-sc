@@ -206,8 +206,13 @@ class NonhydroConfig:
         )
 
 
-def icon_namelist_origins(config: NonhydroConfig) -> dict[str, str]:
-    """Field name -> ICON namelist origin, from the dataclass metadata annotations."""
+def icon_namelist_origins(config: Any) -> dict[str, str]:
+    """Field name -> ICON namelist origin, from the dataclass metadata annotations.
+
+    Works for any origin-annotated config dataclass (``NonhydroConfig``, S13's
+    ``DiffusionConfig``, ...) — a backward-compatible widening of the S12 signature
+    (declared in the S13 STATUS).
+    """
     return {
         field.name: str(field.metadata["icon_namelist_origin"])
         for field in dataclasses.fields(config)

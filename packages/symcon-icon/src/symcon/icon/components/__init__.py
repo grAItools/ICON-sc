@@ -3,11 +3,16 @@
 Subpackages mirror ICON's process taxonomy: :mod:`symcon.icon.components.fast`
 (fast physics, every Δt, sequential-update split);
 :mod:`symcon.icon.components.dycore` (S12: the icon4py nonhydrostatic solver as a
-``DynamicalCore``). Real slow physics and transport arrive with their own steps;
-:mod:`symcon.icon.components.idealized` carries the S09 analytic stand-ins that
-exercise the slow-tendency bus.
+``DynamicalCore``); :mod:`symcon.icon.components.diffusion` (S13: the icon4py
+horizontal-diffusion granule as a ``Stepper``). Real slow physics and transport
+arrive with their own steps; :mod:`symcon.icon.components.idealized` carries the
+S09 analytic stand-ins that exercise the slow-tendency bus.
 """
 
+from symcon.icon.components.diffusion import (
+    DiffusionConfig,
+    HorizontalDiffusion,
+)
 from symcon.icon.components.dycore import (
     NonhydroConfig,
     NonhydroSolver,
@@ -28,8 +33,10 @@ from symcon.icon.components.idealized import (
 
 __all__ = [
     "ApplySlowTendencies",
+    "DiffusionConfig",
     "Graupel",
     "GraupelConfig",
+    "HorizontalDiffusion",
     "Microphysics",
     "NonhydroConfig",
     "NonhydroSolver",
