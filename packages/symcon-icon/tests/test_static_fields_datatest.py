@@ -2,9 +2,14 @@
 
 Every static field produced by ``symcon.icon.grid.metrics``/``.interpolation`` matches
 the corresponding icon4py serialized savepoint at icon4py's own test tolerances
-(REFERENCES.lock id ``icon4py-grid-metrics-tests`` — per-field rtol/atol transcribed
-from icon4py v0.2.0 test_metrics_factory.py / test_interpolation_factory.py /
-test_rbf_interpolation.py; tolerance contracts, SPEC S11).
+(tolerance contracts, SPEC S11). Provenance (REFERENCES.lock ids
+``icon4py-grid-metrics-tests`` + ``icon4py-refatm-metric-field-tests``): most
+per-field rtol/atol come from icon4py v0.2.0 test_metrics_factory.py /
+test_interpolation_factory.py / test_rbf_interpolation.py; six fields have no factory
+test upstream (rho_ref_mc, theta_ref_ic, d_exner_dz_ref_ic, theta_ref_me, rho_ref_me,
+wgtfac_e) — their tolerances come from icon4py's test_reference_atmosphere.py /
+test_metric_fields.py, which use the strict dallclose default rtol=1e-12, atol=0
+(rho_ref_me: rtol=1e-10).
 
 Experiment: EXCLAIM_APE (``exclaim_ape_R02B04``) — icon4py's own factory-parity
 experiment on the R02B04 global grid, i.e. the same horizontal grid as the JW/driver
@@ -79,11 +84,15 @@ METRICS_CASES: dict[str, dict[str, Any]] = {
     "icon:coeff2_dwdz": dict(accessor="coeff2_dwdz", atol=1e-11),
     "icon:exner_ref_mc": dict(accessor="exner_ref_mc", atol=1e-10),
     "icon:theta_ref_mc": dict(accessor="theta_ref_mc", atol=1e-9),
-    "icon:rho_ref_mc": dict(accessor="rho_ref_mc", atol=1e-9),
-    "icon:theta_ref_ic": dict(accessor="theta_ref_ic", atol=1e-9),
-    "icon:d_exner_dz_ref_ic": dict(accessor="d_exner_dz_ref_ic", atol=1e-10),
-    "icon:theta_ref_me": dict(accessor="theta_ref_me", atol=1e-9),
-    "icon:rho_ref_me": dict(accessor="rho_ref_me", atol=1e-9),
+    # The five reference-state fields below + wgtfac_e are not covered by upstream
+    # *factory* tests; their upstream verification lives in
+    # test_reference_atmosphere.py / test_metric_fields.py at the strict dallclose
+    # default (rtol=1e-12, atol=0; rho_ref_me rtol=1e-10) — used verbatim here.
+    "icon:rho_ref_mc": dict(accessor="rho_ref_mc"),
+    "icon:theta_ref_ic": dict(accessor="theta_ref_ic"),
+    "icon:d_exner_dz_ref_ic": dict(accessor="d_exner_dz_ref_ic"),
+    "icon:theta_ref_me": dict(accessor="theta_ref_me"),
+    "icon:rho_ref_me": dict(accessor="rho_ref_me", rtol=1e-10),
     "icon:d2dexdz2_fac1_mc": dict(accessor="d2dexdz2_fac1_mc", atol=1e-12),
     "icon:d2dexdz2_fac2_mc": dict(accessor="d2dexdz2_fac2_mc", atol=1e-12),
     "icon:ddxn_z_full": dict(accessor="ddxn_z_full", atol=1e-8),
@@ -92,7 +101,7 @@ METRICS_CASES: dict[str, dict[str, Any]] = {
     "icon:vwind_expl_wgt": dict(accessor="vwind_expl_wgt", rtol=1e-8),
     "icon:exner_exfac": dict(accessor="exner_exfac", atol=1e-8),
     "icon:wgtfac_c": dict(accessor="wgtfac_c", rtol=1e-9),
-    "icon:wgtfac_e": dict(accessor="wgtfac_e", rtol=1e-9),
+    "icon:wgtfac_e": dict(accessor="wgtfac_e"),  # test_metric_fields.py: strict default
     "icon:wgtfacq_c": dict(accessor="wgtfacq_c"),
     "icon:wgtfacq_e": dict(accessor="wgtfacq_e"),
     "icon:pg_exdist": dict(accessor="pg_exdist_dsl", atol=1e-5),
@@ -226,14 +235,16 @@ def _check(name: str, produced: Any, reference: Any, grid: Any, case: dict[str, 
     if case.get("exact"):
         np.testing.assert_array_equal(actual, desired, err_msg=name)
     else:
-        # icon4py test_utils.dallclose defaults: rtol=1e-12, atol=0 — per-field
-        # overrides keep the *other* default (no tolerance creep).
+        # icon4py test_utils.dallclose defaults: rtol=1e-12, atol=0, equal_nan=False
+        # — per-field overrides keep the *other* defaults (no tolerance creep), and
+        # co-located NaNs fail exactly like upstream.
         assert_allclose(
             actual,
             desired,
             rtol=case.get("rtol", _DEFAULT_RTOL),
             atol=case.get("atol", 0.0),
             names=name,
+            equal_nan=False,
         )
 
 

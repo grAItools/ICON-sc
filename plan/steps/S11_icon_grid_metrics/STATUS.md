@@ -36,7 +36,7 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
   `diffusion_states.{DiffusionMetricState,DiffusionInterpolationState}`
   (REFERENCES.lock `icon4py-dycore-diffusion-static-state`) — the S12 SPEC names S11
   as the coordination point for this list.
-- **`names.py`** — registry extended by 48 `icon:` rows (metrics + interpolation
+- **`names.py`** — registry extended by 47 `icon:` rows (metrics + interpolation
   statics); `docs/names_registry.md` regenerated via `tools/names_audit.py`.
 - **`testing.py`** — datatest bridge re-exports `metrics_savepoint`,
   `interpolation_savepoint`, `topography_savepoint`; new `download_grid_file()`
@@ -64,9 +64,14 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
    bitwise), on both grids; derived connectivities present.
 3. **Metrics/interpolation parity** — `tests/test_static_fields_datatest.py`
    (markers `data`+`slow`): 36 metrics cases + `nflat_gradp` + 16 interpolation
-   cases on **EXCLAIM_APE**, each at icon4py's own per-field tolerances (transcribed
-   from their v0.2.0 factory tests — REFERENCES.lock `icon4py-grid-metrics-tests`);
-   boundary-zone slicing (`LATERAL_BOUNDARY_LEVEL_2` starts for
+   cases on **EXCLAIM_APE**, each at icon4py's own per-field tolerances. Provenance:
+   most rows from their v0.2.0 factory tests (REFERENCES.lock
+   `icon4py-grid-metrics-tests`); six fields have no upstream factory test
+   (rho_ref_mc, theta_ref_ic, d_exner_dz_ref_ic, theta_ref_me, rho_ref_me,
+   wgtfac_e) and use the tolerances of icon4py's test_reference_atmosphere.py /
+   test_metric_fields.py instead — the strict dallclose default rtol=1e-12/atol=0
+   (rho_ref_me: rtol=1e-10) — REFERENCES.lock `icon4py-refatm-metric-field-tests`.
+   Boundary-zone slicing (`LATERAL_BOUNDARY_LEVEL_2` starts for
    zdiff/vertoffset_gradp, geofac_rot, RBF coefficients) mirrors upstream exactly.
    A closure test asserts the parity tables cover every produced field and that all
    outputs are read-only, registry-named, uuid-stamped DataArrays.
@@ -104,12 +109,22 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
   formula is unambiguous (`m` for distances zdiff_gradp/pg_exdist/pos_on_tplane_e,
   `m-1`/`m-2` for geometric-derivative factors, K / kg m-3 for the reference-state
   family, consistent with the existing S06 rows). Documented per row in `names.py`.
-- **D5 — `from_file` takes `num_levels` (keyword-only, default 1).** icon4py bundles
-  the vertical size with the horizontal grid object (`GridConfig.vertical_size`;
-  their TODO acknowledges the coupling). A grid file knows nothing vertical, so the
-  symcon surface takes it as an optional keyword; `metrics()` validates
-  `grid.num_levels == vgrid.nlev` with an actionable message. Declared additive
-  extension of the frozen `from_file(path, ctx)` signature.
+- **D5 — `from_file` takes `num_levels` (keyword-only, default 1) and
+  `keep_skip_values` (keyword-only, default True).** icon4py bundles the vertical
+  size with the horizontal grid object (`GridConfig.vertical_size`; their TODO
+  acknowledges the coupling). A grid file knows nothing vertical, so the symcon
+  surface takes it as an optional keyword; `metrics()` validates
+  `grid.num_levels == vgrid.nlev` with an actionable message. `keep_skip_values`
+  mirrors icon4py's GridManager knob (True — the geometry/factory convention —
+  preserves raw `-1` neighbors; False lets gt4py replace them for stencils that
+  compute over boundary temporaries). Both declared additive extensions of the
+  frozen `from_file(path, ctx)` signature.
+- **D8 — `grid.connectivities` copies; `grid.offset_providers` aliases.** §3.1 says
+  "two forms from one storage": the offset-provider mapping aliases the wrapped
+  icon4py connectivity storage (zero-copy into gt4py programs), while the raw numpy
+  view is a one-time read-only *copy* — a deliberate immutability trade-off so
+  numpy/JAX consumers cannot mutate the tables the gt4py programs execute over
+  (one ~O(n_edges·sparse) int32 copy per grid, cached).
 - **D6 — Registry short names `geofac_grg_x/_y`, `pos_on_tplane_e_x/_y`.** ICON
   stores single arrays with a trailing 1:2 slab; the S06 registry enforces unique
   ICON short names, so the slabs get suffixed names (matching icon4py's own
@@ -155,3 +170,21 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
 - **F4:** metrics() recomputes the interpolation factory internally; if S12 wants to
   share one instance across both calls, add a keyword to pass a prebuilt factory
   (cheap: registration is lazy, fields are computed once per factory instance).
+
+## 6. Review fixes (round 1)
+
+- **MAJOR 1 (tolerance loosening, misattributed provenance):** six metrics parity
+  rows (rho_ref_mc, theta_ref_ic, d_exner_dz_ref_ic, theta_ref_me, rho_ref_me,
+  wgtfac_e) had been given atol=1e-9/1e-10 (wgtfac_e rtol=1e-9) and attributed to
+  upstream factory tests that do not exist for them — an undeclared loosening.
+  Tightened to the tolerances of their actual upstream tests
+  (test_reference_atmosphere.py l.91/149/186/232-233, test_metric_fields.py l.367):
+  the strict dallclose default rtol=1e-12/atol=0, rho_ref_me rtol=1e-10. All six
+  green at the tightened tolerances on gtfn_cpu/EXCLAIM_APE. Provenance corrected
+  in the test docstring, §2.3 above, and REFERENCES.lock (appended corrective entry
+  `icon4py-refatm-metric-field-tests`; the ledger is append-only).
+- **MINOR 2:** `keep_skip_values` extension of `from_file` declared in D5.
+- **MINOR 3:** `_check` now passes `equal_nan=False` to `assert_allclose`
+  (upstream dallclose semantics; co-located NaNs fail).
+- **MINOR 4:** §1 row count corrected 48 → 47.
+- **INFO:** D8 added — connectivities-copy vs offset-providers-alias trade-off.
