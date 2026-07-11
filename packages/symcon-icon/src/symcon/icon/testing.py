@@ -40,6 +40,7 @@ from symcon.icon.grid.vertical import (
 __all__ = [
     "DATATEST_AVAILABLE",
     "MOIST_PROFILE_IDS",
+    "download_grid_file",
     "isothermal_column",
     "moist_test_column",
     "require_datatest",
@@ -195,6 +196,11 @@ try:
         grid_savepoint,
         process_props,
     )
+    from icon4py.model.testing.fixtures.datatest import (  # noqa: F401  (S11 re-exports)
+        interpolation_savepoint,
+        metrics_savepoint,
+        topography_savepoint,
+    )
 
     DATATEST_AVAILABLE = True
 
@@ -222,3 +228,16 @@ def require_datatest() -> None:
             "icon4py datatest stack not installed — install symcon-icon[datatest] "
             "(icon4py-testing + serialbox4py) to run data-marked tests."
         )
+
+
+def download_grid_file(grid_description: Any) -> pathlib.Path:
+    """Fetch (or reuse from cache) the grid NetCDF for an icon4py ``GridDescription``.
+
+    S11 helper: grid *files* download independently of the serialized experiment
+    archives (``<root>/grids/<name>.tar.gz``, a few MB) into the shared datatest
+    cache. Wraps icon4py's ``grid_utils._download_grid_file`` (private there — the
+    public entry points bundle GridManager construction, which symcon does itself).
+    """
+    from icon4py.model.testing import grid_utils
+
+    return pathlib.Path(grid_utils._download_grid_file(grid_description))

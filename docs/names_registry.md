@@ -52,3 +52,50 @@ quantity's canonical units.
 | `icon:snow_gsp_rate` | `kg m-2 s-1` | — | `snow_gsp_rate` | — |
 | `icon:ice_gsp_rate` | `kg m-2 s-1` | — | `ice_gsp_rate` | — |
 | `icon:graupel_gsp_rate` | `kg m-2 s-1` | — | `graupel_gsp_rate` | — |
+| `icon:inv_ddqz_z_full` | `m-1` | — | `inv_ddqz_z_full` | — |
+| `icon:ddqz_z_full_e` | `m` | — | `ddqz_z_full_e` | — |
+| `icon:scalfac_dd3d` | `1` | — | `scalfac_dd3d` | — |
+| `icon:rayleigh_w` | `1` | — | `rayleigh_w` | — |
+| `icon:coeff1_dwdz` | `m-1` | — | `coeff1_dwdz` | — |
+| `icon:coeff2_dwdz` | `m-1` | — | `coeff2_dwdz` | — |
+| `icon:theta_ref_ic` | `K` | — | `theta_ref_ic` | — |
+| `icon:theta_ref_me` | `K` | — | `theta_ref_me` | — |
+| `icon:rho_ref_me` | `kg m-3` | — | `rho_ref_me` | — |
+| `icon:d_exner_dz_ref_ic` | `m-1` | — | `d_exner_dz_ref_ic` | — |
+| `icon:d2dexdz2_fac1_mc` | `m-1` | — | `d2dexdz2_fac1_mc` | — |
+| `icon:d2dexdz2_fac2_mc` | `m-2` | — | `d2dexdz2_fac2_mc` | — |
+| `icon:ddxn_z_full` | `1` | — | `ddxn_z_full` | — |
+| `icon:ddxt_z_full` | `1` | — | `ddxt_z_full` | — |
+| `icon:vwind_impl_wgt` | `1` | — | `vwind_impl_wgt` | — |
+| `icon:vwind_expl_wgt` | `1` | — | `vwind_expl_wgt` | — |
+| `icon:exner_exfac` | `1` | — | `exner_exfac` | — |
+| `icon:wgtfac_c` | `1` | — | `wgtfac_c` | — |
+| `icon:wgtfac_e` | `1` | — | `wgtfac_e` | — |
+| `icon:wgtfacq_c` | `1` | — | `wgtfacq_c` | — |
+| `icon:wgtfacq_e` | `1` | — | `wgtfacq_e` | — |
+| `icon:pg_exdist` | `m` | — | `pg_exdist` | — |
+| `icon:mask_prog_halo_c` | `1` | — | `mask_prog_halo_c` | — |
+| `icon:hmask_dd3d` | `1` | — | `hmask_dd3d` | — |
+| `icon:zdiff_gradp` | `m` | — | `zdiff_gradp` | — |
+| `icon:vertoffset_gradp` | `1` | — | `vertoffset_gradp` | — |
+| `icon:nflat_gradp` | `1` | — | `nflat_gradp` | — |
+| `icon:coeff_gradekin` | `m-1` | — | `coeff_gradekin` | — |
+| `icon:zd_diffcoef` | `1` | — | `zd_diffcoef` | — |
+| `icon:zd_intcoef` | `1` | — | `zd_intcoef` | — |
+| `icon:zd_vertoffset` | `1` | — | `zd_vertoffset` | — |
+| `icon:c_lin_e` | `1` | — | `c_lin_e` | — |
+| `icon:e_bln_c_s` | `1` | — | `e_bln_c_s` | — |
+| `icon:geofac_div` | `m-1` | — | `geofac_div` | — |
+| `icon:geofac_rot` | `m-1` | — | `geofac_rot` | — |
+| `icon:geofac_n2s` | `m-2` | — | `geofac_n2s` | — |
+| `icon:geofac_grdiv` | `m-2` | — | `geofac_grdiv` | — |
+| `icon:geofac_grg_x` | `m-1` | — | `geofac_grg_x` | — |
+| `icon:geofac_grg_y` | `m-1` | — | `geofac_grg_y` | — |
+| `icon:nudgecoeff_e` | `1` | — | `nudgecoeff_e` | — |
+| `icon:rbf_vec_coeff_v1` | `1` | — | `rbf_vec_coeff_v1` | — |
+| `icon:rbf_vec_coeff_v2` | `1` | — | `rbf_vec_coeff_v2` | — |
+| `icon:rbf_vec_coeff_e` | `1` | — | `rbf_vec_coeff_e` | — |
+| `icon:c_intp` | `1` | — | `c_intp` | — |
+| `icon:pos_on_tplane_e_x` | `m` | — | `pos_on_tplane_e_x` | — |
+| `icon:pos_on_tplane_e_y` | `m` | — | `pos_on_tplane_e_y` | — |
+| `icon:e_flx_avg` | `1` | — | `e_flx_avg` | — |

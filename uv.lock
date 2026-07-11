@@ -5316,6 +5316,8 @@ dependencies = [
     { name = "array-api-compat" },
     { name = "icon4py-atmosphere-microphysics" },
     { name = "icon4py-common" },
+    { name = "netcdf4", version = "1.7.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
+    { name = "netcdf4", version = "1.7.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or platform_machine != 'ARM64' or sys_platform != 'win32'" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "symcon-core" },
@@ -5340,6 +5342,7 @@ requires-dist = [
     { name = "icon4py-common", specifier = ">=0.2.0" },
     { name = "icon4py-standalone-driver", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
     { name = "icon4py-testing", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "netcdf4", specifier = ">=1.6" },
     { name = "numpy", specifier = ">=1.23.3" },
     { name = "symcon-core", editable = "packages/symcon-core" },
 ]

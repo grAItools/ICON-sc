@@ -103,6 +103,65 @@ _ROWS: Final[tuple[tuple[str, str, str | None, str | None], ...]] = (
     ("icon:snow_gsp_rate", "kg m-2 s-1", None, "snow_gsp_rate"),
     ("icon:ice_gsp_rate", "kg m-2 s-1", None, "ice_gsp_rate"),
     ("icon:graupel_gsp_rate", "kg m-2 s-1", None, "graupel_gsp_rate"),
+    # --- S11 static state: metrics factory outputs (ICON t_nh_metrics; icon4py --------
+    # metrics_attributes.py — REFERENCES.lock icon4py-metrics-interp-factories).
+    # Unit policy: icon4py/ICON declare no units for these solver-internal
+    # coefficients; symcon records "1" for weight/mask-like fields, "m"/"m-1"/"m-2"
+    # where the defining formula fixes a length dimension (documented per row).
+    ("icon:inv_ddqz_z_full", "m-1", None, "inv_ddqz_z_full"),  # 1/ddqz_z_full [m]
+    ("icon:ddqz_z_full_e", "m", None, "ddqz_z_full_e"),  # layer thickness at edges
+    ("icon:scalfac_dd3d", "1", None, "scalfac_dd3d"),  # 3d-divdamp vertical scaling
+    ("icon:rayleigh_w", "1", None, "rayleigh_w"),  # Klemp-damping profile (x 1/tau0)
+    ("icon:coeff1_dwdz", "m-1", None, "coeff1_dwdz"),  # 2nd-order dw/dz weights
+    ("icon:coeff2_dwdz", "m-1", None, "coeff2_dwdz"),
+    ("icon:theta_ref_ic", "K", None, "theta_ref_ic"),
+    ("icon:theta_ref_me", "K", None, "theta_ref_me"),
+    ("icon:rho_ref_me", "kg m-3", None, "rho_ref_me"),
+    ("icon:d_exner_dz_ref_ic", "m-1", None, "d_exner_dz_ref_ic"),  # d(exner[1])/dz
+    ("icon:d2dexdz2_fac1_mc", "m-1", None, "d2dexdz2_fac1_mc"),  # d/dz factors of
+    ("icon:d2dexdz2_fac2_mc", "m-2", None, "d2dexdz2_fac2_mc"),  # d(exner)/dz/theta
+    ("icon:ddxn_z_full", "1", None, "ddxn_z_full"),  # terrain slope (normal) dz/dn
+    ("icon:ddxt_z_full", "1", None, "ddxt_z_full"),  # terrain slope (tangential)
+    ("icon:vwind_impl_wgt", "1", None, "vwind_impl_wgt"),
+    ("icon:vwind_expl_wgt", "1", None, "vwind_expl_wgt"),
+    ("icon:exner_exfac", "1", None, "exner_exfac"),
+    ("icon:wgtfac_c", "1", None, "wgtfac_c"),  # full->half interpolation weights
+    ("icon:wgtfac_e", "1", None, "wgtfac_e"),
+    ("icon:wgtfacq_c", "1", None, "wgtfacq_c"),  # quadratic surface extrapolation
+    ("icon:wgtfacq_e", "1", None, "wgtfacq_e"),
+    ("icon:pg_exdist", "m", None, "pg_exdist"),  # pressure-gradient extrap. distance
+    ("icon:mask_prog_halo_c", "1", None, "mask_prog_halo_c"),  # bool mask
+    ("icon:hmask_dd3d", "1", None, "hmask_dd3d"),
+    ("icon:zdiff_gradp", "m", None, "zdiff_gradp"),  # height distance to neighbor
+    ("icon:vertoffset_gradp", "1", None, "vertoffset_gradp"),  # int level offsets
+    ("icon:nflat_gradp", "1", None, "nflat_gradp"),  # scalar level index
+    ("icon:coeff_gradekin", "m-1", None, "coeff_gradekin"),  # 1/dual_edge_length x ±1
+    ("icon:zd_diffcoef", "1", None, "zd_diffcoef"),  # terrain-diffusion coefficient
+    ("icon:zd_intcoef", "1", None, "zd_intcoef"),
+    ("icon:zd_vertoffset", "1", None, "zd_vertoffset"),  # int level offsets
+    # --- S11 static state: interpolation factory outputs (ICON t_int_state; icon4py --
+    # interpolation_attributes.py). geofac_* carry the 1/length(s) of their stencils.
+    ("icon:c_lin_e", "1", None, "c_lin_e"),
+    ("icon:e_bln_c_s", "1", None, "e_bln_c_s"),
+    ("icon:geofac_div", "m-1", None, "geofac_div"),  # edge_length/cell_area
+    ("icon:geofac_rot", "m-1", None, "geofac_rot"),  # dual_edge_length/dual_area
+    ("icon:geofac_n2s", "m-2", None, "geofac_n2s"),  # nabla2-scalar stencil
+    ("icon:geofac_grdiv", "m-2", None, "geofac_grdiv"),  # gradient-of-divergence
+    # Green-Gauss gradient factors: ICON stores one array geofac_grg(:,:,:,1:2);
+    # the registry needs unique short names, hence the _x/_y suffixes (icon4py's
+    # savepoint/factory split them the same way).
+    ("icon:geofac_grg_x", "m-1", None, "geofac_grg_x"),
+    ("icon:geofac_grg_y", "m-1", None, "geofac_grg_y"),
+    ("icon:nudgecoeff_e", "1", None, "nudgecoeff_e"),
+    ("icon:rbf_vec_coeff_v1", "1", None, "rbf_vec_coeff_v1"),
+    ("icon:rbf_vec_coeff_v2", "1", None, "rbf_vec_coeff_v2"),
+    ("icon:rbf_vec_coeff_e", "1", None, "rbf_vec_coeff_e"),
+    ("icon:c_intp", "1", None, "c_intp"),
+    # Tangent-plane neighbor-cell positions: ICON pos_on_tplane_e(:,:,:,1:2), split
+    # into _x/_y slabs like icon4py's savepoints (unique short names required).
+    ("icon:pos_on_tplane_e_x", "m", None, "pos_on_tplane_e_x"),
+    ("icon:pos_on_tplane_e_y", "m", None, "pos_on_tplane_e_y"),
+    ("icon:e_flx_avg", "1", None, "e_flx_avg"),
 )
 
 
