@@ -35,3 +35,6 @@ references/*
 # native-driver build cache never lands in-repo, but belt and braces
 *.sdfg
 *.so
+
+# L8 gradient-decay plots (S10) are artifacts, never data in git
+validation/L8_gradients/artifacts/
