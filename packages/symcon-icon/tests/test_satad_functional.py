@@ -29,7 +29,7 @@ from symcon.icon.testing import moist_test_column  # noqa: E402
 _DT = timedelta(seconds=30)
 _NLEV = 65
 
-#: acceptance-3 contract: |⟨Jv,w⟩−⟨v,Jᵀw⟩| / (|⟨Jv,w⟩|+ε) ≤ 1e-10 fp64.
+#: acceptance-3 contract: |⟨Jv,w⟩-⟨v,Jᵀw⟩| / (|⟨Jv,w⟩|+ε) ≤ 1e-10 fp64.
 DOT_PRODUCT_TOL = 1.0e-10
 #: acceptance-2 contract: Taylor slope 2.0 ± 0.1 over 6 halvings.
 TAYLOR_SLOPE = 2.0

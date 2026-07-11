@@ -74,7 +74,7 @@ def test_build_state_tree_skips_time_and_unwraps() -> None:
             location="cell",
         ),
     }
-    cls, tree = build_state_tree(state, {"fstep": np.asarray(0.0)})
+    _, tree = build_state_tree(state, {"fstep": np.asarray(0.0)})
     values = mapping_of(tree)
     assert set(values) == {"eastward_wind", "fstep"}
     assert isinstance(values["eastward_wind"], jax.Array)

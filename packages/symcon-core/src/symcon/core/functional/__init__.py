@@ -1,4 +1,4 @@
-"""The §8.5–8.6 functional lowering (F-tier), proven at column scale (SPEC S10).
+"""The §8.5-8.6 functional lowering (F-tier), proven at column scale (SPEC S10).
 
 Layout (architecture §8.5; jax-touching core code lives here and nowhere else in
 ``symcon.core`` — importing :mod:`symcon.core` itself never imports jax):

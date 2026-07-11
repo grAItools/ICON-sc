@@ -72,7 +72,7 @@ def _plot(name: str, result: TaylorResult) -> None:
 
     ARTIFACTS.mkdir(exist_ok=True)
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.loglog(result.steps, result.remainders, "o-", label="‖f(x+hv) − f(x) − h·Jv‖")
+    ax.loglog(result.steps, result.remainders, "o-", label="‖f(x+hv) - f(x) - h·Jv‖")
     href = np.asarray(result.steps)
     ax.loglog(
         href,

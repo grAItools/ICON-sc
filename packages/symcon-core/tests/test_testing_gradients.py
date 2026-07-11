@@ -38,9 +38,9 @@ def test_taylor_detects_a_wrong_tangent() -> None:
         return _f(x)
 
     @broken.defjvp
-    def _broken_jvp(primals: tuple[jax.Array], tangents: tuple[jax.Array]) -> tuple[
-        jax.Array, jax.Array
-    ]:
+    def _broken_jvp(
+        primals: tuple[jax.Array], tangents: tuple[jax.Array]
+    ) -> tuple[jax.Array, jax.Array]:
         (x,), (dx,) = primals, tangents
         return _f(x), 1.1 * (jnp.cos(x) * jnp.exp(-0.3 * x**2) - 0.6 * x * _f(x)) * dx
 

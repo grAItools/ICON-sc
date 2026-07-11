@@ -156,6 +156,4 @@ class ApplySlowTendencies(Stepper):
     ) -> dict[str, Any]:
         """Pure forward-Euler application of the bus slot (§8.6 ``native``; S10)."""
         del params
-        return {
-            "air_temperature": inputs["air_temperature"] + inputs[SLOW_TEMPERATURE_SLOT] * dt
-        }
+        return {"air_temperature": inputs["air_temperature"] + inputs[SLOW_TEMPERATURE_SLOT] * dt}

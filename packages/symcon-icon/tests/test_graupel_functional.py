@@ -20,6 +20,7 @@ jax = pytest.importorskip("jax")
 jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
+from _functional_columns import PROGNOSTICS, RATES, hydrometeor_column  # noqa: E402
 
 from symcon.core import ComputeContext  # noqa: E402
 from symcon.core.testing import assert_allclose  # noqa: E402
@@ -27,8 +28,6 @@ from symcon.core.testing.gradients import dot_product_test, taylor_test  # noqa:
 from symcon.icon.components.fast.graupel_constants import GRAUPEL_QMIN  # noqa: E402
 from symcon.icon.components.fast.microphysics import Graupel, Microphysics  # noqa: E402
 from symcon.icon.grid.vertical import SleveConfig, VerticalGrid  # noqa: E402
-
-from _functional_columns import PROGNOSTICS, RATES, hydrometeor_column  # noqa: E402
 
 _DT = timedelta(seconds=30)
 _NLEV = 65
@@ -93,9 +92,7 @@ def test_no_hydrometeors_is_a_fixed_point_with_zero_rates(graupel: Graupel) -> N
     for name in PROGNOSTICS[1:]:
         state[name].data[:] = 0.0
     inputs = _inputs(graupel, state)
-    out = graupel.functional_call(
-        inputs, dict(graupel.functional_params()), dt=_DT.total_seconds()
-    )
+    out = graupel.functional_call(inputs, dict(graupel.functional_params()), dt=_DT.total_seconds())
     for name in PROGNOSTICS:
         np.testing.assert_array_equal(np.asarray(out[name]), inputs[name])
     for name in RATES:
@@ -106,9 +103,7 @@ def test_moist_domain_masking(graupel: Graupel) -> None:
     k0 = int(graupel._i4_vertical.kstart_moist)
     assert k0 > 0
     inputs = _inputs(graupel, hydrometeor_column(_NLEV, 2))
-    out = graupel.functional_call(
-        inputs, dict(graupel.functional_params()), dt=_DT.total_seconds()
-    )
+    out = graupel.functional_call(inputs, dict(graupel.functional_params()), dt=_DT.total_seconds())
     for name in PROGNOSTICS:
         np.testing.assert_array_equal(np.asarray(out[name])[:, :k0], inputs[name][:, :k0])
 

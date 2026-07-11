@@ -23,7 +23,7 @@ admissible under the tendency-summing operator families.
 Differentiability: ``differentiable: "custom"`` (architecture §8.6) — since S10
 the granule is paired with a functional core co-located in this module
 (:func:`_satad_functional`, invoked through ``functional_call``): the saturation
-fixed point ``f(T*) = T* - T + (L(T)/cvd)·(qsat_rho(T*, ρ) - qv) = 0`` is solved
+fixed point ``f(T*) = T* - T + (L(T)/cvd)·(qsat_rho(T*, rho) - qv) = 0`` is solved
 by the granule's own masked Newton iteration (same per-point freeze/convergence
 semantics, bounded ``while_loop``) wrapped in the
 :func:`symcon.core.functional.rules.implicit_fixed_point` ``lax.custom_root``
@@ -340,9 +340,7 @@ def _satad_functional(
 
     t_new = jnp.where(subsaturated, t_all_evaporated, t_star)
     t_tendency = (t_new - temperature) / dt
-    qv_tendency = jnp.where(
-        subsaturated, qc / dt, (qsat_rho(t_star) - qv) / dt
-    )
+    qv_tendency = jnp.where(subsaturated, qc / dt, (qsat_rho(t_star) - qv) / dt)
     qc_tendency = jnp.where(
         subsaturated,
         -qc / dt,

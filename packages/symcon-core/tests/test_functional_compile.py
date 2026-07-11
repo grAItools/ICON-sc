@@ -127,9 +127,7 @@ class ToyDecay(Stepper):
     ) -> None:
         assert timestep is not None
         x = cast(Any, inputs["eastward_wind"])
-        cast(Any, outputs["eastward_wind"])[...] = (
-            x - timestep.total_seconds() * self.rate * x**3
-        )
+        cast(Any, outputs["eastward_wind"])[...] = x - timestep.total_seconds() * self.rate * x**3
 
     def functional_call(
         self, inputs: Mapping[str, Any], params: Mapping[str, Any], *, dt: float
@@ -230,8 +228,9 @@ def test_t0_equivalence_including_cadence_replay() -> None:
         np.asarray(values[_SLOT]), reference[_SLOT], rtol=1e-13, names=("F-tier slot", "T0 slot")
     )
     assert float(values["fstep"]) == n_steps
-    assert any(prov.startswith("cadence:") and "every 3 step(s)" in prov for prov in
-               program.provenance)
+    assert any(
+        prov.startswith("cadence:") and "every 3 step(s)" in prov for prov in program.provenance
+    )
 
 
 def test_scan_window_matches_step_loop_and_collects_ys() -> None:
@@ -241,8 +240,9 @@ def test_scan_window_matches_step_loop_and_collects_ys() -> None:
     for _ in range(n_steps):
         looped = program.step_fn(looped, program.params, program.static)
 
-    window = scan_window(program.step_fn, n_steps, remat="per_step",
-                         ys_of=lambda s: jnp.sum(s.eastward_wind))
+    window = scan_window(
+        program.step_fn, n_steps, remat="per_step", ys_of=lambda s: jnp.sum(s.eastward_wind)
+    )
     final, ys = window(program.state, program.params, program.static)
     assert ys.shape == (n_steps,)
     assert_allclose(

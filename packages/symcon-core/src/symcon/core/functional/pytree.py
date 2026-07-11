@@ -61,8 +61,7 @@ def make_pytree_type(type_name: str, leaf_names: Sequence[str]) -> type:
     if len(set(attrs)) != len(attrs):
         dupes = sorted({a for a in attrs if attrs.count(a) > 1})
         raise ValueError(
-            f"{type_name}: sanitized leaf names collide on {dupes!r}; "
-            f"rename the offending fields."
+            f"{type_name}: sanitized leaf names collide on {dupes!r}; rename the offending fields."
         )
     cls = dataclasses.make_dataclass(
         type_name,
@@ -88,7 +87,7 @@ def tree_of(cls: type, values: Mapping[str, Any]) -> Any:
 
 def mapping_of(tree: Any) -> dict[str, Any]:
     """The canonical-name → leaf mapping of a generated PyTree instance."""
-    pairs: tuple[tuple[str, str], ...] = type(tree).__symcon_leaves__  # type: ignore[attr-defined]
+    pairs: tuple[tuple[str, str], ...] = type(tree).__symcon_leaves__
     return {name: getattr(tree, attr) for name, attr in pairs}
 
 

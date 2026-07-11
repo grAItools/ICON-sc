@@ -34,7 +34,7 @@ line-by-line port of the granule's scan/flux programs (REFERENCES.lock
 ``icon4py-graupel-stencils``) sharing this scheme's constants module
 (``graupel_constants.py``) so the two implementations cannot drift (§11.8).
 Tunable scheme constants are exposed as the §8.6 ``params`` declaration
-(``functional_params``): the Seifert–Beheng autoconversion/accretion kernel
+(``functional_params``): the Seifert-Beheng autoconversion/accretion kernel
 coefficients and the ICON tuning-namelist knobs of :class:`GraupelConfig`;
 coefficients the granule precomputes from them (``math.gamma`` expressions) are
 re-derived *in-trace* via ``gammaln`` so ParamTree gradients flow through them.
@@ -251,7 +251,7 @@ class Graupel(Microphysics):
             "dims": _COLUMN_DIMS,
             "units": "1",
             "differentiable": "native",
-            # §8.6 params declaration: the Seifert–Beheng autoconversion/accretion
+            # §8.6 params declaration: the Seifert-Beheng autoconversion/accretion
             # kernel coefficients steer the cloud→rain path (values via
             # functional_params(); the S10 gradient example differentiates kcau).
             "params": ("kcau", "kcac"),
@@ -459,7 +459,7 @@ class Graupel(Microphysics):
     def functional_params(self) -> dict[str, float]:
         """Tunable scheme constants exposed to the ParamTree (§8.6 ``params``).
 
-        The Seifert–Beheng kernel coefficients (scheme constants, single source
+        The Seifert-Beheng kernel coefficients (scheme constants, single source
         ``graupel_constants.py``) plus the ICON tuning-namelist knobs carried by
         :class:`GraupelConfig`; every granule coefficient derived from these is
         re-derived in-trace by the functional core, so their gradients are real.
@@ -962,11 +962,7 @@ def _graupel_functional(
             )
         elif autoconv == 1:  # Seifert & Beheng (2001)
             sb_const = (
-                kcau
-                / (20.0 * C.XSTAR)
-                * (C.CNUE + 2.0)
-                * (C.CNUE + 4.0)
-                / (C.CNUE + 1.0) ** 2.0
+                kcau / (20.0 * C.XSTAR) * (C.CNUE + 2.0) * (C.CNUE + 4.0) / (C.CNUE + 1.0) ** 2.0
             )
             active = warm_cloud & (qc_k > 1.0e-6)
             tau = jnp.minimum(1.0 - wdiv(qc_k, qc_k + qr_k, active), 0.9)
@@ -996,17 +992,13 @@ def _graupel_functional(
         srfrz_clouds = jnp.where(
             warm_cloud & rain & (t_k < C.THRESHOLD_FREEZE_TEMPERATURE) & (qr_k > 0.1 * qc_k),
             C.COEFF_RAIN_FREEZE1
-            * (
-                jnp.exp(C.COEFF_RAIN_FREEZE2 * (C.THRESHOLD_FREEZE_TEMPERATURE - t_k)) - 1.0
-            )
+            * (jnp.exp(C.COEFF_RAIN_FREEZE2 * (C.THRESHOLD_FREEZE_TEMPERATURE - t_k)) - 1.0)
             * celn7o4qrk,
             jnp.where(cold_cloud, csrmax, 0.0),
         )
 
         # riming in clouds
-        srim0 = jnp.where(
-            warm_cloud & snow, crim * qc_k * jnp.exp(C.CCSAXP * jnp.log(cslam)), 0.0
-        )
+        srim0 = jnp.where(warm_cloud & snow, crim * qc_k * jnp.exp(C.CCSAXP * jnp.log(cslam)), 0.0)
         grim0 = jnp.where(warm_cloud, C.CRIM_G * qc_k * celnrimexp_g, 0.0)
         melting_c = t_k >= TMELT
         shed = jnp.where(warm_cloud & melting_c, srim0 + grim0, 0.0)
@@ -1021,9 +1013,7 @@ def _graupel_functional(
         cqcgk_1 = qi_kup + qs_kup + qg_kup
         dist_cldtop = jnp.where(
             cloud & interior,
-            jnp.where(
-                (qv_kup + qc_kup < qvsw_kup) & (cqcgk_1 < qmin), 0.0, dist_cldtop_kup + dz_k
-            ),
+            jnp.where((qv_kup + qc_kup < qvsw_kup) & (cqcgk_1 < qmin), 0.0, dist_cldtop_kup + dz_k),
             dist_cldtop_kup,
         )
         cnin2 = jnp.minimum(5.0 * jnp.exp(0.304 * (TMELT - t_k)), C.NIMAX_THOM)
@@ -1031,8 +1021,7 @@ def _graupel_functional(
         reduce_dep = jnp.where(
             cloud & interior,
             jnp.minimum(
-                cfnuc
-                + (1.0 - cfnuc) * (C.REDUCE_DEP_REF + dist_cldtop / C.DIST_CLDTOP_REF),
+                cfnuc + (1.0 - cfnuc) * (C.REDUCE_DEP_REF + dist_cldtop / C.DIST_CLDTOP_REF),
                 1.0,
             ),
             1.0,
@@ -1046,15 +1035,11 @@ def _graupel_functional(
         lnlogmi = jnp.log(cmi)
         qvsidiff = qv_k - qvsi
         svmax = qvsidiff / dt
-        saggs = jnp.where(
-            cold_ice, eff * qi_k * cagg * jnp.exp(C.CCSAXP * jnp.log(cslam)), 0.0
-        )
+        saggs = jnp.where(cold_ice, eff * qi_k * cagg * jnp.exp(C.CCSAXP * jnp.log(cslam)), 0.0)
         saggg = jnp.where(cold_ice, eff * qi_k * C.CAGG_G * celnrimexp_g, 0.0)
         siau = jnp.where(cold_ice, eff * C.CIAU * jnp.maximum(qi_k - C.QI0, 0.0), 0.0)
         sicri = jnp.where(cold_ice, C.CICRI * qi_k * celn7o8qrk, 0.0)
-        srcri = jnp.where(
-            cold_ice & (qs_k > 1.0e-7), C.CRCRI * (qi_k / cmi) * celn13o8qrk, 0.0
-        )
+        srcri = jnp.where(cold_ice & (qs_k > 1.0e-7), C.CRCRI * (qi_k / cmi) * celn13o8qrk, 0.0)
         icetotaldep = cidep * nid * jnp.exp(0.33 * lnlogmi) * qvsidiff
         sidep = jnp.where(cold_ice, icetotaldep, 0.0)
         simax = rhoqi_inter / rho_k / dt
@@ -1063,9 +1048,7 @@ def _graupel_functional(
             cold_ice & (icetotaldep > 0.0), jnp.minimum(reduced_dep_rate, svmax), 0.0
         )
         snet_sub0 = jnp.maximum(icetotaldep, svmax)
-        snet_sub = jnp.where(
-            cold_ice & (icetotaldep < 0.0), -jnp.maximum(snet_sub0, -simax), 0.0
-        )
+        snet_sub = jnp.where(cold_ice & (icetotaldep < 0.0), -jnp.maximum(snet_sub0, -simax), 0.0)
         lnlogmi2 = jnp.log(C.MSMIN / cmi)
         ztau = 1.5 * (jnp.exp(0.66 * lnlogmi2) - 1.0)
         sdau = jnp.where(cold_ice, snet_dep / ztau, 0.0)
@@ -1076,16 +1059,12 @@ def _graupel_functional(
         xfac = 1.0 + cbsdep * jnp.exp(C.CCSDXP * jnp.log(cslam))
         ssdep_c = csdep * xfac * qvsidiff / (cslam + C_EPS) ** 2.0
         ssdep_c = jnp.where(ssdep_c > 0.0, ssdep_c * reduce_dep, ssdep_c)
-        ssdep_c = jnp.where(
-            ssdep_c > 0.0, jnp.minimum(ssdep_c, svmax - snet_dep), ssdep_c
-        )
+        ssdep_c = jnp.where(ssdep_c > 0.0, jnp.minimum(ssdep_c, svmax - snet_dep), ssdep_c)
         ssdep_c = jnp.where(qs_k <= 1.0e-7, jnp.minimum(ssdep_c, 0.0), ssdep_c)
         ssdep_c = jnp.where(cold_frozen, ssdep_c, 0.0)
         sgdep_c = jnp.where(
             cold_frozen,
-            (0.398561 - 0.00152398 * t_k + 2554.99 / p_k + 2.6531e-7 * p_k)
-            * qvsidiff
-            * celn6qgk,
+            (0.398561 - 0.00152398 * t_k + 2554.99 / p_k + 2.6531e-7 * p_k) * qvsidiff * celn6qgk,
             0.0,
         )
 
@@ -1107,29 +1086,19 @@ def _graupel_functional(
         sgmelt_neg = jnp.maximum(sgmelt0 + sgdep_m_neg, 0.0)
         # T below the melting-critical temperature: evaporation only
         qvswdiff = qv_k - qvsw
-        ssdep_m_cold = jnp.maximum(
-            -cssmax, (0.28003 - p_k * 0.146293e-6) * qvswdiff * celn8qsk
-        )
-        sgdep_m_cold = jnp.maximum(
-            -csgmax, (0.0418521 - p_k * 4.7524e-8) * qvswdiff * celn6qgk
-        )
+        ssdep_m_cold = jnp.maximum(-cssmax, (0.28003 - p_k * 0.146293e-6) * qvswdiff * celn8qsk)
+        sgdep_m_cold = jnp.maximum(-csgmax, (0.0418521 - p_k * 4.7524e-8) * qvswdiff * celn6qgk)
         ssmelt = jnp.where(melt_active, jnp.where(subsat0, ssmelt_neg, ssmelt0), 0.0)
         sgmelt = jnp.where(melt_active, jnp.where(subsat0, sgmelt_neg, sgmelt0), 0.0)
-        sconr = jnp.where(
-            melt_active & ~subsat0, ssdep_m0 + sgdep_m0, 0.0
-        )
+        sconr = jnp.where(melt_active & ~subsat0, ssdep_m0 + sgdep_m0, 0.0)
         ssdep_m = jnp.where(
             warm_frozen,
-            jnp.where(
-                melt_active, jnp.where(subsat0, ssdep_m_neg, 0.0), ssdep_m_cold
-            ),
+            jnp.where(melt_active, jnp.where(subsat0, ssdep_m_neg, 0.0), ssdep_m_cold),
             0.0,
         )
         sgdep_m = jnp.where(
             warm_frozen,
-            jnp.where(
-                melt_active, jnp.where(subsat0, sgdep_m_neg, 0.0), sgdep_m_cold
-            ),
+            jnp.where(melt_active, jnp.where(subsat0, sgdep_m_neg, 0.0), sgdep_m_cold),
             0.0,
         )
 
@@ -1152,9 +1121,7 @@ def _graupel_functional(
             & (t_k > C.HOMOGENEOUS_FREEZE_TEMPERATURE)
             & (t_k < C.THRESHOLD_FREEZE_TEMPERATURE),
             C.COEFF_RAIN_FREEZE1
-            * (
-                jnp.exp(C.COEFF_RAIN_FREEZE2 * (C.THRESHOLD_FREEZE_TEMPERATURE - t_k)) - 1.0
-            )
+            * (jnp.exp(C.COEFF_RAIN_FREEZE2 * (C.THRESHOLD_FREEZE_TEMPERATURE - t_k)) - 1.0)
             * celn7o4qrk,
             jnp.where(evap & (t_k <= C.HOMOGENEOUS_FREEZE_TEMPERATURE), csrmax, srfrz_clouds),
         )
@@ -1182,12 +1149,8 @@ def _graupel_functional(
         saggs = jnp.where(cold_frozen, ccorr * saggs, saggs)
         saggg = jnp.where(cold_frozen, ccorr * saggg, saggg)
         sicri = jnp.where(cold_frozen, ccorr * sicri, sicri)
-        ssdep = jnp.where(
-            cold_frozen & (qvsidiff < 0.0), jnp.maximum(ssdep, -cssmax), ssdep
-        )
-        sgdep = jnp.where(
-            cold_frozen & (qvsidiff < 0.0), jnp.maximum(sgdep, -csgmax), sgdep
-        )
+        ssdep = jnp.where(cold_frozen & (qvsidiff < 0.0), jnp.maximum(ssdep, -cssmax), ssdep)
+        sgdep = jnp.where(cold_frozen & (qvsidiff < 0.0), jnp.maximum(sgdep, -csgmax), sgdep)
 
         csum = sev + srfrz + srcri
         denom = jnp.maximum(csrmax, csum)
@@ -1213,18 +1176,10 @@ def _graupel_functional(
         cqgt = saggg - sgmelt + sicri + srcri + sgdep + srfrz + grim + sconv
 
         t_tend = C.RCVD * (lhv * (cqct + cqrt) + lhs * (cqit + cqst + cqgt))
-        qi_tend = jnp.maximum(
-            (rhoqi_inter / rho_k * cimi - qi_k) / dt + cqit * cimi, -qi_k / dt
-        )
-        qr_tend = jnp.maximum(
-            (rhoqr_inter / rho_k * cimr - qr_k) / dt + cqrt * cimr, -qr_k / dt
-        )
-        qs_tend = jnp.maximum(
-            (rhoqs_inter / rho_k * cims - qs_k) / dt + cqst * cims, -qs_k / dt
-        )
-        qg_tend = jnp.maximum(
-            (rhoqg_inter / rho_k * cimg - qg_k) / dt + cqgt * cimg, -qg_k / dt
-        )
+        qi_tend = jnp.maximum((rhoqi_inter / rho_k * cimi - qi_k) / dt + cqit * cimi, -qi_k / dt)
+        qr_tend = jnp.maximum((rhoqr_inter / rho_k * cimr - qr_k) / dt + cqrt * cimr, -qr_k / dt)
+        qs_tend = jnp.maximum((rhoqs_inter / rho_k * cims - qs_k) / dt + cqst * cims, -qs_k / dt)
+        qg_tend = jnp.maximum((rhoqg_inter / rho_k * cimg - qg_k) / dt + cqgt * cimg, -qg_k / dt)
         qc_tend = jnp.maximum(cqct, -qc_k / dt)
         qv_tend = jnp.maximum(cqvt, -qv_k / dt)
 
@@ -1329,9 +1284,7 @@ def _graupel_functional(
     # icon_graupel_flux_at_ground (K domain [ground_level, nlev)): the surface
     # precipitation rate is the ground-level value of the flux field.
     def ground_rate(q: Any, q_tend: Any, rhoqv_old: Any, vnew: Any) -> Any:
-        return 0.5 * (
-            (q[:, -1] + q_tend[:, -1] * dt) * rho[:, -1] * vnew[:, -1] + rhoqv_old[:, -1]
-        )
+        return 0.5 * ((q[:, -1] + q_tend[:, -1] * dt) * rho[:, -1] * vnew[:, -1] + rhoqv_old[:, -1])
 
     return {
         "air_temperature": temperature + t_tend * dt,

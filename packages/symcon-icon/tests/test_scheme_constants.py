@@ -121,8 +121,8 @@ def test_snow_intercept_moment_tables_bitwise(index: int) -> None:
 
 
 def test_graupel_physics_constants_bitwise() -> None:
-    assert g.WATER_DENSITY == float(P.water_density.value)
-    assert g.CPI == float(P.cpi.value)
+    assert float(P.water_density.value) == g.WATER_DENSITY
+    assert float(P.cpi.value) == g.CPI
 
 
 @pytest.mark.parametrize(
@@ -142,9 +142,9 @@ def test_satad_constants_bitwise(symcon_value: float, icon4py_member: str) -> No
 def test_satad_closure_constants_match_physics_constants() -> None:
     # The Kirchhoff/qsat closures draw ALV/CLW/CVD/RV/TMELT from _constants;
     # those must equal the granule's PhysicsConstants members bitwise.
-    assert ALV == float(P.lh_vaporise.value)
-    assert CLW == float(P.cpl.value)
-    assert CVD == float(P.cvd.value)
-    assert RV == float(P.rv.value)
-    assert TMELT == float(P.tmelt.value)
-    assert RHOH2O == float(P.water_density.value)
+    assert float(P.lh_vaporise.value) == ALV
+    assert float(P.cpl.value) == CLW
+    assert float(P.cvd.value) == CVD
+    assert float(P.rv.value) == RV
+    assert float(P.tmelt.value) == TMELT
+    assert float(P.water_density.value) == RHOH2O

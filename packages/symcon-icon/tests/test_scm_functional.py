@@ -29,6 +29,7 @@ jax = pytest.importorskip("jax")
 jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
+from _functional_columns import PROGNOSTICS, RATES  # noqa: E402
 
 from symcon.core import SequentialUpdateSplitting  # noqa: E402
 from symcon.core.functional import (  # noqa: E402
@@ -43,8 +44,6 @@ from symcon.icon.components.fast.graupel_constants import GRAUPEL_QMIN  # noqa: 
 from symcon.icon.components.fast.satad import SaturationAdjustment  # noqa: E402
 from symcon.icon.components.idealized import SLOW_TEMPERATURE_SLOT  # noqa: E402
 from symcon.icon.presets import SCMConfig, build_scm  # noqa: E402
-
-from _functional_columns import PROGNOSTICS, RATES  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE_PATH = REPO_ROOT / "examples" / "07_gradient_scm.py"

@@ -3,7 +3,7 @@
 Generic over PyTrees and reused beyond S10 (P6): ``taylor_test`` measures the
 first-order Taylor-remainder decay of ``jax.jvp`` (correct tangents ⇒ slope 2 in
 ``h``), ``dot_product_test`` measures adjoint consistency
-``|⟨Jv,w⟩−⟨v,Jᵀw⟩| / (|⟨Jv,w⟩|+ε)`` between ``jax.jvp`` and ``jax.vjp``.
+``|⟨Jv,w⟩-⟨v,Jᵀw⟩| / (|⟨Jv,w⟩|+ε)`` between ``jax.jvp`` and ``jax.vjp``.
 
 Lives outside :mod:`symcon.core.testing`'s ``__init__`` on purpose: importing
 the package stays numpy-only; this module imports jax (fp64 expected — enable
@@ -50,9 +50,9 @@ class TaylorResult:
     slope: float
     #: The step sizes tried, largest first.
     steps: tuple[float, ...]
-    #: ‖f(x+hv) − f(x) − h·Jv‖ per step.
+    #: ‖f(x+hv) - f(x) - h·Jv‖ per step.
     remainders: tuple[float, ...]
-    #: ‖f(x+hv) − f(x)‖ per step (the slope-1 control: perturbations register).
+    #: ‖f(x+hv) - f(x)‖ per step (the slope-1 control: perturbations register).
     increments: tuple[float, ...]
 
 
@@ -66,7 +66,7 @@ def taylor_test(
 ) -> TaylorResult:
     """First-order Taylor-remainder test of ``jax.jvp`` at ``x`` along ``v`` (L8).
 
-    ``r(h) = ‖f(x + h·v) − f(x) − h·Jv‖`` decays with slope 2 in ``h`` iff the
+    ``r(h) = ‖f(x + h·v) - f(x) - h·Jv‖`` decays with slope 2 in ``h`` iff the
     tangent ``Jv`` is exact (the slope-1 term cancels). The SPEC contract is
     slope ``2.0 ± 0.1`` over 6 halvings; choose ``h0`` so the smallest remainder
     stays above the fp64 noise floor.
@@ -102,7 +102,7 @@ def dot_product_test(
     *,
     eps: float = 1e-300,
 ) -> float:
-    """Adjoint-consistency (dot-product) test: ``|⟨Jv,w⟩−⟨v,Jᵀw⟩|/(|⟨Jv,w⟩|+ε)`` (L8).
+    """Adjoint-consistency (dot-product) test: ``|⟨Jv,w⟩-⟨v,Jᵀw⟩|/(|⟨Jv,w⟩|+ε)`` (L8).
 
     ``v`` has the structure of ``x`` (input tangent), ``w`` the structure of
     ``f(x)`` (output cotangent). fp64 contract: ≤ 1e-10 per SPEC S10.

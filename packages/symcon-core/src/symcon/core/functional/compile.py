@@ -248,7 +248,9 @@ class _FunctionalCompiler:
             f"phase {'unset' if last is None else last_fire}"
         )
 
-        def op(env: MutableMapping[str, Any], params: Mapping[str, Any], static: StaticArgs) -> None:
+        def op(
+            env: MutableMapping[str, Any], params: Mapping[str, Any], static: StaticArgs
+        ) -> None:
             import jax.numpy as jnp
 
             step = env[_STEP_LEAF]
@@ -379,7 +381,9 @@ class _FunctionalCompiler:
                 if spec_name not in self._state and spec_name not in self.seeded:
                     self.seeded[spec_name] = self._zeros(spec, component)
 
-        def op(env: MutableMapping[str, Any], params: Mapping[str, Any], static: StaticArgs) -> None:
+        def op(
+            env: MutableMapping[str, Any], params: Mapping[str, Any], static: StaticArgs
+        ) -> None:
             import jax.numpy as jnp
 
             try:
@@ -452,7 +456,7 @@ def functional_compile(
         raise ValueError(f"policy must be one of {_POLICIES!r}, got {policy!r}.")
     if timestep <= timedelta(0):
         raise ValueError(f"timestep must be positive, got {timestep!r}.")
-    if not jax.config.jax_enable_x64:
+    if not getattr(jax.config, "jax_enable_x64", False):
         warnings.warn(
             "functional_compile: jax is running in fp32; fp64 is the default "
             "for gradient work (§8.6) — jax.config.update('jax_enable_x64', True).",
@@ -530,7 +534,12 @@ def scan_window(
         def one_step(carry: Any, params_in: Any) -> Any:
             return step_fn(carry, params_in, static)
 
-        step = jax.checkpoint(one_step) if remat == "per_step" else one_step
+        if remat == "per_step":
+            from jax.ad_checkpoint import checkpoint as _checkpoint
+
+            step = _checkpoint(one_step)
+        else:
+            step = one_step
 
         def body(carry: Any, _: Any) -> tuple[Any, Any]:
             advanced = step(carry, params)

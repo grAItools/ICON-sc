@@ -1,8 +1,8 @@
-"""symcon example 07 — gradients through the SCM window (the §8.5–8.6 F-tier).
+"""symcon example 07 — gradients through the SCM window (the §8.5-8.6 F-tier).
 
 The S09 single-column composition, lowered to a pure JAX function and
 differentiated end-to-end: ``jax.vjp`` of the **accumulated surface rain**
-over a multi-step window with respect to the Seifert–Beheng autoconversion
+over a multi-step window with respect to the Seifert-Beheng autoconversion
 kernel coefficient ``kcau`` in the ParamTree (parameter estimation's atomic
 operation), cross-checked against a central finite difference — the SPEC S10
 acceptance-4 scalar functional.
@@ -33,7 +33,7 @@ from symcon.core.functional.pytree import mapping_of, tree_of  # noqa: E402
 from symcon.icon.presets import SCMConfig, build_scm  # noqa: E402
 
 #: The ParamTree leaf the example differentiates (§8.6 params declaration of the
-#: graupel scheme: the Seifert–Beheng autoconversion kernel coefficient).
+#: graupel scheme: the Seifert-Beheng autoconversion kernel coefficient).
 PARAM = "mphys/kcau"
 
 

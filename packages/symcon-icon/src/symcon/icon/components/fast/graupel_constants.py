@@ -43,10 +43,10 @@ __all__ = [
     "CICRI",
     "CLOUD_NUM",
     "CNUE",
-    "CPI",
-    "CP_V",
     "COEFF_RAIN_FREEZE1",
     "COEFF_RAIN_FREEZE2",
+    "CPI",
+    "CP_V",
     "CRCRI",
     "CRIM_G",
     "DIFFUSION_COEFF_FOR_WATER_VAPOR",
@@ -244,20 +244,20 @@ SNOW_INTERCEPT_PARAMETER_MMB: Final[tuple[float, ...]] = (
 KESSLER_CLOUD2RAIN_AUTOCONVERSION_COEFF_FOR_CLOUD: Final[float] = 4.0e-4
 #: Kessler (1969) rain-accretion coefficient — (ICON ``cac``).
 KESSLER_CLOUD2RAIN_AUTOCONVERSION_COEFF_FOR_RAIN: Final[float] = 1.72
-#: Seifert–Beheng (2001) phi-function constant — ``KPHI1``.
+#: Seifert-Beheng (2001) phi-function constant — ``KPHI1``.
 KPHI1: Final[float] = 6.00e02
-#: Seifert–Beheng (2001) phi-function exponent — ``KPHI2``.
+#: Seifert-Beheng (2001) phi-function exponent — ``KPHI2``.
 KPHI2: Final[float] = 0.68e00
-#: Seifert–Beheng (2001) accretion phi exponent — ``KPHI3``.
+#: Seifert-Beheng (2001) accretion phi exponent — ``KPHI3``.
 KPHI3: Final[float] = 5.00e-05
-#: Seifert–Beheng (2001) autoconversion kernel coefficient — ``KCAU``
+#: Seifert-Beheng (2001) autoconversion kernel coefficient — ``KCAU``
 #: (the tunable "autoconversion parameter" exposed in the S10 ParamTree).
 KCAU: Final[float] = 9.44e09
-#: Seifert–Beheng (2001) accretion kernel coefficient — ``KCAC``.
+#: Seifert-Beheng (2001) accretion kernel coefficient — ``KCAC``.
 KCAC: Final[float] = 5.25e00
-#: Gamma exponent of the cloud size distribution (Seifert–Beheng) — ``CNUE``.
+#: Gamma exponent of the cloud size distribution (Seifert-Beheng) — ``CNUE``.
 CNUE: Final[float] = 2.00e00
-#: Separating mass between cloud and rain (Seifert–Beheng) — ``XSTAR``.
+#: Separating mass between cloud and rain (Seifert-Beheng) — ``XSTAR``.
 XSTAR: Final[float] = 2.60e-10
 
 # --- riming / aggregation / melting coefficients --------------------------------------

@@ -95,10 +95,9 @@ def test_graupel_jax_core_vs_gtfn_kernel_on_wk_savepoints(
     experiment: Any,
 ) -> None:
     from icon4py.model.common.grid import vertical as v_grid
+    from test_graupel_datatest import _state_from_savepoint  # S08 builder, reused
 
     from symcon.icon.components import GraupelConfig, Microphysics
-
-    from test_graupel_datatest import _state_from_savepoint  # S08 builder, reused
 
     jax.config.update("jax_enable_x64", True)
 
