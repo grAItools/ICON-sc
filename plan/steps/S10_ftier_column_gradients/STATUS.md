@@ -178,13 +178,18 @@ of it; flagged here per AGENTS.md for sign-off in the PR.
   `taylor_scm_window_10.png` (gitignored; regenerate with
   `uv run python validation/L8_gradients/run_l8.py`).
 
-## Gate
+## Gate (all green, this machine)
 
-- `uv run pytest packages -m "not gpu and not slow" -q` — see PR checklist
-  (filled at gate time below).
-- `uv run pytest packages -m "slow and not gpu" -q` — idem.
-- `uv run ruff check .` / `uv run ruff format --check .` — clean.
-- `uv run mypy --strict -p symcon.core` — clean (50 files).
-- `uv run lint-imports` — 2 contracts kept.
-- data-marked: `test_graupel_functional_datatest.py` 3/3 passed locally
-  (cached WK archive); gpu-marked tests skip without a device.
+- `pytest -m "not gpu and not slow"`: **641 passed, 1 skipped** (core: 387
+  passed + 1 mpi-option skip, 12 s; icon+bridges: 254 passed incl. the
+  data-marked suites against the cached archives, 657 s).
+- `pytest packages -m "slow and not gpu"`: **30 passed** (392 s; includes the
+  S10 FD-cross-check example test).
+- `ruff check .` — All checks passed; `ruff format --check .` — 143 files
+  already formatted.
+- `mypy --strict -p symcon.core` — Success, 50 source files.
+- `lint-imports` — 2 contracts kept, 0 broken.
+- New test files also run green in isolation (per-file `pytest` runs).
+- data-marked: `test_graupel_functional_datatest.py` 3/3 dates passed
+  (cached WK archive, gtfn_cpu reference); gpu-marked tests skip without a
+  device.
