@@ -18,11 +18,20 @@ downloads once into ``~/.cache/symcon/icon4py-testdata``).
 from __future__ import annotations
 
 import argparse
+import os
+import pathlib
 import warnings
 from collections.abc import Mapping
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
+
+# The persistent gtfn program cache (the pytest plugin sets the same defaults):
+# without it, gt4py recompiles the ~70 dycore+diffusion programs on every run.
+os.environ.setdefault("GT4PY_BUILD_CACHE_LIFETIME", "persistent")
+os.environ.setdefault(
+    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "symcon" / "gt4py")
+)
 
 import numpy as np
 
