@@ -225,11 +225,16 @@ def test_l4_zonal_symmetry_12h() -> None:
     On an icosahedral grid the *exact* zonal symmetry group is the C5 rotation by
     72° about the polar axis, so the equivalence classes are cells with equal
     (latitude, longitude mod 2π/5); the discrete solution must stay constant on
-    those classes to rounding level. Full latitude rings mix cells that are NOT
-    icosahedron-equivalent: their spread is the grid's *instantaneous* zonal
-    truncation asymmetry (measured 1.3e-5 relative after ONE hour, 1.7e-5 after
-    12 h — a property of the R2B4 discretization, not an orchestration error) and
-    is reported to the artifacts file as context, not asserted."""
+    those classes to rounding level. Coverage on R02B04 (measured): 12387 classes
+    over 20480 cells — 66% of cells sit in multi-member classes (the ones the
+    assertion actually constrains), 34% are singletons that pass vacuously. A
+    structural guard asserts that multi-member coverage, so a coordinate/grouping
+    regression cannot silently turn the test vacuous. Full latitude rings mix
+    cells that are NOT icosahedron-equivalent: their spread is the grid's
+    *instantaneous* zonal truncation asymmetry (measured 1.3e-5 relative after ONE
+    hour, 1.7e-5 after 12 h — a property of the R2B4 discretization, not an
+    orchestration error) and is reported to the artifacts file as context, not
+    asserted."""
     pytest.importorskip("icon4py.model.testing", reason="symcon-icon[datatest] required")
 
     from symcon.icon.presets import JWConfig, build_jw
@@ -244,7 +249,7 @@ def test_l4_zonal_symmetry_12h() -> None:
 
     lat, lon = _cell_coordinates()
 
-    def class_spread(*keys: np.ndarray) -> tuple[int, float]:
+    def class_spread(*keys: np.ndarray) -> tuple[int, float, np.ndarray]:
         order = np.lexsort(keys[::-1])
         breaks = np.zeros(len(order), dtype=bool)
         breaks[0] = True
@@ -253,21 +258,35 @@ def test_l4_zonal_symmetry_12h() -> None:
         class_id = np.cumsum(breaks) - 1
         sorted_ps = ps[order]
         n_classes = int(class_id[-1]) + 1
-        mean = np.bincount(class_id, weights=sorted_ps, minlength=n_classes) / np.bincount(
-            class_id, minlength=n_classes
-        )
+        counts = np.bincount(class_id, minlength=n_classes)
+        mean = np.bincount(class_id, weights=sorted_ps, minlength=n_classes) / counts
         rel = np.abs(sorted_ps - mean[class_id]) / np.abs(mean[class_id])
-        return n_classes, float(rel.max())
+        return n_classes, float(rel.max()), counts
 
     # the exact zonal symmetry classes: (lat, lon mod 72°) — C5 about the pole.
-    n_classes, spread_c5 = class_spread(lat, np.mod(lon, 2.0 * np.pi / 5.0))
+    n_classes, spread_c5, counts = class_spread(lat, np.mod(lon, 2.0 * np.pi / 5.0))
     # full latitude rings (context only: inequivalent cells, truncation asymmetry).
-    n_rings, spread_ring = class_spread(lat)
+    n_rings, spread_ring, _ring_counts = class_spread(lat)
+
+    # structural guard (review round 1, MINOR 2): singleton classes pass vacuously,
+    # so a coordinate/grouping regression could hollow the test out. Measured on
+    # R02B04: 66% of cells in multi-member classes (13511/20480), 6969 singletons,
+    # 158 full 5-member classes — assert the multi-member coverage with headroom.
+    multi_member_cells = int(counts[counts >= 2].sum())
+    coverage = multi_member_cells / float(len(ps))
+    assert coverage >= 0.60, (
+        f"C5 symmetry classes cover only {coverage:.1%} of cells with multi-member "
+        f"classes (expected >= 60%) — the symmetry assertion would be vacuous; "
+        f"check the coordinate source/grouping tolerance"
+    )
 
     ARTIFACTS.mkdir(exist_ok=True)
     with open(ARTIFACTS / "l4_symmetry_12h.txt", "w") as stream:
         stream.write(
             f"C5_classes={n_classes} max_class_spread_rel={spread_c5:.3e} "
+            f"multi_member_cells={multi_member_cells}/{len(ps)} ({coverage:.1%}) "
+            f"singletons={int((counts == 1).sum())} "
+            f"full_5_member_classes={int((counts == 5).sum())} "
             f"lat_rings={n_rings} ring_spread_rel={spread_ring:.3e} "
             f"ps_range=[{ps.min():.6f},{ps.max():.6f}]\n"
         )

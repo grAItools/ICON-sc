@@ -101,20 +101,40 @@ reading (symmetry, §4.7) and one is partially executed in-session (L4 length, �
    fields and namelist config (byte-identical inputs to an upstream-built granule);
    the *orchestration* producing the reference is entirely upstream `TimeLoop` code;
    config congruence is asserted again in the test. Documented private-member use.
-6. **JW initializer statics via keyword-only args** — the frozen `(grid, vgrid,
-   cfg)` core is extended with `static`/geometry keywords (SPEC allows declared
-   additive keywords): the donor reads the same fields from its own serialbox
-   provider; symcon takes them through S11 registry names.
+   What is and is not independent in the L4 parity chain, explicitly: granule
+   *construction* is common-mode (the same hosted instances on both sides), so the
+   day-1 bitwise-zero result proves **orchestration equivalence**; granule
+   **correctness** is supplied independently by the savepoint parity suite against
+   serialized ICON data (acceptance 1 here + the S12 dycore parity tests).
+6. **⚠ JW initializer signature CHANGE (frozen interface — needs trunk
+   acknowledgment).** The SPEC names `jablonowski_williamson(grid, vgrid, cfg)`;
+   the implementation requires a keyword-only `static` mapping **with no default**
+   (plus optional geometry keywords). A mandatory kwarg is a signature *change*,
+   not an "additive keyword with default": a SPEC-verbatim call raises
+   `TypeError`. Justification: the initializer is not fully analytic — the donor's
+   η Newton fit runs against the *serialized* `geopot` metric field and the
+   hydrostatic adjustment consumes five further metric fields, which the donor
+   reads from its own serialbox provider; symcon takes them explicitly through S11
+   registry names rather than hiding a data dependency inside `(grid, vgrid,
+   cfg)`. Per AGENTS.md a frozen-signature change is a trunk decision, not a local
+   fix — flagged for sign-off (the alternative, `static=None` raising
+   `ValueError` at call time, would restore the syntactic signature only).
 7. **Symmetry equivalence classes (acceptance 4).** Full latitude rings mix cells
    that are *not* equivalent under the icosahedral grid's symmetry group; their ps
    spread is the grid's instantaneous zonal truncation asymmetry — measured
    **1.27e-5 relative after ONE hour** (before any dynamics could "break" symmetry)
    and 1.67e-5 after 12 h. No orchestration can meet 1e-10 on that reading. The
-   test therefore asserts the *exact* zonal symmetry classes of the discrete grid —
-   cells equal under C5 rotation about the pole (lat, lon mod 72°); measured spread
-   after 12 h: **1.477e-11 ≤ 1e-10** (the latitude-ring figure is still computed
-   and written to the artifacts file as context). This is an equivalence-class
-   interpretation, not a tolerance change — flagged for reviewer confirmation.
+   test therefore asserts the zonal symmetry classes the discrete grid actually
+   has — cells equal under C5 rotation about the pole (lat, lon mod 72°); measured
+   spread after 12 h: **1.477e-11 ≤ 1e-10**. Coverage caveat (review round 1,
+   MINOR 2): on R02B04 the 12387 classes over 20480 cells include 6969 singletons
+   (34%, vacuous for the assertion) and only 158 full 5-member classes — the
+   assertion constrains the **66% of cells in multi-member classes**
+   (13511/20480); a structural guard in the test asserts ≥ 60% multi-member
+   coverage so a coordinate/grouping regression cannot hollow the test out. The
+   latitude-ring figure is still computed and written to the artifacts file as
+   context. Equivalence-class interpretation, not a tolerance change — flagged for
+   reviewer confirmation.
 8. **⚠ L4 executed at 1 day in-session; 9-day is a documented offline run.** The
    session environment enforced a hard 10-minute cap per foreground command with no
    background jobs; at the measured 2.2 s/step (upstream TimeLoop) a 9-day
@@ -132,6 +152,17 @@ reading (symmetry, §4.7) and one is partially executed in-session (L4 length, �
    listed, which cover the same test set (S12 precedent).
 10. **First-ever gtfn compile cost:** the JW grid's 35-level program variants
    compile once (~25 min) into the persistent cache; all quoted runtimes are warm.
+11. **L4 caching mechanism: hand-rolled sha256 manifest instead of pooch**
+   (SPEC/PLAN/AGENTS say "cached via pooch"). pooch is built around *fetch-from-URL
+   registries with known-in-advance hashes*; the L4 reference is **locally
+   generated** (no URL to fetch from, and gtfn floating-point output is not
+   guaranteed bitwise-portable across machines/compilers, so a committed hash
+   registry would go stale per machine). `make_reference.py` therefore writes its
+   own `manifest.json` (sha256 per artifact + full config provenance) and
+   `test_jw.py` verifies the checksum before any comparison and skips with
+   generation instructions when the cache is absent — functionally the same
+   contract (checksummed, never regenerated in CI). Declared as a mechanism swap,
+   not silently resolved (review round 1, MINOR 3).
 
 ## 5. The S12 "pentagon" dossier — ROOT-CAUSED, FIXED, pentagons exonerated
 
@@ -230,6 +261,10 @@ field-specific knowledge — trunk decision, recorded here.
   no `zd_*` fields (accessors return `None`; the granule accepts that since the
   path is off) — a `zdiffu_t=True` JW experiment would need the factory statics.
 - P5: distributed diffusion (constructor accepts `exchange`; single-node default).
+- T1 bindability of the **composed** JW model (dycore+diffusion as one bound
+  sequence) is untested — S13 verifies per-component binds only
+  (`test_plan_tier_binds_and_runs_the_component` in both component test files);
+  the composed bind is S14's plan-compiler scope (review round 1, INFO 10).
 
 ## 8. Data artifacts (no data in git)
 
@@ -243,3 +278,35 @@ field-specific knowledge — trunk decision, recorded here.
 - gtfn program caches: `~/.cache/symcon/gt4py` (main, + the 35-level JW variants)
   and `~/.cache/symcon/gt4py-s13-pentagon-pad_after` (the cold-cache probe world,
   disposable).
+
+## 9. Review fixes (round 1)
+
+- **MAJOR (9-day L4)** — handled by the orchestrator: a `make_reference.py
+  --days 9 --force --run all` regeneration is running offline; `test_jw.py` will be
+  re-run against it (deviation 8 stands until then).
+- **MINOR 2** — the C5 symmetry test now carries a structural coverage guard:
+  ≥ 60% of cells must sit in multi-member symmetry classes (measured 66.0% =
+  13511/20480; 6969 singletons pass vacuously; 158 full 5-member classes), so a
+  coordinate/grouping regression cannot make the assertion vacuous; the artifacts
+  line now records the class-structure numbers, and deviation 7 states the actual
+  coverage instead of implying full-grid coverage. Verification status: the guard
+  logic was executed standalone against the real grid coordinates (66.0% ≥ 60%,
+  numbers identical to the reviewer's); the full 12-h test could not be re-run
+  during this round (the orchestrator's 9-day L4 regeneration saturates the
+  machine; two attempts hit the 10-min command cap) — its physics assertion is
+  unchanged from the green run (1.477e-11) and it re-runs anyway against the
+  9-day cache when the MAJOR lands.
+- **MINOR 3** — the pooch→sha256-manifest mechanism swap is now a declared
+  deviation (11): pooch is a fetch-from-URL registry tool; this cache is locally
+  generated with non-portable bitwise content.
+- **MINOR 4** — deviation 6 rewritten: the mandatory `static` kwarg of
+  `jablonowski_williamson` is declared as a **frozen-interface signature change**
+  (SPEC-verbatim calls raise TypeError), justified by the initializer's serialized
+  `geopot`/metrics data dependency, and flagged for trunk acknowledgment — it is no
+  longer mislabelled an "additive keyword".
+- **INFO 8** — deviation 5 now states explicitly what the L4 chain proves:
+  common-mode granule construction ⇒ day-1 bitwise-zero = orchestration
+  equivalence; granule correctness comes independently from the savepoint parity
+  suite vs serialized ICON data.
+- **INFO 10** — follow-up added (§7): composed-model T1 bind is untested;
+  per-component binds only; S14 owns the composed bind.
