@@ -80,7 +80,7 @@ class PrescribedCooling(TendencyComponent):
         "altitude": {"dims": _COLUMN_DIMS, "units": "m"},
     }
     tendency_properties: ClassVar[Mapping[str, Any]] = {
-        SLOW_TEMPERATURE_SLOT: {"dims": _COLUMN_DIMS, "units": "K s-1"},
+        SLOW_TEMPERATURE_SLOT: {"dims": _COLUMN_DIMS, "units": "K s-1", "differentiable": "native"},
     }
 
     def __init__(
@@ -106,6 +106,19 @@ class PrescribedCooling(TendencyComponent):
         t_eq = reference_temperature(altitude) - self.config.equilibrium_offset
         cast(Any, outputs[SLOW_TEMPERATURE_SLOT])[...] = (t_eq - temperature) / tau
 
+    def functional_call(
+        self, inputs: Mapping[str, Any], params: Mapping[str, Any], *, dt: float
+    ) -> dict[str, Any]:
+        """Pure evaluation of the relaxation tendency (§8.6 ``native``; S10).
+
+        ``reference_temperature`` is array-namespace generic (S06), so the same
+        formula traces under jax unchanged — one shared source for both tiers.
+        """
+        del params, dt
+        tau = self.config.relaxation_timescale.total_seconds()
+        t_eq = reference_temperature(inputs["altitude"]) - self.config.equilibrium_offset
+        return {SLOW_TEMPERATURE_SLOT: (t_eq - inputs["air_temperature"]) / tau}
+
 
 class ApplySlowTendencies(Stepper):
     """Trivial bus consumer: forward-Euler application of the slow T tendency.
@@ -122,7 +135,7 @@ class ApplySlowTendencies(Stepper):
         SLOW_TEMPERATURE_SLOT: {"dims": _COLUMN_DIMS, "units": "K s-1"},
     }
     output_properties: ClassVar[Mapping[str, Any]] = {
-        "air_temperature": {"dims": _COLUMN_DIMS, "units": "K"},
+        "air_temperature": {"dims": _COLUMN_DIMS, "units": "K", "differentiable": "native"},
     }
 
     def array_call(
@@ -137,3 +150,12 @@ class ApplySlowTendencies(Stepper):
         cast(Any, outputs["air_temperature"])[...] = (
             temperature + tendency * timestep.total_seconds()
         )
+
+    def functional_call(
+        self, inputs: Mapping[str, Any], params: Mapping[str, Any], *, dt: float
+    ) -> dict[str, Any]:
+        """Pure forward-Euler application of the bus slot (§8.6 ``native``; S10)."""
+        del params
+        return {
+            "air_temperature": inputs["air_temperature"] + inputs[SLOW_TEMPERATURE_SLOT] * dt
+        }

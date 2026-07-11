@@ -20,10 +20,18 @@ equilibrium before the slow physics. Hence
 satad as an adjustment-type ``Stepper`` enters SUS chains directly and is not
 admissible under the tendency-summing operator families.
 
-Differentiability: ``differentiable: "custom"`` is *declared* on the contract
-now (architecture §8.6 — the fixed point differentiates through an implicit
-custom rule, not through recorded Newton iterations); the actual rules are
-deferred to S10.
+Differentiability: ``differentiable: "custom"`` (architecture §8.6) — since S10
+the granule is paired with a functional core co-located in this module
+(:func:`_satad_functional`, invoked through ``functional_call``): the saturation
+fixed point ``f(T*) = T* - T + (L(T)/cvd)·(qsat_rho(T*, ρ) - qv) = 0`` is solved
+by the granule's own masked Newton iteration (same per-point freeze/convergence
+semantics, bounded ``while_loop``) wrapped in the
+:func:`symcon.core.functional.rules.implicit_fixed_point` ``lax.custom_root``
+rule, so both AD modes differentiate through the *implicit function* — the
+adjoint of the Newton solve via the IFT, never through recorded iterations
+(which also sidesteps ``while_loop``'s reverse-mode prohibition). Closures and
+constants come from ``satad_constants.py`` (one scheme-constants module per
+scheme, §11.8). jax imports stay inside the functional entry points.
 """
 
 from __future__ import annotations
@@ -41,6 +49,8 @@ from symcon.core.coupling.constraints import CouplingConstraints
 from symcon.core.ingress.gt4py import Backend, resolve_backend
 from symcon.core.typing import FieldBuffer
 from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
+from symcon.icon._constants import ALV, CLW, CVD, RV, TMELT
+from symcon.icon.components.fast import satad_constants as sconst
 from symcon.icon.components.fast._column_grid import column_icon4py_grid
 from symcon.icon.grid.vertical import VerticalGrid
 
@@ -234,3 +244,119 @@ class SaturationAdjustment(Stepper):
         out_t[...] = cast(Any, temperature) + t_tend.ndarray * dtime
         out_qv[...] = cast(Any, qv) + qv_tend.ndarray * dtime
         out_qc[...] = cast(Any, qc) + qc_tend.ndarray * dtime
+
+    # -- the §8.6 functional core (S10, `custom` route) ------------------------------
+
+    def functional_call(
+        self, inputs: Mapping[str, Any], params: Mapping[str, Any], *, dt: float
+    ) -> dict[str, Any]:
+        """Pure JAX evaluation of one satad step (§8.6 ``custom``; SPEC S10).
+
+        Same boundary as :meth:`array_call`; reverse/forward derivatives cross
+        the saturation fixed point through the IFT ``custom_root`` rule, not the
+        Newton iterations. No tunable ``params``: ``max_iter``/``tolerance`` are
+        solver controls, not scheme physics.
+        """
+        del params
+        return _satad_functional(
+            dt=dt,
+            temperature=inputs["air_temperature"],
+            qv=inputs["specific_humidity"],
+            qc=inputs["specific_cloud_content"],
+            rho=inputs["air_density"],
+            tolerance=self.config.tolerance,
+            max_iter=self.config.max_iter,
+            kstart_moist=int(self._i4_vertical.kstart_moist),
+        )
+
+
+# --------------------------------------------------------------------------------------
+# The JAX functional core (S10) — a port of icon4py's satad stencils (REFERENCES.lock
+# ``icon4py-satad-stencils``) with the fixed point differentiated implicitly.
+# --------------------------------------------------------------------------------------
+
+
+def _satad_functional(
+    *,
+    dt: float,
+    temperature: Any,
+    qv: Any,
+    qc: Any,
+    rho: Any,
+    tolerance: float,
+    max_iter: int,
+    kstart_moist: int,
+) -> dict[str, Any]:
+    """One satad step on (cell, height) arrays — pure, traced, fp64."""
+    import jax.numpy as jnp
+
+    from symcon.core.functional.rules import implicit_fixed_point, masked_newton_solve
+
+    C = sconst
+
+    def latent_heat_vaporization(t: Any) -> Any:
+        # Kirchhoff closure, the granule's local cp_v literal (NOT the model CPV).
+        return ALV + (C.CP_V - CLW) * (t - TMELT) - RV * t
+
+    def sat_pres_water(t: Any) -> Any:
+        return C.TETENS_P0 * jnp.exp(C.TETENS_AW * (t - TMELT) / (t - C.TETENS_BW))
+
+    def qsat_rho(t: Any) -> Any:
+        return sat_pres_water(t) / (rho * RV * t)
+
+    def dqsatdT_rho(t: Any, zqsat: Any) -> Any:
+        beta = C.TETENS_DER / (t - C.TETENS_BW) ** 2 - 1.0 / t
+        return beta * zqsat
+
+    nlev = int(temperature.shape[-1])
+    k_index = jnp.arange(nlev)
+    moist = k_index >= kstart_moist  # (height,), broadcasts over (cell, height)
+
+    # Subsaturated shortcut: evaporate all cloud water, check saturation there.
+    lwdocvd = latent_heat_vaporization(temperature) / CVD
+    t_all_evaporated = temperature - lwdocvd * qc
+    subsaturated = qv + qc <= qsat_rho(t_all_evaporated)
+
+    # The saturation fixed point, solved with the granule's own masked Newton
+    # (per-point freeze at |ΔT| <= tolerance, global loop while any active,
+    # bounded by max_iter) and differentiated through the IFT.
+    def residual(t_new: Any) -> Any:
+        return t_new - temperature + lwdocvd * (qsat_rho(t_new) - qv)
+
+    def residual_prime(t_new: Any) -> Any:
+        return 1.0 + lwdocvd * dqsatdT_rho(t_new, qsat_rho(t_new))
+
+    def solve(_f: Any, x0: Any) -> Any:
+        return masked_newton_solve(
+            residual,
+            residual_prime,
+            x0,
+            active0=~subsaturated & moist,
+            tolerance=tolerance,
+            max_iter=max_iter,
+        )
+
+    t_star = implicit_fixed_point(residual, temperature, solve)
+
+    t_new = jnp.where(subsaturated, t_all_evaporated, t_star)
+    t_tendency = (t_new - temperature) / dt
+    qv_tendency = jnp.where(
+        subsaturated, qc / dt, (qsat_rho(t_star) - qv) / dt
+    )
+    qc_tendency = jnp.where(
+        subsaturated,
+        -qc / dt,
+        (jnp.maximum(qv + qc - qsat_rho(t_star), C.ZQWMIN) - qc) / dt,
+    )
+
+    # Moist-domain masking (granule domain [kstart_moist:nlev)): exact zeros above.
+    t_tendency = jnp.where(moist, t_tendency, 0.0)
+    qv_tendency = jnp.where(moist, qv_tendency, 0.0)
+    qc_tendency = jnp.where(moist, qc_tendency, 0.0)
+
+    # icon4py's own verification arithmetic: x_exit = x_init + dx/dt * dt.
+    return {
+        "air_temperature": temperature + t_tendency * dt,
+        "specific_humidity": qv + qv_tendency * dt,
+        "specific_cloud_content": qc + qc_tendency * dt,
+    }
