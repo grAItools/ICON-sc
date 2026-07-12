@@ -878,16 +878,18 @@ def test_production_path_from_s11_grid_and_factories(
     the owner mask matches, and one full Δt *executes* and returns the declared
     output set with the ingested shapes.
 
-    The stepped trajectory carries **no value assertions**: on file-built grids
-    the hosted solver shows process-dependent, unbounded deviations seeded near
-    the 12 icosahedron pentagon points (identical reruns measured anywhere from
-    ≤ 1.8e-5 up to 10 m/s over 6% of edges, while every input — static fields,
-    interpolation coefficients including the pentagon rows, geometry,
-    connectivities — is verified bit-stable and archive-equal in clean
-    processes; ICON-style padding of the residual ``-1`` V2C/V2E/V2E2V entries
-    does *not* remove the effect). Root-causing this is an S13
-    blocker-candidate with a full dossier in STATUS §5; trajectory verification
-    of the hosted solver is the job of the savepoint-grid parity tests above.
+    Trajectory values ARE asserted since S13: the S12 dossier's "pentagon"
+    contamination was root-caused to the static-conversion path rebuilding the
+    3-level ``wgtfacq_c``/``wgtfacq_e`` fields with K-domain ``[0, 3)`` instead of
+    the producers' ``[nlev-3, nlev)`` — every surface-extrapolation read went out
+    of the field domain (heap garbage: rebuild-dependent, unbounded; the pentagon
+    ``-1``s were proven innocent by cold-cache padding and grid/static cross
+    experiments — S13 STATUS §5). With the domain fix the production path is
+    bitwise-deterministic across rebuilds; the residual deviation vs the archive
+    (measured max|vn| = 3.6e-6 after one Δt) is exactly the documented
+    deterministic ``mean_cell_area`` serialized-vs-computed difference scaling
+    the 2nd-order divergence damping. The 1e-4 bound is a regression guard on
+    that characterization (not an upstream tolerance; S13 STATUS §5).
     """
     from symcon.icon.grid import VerticalGrid as SymconVerticalGrid
     from symcon.icon.grid import from_file, interpolation, metrics
@@ -976,10 +978,18 @@ def test_production_path_from_s11_grid_and_factories(
         grid_savepoint.c_owner_mask().asnumpy(),
     )
 
-    # -- execution smoke: one full Δt runs; declared outputs, ingested shapes ---------
-    # (no trajectory-value assertions on file-built grids — see docstring/STATUS §5)
+    # -- one full Δt: declared outputs, ingested shapes, trajectory regression guard --
+    sp_exit = data_provider.from_savepoint_nonhydro_exit(istep=2, date=DATE_FIRST, substep=2)
     state = _state_from_savepoint(sp_init, ctx)
     _, new_state = solver(state, timedelta(seconds=dt_substep * 2))
     assert set(new_state) == {name for name, _accessor, _dims in _PROGNOSTICS}
     for name, _accessor, _dims in _PROGNOSTICS:
         assert new_state[name].data.shape == state[name].data.shape, name
+    vn_deviation = np.max(
+        np.abs(_host(new_state["icon:normal_wind"].data) - sp_exit.vn_new().asnumpy())
+    )
+    assert np.isfinite(vn_deviation) and vn_deviation < 1e-4, (
+        f"production-path vn deviation {vn_deviation:.3e} exceeds the S13 "
+        f"characterization bound (measured 3.6e-6 = the mean_cell_area effect; "
+        f"see S13 STATUS §5)"
+    )

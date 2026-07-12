@@ -7,6 +7,11 @@ plan-hash regression enforcing that). S09 ships the single-column (SCM) preset;
 the full NWP preset arrives with the dycore lane.
 """
 
+from symcon.icon.presets.jw import (
+    JWConfig,
+    JWModel,
+    build_jw,
+)
 from symcon.icon.presets.scm import (
     SCM_FAST_ORDER,
     SCMComposition,
@@ -16,7 +21,10 @@ from symcon.icon.presets.scm import (
 
 __all__ = [
     "SCM_FAST_ORDER",
+    "JWConfig",
+    "JWModel",
     "SCMComposition",
     "SCMConfig",
+    "build_jw",
     "build_scm",
 ]

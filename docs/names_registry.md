@@ -84,6 +84,7 @@ quantity's canonical units.
 | `icon:zd_diffcoef` | `1` | — | `zd_diffcoef` | — |
 | `icon:zd_intcoef` | `1` | — | `zd_intcoef` | — |
 | `icon:zd_vertoffset` | `1` | — | `zd_vertoffset` | — |
+| `icon:geopot` | `m2 s-2` | — | `geopot` | — |
 | `icon:c_lin_e` | `1` | — | `c_lin_e` | — |
 | `icon:e_bln_c_s` | `1` | — | `e_bln_c_s` | — |
 | `icon:geofac_div` | `m-1` | — | `geofac_div` | — |

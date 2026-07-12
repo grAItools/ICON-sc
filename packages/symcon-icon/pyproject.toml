@@ -33,6 +33,11 @@ datatest = [
   "icon4py-atmosphere-dycore>=0.2.0",
   "icon4py-atmosphere-microphysics>=0.2.0",
   "icon4py-standalone-driver>=0.2.0",
+  # S13: the classic driver is the JW-initializer donor (delegation target of
+  # symcon.icon.ingest.idealized) and the L4 reference-trajectory generator
+  # (already pinned at 0.2.0 by constraints/cpu-ci.txt line 12 — a new member of
+  # the pinned set, not a bump).
+  "icon4py-driver>=0.2.0",
 ]
 
 [tool.hatch.build.targets.wheel]

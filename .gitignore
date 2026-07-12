@@ -38,3 +38,7 @@ references/*
 
 # L8 gradient-decay plots (S10) are artifacts, never data in git
 validation/L8_gradients/artifacts/
+
+# L4 JW trajectory artifacts (S13): plots/norm tables, never data in git
+validation/L4_idealized/artifacts/
+*.npz
