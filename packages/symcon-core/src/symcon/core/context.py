@@ -198,11 +198,20 @@ class ComputeContext:
         vault = StateVault.from_state(state)
         plan = ExecutionPlan.bind(composition, StateSchema.from_state(state), bind_ctx)
         facade = vault.facade()
-        for index in range(n):
-            plan.run_step(vault, index)
+
+        # Monitors are excluded from the plan (S14): they run in the host step
+        # the interpreter yields to at every SegmentMarker — at T1 the
+        # ``step_end`` marker closes the step's single segment; T2 will stop
+        # graph replay at exactly these markers (§8.3 design note).
+        def host_step(marker: Any) -> None:
+            if marker.kind != "step_end":
+                return
             vault.time = vault.time + timestep
             for monitor in monitor_list:
                 monitor.store(facade)
+
+        for index in range(n):
+            plan.run_step(vault, index, on_segment=host_step)
             if debug_renegotiate_every is not None and (index + 1) % debug_renegotiate_every == 0:
                 renegotiate_and_diff(plan, composition, bind_ctx)
         return dict(facade)

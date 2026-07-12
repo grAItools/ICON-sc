@@ -41,6 +41,7 @@ from typing import Any, Protocol
 import numpy as np
 
 from symcon.core.components.base import Component, OutputSchema
+from symcon.core.components.base import Monitor as BaseMonitor
 from symcon.core.context import ComputeContext
 from symcon.core.contracts.checkers import FieldSchema, StateSchema
 from symcon.core.contracts.operators import IngressPlan
@@ -285,7 +286,10 @@ class _Compiler:
         self._slot_by_key: dict[Any, int] = {}
         self._pairs: dict[str, tuple[int, int]] = {}
         self.cadence_periods: set[int] = set()
-        self._ingress_cache: dict[str, IngressPlan] = {}
+        #: keyed by (walk path, component identity): a composite may dispatch
+        #: several children at one path (S14 loop-body composites), and one
+        #: component may occur at several paths (S05: one negotiation each).
+        self._ingress_cache: dict[tuple[str, int], IngressPlan] = {}
         #: published diag name -> (writer path, inside cadence mask)
         self._diag_writers: dict[str, tuple[str, bool]] = {}
 
@@ -429,8 +433,8 @@ class _Compiler:
     ) -> tuple[tuple[str, int], ...]:
         """Pre-resolved input pack: contract field -> cell (alias-resolved, checked)."""
         spec = dict(parsed_properties_of(component).get("input_properties", {}))
-        path = self._tag()
-        plan = self._ingress_cache.get(path)
+        cache_key = (self._tag(), id(component))
+        plan = self._ingress_cache.get(cache_key)
         if plan is None:
             try:
                 plan = IngressPlan.build(
@@ -441,7 +445,7 @@ class _Compiler:
                 )
             except KeyError as exc:
                 raise PlanCompileError(f"bind ingress failed: {exc.args[0]}") from exc
-            self._ingress_cache[path] = plan
+            self._ingress_cache[cache_key] = plan
         override = self._input_override
         bindings: list[tuple[str, int]] = []
         for field, state_name in zip(plan.fields, plan.names, strict=True):
@@ -549,6 +553,13 @@ class _Compiler:
     # -- dispatch --------------------------------------------------------------------------
 
     def _dispatch(self, node: Any) -> None:
+        if isinstance(node, BaseMonitor):
+            raise PlanCompileError(
+                f"plan compiler: {name_of(node)!r} is a Monitor — monitors are "
+                f"excluded from the plan (S14). Pass them to "
+                f"ctx.timeloop(monitors=...); they run in the SegmentMarker-"
+                f"delimited host step between plan segments (§8.3)."
+            )
         visit = getattr(node, "visit", None)
         if visit is None or not callable(visit):
             raise PlanCompileError(
@@ -589,16 +600,71 @@ class _Compiler:
 
     def visit_concurrent_coupling(self, coupling: Any) -> None:
         if self._eval is None:
-            raise PlanCompileError(
-                f"plan compiler: ConcurrentCoupling {name_of(coupling)!r} is a tendency "
-                f"provider; compile it under a TendencyStepper or federation section."
-            )
+            self._emit_publishing_coupling(coupling)
+            return
         for index, member in enumerate(coupling.components):
             self._path.append(f"m{index}")
             try:
                 self._dispatch(member)
             finally:
                 self._path.pop()
+
+    def _emit_publishing_coupling(self, coupling: Any) -> None:
+        """A top-level ConcurrentCoupling publishes its tendencies to state (S14).
+
+        The §5.1/§4.2 LFC bus-publication pattern (SPEC S09's slow suite): at T0
+        the run script evaluates the coupling once per step and merges the
+        returned tendency dict into the state (``working.update(tendencies)``),
+        so the tendency fields *are* state fields downstream. At T1 the members
+        evaluate exactly as a stage-0 coupling walk (cadence masks included) and
+        one Axpy per tendency field copies/sums the member contributions into
+        the field's published cell — T0's ``acc = c1; acc += c2`` member order,
+        replayed exactly (bitwise contract). On non-fire cadence phases the
+        member ops are absent but the persistent member cells hold the cached
+        output, so the per-step publication Axpy reproduces the
+        ``CallingFrequency`` replay verbatim.
+        """
+        if self._output_binding is not None:
+            raise PlanCompileError(
+                "plan compiler: a publishing ConcurrentCoupling nested as a redirected "
+                "section (inside PS/STS) is not supported."
+            )
+        ev = _EvalCtx(
+            stage=0,
+            stage_env=dict(self.env),
+            tendencies={},
+            diag_published={},
+        )
+        saved_eval = self._eval
+        self._eval = ev
+        self._path.append("pub")
+        try:
+            for index, member in enumerate(coupling.components):
+                self._path.append(f"m{index}")
+                try:
+                    self._dispatch(member)
+                finally:
+                    self._path.pop()
+        finally:
+            self._path.pop()
+            self._eval = saved_eval
+
+        tendency_specs = parsed_properties_of(coupling).get("tendency_properties", {})
+        self._path.append("pub.publish")
+        try:
+            for name, cells in ev.tendencies.items():
+                spec = tendency_specs.get(name)
+                if spec is None:
+                    raise PlanCompileError(
+                        f"plan compiler: publishing coupling {name_of(coupling)!r} "
+                        f"produced a tendency {name!r} it does not declare."
+                    )
+                target = self._published_cell(name, spec, None)
+                self._emit_axpy(target, (1.0, cells[0]), [(1.0, c) for c in cells[1:]], note=name)
+                self.env[name] = target
+        finally:
+            self._path.pop()
+        self.env.update(ev.diag_published)
 
     def visit_tendency_stepper(self, stepper: Any) -> None:
         binding = self._output_binding
@@ -1207,13 +1273,25 @@ class _Compiler:
         if core.fast_tendency_component is not None:
             raise PlanCompileError(
                 f"plan compiler: DynamicalCore {name_of(core)!r} has a "
-                f"fast_tendency_component; the per-stage fast tier is compiled in S14."
+                f"fast_tendency_component; compiling the per-stage fast tier needs "
+                f"per-stage coupling evaluation on provisional state (post-slice "
+                f"follow-up; T0 runs it fine)."
             )
         if core.ratio_provider is not None:
             raise PlanCompileError(
                 f"plan compiler: DynamicalCore {name_of(core)!r} uses an adaptive "
                 f"ratio_provider; adaptive substep counts are a T2 signature-cache "
                 f"feature (post-S05)."
+            )
+        nesting = str(getattr(core, "substep_nesting", "stage_outer"))
+        if nesting == "substep_outer":
+            self._emit_dycore_substep_outer(core)
+            return
+        if nesting != "stage_outer":
+            raise PlanCompileError(
+                f"plan compiler: DynamicalCore {name_of(core)!r} declares "
+                f"substep_nesting={nesting!r}; known nestings are 'stage_outer' "
+                f"(Fig. 3.10) and 'substep_outer' (ICON, S14)."
             )
         binding = self._output_binding
         self._output_binding = None
@@ -1301,13 +1379,112 @@ class _Compiler:
         if binding is None:
             self.env.update(final_targets)
 
+    #: The plan-hook quartet a substep-outer core must implement (S14; the
+    #: contract is documented on ``DynamicalCore.substep_nesting``).
+    _SUBSTEP_OUTER_HOOKS = (
+        "plan_ingress",
+        "plan_substep_begin",
+        "substep_array_call",
+        "plan_substep_end",
+        "plan_egress",
+    )
+
+    def _emit_dycore_substep_outer(self, core: Any) -> None:
+        """Unroll ICON's substep-outer nesting: substeps outer, stages inner (S14).
+
+        Emits the exact op order of ``mo_nh_stepping.f90::perform_dyn_substepping``
+        / the icon4py driver ``_do_dyn_substepping`` (REFERENCES.lock
+        ``icon4py-driver-substep-op-order``, ``icon-fortran-substep-op-order``):
+        step ingress, then per substep the private carry swaps
+        (``plan_substep_begin``), the full stage sequence, and the private
+        time-level swap between substeps (``plan_substep_end``, postponed past
+        the last substep), then step egress. All data flows through the
+        component-private state (§4.5): the hooks are plain BoundCalls sharing
+        one pre-bound boundary pack, and the **only** vault-visible effect is the
+        step-level ping-pong of the boundary prognostics — the per-substep
+        internal swaps never leak into the even/odd variants (PLAN S14 pitfall).
+        """
+        missing = [h for h in self._SUBSTEP_OUTER_HOOKS if not callable(getattr(core, h, None))]
+        if missing:
+            raise PlanCompileError(
+                f"plan compiler: substep-outer DynamicalCore {name_of(core)!r} lacks "
+                f"plan hooks {missing!r} (contract: DynamicalCore.substep_nesting)."
+            )
+        n_substeps = int(core.substeps)
+        if n_substeps < 1:
+            raise PlanCompileError(
+                f"plan compiler: substep-outer DynamicalCore {name_of(core)!r} has "
+                f"substeps={n_substeps}; the substep tier is mandatory for the ICON "
+                f"nesting (every substep runs the full stage sequence)."
+            )
+        dt_td = self._dt
+        sub_dt = dt_td / n_substeps  # exact T0 expression (NonhydroSolver.array_call)
+        if sub_dt * n_substeps != dt_td:
+            raise PlanCompileError(
+                f"plan compiler: timestep {dt_td} is not divisible into {n_substeps} "
+                f"substeps at timedelta (microsecond) resolution; choose a compatible "
+                f"Δt/substeps pair (the T0 array_call refuses the same split)."
+            )
+        binding = self._output_binding
+        self._output_binding = None
+        parsed = parsed_properties_of(core)
+        n_stages = int(core.n_stages)
+        prognostics = tuple(parsed.get("output_properties", {}))
+        path = self._tag()
+
+        inputs = self._ingress_bindings(core, self.env)
+        diag_cells: dict[str, int] = {}
+        for name, spec in parsed.get("diagnostic_properties", {}).items():
+            sid = self._published_cell(name, spec, core)
+            self._record_diag_write(name, f"{path}/{name_of(core)}")
+            diag_cells[name] = sid
+
+        entry_env = dict(self.env)
+        final_targets = (
+            binding
+            if binding is not None
+            else {f: self._pair_partner(f, entry_env) for f in prognostics}
+        )
+        outputs = tuple({**final_targets, **diag_cells}.items())
+        tag = f"{path}/{name_of(core)}"
+
+        def call(method: str, prefix: tuple[int, ...], dt: timedelta, note: str) -> None:
+            self._emit(
+                _DraftCall(
+                    component=core,
+                    method=method,
+                    prefix=prefix,
+                    inputs=inputs,
+                    outputs=outputs,
+                    timestep_us=_dt_us(dt),
+                    tag=f"{tag}/{note}",
+                )
+            )
+
+        call("plan_ingress", (n_substeps,), dt_td, "ingress")
+        for substep in range(n_substeps):
+            call("plan_substep_begin", (substep,), sub_dt, f"sub{substep}/begin")
+            for stage in range(n_stages):
+                call("substep_array_call", (stage, substep), sub_dt, f"stage{stage}sub{substep}")
+            if substep != n_substeps - 1:
+                call("plan_substep_end", (substep,), sub_dt, f"sub{substep}/end")
+        call("plan_egress", (), dt_td, "egress")
+
+        self.env.update(diag_cells)
+        if binding is None:
+            self.env.update(final_targets)
+
     # -- serialization ---------------------------------------------------------------------
 
     def describe(self) -> str:
         lines = [
             f"schema {schema_fingerprint(self._schema0)}",
             (
-                f"ctx backend={self._ctx.backend} strict={self._ctx.strict} "
+                # backend_name, not the raw backend: a Backend *object* reprs
+                # with live executor objects (memory addresses), which would
+                # make plan_hash instance-dependent (S14 fix; string backends
+                # are unaffected — their name is the string itself).
+                f"ctx backend={self._ctx.backend_name} strict={self._ctx.strict} "
                 f"tier={self._ctx.tier} timestep_us={_dt_us(self._timestep)} "
                 f"device={self._ctx.device}"
             ),
@@ -1506,7 +1683,13 @@ class ExecutionPlan:
 
     # -- the T1 step (hot path) --------------------------------------------------------------
 
-    def run_step(self, vault: StateVault, step_index: int) -> None:
+    def run_step(
+        self,
+        vault: StateVault,
+        step_index: int,
+        *,
+        on_segment: Any = None,
+    ) -> None:
         """Execute one step's pre-bound op list (frozen interface, SPEC S05).
 
         ``step_index`` must advance sequentially from 0 (modulo the signature
@@ -1514,6 +1697,12 @@ class ExecutionPlan:
         Materializes against ``vault`` on first use; raises
         :class:`~symcon.core.plan.guards.StalePlanError` after any out-of-band
         façade mutation.
+
+        ``on_segment`` (S14, additive keyword with default) is the host-step
+        seam: a callback invoked with every
+        :class:`~symcon.core.plan.ops.SegmentMarker` the interpreter reaches
+        (see :mod:`symcon.core.plan.interpreter`); monitors and time
+        advancement live there, outside the plan.
         """
         bound = self._bound
         if bound is None or bound.vault is not vault:
@@ -1538,4 +1727,4 @@ class ExecutionPlan:
                 f"advance sequentially."
             )
         self._cursor = slot + 1 if slot + 1 < len(variants) else 0
-        run_ops(variants[slot], step_index)
+        run_ops(variants[slot], step_index, on_segment)
