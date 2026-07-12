@@ -35,8 +35,9 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core import ComputeContext
+from symcon.core import ComputeContext, SequentialUpdateSplitting
 from symcon.core.ingress.gt4py import make_backend
+from symcon.core.state import make_dataarray
 from symcon.icon.components import (
     DiffusionConfig,
     HorizontalDiffusion,
@@ -60,10 +61,22 @@ class JWConfig:
 
 @dataclasses.dataclass(frozen=True)
 class JWModel:
-    """The composed dry model + initial state + checkpoint diagnostics."""
+    """The composed dry model + initial state + checkpoint diagnostics.
+
+    S14 additive extension (declared in the S14 STATUS): ``composition`` is the
+    dycore→diffusion sequence as one bindable ``SequentialUpdateSplitting`` —
+    the tree ``ExecutionPlan.bind`` compiles and ``ctx.timeloop`` runs under
+    either tier; ``step`` remains the equivalent T0 closure (the L4 runner's
+    entry). ``state`` now carries the slow-tendency bus slots explicitly as
+    zero fields: under ``tier="plan"`` the ``__call__`` zero-fill convenience
+    is bypassed (S12 STATUS follow-up — decision: the plan compiler does *not*
+    synthesize default slots; the bound state is explicit), and under T0 the
+    dycore sees the same zeros it would have synthesized, bitwise.
+    """
 
     dycore: NonhydroSolver
     diffusion: HorizontalDiffusion
+    composition: SequentialUpdateSplitting
     state: dict[str, Any]
     dtime: timedelta
     #: archive-derived run provenance (asserted against the reference's in L4).
@@ -215,6 +228,8 @@ def build_jw(cfg: JWConfig | None = None) -> JWModel:
         cell_geometry=cell_geometry,
     )
 
+    composition = SequentialUpdateSplitting([dycore, diffusion], name="jw_dry")
+
     state = jablonowski_williamson(
         icon_grid,
         vertical_params,
@@ -232,6 +247,21 @@ def build_jw(cfg: JWConfig | None = None) -> JWModel:
         edge_geometry=edge_geometry,
         cell_geometry=cell_geometry,
     )
+
+    # Explicit zero slow-tendency bus slots (S14): tier="plan" bypasses the
+    # __call__ zero-fill convenience, so the bound state carries the slots; under
+    # T0 the dycore ingests the same zeros it would have synthesized (bitwise).
+    nlev = int(experiment_config.vertical_grid.num_levels)
+    for slot, dims, shape in (
+        ("icon:ddt_vn_phy", ("edge", "height"), (int(icon_grid.num_edges), nlev)),
+        ("icon:ddt_exner_phy", ("cell", "height"), (int(icon_grid.num_cells), nlev)),
+    ):
+        buffer = ctx.require_allocator.empty(shape, np.dtype(np.float64))
+        buffer[...] = 0.0
+        spec = dict(NonhydroSolver.input_properties[slot])
+        state[slot] = make_dataarray(
+            buffer, name=slot, dims=dims, units=str(spec["units"]), location=dims[0]
+        )
 
     # -- checkpoint diagnostics (numpy; shared verbatim by reference + symcon runs) ----
     ddqz_z_full = 1.0 / _host(metrics_savepoint.inv_ddqz_z_full())
@@ -284,6 +314,7 @@ def build_jw(cfg: JWConfig | None = None) -> JWModel:
     return JWModel(
         dycore=dycore,
         diffusion=diffusion,
+        composition=composition,
         state=state,
         dtime=dtime,
         provenance=provenance,

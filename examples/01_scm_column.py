@@ -44,9 +44,19 @@ OUTPUT_SET: tuple[str, ...] = (
 )
 
 
+def build_model() -> Any:
+    """The example's model: exactly the S09 preset builder, default config.
+
+    Exposed as a function so the S14 plan-hash drift test can bind the
+    composition this script runs and assert it hashes identically to the
+    preset builder's (the layout-doc drift test — SPEC S14 acceptance 3).
+    """
+    return build_scm(SCMConfig())  # embedded backend: no compile step
+
+
 def main(output: str | Path = "scm_column.nc", hours: float = 1.0) -> dict[str, Any]:
     """Build the SCM preset, run it for ``hours``, write NetCDF; return the final state."""
-    composition, state, cfg = build_scm(SCMConfig())  # embedded backend: no compile step
+    composition, state, cfg = build_model()
     monitor = NetCDFMonitor(output, variables=OUTPUT_SET)
 
     with warnings.catch_warnings():

@@ -65,6 +65,18 @@ class EveryNSteps(Monitor):
             self._inner.store(state)
 
 
+def build_model(perturbation: float = 1.0, backend: str = "gtfn_cpu") -> Any:
+    """The example's model: exactly the S13 preset builder.
+
+    Exposed as a function so the S14 plan-hash drift test can bind the
+    composition this script runs and assert it hashes identically to the
+    preset builder's (the layout-doc drift test — SPEC S14 acceptance 3).
+    """
+    from symcon.icon.presets import JWConfig, build_jw
+
+    return build_jw(JWConfig(perturbation_amplitude=perturbation, backend=backend))
+
+
 def main(
     output: str | Path = "jw_baroclinic.nc",
     hours: float = 6.0,
@@ -73,9 +85,7 @@ def main(
     store_every_hours: float = 6.0,
 ) -> dict[str, Any]:
     """Build the JW dry model, run it for ``hours``, write NetCDF; return the state."""
-    from symcon.icon.presets import JWConfig, build_jw
-
-    model = build_jw(JWConfig(perturbation_amplitude=perturbation, backend=backend))
+    model = build_model(perturbation=perturbation, backend=backend)
 
     def with_surface_pressure(state: dict[str, Any]) -> dict[str, Any]:
         state["air_pressure_at_ground_level"] = make_dataarray(
