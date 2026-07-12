@@ -123,10 +123,16 @@ plan-hash-pinned to their preset builders; dispatch-overhead evidence recorded.
   build; S12 precedent (STATUS deviation 6) for upstream-style private staging
   in tests.
 - **The 24 h equivalence costs ~20 min wall** (gtfn_cpu, warm caches, both
-  legs in lockstep); it is `data`+`slow` and dominates that gate. If CI time
-  becomes a problem, the SPEC-conformal split is one file per leg with a
-  cached T0 trajectory — not done here (the lockstep form localizes any
-  divergence to the exact step).
+  legs in lockstep); it is `data`+`slow` and dominates that gate. It is
+  **chunk-resumable** via `SYMCON_S14_EQUIV_HOURS`/`SYMCON_S14_EQUIV_STATE`
+  (the S13 `make_reference.py` pattern: per-leg component restart protocols +
+  boundary prognostics; every chunk re-asserts lockstep bitwise equality per
+  step). CI default (no env) is the single 24 h run; the acceptance evidence
+  here was produced as 4 × 6 h chunked invocations of the same test function
+  (this environment caps single commands at 10 min). The 24-hours-continuous
+  claim across chunk boundaries rests on the bitwise restart fidelity S12
+  acceptance 3 proved for the dycore (and the diffusion restart schema),
+  plus each chunk's per-step bitwise lockstep assertions.
 - **GPU benchmark leg is unvalidated here** (no CUDA device in the
   implementation environment; cupy not installed). The capture-based launch
   count is best-effort with an explicit failure mode that itself reports the
