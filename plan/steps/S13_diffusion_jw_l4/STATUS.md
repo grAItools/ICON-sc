@@ -310,3 +310,21 @@ field-specific knowledge — trunk decision, recorded here.
   suite vs serialized ICON data.
 - **INFO 10** — follow-up added (§7): composed-model T1 bind is untested;
   per-component binds only; S14 owns the composed bind.
+
+## Review round 1 — MAJOR resolution (9-day L4 run executed)
+
+The full 9-day generation ran offline (orchestrator background run, `make_reference.py
+--days 9 --force --run all` + `--run symcon`): reference, ε-twin (vn +1e-13) and symcon
+legs at 6-hourly checkpoints. **Result: the symcon composed model is bitwise-identical
+to the upstream icon4py TimeLoop at all 37 checkpoints over 9 days** (max|ps−ref| = 0.0
+at 24 h, 120 h and 216 h), while the twin envelope grows 1.6e-6 → 2.2e-5 → 3.8e-4 Pa —
+i.e. the trajectory sits at the floor of the chaotic-growth envelope, not merely inside
+it. `validation/L4_idealized/test_jw.py` → 3 passed against the 9-day cache (incl. the
+day-1 rtol≤1e-6 leg and the 12 h C5-class symmetry test with the new ≥60% coverage
+guard). The §4.8 sign-off flag for the 1-day/9-day split is hereby RESOLVED — acceptance
+3 is executed in full; the flag now covers only the standing note that CI never reruns
+the generation (cache + checksums per deviation 11).
+
+**CLI note (follow-up):** `make_reference.py --run all` generates reference+twin+manifest
+but NOT the symcon leg (which needs an explicit `--run symcon`) — this cost the
+orchestrator a cycle; either fold symcon into `all` or rename the option (S14 or trunk).
