@@ -440,6 +440,44 @@ def test_hook_order_matches_icon_sequence_for_two_substeps() -> None:
     assert all(c["ndyn_substeps_var"] == 2 for c in correctors)
 
 
+def test_plan_unrolled_hook_order_matches_t0() -> None:
+    """S14: the T1 unrolled op list replays T0's exact event sequence.
+
+    Two steps at ndyn_substeps=2 through fresh solvers with stubbed granules:
+    the T0 ``array_call`` orchestration and the T1 plan hooks record identical
+    (event, substep, flags) sequences — including the initial-timestep
+    carry-swap exception, which is component-private state at both tiers.
+    """
+    import dataclasses as _dataclasses
+
+    from symcon.core.contracts.checkers import StateSchema
+    from symcon.core.plan.bind import ExecutionPlan
+    from symcon.core.state.vault import StateVault
+    from symcon.core.time import datetime
+
+    bus = {"icon:ddt_vn_phy": 0.0, "icon:ddt_exner_phy": 0.0}
+
+    t0 = _make_solver()
+    _stub_stages(t0)
+    t0.hook_log = []
+    t0_state = _state(t0, bus=dict(bus))
+    for _ in range(2):
+        t0(t0_state, DT)
+
+    t1 = _make_solver()
+    _stub_stages(t1)
+    t1.hook_log = []
+    t1_state = _state(t1, bus=dict(bus))
+    t1_state["time"] = datetime(2000, 1, 1)
+    bind_ctx = _dataclasses.replace(t1.ctx, tier="plan", timestep=DT)
+    vault = StateVault.from_state(t1_state)
+    plan = ExecutionPlan.bind(t1, StateSchema.from_state(t1_state), bind_ctx)
+    for index in range(2):
+        plan.run_step(vault, index)
+
+    assert t0.hook_log == t1.hook_log
+
+
 def test_ratio_provider_drives_substep_count() -> None:
     solver = _make_solver(
         cfg=NonhydroConfig(ndyn_substeps=2), substeps=0, ratio_provider=lambda state: 3
@@ -691,12 +729,17 @@ def test_load_restart_state_rejects_schema_mismatch() -> None:
         solver.load_restart_state(extra)
 
 
-# -- T1 bindability (deviation 5: visit() compiles as an opaque Stepper op) -----------------
+# -- T1 bindability (S12 deviation 5; since S14: the substep-outer unrolled path) -----------
 
 
 def test_plan_tier_binds_and_runs_the_component() -> None:
-    """The S05 plan compiler accepts NonhydroSolver (opaque ``array_call`` op via
-    the ``visit`` override) and ``run_step`` executes it (review round 1, MINOR 5).
+    """The plan compiler accepts NonhydroSolver and ``run_step`` executes it.
+
+    S12 bound the component as one opaque ``array_call`` op (deviation 5); since
+    S14 the ``visit`` override routes to ``visit_dynamical_core`` and the step is
+    unrolled into the ICON substep-outer op sequence (ingress → per-substep carry
+    swaps + predictor/corrector + time-level swaps → egress) — this smoke drives
+    exactly that path with the stubbed granule.
 
     Under the plan tier the ``__call__`` zero-fill convenience is bypassed, so the
     bound state must carry the bus slots explicitly (declared in STATUS §2).

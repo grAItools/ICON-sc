@@ -80,3 +80,48 @@ def test_unknown_wrapper_refuses_plan_compilation() -> None:
             timestep=COLUMN_DT,
             n_steps=1,
         )
+
+
+def test_run_step_yields_to_the_host_callback_at_segment_markers() -> None:
+    """S14 host-step seam: ``run_step(..., on_segment=...)`` fires at every
+    SegmentMarker — the point where T2 will stop graph replay and return
+    control to Python; ``ctx.timeloop`` hangs monitors and time advancement
+    off exactly this callback."""
+    from symcon.core import ExecutionPlan, StateSchema, StateVault
+
+    ctx = ComputeContext("embedded", tier="plan", timestep=COLUMN_DT)
+    state = toy_state()
+    vault = StateVault.from_state(state)
+    plan = ExecutionPlan.bind(make_toy_loop(), StateSchema.from_state(state), ctx)
+
+    markers: list[tuple[str, str]] = []
+    for index in range(3):
+        plan.run_step(vault, index, on_segment=lambda m: markers.append((m.kind, m.tag)))
+    assert markers == [("step_end", "root")] * 3
+
+    # The callback is optional: the default path stays marker-silent.
+    plan_quiet = ExecutionPlan.bind(make_toy_loop(), StateSchema.from_state(state), ctx)
+    vault_quiet = StateVault.from_state(toy_state())
+    plan_quiet.run_step(vault_quiet, 0)
+
+
+def test_plan_and_interpret_monitor_series_agree_bitwise() -> None:
+    """Monitors run in the step_end host step at T1; the stored series equals
+    T0's snapshot-for-snapshot (values and time stamps)."""
+    import numpy as np
+
+    series = {}
+    for tier in ("interpret", "plan"):
+        monitor = MemoryMonitor(variables=("air_temperature", "upward_air_velocity"))
+        ctx = ComputeContext("embedded", tier=tier)
+        ctx.timeloop(
+            toy_state(), make_toy_loop(), timestep=COLUMN_DT, n_steps=4, monitors=(monitor,)
+        )
+        series[tier] = monitor.snapshots
+    assert len(series["interpret"]) == len(series["plan"]) == 4
+    for t0_snap, t1_snap in zip(series["interpret"], series["plan"], strict=True):
+        assert t0_snap["time"] == t1_snap["time"]
+        for name in ("air_temperature", "upward_air_velocity"):
+            np.testing.assert_array_equal(
+                np.asarray(t1_snap[name].data), np.asarray(t0_snap[name].data), strict=True
+            )
