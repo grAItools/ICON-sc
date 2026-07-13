@@ -402,6 +402,10 @@ class NonhydroSolver(DynamicalCore):
 
     n_stages: ClassVar[int] = 2  # 0 = predictor, 1 = corrector
     substep_fraction: ClassVar[float] = 1.0
+    #: ICON nests substeps outer (module docstring); the S14 plan compiler unrolls
+    #: the step through the plan-hook quartet below (contract documented on
+    #: ``DynamicalCore.substep_nesting``).
+    substep_nesting: ClassVar[str] = "substep_outer"
 
     input_properties: ClassVar[Mapping[str, Any]] = {
         "icon:normal_wind": {"dims": _EDGE_K, "units": "m s-1"},
@@ -651,14 +655,86 @@ class NonhydroSolver(DynamicalCore):
         return float(np.asarray(self._diag_state.max_vertical_cfl))
 
     def visit(self, plan_builder: PlanBuilder) -> None:
-        """S05 plan hook: compile as an opaque Stepper-shaped op.
+        """S05/S14 plan hook: unroll the ICON substep-outer nesting.
 
-        The base-class ``visit_dynamical_core`` unrolls the Fig. 3.10 stage-outer
-        tiers, which is not this component's nesting (see module docstring); until
-        S14 teaches the plan compiler the ICON nesting, the hosted granule is one
-        opaque ``array_call`` op (``communicates_internally=True``).
+        ``substep_nesting = "substep_outer"`` routes the compiler to the S14
+        per-substep op sequence (ingress → N x [carry swaps → predictor →
+        corrector → time-level swap] → egress) via the plan-hook quartet; the
+        component-private icon4py state never reaches the vault (§4.5, PLAN S14
+        pitfall) — the vault sees only the boundary prognostics' step-level
+        ping-pong.
         """
-        plan_builder.visit_component(self)
+        plan_builder.visit_dynamical_core(self)
+
+    # -- S14 plan hooks (contract: DynamicalCore.substep_nesting) -------------------------
+
+    def plan_ingress(
+        self,
+        n_substeps: int,
+        inputs: dict[str, FieldBuffer],
+        outputs: dict[str, FieldBuffer],
+        timestep: timedelta,
+    ) -> None:
+        """T1 step entry: boundary buffers → private time levels + bus (S14).
+
+        Mirrors the ``array_call`` preamble exactly (the substep-count guards ran
+        at bind; they are re-checked here so a mutated component fails loudly).
+        """
+        del outputs, timestep
+        if not 1 <= n_substeps <= self.config.ndyn_substeps_max:
+            raise ValueError(
+                f"component {self.name!r}: bound substep count {n_substeps} is outside "
+                f"[1, ndyn_substeps_max={self.config.ndyn_substeps_max}]."
+            )
+        self._current_call_substeps = n_substeps
+        self._ingest(inputs)
+
+    def plan_substep_begin(
+        self,
+        substep: int,
+        inputs: dict[str, FieldBuffer],
+        outputs: dict[str, FieldBuffer],
+        timestep: timedelta,
+    ) -> None:
+        """T1 substep entry: the MOST_EFFICIENT advective-tendency pair swaps.
+
+        Component-private carry swaps (never vault swaps); the initial-timestep
+        exception lives in the private ``_at_initial_timestep`` flag exactly as
+        at T0 (§4.5 restart semantics are preserved verbatim).
+        """
+        del inputs, outputs, timestep
+        diag = self._diag_state
+        at_first = substep == 0
+        if not (self._at_initial_timestep and at_first):
+            diag.vertical_wind_advective_tendency.swap()
+            self._record("swap_w_adv_pair", substep)
+        if not at_first:
+            diag.normal_wind_advective_tendency.swap()
+            self._record("swap_vn_adv_pair", substep)
+
+    def plan_substep_end(
+        self,
+        substep: int,
+        inputs: dict[str, FieldBuffer],
+        outputs: dict[str, FieldBuffer],
+        timestep: timedelta,
+    ) -> None:
+        """T1 inter-substep boundary: private nnow/nnew time-level swap."""
+        del inputs, outputs, timestep
+        self._prognostic_states.swap()
+        self._record("swap_time_levels", substep)
+
+    def plan_egress(
+        self,
+        inputs: dict[str, FieldBuffer],
+        outputs: dict[str, FieldBuffer],
+        timestep: timedelta,
+    ) -> None:
+        """T1 step exit: bookkeeping + private state → boundary output buffers."""
+        del inputs, timestep
+        self._at_initial_timestep = False
+        self._steps_done += 1
+        self._egress(outputs)
 
     # -- the call path -----------------------------------------------------------------
 

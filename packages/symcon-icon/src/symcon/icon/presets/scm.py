@@ -176,6 +176,36 @@ class SCMComposition:
         working.update(new_state)
         return working
 
+    def __call__(
+        self,
+        state: Mapping[str, Any],
+        timestep: timedelta,
+        *,
+        out: Mapping[str, Any] | None = None,
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Stepper-shaped adapter over :meth:`step` (S14 additive extension).
+
+        Makes the composition drivable by ``ctx.timeloop`` under either tier:
+        the advanced state is returned in the ``new_state`` slot (``step``
+        already merges diagnostics), so the loop's ``update`` reproduces
+        ``step``'s result exactly.
+        """
+        del out  # the T0 loop body owns its buffers (§5.1 run-script shape)
+        return {}, self.step(state, timestep)
+
+    def visit(self, plan_builder: Any) -> None:
+        """S14 plan-compiler hook: compile exactly the :meth:`step` sequence.
+
+        The loop body has no single S04 operator (S09 STATUS deviation) — the
+        walk dispatches its three pieces in ``step`` order: the slow suite as a
+        top-level *publishing* coupling (tendencies land in their bus-slot
+        state cells, cadence masks preserved), then the consumer, then the fast
+        federation.
+        """
+        self.slow.visit(plan_builder)
+        self.core.visit(plan_builder)
+        self.fast.visit(plan_builder)
+
 
 def _initial_column(cfg: SCMConfig) -> dict[str, Any]:
     """The preset's initial state (provenance in the module docstring)."""

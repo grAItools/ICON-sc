@@ -434,3 +434,30 @@ paths = ["model/testing/src/icon4py/model/testing/serialbox.py", "model/common/s
 taken = "The S12-dossier root cause (S13 STATUS section 5). wgtfacq_c/wgtfacq_e are 3-level fields with a SHIFTED K-domain [nlev-3, nlev): serialbox.py:828-890 builds them via an embedded KDim shift by (nlev-3) + flip ('the Fortran array stores the surface levels in reversed order'), and the metrics factory's field carries the same domain (measured Domain(Cell=(0:20480), K=(57:60)) on EXCLAIM_APE; a scan over every consumed metrics/interpolation factory output shows these two are the ONLY fields with non-zero domain starts). The consuming solve_nonhydro surface-extrapolation stencils index K=nlev-3..nlev-1 through the field domain, so any re-import of the raw (N,3) array at K-domain [0,3) sends every read out of bounds -> gtfn reads unallocated memory (rebuild-dependent, unbounded garbage). symcon fix: dycore convert() anchors the rebuilt fields at the surface, K-domain [nlev-k_extent, nlev)."
 step = "S13"
 date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-driver-substep-op-order"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/driver/src/icon4py/model/driver/icon4py_driver.py"]
+taken = "S14 re-consult (plan-compiler unroll order for the ICON substep-outer nesting; the S12 hosting refs mined the same lines for array_call): _integrate_one_time_step = _do_dyn_substepping THEN diffusion.run THEN prognostic_states.swap() (l.202-229) - the composed-model op order the JW plan must reproduce; _do_dyn_substepping (l.272-310): per substep FIRST _update_time_levels_for_velocity_tendencies (vertical pair swap unless (at_initial_timestep AND at_first_substep); normal pair swap unless at_first_substep - l.233-271), THEN solve_nonhydro.time_step(predictor->corrector), THEN prognostic_states.swap() unless last substep (the final swap is postponed past diffusion). The unrolled T1 op list emits exactly this sequence as component BoundCalls: the pair/time-level swaps are component-private ops (plan_substep_begin/plan_substep_end hooks), never vault Swaps - only the step-boundary prognostic ping-pong reaches the vault (PLAN S14 pitfall)."
+step = "S14"
+date = "2026-07-12"
+
+[[ref]]
+id = "icon-fortran-substep-op-order"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_dyn_iconam/mo_nh_stepping.f90"]
+taken = "S14 cross-check of the substep-outer unroll order (icon4py remains the verification target): perform_dyn_substepping SUBSTEPS loop (l.3050-3130) calls solve_nh once per substep with dt_dyn = Δt/N and swaps nnow/nnew between substeps but NOT after the last ('This final swap is postponed till the end of the integration step', l.3104-3111); the integration step runs perform_dyn_substepping then CALL diffusion on nnew (l.2182-2191). Matches the icon4py driver order the T1 plan unrolls; linit_dyn(jg) is the at_initial_timestep flag consumed inside the first predictor only - component-private state at T1, not a plan-phase distinction."
+step = "S14"
+date = "2026-07-12"
+
+[[ref]]
+id = "cupy-graph-launch-count"
+url = "https://github.com/cupy/cupy"
+commit = "v13.0.0"  # PyPI floor of the icon4py cuda12 extra (cupy-cuda12x>=13.0)
+paths = ["cupy_backends/cuda/api/runtime.pyx", "cupy/cuda/graph.pyx", "docs cupy.cuda.Graph / Stream.begin_capture"]
+taken = "S14 benchmark gpu leg feasibility: cupy exposes stream capture (Stream.begin_capture/end_capture -> cupy.cuda.Graph with the raw cudaGraph_t as Graph.graph) but does NOT bind cudaGraphGetNodes or cudaGraphDebugDotPrint at v13.0.0 (runtime.pyx graph surface: graphDestroy/graphExecDestroy/graphLaunch/graphUpload only) - so a kernel-launch count needs a ctypes cudaGraphGetNodes call on Graph.graph after capturing one T1 step. Capture also fails across host seams (numpy work, cudaMalloc), which is itself the T2 segment observation the benchmark records. gtfn_gpu kernels launch inside compiled nanobind modules, so Python-level cupy call hooks cannot see them - capture-based counting is the only cupy-reachable mechanism."
+step = "S14"
+date = "2026-07-12"

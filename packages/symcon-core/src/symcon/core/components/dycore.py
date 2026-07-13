@@ -75,6 +75,30 @@ class DynamicalCore(Component):
     )
     timestep_required: ClassVar[bool] = True
 
+    #: How the stage and super-fast tiers nest (S14, additive ClassVar):
+    #: ``"stage_outer"`` — the Fig. 3.10 default this base class orchestrates
+    #: (each stage runs its own substep block); ``"substep_outer"`` — ICON's
+    #: nesting (every substep runs the full stage sequence,
+    #: ``mo_nh_stepping.f90::perform_dyn_substepping``). A substep-outer core
+    #: overrides ``array_call`` with its own orchestration **and** implements the
+    #: plan-hook quartet the S05/S14 compiler unrolls the step into (all follow
+    #: the materialized ``(*prefix, inputs, outputs, timestep)`` BoundCall pack):
+    #:
+    #: - ``plan_ingress(n_substeps, inputs, outputs, dt)`` — step entry: boundary
+    #:   buffers → component-private state (§4.5); ``dt`` is the full Δt;
+    #: - ``plan_substep_begin(substep, inputs, outputs, sub_dt)`` — the
+    #:   component-private carry swaps that precede the substep's stages;
+    #: - ``substep_array_call(stage, substep, inputs, outputs, sub_dt)`` — the
+    #:   frozen S04 hook, one stage of one substep;
+    #: - ``plan_substep_end(substep, inputs, outputs, sub_dt)`` — the private
+    #:   time-level swap between substeps (not emitted after the last);
+    #: - ``plan_egress(inputs, outputs, dt)`` — step exit: private state →
+    #:   boundary output buffers, plus step bookkeeping.
+    #:
+    #: Private swaps stay inside these BoundCalls — the vault only ever holds
+    #: boundary fields and their step-level ping-pong (§8.2/§4.5).
+    substep_nesting: ClassVar[str] = "stage_outer"
+
     #: Number of stages of the time-marching scheme (subclass contract).
     n_stages: ClassVar[int] = 1
     #: Per-stage fraction of the total substep count ``N`` (scalar broadcasts).
