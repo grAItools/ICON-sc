@@ -23,3 +23,6 @@ jobs:
         run: uv run mypy --strict -p symcon.core
       - name: import-linter contracts
         run: uv run lint-imports
+      # task 28: a PR that breaks the docs build fails lint, not just the docs workflow.
+      - name: docs build
+        run: uv run sphinx-build -b html docs docs/_build/html

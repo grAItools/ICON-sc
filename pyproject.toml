@@ -32,6 +32,10 @@ dev = [
   "import-linter>=2.1",
   "pre-commit>=4.0",
   "matplotlib>=3.8",
+  # task 28: docs build — plan 27_docs_plan §3.3 (TD-2); pins in constraints/cpu-ci.txt.
+  "sphinx>=8.1",
+  "myst-parser>=4.0",
+  "furo>=2025.12.19",
 ]
 
 [tool.uv]
@@ -57,7 +61,20 @@ src = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "D"]
+# task 28 (TD-3, plan 27_docs_plan §4): Google docstring convention, enforced going
+# forward; the existing corpus is narrative reST prose that legitimately fails the
+# rules below TODAY. Each entry is corpus baseline, plan 27 §4; shrink-only.
+ignore = [
+  "D1",   # undocumented-public-* family: 577 findings / 122 public defs; corpus baseline, plan 27 §4; shrink-only
+  "D205", # missing-blank-line-after-summary: 79 in corpus; corpus baseline, plan 27 §4; shrink-only
+  "D209", # new-line-after-last-paragraph: 66 in corpus; corpus baseline, plan 27 §4; shrink-only
+  "D403", # first-word-uncapitalized: 15 in corpus (< 20, but green-without-docstring-edits is binding; the autofix would rewrite literal names, e.g. numpy -> Numpy); corpus baseline, plan 27 §4; shrink-only
+  "D415", # missing-terminal-punctuation: 1 in corpus (< 20, same green rule); corpus baseline, plan 27 §4; shrink-only
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.isort]
 known-first-party = ["symcon"]

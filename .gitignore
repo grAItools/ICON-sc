@@ -8,6 +8,8 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+# docs build output (task 28) — built, never committed
+docs/_build/
 dist/
 build/
 .pytest_cache/
