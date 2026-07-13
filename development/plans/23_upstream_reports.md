@@ -2,7 +2,7 @@
 
 **Branch:** `task/23-upstream-reports` (from `main`; verify `git branch
 --show-current` before every commit). **Scope: writing three report drafts into
-`plan/prompts/reports/upstream/` — you change NO product code and NO tests.** The
+`development/records/upstream/` — you change NO product code and NO tests.** The
 drafts are for a human to review and submit to github.com/C2SM/icon4py; you do NOT
 open issues yourself.
 
@@ -20,7 +20,7 @@ open issues yourself.
 
 ## Draft 1 — `graupel_cold_glaciation_budget_leak.md`
 
-Source material: `plan/steps/S08_graupel_component/STATUS.md` (the leak dossier and
+Source material: `development/records/S08_graupel_component/STATUS.md` (the leak dossier and
 its Review-fixes round), and the committed wrapper-free reproduction
 `test_cold_leak_reproduces_in_bare_granule` in
 `packages/symcon-icon/tests/test_graupel_component.py` (read `_raw_granule_budget_defect`
@@ -35,8 +35,8 @@ and quote its pass line.
 
 ## Draft 2 — `wgtfacq_shifted_k_domain_footgun.md`
 
-Source material: `plan/steps/S13_diffusion_jw_l4/STATUS.md` (the root-cause
-narrative), `plan/steps/S12_nonhydro_hosting/STATUS.md` §5 (the original dossier +
+Source material: `development/records/S13_diffusion_jw_l4/STATUS.md` (the root-cause
+narrative), `development/records/S12_nonhydro_hosting/STATUS.md` §5 (the original dossier +
 reviewer refinements), REFERENCES.lock entry `icon4py-wgtfacq-domain`, and the fix
 commit `2c0b569`. Content: NOT a bug report — a documentation/API-hardening
 suggestion. The facts: `wgtfacq_c`/`wgtfacq_e` are 3-level fields registered on
@@ -67,12 +67,12 @@ as a data point upstream may want.
 
 ## Acceptance criteria
 
-1. Three drafts committed under `plan/prompts/reports/upstream/`, every claim
+1. Three drafts committed under `development/records/upstream/`, every claim
    double-cited (in-repo + upstream file:line at the pinned SHA).
 2. Draft 1's reproduction snippet is icon4py-only (no symcon import) and you have
    verified it runs (`uv run python <<the snippet>>` in a scratch file under /tmp)
    producing the reported magnitudes.
-3. No product/test/doc file outside `plan/prompts/reports/upstream/` is touched.
+3. No product/test/doc file outside `development/records/upstream/` is touched.
 4. Full fast gate untouched-green as a formality:
    `uv run pytest packages -m "not gpu and not slow" -q` matches the current
    baseline (see README; may be 733 if Task 21 merged first — check `git log`).
@@ -83,7 +83,7 @@ as a data point upstream may want.
   (clone/fetch at the SHA if needed) and comparing line contents.
 - Run Draft 1's snippet yourself; the numbers must reproduce within the stated
   bounds (they are deterministic).
-- `git diff main..HEAD --stat`: only files under `plan/prompts/reports/upstream/`.
+- `git diff main..HEAD --stat`: only files under `development/records/upstream/`.
   Anything else is a MAJOR finding.
 - Check every number in the drafts against its cited source; an uncited or
   unreproducible number is a MAJOR finding (these documents leave the repo — they

@@ -8,7 +8,7 @@ local `main` (nothing pushed; one-PR-per-step remains available in DAG order).
 This report is the process memory of the implementation: how each step landed, what the
 reviews caught, the scientific/engineering findings worth keeping, and the ledger of
 items that still need human sign-off at PR time. Detailed per-step accounts live in
-`plan/steps/SXX_*/STATUS.md`; provenance of every consulted source is in
+`development/records/SXX_*/STATUS.md`; provenance of every consulted source is in
 `REFERENCES.lock`.
 
 ---

@@ -290,6 +290,6 @@ linked from all three pages, `Location.CELL` present in the built T1;
 Commit `6abd1b9` ("docs: refresh prompts-README gate baselines post task 26")
 was committed onto this branch by the **orchestrator** (shared working tree
 had this branch checked out) rather than main. It touches only
-`plan/prompts/README.md`, is authorized (reviewer INFO-7 baseline refresh),
+`development/plans/README.md`, is authorized (reviewer INFO-7 baseline refresh),
 and rides along in this branch per the coordinator's instruction — it is not
 an undeclared out-of-scope touch by task 28.

@@ -24,7 +24,7 @@
   wrapped component re-registers its cadence-masked diagnostic cells under a second
   path, and the compiler's cell-write corruption guard (bind.py, search
   `"persistent-cache slot would be corrupted"`) rightly rejects that. See
-  `plan/steps/S05_vault_plan_t1/STATUS.md` "Review fixes (round 1)" for the record.
+  `development/records/S05_vault_plan_t1/STATUS.md` "Review fixes (round 1)" for the record.
 - Loud-rejection regression tests exist and MUST keep passing until the feature
   works, then be CONVERTED (not deleted):
   `packages/symcon-core/tests/test_plan_equivalence.py::test_calling_frequency_under_multi_stage_scheme_is_rejected_loudly`
@@ -92,7 +92,7 @@ raising the current error (true duplicate occurrence).
 ## Acceptance criteria
 
 Either (A) feature complete: tests 1–4 green + full README gate green + report
-`plan/prompts/reports/25_cf_multistage_REPORT.md` describing the cell-aliasing
+`development/records/25_cf_multistage_REPORT.md` describing the cell-aliasing
 mechanism and why the corruption guard stays intact; or (B) design outcome: no
 code change (or a reverted branch), plus the report containing the attempted
 approach, the exact guard/equivalence failure evidence, and a concrete design for

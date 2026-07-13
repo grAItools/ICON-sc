@@ -35,8 +35,8 @@ text is delivered ad hoc and never committed (the row says so). Numbers are stri
 monotonic, never reused; gaps are never backfilled. On a collision, the first-registered
 number wins and the latecomer takes the next free one. Full naming convention, file
 taxonomy, forward SPEC/STATUS templates, and the plan/docs boundary policy live in
-`plan/README.md`; the living trunk-decision/sign-off register is
-`plan/TRUNK_DECISIONS.md` (it supersedes `plan/IMPLEMENTATION_REPORT.md` §5/§6 going
+`development/archive/plan_tree_map.md`; the living trunk-decision/sign-off register is
+`development/DECISIONS.md` (it supersedes `development/records/IMPLEMENTATION_REPORT.md` §5/§6 going
 forward).
 
 | N | Task | Prompt | Status | Deliverable |
@@ -70,7 +70,7 @@ forward).
 - **No tolerance changes anywhere.** If a test tolerance seems wrong, stop and report;
   do not edit it. (AGENTS.md rule 6: tolerance creep is how scientific divergence
   sneaks in.)
-- Do not edit `docs/architecture/*`, any `plan/steps/*/SPEC.md` or `PLAN.md`, or
+- Do not edit `docs/architecture/*`, any `development/specs/*.md` or `PLAN.md`, or
   another task's files. Completed steps' `STATUS.md` files are historical records —
   never edit them; new findings go in YOUR task report.
 - Every consulted external source (icon4py, gt4py, ICON Fortran, docs) gets an entry
@@ -138,7 +138,7 @@ Rules for reading gate output:
 
 ## Background reading (skim before any task)
 
-- `plan/IMPLEMENTATION_REPORT.md` — what was built, findings, the sign-off ledger.
+- `development/records/IMPLEMENTATION_REPORT.md` — what was built, findings, the sign-off ledger.
 - `AGENTS.md` — the working agreement (binding).
-- `plan/00_OVERVIEW.md` — DAG and conventions; §5 names the post-slice phases,
-  outlined in `plan/outlines/`.
+- `development/records/00_OVERVIEW.md` — DAG and conventions; §5 names the post-slice phases,
+  outlined in `development/ideas/`.

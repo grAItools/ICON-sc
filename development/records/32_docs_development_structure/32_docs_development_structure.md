@@ -13,13 +13,13 @@ supersedes it. The register handles this by its own convention — TD-29.1's `St
 only its *conclusion* ("move nothing") is on the table.
 
 **Where this document lives.** It was commissioned into
-`plan/prompts/reports/32_docs_development_structure/` per the current (task-29) convention.
+`development/records/32_docs_development_structure/` per the current (task-29) convention.
 Under the refined structure of §2 it would be
 `docs/development/records/32_docs_development_structure/` — task deliverables are records.
 The irony is the same bootstrapping one task 29 recorded; it resolves the same way: the
 location is correct under the rules in force at commission time, and history freezes in place
 (§5). Register note: per the allocation rule, number 32 needs a row in
-`plan/prompts/README.md` — this task's file-scope constraint (new files only) means that row
+`development/plans/README.md` — this task's file-scope constraint (new files only) means that row
 lands with the migration task's PR; recorded here so the allocator does not drift.
 
 ---
@@ -46,7 +46,7 @@ Five verdicts up front:
    counts ~90 inbound references to `plan/` paths, including *runtime paths in committed test
    code* and agent permission globs. Migrating S01–S14 buys nothing and breaks records that
    must never be edited. `plan/` becomes a read-only archive with a banner. (§2.6, §5.)
-4. **`plans/` absorbs `plan/prompts/`** — the owner's definition of plans ("usable as prompts
+4. **`plans/` absorbs `development/plans/`** — the owner's definition of plans ("usable as prompts
    for mid-tier LLM coding agents") *is* the existing prompt discipline; two trees for one
    kind would drift. The task-number register (single allocator) survives as
    `plans/README.md`. (§2.6.)
@@ -61,11 +61,11 @@ Five verdicts up front:
 - `docs/` is a Sphinx source tree (task 28): `sphinx-build -b html docs …` runs in
   `lint.yml` (PR gate) and `docs.yml` (Pages deploy from `main`). The task-31 gate uses
   `-E -W --keep-going`; warnings are failures.
-- `plan/` ↔ `docs/` boundary policy (`plan/README.md` §4): plan is never a Sphinx source,
+- `plan/` ↔ `docs/` boundary policy (`development/archive/plan_tree_map.md` §4): plan is never a Sphinx source,
   never linked from site pages, never deployed. The proposal *relocates* the boundary
   (development memory moves inside `docs/`); it must not *erase* it — §4 restates it for the
   new geometry.
-- Frozen records are never retro-edited (AGENTS.md; `plan/README.md` §1 liveness column).
+- Frozen records are never retro-edited (AGENTS.md; `development/archive/plan_tree_map.md` §1 liveness column).
   Every structure decision below is priced against that rule.
 - `REFERENCES.lock` is the append-only provenance ledger (51 entries, 41 source ids,
   schema in header, appended at mining time, referenced by ~30 files). Nothing here may
@@ -97,7 +97,7 @@ change together (from grep, this branch):
 | 6 | Published URLs | `…/tutorials/*`, `…/api/*` → `…/user/…` — GitHub Pages has no server redirects; any circulated link 404s. Site is days old; cost ≈ zero *now*, grows monotonically |
 | 7 | intersphinx | outbound only (`python`) — no inbound consumers yet; anchors change if anyone maps us later |
 | 8 | CI workflows | **no change** — `docs.yml`/`lint.yml` build the whole `docs/` dir; `test-cpu.yml` examples-smoke runs `examples/*.py`, not docs paths |
-| 9 | Historical mentions | `plan/steps/S01…/STATUS.md`, prompts 28, reports 27/28 cite `docs/api/`/`docs/tutorials/` — frozen, stay as written (archive banner covers the drift, §5) |
+| 9 | Historical mentions | `development/records/S01…/STATUS.md`, prompts 28, reports 27/28 cite `docs/api/`/`docs/tutorials/` — frozen, stay as written (archive banner covers the drift, §5) |
 
 **Verdict.** Adoptable at a bounded, one-PR cost — but note the honest alternative: if
 `development/` is excluded from the build (§2.2), then *everything published is already
@@ -137,7 +137,7 @@ invariant becomes: *published surface = `docs/` minus `docs/development/`*; `doc
 ### 2.3 `docs/development/policies/`
 
 **Strengths.** Today's living rules are scattered across `AGENTS.md` (hard rules),
-`plan/README.md` (taxonomy, naming, templates, boundary), and `plan/prompts/README.md`
+`development/archive/plan_tree_map.md` (taxonomy, naming, templates, boundary), and `development/plans/README.md`
 (invariants, verification-gate baselines, caches). One policy per file, updated as needed,
 is strictly better than three multi-purpose READMEs.
 
@@ -192,8 +192,8 @@ suffices. Retroactive ADR back-fill of TD-27.1/29.x: optional, low value, not re
 Sound as specified (idea, motivation, benefits, risks; reviewed/prioritized). Two existing
 populations to place:
 
-- **Phase outlines (`plan/outlines/P2…P7.md`)** are *not* ideas — they are the accepted
-  roadmap, input contract for task 30 (phase-spec authoring), and `plan/00_OVERVIEW.md` §5
+- **Phase outlines (`development/ideas/P2…P7.md`)** are *not* ideas — they are the accepted
+  roadmap, input contract for task 30 (phase-spec authoring), and `development/records/00_OVERVIEW.md` §5
   points at them. They freeze in the archive; their content graduates directly into `specs/`
   when a phase is specced. Copying them into `ideas/` would create a second source of truth.
 - **Open questions parked in the register** (e.g., the old TD-29.6) are the ideas/ natural
@@ -209,10 +209,10 @@ no numbers (ideas churn; they get a number only on graduating to a spec, from th
 scope, frozen interfaces, acceptance criteria) → `specs/`; PLAN.md (ordered tasks, mining
 instructions, pitfalls) → `plans/`. The owner's plans/ definition — complete-but-minimal,
 anti-drift, usable as prompts for mid-tier LLMs — is *verbatim* the discipline
-`plan/prompts/README.md` already states ("written for LLM agents weaker than the ones that
+`development/plans/README.md` already states ("written for LLM agents weaker than the ones that
 built the slice… scope discipline is the main anti-drift device"). Two consequences:
 
-1. **Merge `plan/prompts/` into `plans/`** (future tasks). A task prompt *is* an
+1. **Merge `development/plans/` into `plans/`** (future tasks). A task prompt *is* an
    implementation plan under the new model. The register — the single N-number allocator,
    invariants pointer, execution-order table — becomes `plans/README.md` and keeps its
    allocation rule unchanged (row at assignment, monotonic, no reuse, no backfill).
@@ -223,17 +223,17 @@ built the slice… scope discipline is the main anti-drift device"). Two consequ
 
 **Do S01–S14 (and tasks 20–31) migrate?** The task-29 census: ~90 inbound references to
 `plan/` paths across AGENTS.md/CLAUDE.md/README, PR template, both agent command sets, a
-`.claude/settings.json` permission glob (`Edit(plan/steps/**/SPEC.md)`), `.gitignore`,
+`.claude/settings.json` permission glob (`Edit(development/specs/**)`), `.gitignore`,
 prompts 20–25/30 (unexecuted — their literal paths are the contract a weak model follows),
 `docs/conf.py`'s header, ~30 historical documents, **and runtime path construction in
 committed test code** (`test_order_ode.py`, `test_order_burgers.py` build
-`plan/steps/S04_coupling_algebra/artifacts` at runtime). A `git mv` preserves blame but
+`development/records/S04_coupling_algebra/artifacts` at runtime). A `git mv` preserves blame but
 every *content* citation inside frozen records dangles, and fixing them is forbidden
 (no retro-edits). `REFERENCES.lock` `step` fields are bare ids ("S08"), not paths — safe
 either way.
 
 **Recommend: freeze in place.** `plan/` becomes a read-only archive: one banner paragraph
-prepended to `plan/README.md` ("archive as of task 3X; future work lives in
+prepended to `development/archive/plan_tree_map.md` ("archive as of task 3X; future work lives in
 `docs/development/`; paths cited inside are valid relative to this archive"), everything
 else byte-identical. Future steps (S15+) and tasks (33+) are born in the new tree. The two
 trees never overlap in IDs, so `grep -r S17` finds exactly one home. The one persistent
@@ -261,7 +261,7 @@ what was taken, which step) is ledger-shaped, not document-shaped.
 
 **`references/` md cards are the human layer above it**: one card per *source* (icon4py,
 gt4py, icon-fortran, sympl, tasmania, tutorial PDF, thesis — the §3 corpus of
-`plan/00_OVERVIEW.md`, ≈8 cards), not per lock entry. Card contents: canonical URL, pinned
+`development/records/00_OVERVIEW.md`, ≈8 cards), not per lock entry. Card contents: canonical URL, pinned
 version/SHA and where the pin is decided (`constraints/`), license, role in the project,
 gotchas (e.g., "gitlab.dwd.de does not resolve; use the gitlab.dkrz.de mirror"), and a
 pointer to `REFERENCES.lock` for the consultation ledger. Hand-curated, living; **not**
@@ -296,7 +296,7 @@ can survive with the dev-tree card folder linking to it — decision point 8. No
 - **(d) `TRUNK_DECISIONS.md`** — moves to `docs/development/TRUNK_DECISIONS.md`, top of the
   dev tree next to `adr/` (relationship in §2.4). It is the living register; leaving the
   only living ledger inside a frozen archive would be incoherent. Cost: ~6 living files
-  reference `plan/TRUNK_DECISIONS.md` (root README, plan/README, prompts README, reports
+  reference `development/DECISIONS.md` (root README, plan/README, prompts README, reports
   README, AGENTS-adjacent wording) — all living, all updatable; frozen citations (report 29,
   TD rows' own Source columns) stay valid via the archive banner.
 - **(e) Phase outlines** — stay frozen in the archive (§2.5); future roadmap items are born
@@ -326,7 +326,7 @@ can survive with the dev-tree card folder linking to it — decision point 8. No
 4. **Every folder gets a `README.md` index** (existing pattern: prompts, reports).
 5. **Greppable markers unchanged:** `TD-PENDING:` (register contract), `GENERATED FILE`
    headers, `[[ref]]` schema. New under this proposal: ideas' `Status:` header line.
-6. **Liveness is declared, not implied:** the taxonomy table (today `plan/README.md` §1)
+6. **Liveness is declared, not implied:** the taxonomy table (today `development/archive/plan_tree_map.md` §1)
    moves to `policies/records_and_liveness.md` and gains rows for the new kinds
    (policy=living, adr=frozen-after-accepted+status-field, idea=living-until-graduated,
    spec/plan=frozen at acceptance/assignment, record=frozen at merge, card=living).
@@ -362,12 +362,12 @@ docs/
     ├── drafts/                external-facing: upstream/, prs/ (resolves TD-29.6)
     └── references/            per-source cards (~8) + local/ (gitignored; absorbs the
                                top-level references/ dir — §2.7)
-plan/                          FROZEN ARCHIVE — byte-identical except a banner in plan/README.md;
+plan/                          FROZEN ARCHIVE — byte-identical except a banner in development/archive/plan_tree_map.md;
                                all S01–S14 triads, outlines, prompts 10–31, reports stay put
 references/                    dissolved into development/references/local/ (decision point 8)
 ```
 
-## 4. docs/-publication policy (replaces `plan/README.md` §4 wording)
+## 4. docs/-publication policy (replaces `development/archive/plan_tree_map.md` §4 wording)
 
 1. The published surface is `docs/` **minus `docs/development/`** (conf.py
    `exclude_patterns`; the `-W` build gate applies only to published sources).
@@ -387,7 +387,7 @@ references/                    dissolved into development/references/local/ (dec
 | `docs/{tutorials,api,glossary,names_registry}` → `docs/user/` | 21 moved | conf.py (1 pattern), index.md (~8 refs), ~23 in-tutorial links (most survive as same-dir), `tools/names_audit.py` (2 lines), published URLs; CI untouched | do atomically (§2.1) |
 | Create `development/` skeleton (README, policies ×~7, adr/README, ideas/README, specs/plans/records/drafts/references READMEs + ~8 cards) | ~20 new | none (new files) | cheap |
 | `TRUNK_DECISIONS.md` → `development/` | 1 moved | ~6 living files updated; frozen citations covered by archive banner | acceptable |
-| `plan/prompts/` future merge into `plans/` | register content re-homed; 7 unexecuted prompts either stay archived or move | prompts are frozen-at-assignment: recommend *unexecuted* prompts 20–25/30 move (they are contracts not yet consumed; their internal `reports/…` output paths re-target to `records/`+`drafts/` — ~15 path lines across 7 files) — or stay and execute against the archive; decision point 10 | moderate |
+| `development/plans/` future merge into `plans/` | register content re-homed; 7 unexecuted prompts either stay archived or move | prompts are frozen-at-assignment: recommend *unexecuted* prompts 20–25/30 move (they are contracts not yet consumed; their internal `reports/…` output paths re-target to `records/`+`drafts/` — ~15 path lines across 7 files) — or stay and execute against the archive; decision point 10 | moderate |
 | Top-level `references/` → `development/references/local/` | 1 README + 2 gitignore lines + 1 AGENTS.md sentence | PDFs untracked (re-drop) | cheap |
 | AGENTS.md/CLAUDE.md thinning + `.claude`/`.opencode` command+glob updates for S15+ paths | ~6 living files | trunk-owned | required with new tree |
 | **NOT moved:** S01–S14 triads (42 files), outlines (6), executed reports, IMPLEMENTATION_REPORT, `docs/architecture/` | 0 | avoids the ~90-reference census incl. runtime test paths | frozen archive (§2.6) |
@@ -432,7 +432,7 @@ TD-29.7 stays pending but its diff is re-drafted against the final tree (§2.8-f
 6. **Register vs ADRs:** keep `TRUNK_DECISIONS.md` as the sign-off ledger + `adr/` for
    architecture decisions, cross-referenced vs full merge. — *Recommend no merge; tolerance
    sign-offs are ledger rows, not ADRs (§2.4).*
-7. **Prompts ≡ plans:** merge `plan/prompts/` (future) into `plans/`, register becomes
+7. **Prompts ≡ plans:** merge `development/plans/` (future) into `plans/`, register becomes
    `plans/README.md` vs keep a separate prompts tree. — *Recommend merge; the definitions
    are identical and two trees would drift.*
 8. **references/ collision:** absorb top-level `references/` into

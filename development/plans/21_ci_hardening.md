@@ -3,7 +3,7 @@
 **Branch:** `task/21-ci-hardening` (from `main`; verify `git branch --show-current`
 before every commit). One commit per item below (5 commits + report).
 
-## Hard rules (restated; full list in plan/prompts/README.md)
+## Hard rules (restated; full list in development/plans/README.md)
 
 - No tolerance changes. No pin changes. No data in git. Do not edit
   `docs/architecture/*`, any SPEC/PLAN, or completed steps' STATUS files.
@@ -124,7 +124,7 @@ one more test than before).
    commit each, verified by the per-item commands above.
 2. Full gate green with the NEW baselines from item B (733 fast / +3 in data+slow)
    — record the exact numbers.
-3. Report `plan/prompts/reports/21_ci_hardening_REPORT.md` committed: per-item
+3. Report `development/records/21_ci_hardening_REPORT.md` committed: per-item
    what/verify-output/new-baselines, plus anything found out of scope.
 
 ## Review checklist (appended to 10_REVIEW_PROTOCOL.md for this task)

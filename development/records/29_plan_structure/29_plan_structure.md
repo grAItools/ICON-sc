@@ -6,7 +6,7 @@ and the execution is specced as a liftable task in §8). · **Date:** 2026-07-12
 `main` = `cbbec36`, post task-28 merge).
 
 **Where this document lives, and the bootstrapping irony.** This proposal was commissioned
-into `plan/prompts/reports/29_plan_structure/29_plan_structure.md` — a location chosen
+into `development/records/29_plan_structure/29_plan_structure.md` — a location chosen
 *before* the naming convention it proposes existed. Under the convention of §3 (which
 blesses the task-27 pattern: a task whose deliverable *is a document* gets a
 `reports/NN_<name>/NN_<name>.md` subdirectory; a task whose deliverable is *executed work*
@@ -28,16 +28,16 @@ accurate. The five real structural problems, in order of cost:
 
 1. **The sign-off/trunk-decision ledger is buried and unmarked.** The single
    most-load-bearing content (what needs human sign-off; what the trunk decided) lives in
-   the frozen `plan/IMPLEMENTATION_REPORT.md` §5, in three unmerged TD items inside a
+   the frozen `development/records/IMPLEMENTATION_REPORT.md` §5, in three unmerged TD items inside a
    report subdirectory (`27_docs_plan.md` §3), and in ~25 scattered STATUS flags with **no
    machine-greppable token** — the flags use at least four spellings ("HUMAN SIGN-OFF
    REQUIRED", "flag for human sign-off", "needs trunk", a warning glyph) and "TD-" appears
    nowhere in any STATUS file.
 2. **The task-number register is stale and has no allocation rule.** Prompts 26, 27, 29
    were consumed by tasks that have committed outputs but no committed prompt file; the
-   `plan/prompts/README.md` execution-order table lists only 20–25 and 30. Numbering
+   `development/plans/README.md` execution-order table lists only 20–25 and 30. Numbering
    collisions between concurrent task assignments are currently prevented by nothing.
-3. **`plan/prompts/reports/` mixes three kinds** — task execution reports (26, 28), a
+3. **`development/records/` mixes three kinds** — task execution reports (26, 28), a
    design document (27), and (once tasks 23/24 run) external-facing drafts
    (`upstream/`, `prs/`) — with no index saying which is which, and two naming patterns
    (`NN_name_REPORT.md` flat vs `NN_name/` subdir) with no stated rule.
@@ -52,14 +52,14 @@ accurate. The five real structural problems, in order of cost:
    enumerable ways (§6).
 
 **The proposal moves nothing.** Every existing path stays (§4). The fix is: three new
-files (`plan/README.md`, `plan/TRUNK_DECISIONS.md`, `plan/prompts/reports/README.md`),
+files (`development/archive/plan_tree_map.md`, `development/DECISIONS.md`, `development/records/README.md`),
 two content refreshes of *living* documents (root `README.md`, the register table in
-`plan/prompts/README.md`), one canonical sign-off marker convention going forward, and
+`development/plans/README.md`), one canonical sign-off marker convention going forward, and
 one trunk-owned layout-doc revision (drafted as a diff in §6.3, not applied). Rationale:
 the cross-reference census (§4.3) found ~90 inbound references to plan paths across
 prompts, agent tooling, CI-adjacent files, *executed* task records, and — critically —
 **hard-coded paths in committed test code** (`test_order_ode.py`,
-`test_order_burgers.py` construct `plan/steps/S04_coupling_algebra/artifacts` at
+`test_order_burgers.py` construct `development/records/S04_coupling_algebra/artifacts` at
 runtime). Any move therefore either breaks the weak-model prompt workflow, edits
 historical records (forbidden), or touches test code for zero functional gain. A
 beautiful greenfield tree loses to registers and indexes here.
@@ -83,14 +83,14 @@ Every memory/planning/documentation file, grouped; line counts from the working 
 
 | Path | Lines | Kind | State |
 |---|---|---|---|
-| `plan/00_OVERVIEW.md` | 69 | plan overview: agent contract, DAG, lanes, reference corpus, phases | current; §5 points at `outlines/` |
-| `plan/IMPLEMENTATION_REPORT.md` | 206 | process record of the S01–S14 slice; §2 merge ledger, §4 findings, **§5 human sign-off ledger**, §6 standing follow-ups | frozen historical record *containing living content* (§5, §6) — the central misfit (M2) |
+| `development/records/00_OVERVIEW.md` | 69 | plan overview: agent contract, DAG, lanes, reference corpus, phases | current; §5 points at `outlines/` |
+| `development/records/IMPLEMENTATION_REPORT.md` | 206 | process record of the S01–S14 slice; §2 merge ledger, §4 findings, **§5 human sign-off ledger**, §6 standing follow-ups | frozen historical record *containing living content* (§5, §6) — the central misfit (M2) |
 
-### 1.3 `plan/steps/` — 14 triads
+### 1.3 `development/{specs,plans,records}/` — 14 triads
 
 All 14 steps have exactly `SPEC.md` + `PLAN.md` + `STATUS.md`. S04 additionally has an
 on-disk `artifacts/` (2 PNGs) which is **gitignored and untracked**
-(`.gitignore:32 plan/steps/*/artifacts/`) — generated locally by
+(`.gitignore:32 development/records/*/artifacts/`) — generated locally by
 `test_order_ode.py`/`test_order_burgers.py`; the STATUS "Artifacts" sections describe
 them but git carries none.
 
@@ -100,15 +100,15 @@ them but git carries none.
 | `SPEC.md` (×14) | common core: Goal · In scope · Acceptance criteria; 15–31 lines | "Frozen interfaces" present in 9 (S01–S07, S11), **absent in 6** (S08–S10, S12–S14); "Out of scope" only S01–S03 |
 | `STATUS.md` (×14) | none stable; 79 → 330 lines over the series | heavy — §2.3 |
 
-### 1.4 `plan/outlines/` — 6 files
+### 1.4 `development/ideas/` — 6 files
 
 `P2_distributed.md` … `P7_presets_docs_anemoi.md`, each exactly 3 lines on a shared
 micro-template: `# PX — Title (outline)` · `**After:** <dep>` · one dense prose paragraph
 of `(a)…(b)…` sub-steps. Zero references to `docs/`, CONTRIBUTING, or CHANGELOG. They are
 the input contract for prompt 30 (phase-spec authoring); phase steps, when specced,
-continue the S-series under `plan/steps/`.
+continue the S-series under `development/{specs,plans,records}/`.
 
-### 1.5 `plan/prompts/` — register + protocol + 8 task prompts
+### 1.5 `development/plans/` — register + protocol + 8 task prompts
 
 | Path | Lines | Notes |
 |---|---|---|
@@ -124,7 +124,7 @@ continue the S-series under `plan/steps/`.
 | `30_author_phase_specs.md` | 103 | unexecuted; output → `reports/30_specs_<phase>_REPORT.md` |
 
 Common prompt template (the "register format"): title `# Task NN — …` · `**Branch:**
-task/NN-…` line · `## Hard rules (restated; full list in plan/prompts/README.md)` ·
+task/NN-…` line · `## Hard rules (restated; full list in development/plans/README.md)` ·
 body (`## Item A…F` or `## Procedure`/`## Design`) · `## Acceptance criteria` ·
 `## Verification gates` · `## Review checklist (appended to 10_REVIEW_PROTOCOL.md for
 this task)`. Deviations: 24 adds "What NOT to do"; 25 adds "History"/"Stop rules".
@@ -133,7 +133,7 @@ this task)`. Deviations: 24 adds "What NOT to do"; 25 adds "History"/"Stop rules
 `reports/26_gridgen_integration_REPORT.md`, `reports/27_docs_plan/`, this document.
 Those tasks were evidently assigned by ad-hoc prompt text never committed to the repo.
 
-### 1.6 `plan/prompts/reports/`
+### 1.6 `development/records/`
 
 | Path | Lines | Kind |
 |---|---|---|
@@ -148,7 +148,7 @@ Those tasks were evidently assigned by ad-hoc prompt text never committed to the
 |---|---|---|
 | `architecture/symcon_architecture.md` | canonical architecture (trunk-owned, edit-forbidden) | v1.3; since task 28 *also* a Sphinx source, read-only |
 | `architecture/symcon_repo_layout.md` | canonical layout companion | calls the architecture doc "v1.2" (L283); omits itself from its own §4 `docs/` tree; §4 diverged from reality (§6) |
-| `conf.py` | Sphinx config (task 28) | header cites `plan/prompts/reports/27_docs_plan/27_docs_plan.md §3`; `exclude_patterns = ["_build", "api/README.md"]` |
+| `conf.py` | Sphinx config (task 28) | header cites `development/records/27_docs_plan/27_docs_plan.md §3`; `exclude_patterns = ["_build", "api/README.md"]` |
 | `index.md`, `glossary.md` | hand-written site pages (MyST) | index L51 mentions `plan/` as prose only — no link into plan/ from the published site |
 | `tutorials/` (index + T0/T1/T2) | hand-written tutorial track | link `../architecture/symcon_architecture.md` (relative, inside docs/) |
 | `names_registry.md` | **generated, committed** (`GENERATED FILE — do not edit… tools/names_audit.py`) | a committed generated artifact in the docs tree — layout doc silent (M10) |
@@ -158,9 +158,9 @@ Those tasks were evidently assigned by ad-hoc prompt text never committed to the
 ### 1.8 Agent tooling and CI-adjacent
 
 `.claude/commands/{implement-step,review-step}.md` + `.claude/settings.json`
-(permission glob `Edit(plan/steps/**/SPEC.md)`); mirrored `.opencode/command/*` +
+(permission glob `Edit(development/specs/**)`); mirrored `.opencode/command/*` +
 `opencode.json`; `.github/PULL_REQUEST_TEMPLATE.md` (**step-shaped only**: header
-`plan/steps/____ — one step per PR`); `.github/workflows/{docs,lint,test-cpu,test-gpu,test-mpi}.yml`
+`development/specs/____ — one step per PR`); `.github/workflows/{docs,lint,test-cpu,test-gpu,test-mpi}.yml`
 — note `nightly.yml` is promised by layout §4 and does not exist; `docs.yml` exists and
 is not in layout §4. No workflow references any plan path.
 
@@ -175,18 +175,18 @@ is not in layout §4. No workflow references any plan path.
 | K1 | Canonical architecture | trunk-edited only | `docs/architecture/*.md` (2) |
 | K2 | Working agreement | living, trunk-gated | `AGENTS.md`, `CLAUDE.md` |
 | K3 | Provenance ledger | append-only | `REFERENCES.lock` |
-| K4 | Plan overview / register | living | `plan/00_OVERVIEW.md`, `plan/prompts/README.md` |
-| K5 | Step contract (SPEC) | frozen at step start | `plan/steps/*/SPEC.md` (14) |
-| K6 | Step how-to (PLAN) | frozen at step start | `plan/steps/*/PLAN.md` (14) |
-| K7 | Step record (STATUS) | frozen at merge (historical) | `plan/steps/*/STATUS.md` (14) |
-| K8 | Phase outline | frozen until specced | `plan/outlines/P*.md` (6) |
-| K9 | Review protocol | living, versioned by task checklists | `plan/prompts/10_REVIEW_PROTOCOL.md` |
-| K10 | Task prompt | frozen at assignment | `plan/prompts/2x/30_*.md` (8) |
+| K4 | Plan overview / register | living | `development/records/00_OVERVIEW.md`, `development/plans/README.md` |
+| K5 | Step contract (SPEC) | frozen at step start | `development/specs/SXX_*.md` (14) |
+| K6 | Step how-to (PLAN) | frozen at step start | `development/plans/SXX_*.md` (14) |
+| K7 | Step record (STATUS) | frozen at merge (historical) | `development/records/SXX_*/STATUS.md` (14) |
+| K8 | Phase outline | frozen until specced | `development/ideas/P*.md` (6) |
+| K9 | Review protocol | living, versioned by task checklists | `development/policies/review_protocol.md` |
+| K10 | Task prompt | frozen at assignment | `development/plans/2x/30_*.md` (8) |
 | K11 | Task execution report | frozen at task merge | `reports/26_*_REPORT.md`, `28_*_REPORT.md` |
 | K12 | Design document / proposal | frozen; decisions extracted to register | `reports/27_docs_plan/`, this file |
 | K13 | External-facing draft | frozen after human publishes | future `reports/upstream/`, `reports/prs/` |
-| K14 | Process report (slice-level) | frozen | `plan/IMPLEMENTATION_REPORT.md` |
-| K15 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed); `docs/_build/`, `plan/steps/*/artifacts/` (untracked) |
+| K14 | Process report (slice-level) | frozen | `development/records/IMPLEMENTATION_REPORT.md` |
+| K15 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed); `docs/_build/`, `development/records/*/artifacts/` (untracked) |
 | K16 | Published site source | living | `docs/{conf.py,index.md,glossary.md,tutorials/,api/}` |
 | K17 | Agent tooling / CI templates | living | `.claude/`, `.opencode/`, `.github/PULL_REQUEST_TEMPLATE.md` |
 | — | **Missing kind: living decision register** | living, append-mostly | **none — the gap §5 fills** |
@@ -196,7 +196,7 @@ is not in layout §4. No workflow references any plan path.
 - **M1** `27_docs_plan.md` is a K12 design document living under `reports/` among K11
   execution reports, in the only subdirectory, with no suffix — three simultaneous
   deviations from its siblings. (Resolution: bless, don't move — §3.)
-- **M2** `plan/IMPLEMENTATION_REPORT.md` is a frozen K14 record whose §5 (sign-off
+- **M2** `development/records/IMPLEMENTATION_REPORT.md` is a frozen K14 record whose §5 (sign-off
   ledger) and §6 (standing follow-ups) are *living* content: prompts 20/24/30 point
   agents at §5/§4–6 as current state, but the file can never be updated without editing
   a historical record. Liveness mixing, not location, is the defect.
@@ -211,7 +211,7 @@ is not in layout §4. No workflow references any plan path.
   calls load-bearing for concurrent lanes is sometimes just missing, so absence cannot
   be read as "this step freezes nothing".
 - **M7** Root README stale (pre-implementation claim; Contents table missing
-  `plan/prompts/`, `plan/IMPLEMENTATION_REPORT.md`, the docs site).
+  `development/plans/`, `development/records/IMPLEMENTATION_REPORT.md`, the docs site).
 - **M8** PR template hard-codes the step shape; tasks 20–30 also land by PR and get a
   template whose first line is wrong for them.
 - **M9** Layout doc: "v1.2" mislabel (L283), self-omission from §4, §4 `docs/` and
@@ -262,23 +262,23 @@ One integer namespace for *post-slice work units* (the "N-series"), two letter-p
 namespaces for *plan units* (S-series steps, P-series phases), fixed filenames inside
 step folders. Concretely:
 
-1. **S-series** (implementation steps): `plan/steps/SXX_<snake>/` with `SPEC.md`,
+1. **S-series** (implementation steps): `development/{specs,plans,records}/SXX_<snake>` with `SPEC.md`,
    `PLAN.md`, `STATUS.md`, optional untracked `artifacts/`. Phase steps continue the
    series (S15+…) as prompt 30 already specifies. Zero-padded two digits until S99.
-2. **P-series** (phase outlines): `plan/outlines/PN_<snake>.md`. Retired when the phase
+2. **P-series** (phase outlines): `development/ideas/PN_<snake>.md`. Retired when the phase
    is specced into steps (file stays as record).
 3. **N-series** (tasks): two-digit, strictly monotonic, **never reused, gaps never
    backfilled**. Bands: `0x` = plan-root ordering prefixes (only `00_OVERVIEW`),
    `10–19` = protocols (only `10_REVIEW_PROTOCOL`), `20+` = tasks.
-   - Prompt file: `plan/prompts/NN_<snake>.md`. **Allocation rule (new):** the number is
+   - Prompt file: `development/plans/NN_<snake>.md`. **Allocation rule (new):** the number is
      allocated by adding a row to the prompts/README register table *at assignment*,
      even when the prompt text is delivered ad hoc and never committed — the row then
      reads "prompt: ad hoc (not committed)". This retroactively regularizes 26/27/29 and
      is the collision rule: the register is the single allocator; first row wins; a
      colliding latecomer takes the next free number.
-   - Execution report: `plan/prompts/reports/NN_<snake>_REPORT.md` (flat, suffixed).
+   - Execution report: `development/records/NN_<snake>_REPORT.md` (flat, suffixed).
    - Document-deliverable (design doc/proposal, or any multi-file deliverable):
-     `plan/prompts/reports/NN_<snake>/NN_<snake>.md` (+ sidecars). This blesses the
+     `development/records/NN_<snake>/NN_<snake>.md` (+ sidecars). This blesses the
      task-27 pattern; task 29 (this file) conforms.
    - External-facing drafts: thematic subdirs under `reports/` as their prompt names
      them (`upstream/`, `prs/`) — kept, because tasks 23/24 hard-code these paths and
@@ -287,7 +287,7 @@ step folders. Concretely:
 4. **Forward STATUS/SPEC templates** (next steps only, no retro-edits): §3.3.
 5. **Canonical sign-off marker** (new, forward): any line in any STATUS/report that
    requires trunk/human action carries the literal token `TD-PENDING:` and is mirrored
-   as a row in `plan/TRUNK_DECISIONS.md` within the same PR. `grep -rn "TD-PENDING"`
+   as a row in `development/DECISIONS.md` within the same PR. `grep -rn "TD-PENDING"`
    must return only lines whose register row is still open.
 
 ### 3.3 Forward templates (to be appended to prompts/README by the migration task)
@@ -300,7 +300,7 @@ step folders. Concretely:
   subsume disagreements/findings as list prefixes) · `## 4. Tolerances & sign-off flags`
   (each flag on a `TD-PENDING:` line) · `## 5. Gates (dated)` · `## 6. Follow-ups` ·
   `## 7. Artifacts` · `## 8. Review fixes (round N)`. This is the S11–S14 enriched shape,
-  named once. **Artifact-reference rule:** `plan/steps/*/artifacts/` is gitignored, so a
+  named once. **Artifact-reference rule:** `development/records/*/artifacts/` is gitignored, so a
   STATUS "Artifacts" entry that names a path is dangling on a fresh clone (S04's two
   convergence PNGs are the existing case — they survive only because the generating
   tests are committed). Rule: every untracked artifact is cited *with its regeneration
@@ -344,21 +344,21 @@ symcon/
 
 | Existing path | Target | Action |
 |---|---|---|
-| `README.md` | same | content refresh (status paragraph + Contents rows for `plan/prompts/`, `plan/IMPLEMENTATION_REPORT.md`, `plan/TRUNK_DECISIONS.md`, docs site) |
+| `README.md` | same | content refresh (status paragraph + Contents rows for `development/plans/`, `development/records/IMPLEMENTATION_REPORT.md`, `development/DECISIONS.md`, docs site) |
 | `AGENTS.md`, `CLAUDE.md`, `REFERENCES.lock` | same | none |
-| `plan/00_OVERVIEW.md` | same | none |
-| `plan/IMPLEMENTATION_REPORT.md` | same | none (stays frozen; superseded-by relationship declared *in* TRUNK_DECISIONS, not by editing the report) |
-| `plan/steps/**` (42 files) | same | none — zero content edits, zero moves |
-| `plan/outlines/**` (6 files) | same | none |
-| `plan/prompts/README.md` | same | content refresh (register + rules + templates) |
-| `plan/prompts/10,20–25,28,30_*.md` | same | none (executed AND unexecuted prompts untouched) |
-| `plan/prompts/reports/26,28_*_REPORT.md` | same | none |
-| `plan/prompts/reports/27_docs_plan/` | same | none |
+| `development/records/00_OVERVIEW.md` | same | none |
+| `development/records/IMPLEMENTATION_REPORT.md` | same | none (stays frozen; superseded-by relationship declared *in* TRUNK_DECISIONS, not by editing the report) |
+| `development/{specs,plans,records}/**` (42 files) | same | none — zero content edits, zero moves |
+| `development/ideas/**` (6 files) | same | none |
+| `development/plans/README.md` | same | content refresh (register + rules + templates) |
+| `development/plans/10,20–25,28,30_*.md` | same | none (executed AND unexecuted prompts untouched) |
+| `development/records/26,28_*_REPORT.md` | same | none |
+| `development/records/27_docs_plan/` | same | none |
 | `docs/**` (all) | same | none by the agent task; layout-doc diff (§6.3) is trunk/human |
 | `.github/`, `.claude/`, `.opencode/` | same | none by the agent task; PR template = TD-29.5 |
-| — | `plan/README.md` | NEW |
-| — | `plan/TRUNK_DECISIONS.md` | NEW |
-| — | `plan/prompts/reports/README.md` | NEW |
+| — | `development/archive/plan_tree_map.md` | NEW |
+| — | `development/DECISIONS.md` | NEW |
+| — | `development/records/README.md` | NEW |
 
 Zero `git mv`. Zero edits to K1/K5/K6/K7/K10/K11/K12/K14 files. The only edited files
 are living documents (K2-adjacent README, K4 register), which is what "minimize churn,
@@ -373,28 +373,28 @@ move can price itself.
 
 | Target | Referenced by (file: approx. lines) |
 |---|---|
-| `plan/steps/**` | `AGENTS.md` (10, 23, 44), `CLAUDE.md` (9), `README.md` (21), `.github/PULL_REQUEST_TEMPLATE.md` (3), `.claude/commands/implement-step.md` (3, 12), `.claude/settings.json` (29: permission glob `Edit(plan/steps/**/SPEC.md)`), `.opencode/command/implement-step.md` (6, 15), `plan/prompts/README.md` (44), `10_REVIEW_PROTOCOL.md` (27), prompts 20 (31–34), 21 (9), 23 (23, 38–39), 25 (27), 30 (19–20, 31, 54, 81), `IMPLEMENTATION_REPORT.md` (11), **test code:** `packages/symcon-core/tests/test_order_burgers.py` (87), `test_order_ode.py` (9, 101) — runtime `parents[3]/"plan/steps/S04_coupling_algebra/artifacts"`; **benchmarks:** `benchmarks/dispatch_overhead/jw_step.py` (4), `benchmarks/s05_dispatch.py` (4); `.gitignore` (32) |
-| `plan/00_OVERVIEW.md` | `AGENTS.md` (10, 45), `README.md` (20, 41), `plan/prompts/README.md` (114), prompt 30 (18, 79–80), 27 report (330) |
-| `plan/IMPLEMENTATION_REPORT.md` | `plan/prompts/README.md` (112), prompts 20 (14), 24 (11, 19), 30 (23, 58), 27 report (84, 103, 121, 130) |
-| `plan/outlines/` | `README.md` (22), `plan/prompts/README.md` (115), prompt 30 (15), 27 report (604) |
-| `plan/prompts/README.md` | `10_REVIEW_PROTOCOL.md` (32), prompts 20–22, 25, 28, 30 ("Hard rules" headers), 27 report (394), 28 report (293) |
-| `plan/prompts/reports/**` | `docs/conf.py` (1–2: `27_docs_plan.md §3`), prompts 20 (57), 21 (127), 22 (107), 23 (5, 70, 75, 86 → `upstream/`), 24 (21, 33, 42, 54, 58 → `prs/`), 25 (95), 28 (1, 10, 195), 30 (83), 27 report (self, 391, 576) |
-| `docs/architecture/*` | `AGENTS.md` (4, 35), `README.md` (18–19), `plan/prompts/README.md` (34, 44), `10_REVIEW_PROTOCOL.md` (27), prompt 30 (17), `packages/symcon-core/README.md` (3), `packages/symcon-icon/README.md` (3), `docs/index.md` (47–48), `docs/tutorials/00_*` (47), `01_*` (74), 27 report (18, 281), 28 report (33), layout doc self-ref (283, mislabelled "v1.2") |
+| `development/{specs,plans,records}/**` | `AGENTS.md` (10, 23, 44), `CLAUDE.md` (9), `README.md` (21), `.github/PULL_REQUEST_TEMPLATE.md` (3), `.claude/commands/implement-step.md` (3, 12), `.claude/settings.json` (29: permission glob `Edit(development/specs/**)`), `.opencode/command/implement-step.md` (6, 15), `development/plans/README.md` (44), `10_REVIEW_PROTOCOL.md` (27), prompts 20 (31–34), 21 (9), 23 (23, 38–39), 25 (27), 30 (19–20, 31, 54, 81), `IMPLEMENTATION_REPORT.md` (11), **test code:** `packages/symcon-core/tests/test_order_burgers.py` (87), `test_order_ode.py` (9, 101) — runtime `parents[3]/"development/records/S04_coupling_algebra/artifacts"`; **benchmarks:** `benchmarks/dispatch_overhead/jw_step.py` (4), `benchmarks/s05_dispatch.py` (4); `.gitignore` (32) |
+| `development/records/00_OVERVIEW.md` | `AGENTS.md` (10, 45), `README.md` (20, 41), `development/plans/README.md` (114), prompt 30 (18, 79–80), 27 report (330) |
+| `development/records/IMPLEMENTATION_REPORT.md` | `development/plans/README.md` (112), prompts 20 (14), 24 (11, 19), 30 (23, 58), 27 report (84, 103, 121, 130) |
+| `development/ideas/` | `README.md` (22), `development/plans/README.md` (115), prompt 30 (15), 27 report (604) |
+| `development/plans/README.md` | `10_REVIEW_PROTOCOL.md` (32), prompts 20–22, 25, 28, 30 ("Hard rules" headers), 27 report (394), 28 report (293) |
+| `development/records/**` | `docs/conf.py` (1–2: `27_docs_plan.md §3`), prompts 20 (57), 21 (127), 22 (107), 23 (5, 70, 75, 86 → `upstream/`), 24 (21, 33, 42, 54, 58 → `prs/`), 25 (95), 28 (1, 10, 195), 30 (83), 27 report (self, 391, 576) |
+| `docs/architecture/*` | `AGENTS.md` (4, 35), `README.md` (18–19), `development/plans/README.md` (34, 44), `10_REVIEW_PROTOCOL.md` (27), prompt 30 (17), `packages/symcon-core/README.md` (3), `packages/symcon-icon/README.md` (3), `docs/index.md` (47–48), `docs/tutorials/00_*` (47), `01_*` (74), 27 report (18, 281), 28 report (33), layout doc self-ref (283, mislabelled "v1.2") |
 | `REFERENCES.lock` | ~30 files: AGENTS/CLAUDE/README, PR template, both command sets, prompts README + most prompts, most STATUS files, `constraints/cpu-ci.txt` (1), and provenance comments across `packages/**` source and tests, `validation/L4_idealized/*` |
 
 False-positive guard for any future migration grep: `plan/` also names the **source
 module** `symcon/core/plan/` (`plan/bind.py`, `plan/ops.py`, `plan/native/templates/`)
 in `docs/architecture/symcon_repo_layout.md` (104, 150, 156, 300, 303) and
-`plan/outlines/P2_distributed.md` (3) — never rewrite those.
+`development/ideas/P2_distributed.md` (3) — never rewrite those.
 
 Priced-out alternatives this census kills:
 
 | Rejected move | Would touch |
 |---|---|
-| `plan/prompts/reports/` → `plan/reports/` | ~15 references in ~10 files, incl. 5 *unexecuted* prompts (their literal output paths are the contract a weak model follows), 2 *executed* records, and `docs/conf.py` |
+| `development/records/` → `plan/reports/` | ~15 references in ~10 files, incl. 5 *unexecuted* prompts (their literal output paths are the contract a weak model follows), 2 *executed* records, and `docs/conf.py` |
 | `27_docs_plan/` → `plan/design/` | `docs/conf.py` header + executed prompt 28 (1, 10) + self-refs — edits to two frozen records |
 | `IMPLEMENTATION_REPORT.md` → `plan/reports/` | 10 references in 5 files incl. 3 unexecuted prompts |
-| any `plan/steps/` reshaping | test code at runtime, permission glob, both agent command sets, PR template |
+| any `development/{specs,plans,records}/` reshaping | test code at runtime, permission glob, both agent command sets, PR template |
 
 ---
 
@@ -402,17 +402,17 @@ Priced-out alternatives this census kills:
 
 | Candidate | Verdict | Rationale |
 |---|---|---|
-| **`plan/TRUNK_DECISIONS.md`** | **Needed NOW** | The single most-referenced-hardest-to-find content. Today it is: `IMPLEMENTATION_REPORT.md` §5 (7 rows, frozen), 27 §3 TD-1/2/3 (signed off implicitly by task 28's execution — nowhere recorded), and ~25 STATUS flags across S05–S13 with no common token (S05:104 "HUMAN SIGN-OFF REQUIRED (PR)…", S08:137 "…CONSERVATION_RTOL_COLD = 1e-3…", S10:109 heading "Tolerance note (flag for human sign-off)", S13:109 "JW initializer signature CHANGE (frozen interface — needs trunk…", S13:324 a flag *self-resolving in prose*). Format in §5.1. |
+| **`development/DECISIONS.md`** | **Needed NOW** | The single most-referenced-hardest-to-find content. Today it is: `IMPLEMENTATION_REPORT.md` §5 (7 rows, frozen), 27 §3 TD-1/2/3 (signed off implicitly by task 28's execution — nowhere recorded), and ~25 STATUS flags across S05–S13 with no common token (S05:104 "HUMAN SIGN-OFF REQUIRED (PR)…", S08:137 "…CONSERVATION_RTOL_COLD = 1e-3…", S10:109 heading "Tolerance note (flag for human sign-off)", S13:109 "JW initializer signature CHANGE (frozen interface — needs trunk…", S13:324 a flag *self-resolving in prose*). Format in §5.1. |
 | Decision-record convention (ADR) | **Needed now, as register rows — not an ADR directory** | The 27 pattern (full analysis in a K12 document, decision extracted to a register row with a link) already works and produced better artifacts than one-page ADRs would. A `plan/adr/` tree would add a fourth document kind for zero information. Revisit only if P7's release process wants published decision history. |
 | **`CONTRIBUTING.md`** | **Needed LATER — at task 24 (publication)** | Today every contributor is an agent bound by AGENTS.md + prompts/README; a third entry point would drift. The moment the repo is pushed and PRs invite humans (task 24), add a *thin* CONTRIBUTING.md that points at AGENTS.md, the gate table, and the PR template — one screen, no duplicated rules. Add as an item to task 24's scope at execution (its prompt is unexecuted; scope addition is a trunk call, TD-29.4). |
-| CHANGELOG / policy | **Not needed now; policy decision now, file at P7** | Nothing is released; versioning + release automation are explicitly P7-scoped (`plan/outlines/P7`). Record the policy as a TRUNK_DECISIONS row ("no CHANGELOG until P7 versioning step; then Keep-a-Changelog or towncrier decided with the release tooling") so the question stops being re-asked. |
-| **`plan/` ↔ `docs/` boundary policy** | **Needed NOW** (a section in the new `plan/README.md`, §5.2) | Task 28 made the boundary real: the Sphinx site publishes `docs/` only, and today the only plan-mention in the site is prose (`docs/index.md` L51, no link). Unwritten, the next tutorial author will hyperlink `plan/IMPLEMENTATION_REPORT.md` (T2/T4/T6/T7 in 27 §1.2 all cite it as *source material*) and either 404 the published site or drag process memory into it. |
+| CHANGELOG / policy | **Not needed now; policy decision now, file at P7** | Nothing is released; versioning + release automation are explicitly P7-scoped (`development/ideas/P7`). Record the policy as a TRUNK_DECISIONS row ("no CHANGELOG until P7 versioning step; then Keep-a-Changelog or towncrier decided with the release tooling") so the question stops being re-asked. |
+| **`plan/` ↔ `docs/` boundary policy** | **Needed NOW** (a section in the new `development/archive/plan_tree_map.md`, §5.2) | Task 28 made the boundary real: the Sphinx site publishes `docs/` only, and today the only plan-mention in the site is prose (`docs/index.md` L51, no link). Unwritten, the next tutorial author will hyperlink `development/records/IMPLEMENTATION_REPORT.md` (T2/T4/T6/T7 in 27 §1.2 all cite it as *source material*) and either 404 the published site or drag process memory into it. |
 | `docs/coupling.md`, `docs/porting_guide.md` | **Needed later — P7-owned; do not create** | Promised by layout §4; 27 §6 already fences both to P7 ("the nav gets no placeholder that would imply a promise"). Noted here; no action. |
-| `plan/README.md` | **Needed NOW** | The taxonomy/naming/boundary content of this proposal needs a durable, discoverable home; `00_OVERVIEW.md` is the *slice plan* and prompts/README is the *task register* — neither should absorb repo-memory policy. |
-| `plan/prompts/reports/README.md` | **Needed NOW** | Three kinds (K11/K12/K13) and three naming patterns coexist in one directory; a 20-line index labelling each entry ends M1/M3 without moving anything. |
+| `development/archive/plan_tree_map.md` | **Needed NOW** | The taxonomy/naming/boundary content of this proposal needs a durable, discoverable home; `00_OVERVIEW.md` is the *slice plan* and prompts/README is the *task register* — neither should absorb repo-memory policy. |
+| `development/records/README.md` | **Needed NOW** | Three kinds (K11/K12/K13) and three naming patterns coexist in one directory; a 20-line index labelling each entry ends M1/M3 without moving anything. |
 | Others considered | not needed | `MAINTAINERS`/CODEOWNERS (single-owner repo), `SECURITY.md` (pre-publication), a plan glossary (docs/glossary.md exists and is user-facing; AGENTS.md defines the process terms). |
 
-### 5.1 `plan/TRUNK_DECISIONS.md` — specified format
+### 5.1 `development/DECISIONS.md` — specified format
 
 Append-mostly table + one rule paragraph. Columns:
 `ID` (`TD-NN.k`, NN = originating task/step number, k = ordinal) · `Date` · `Decision`
@@ -425,7 +425,7 @@ TD-1/TD-2/TD-3 from 27 §3 (status: signed-off — task 28 executed them; eviden
 `cbbec36`); the CHANGELOG-deferral row (above); the TD-29.x rows of §7. Forward rule:
 every new `TD-PENDING:` line in a STATUS/report lands here in the same PR.
 
-### 5.2 Boundary policy (to live in `plan/README.md`)
+### 5.2 Boundary policy (to live in `development/archive/plan_tree_map.md`)
 
 1. `plan/` is repo-internal process memory. It is never a Sphinx source, never linked
    from `docs/` site pages (prose mentions without links allowed), never deployed.
@@ -487,7 +487,7 @@ following diff is therefore **drafted, not applied**.
 +│   ├── symcon_architecture.md           # the v1.3 document, canonical
 +│   └── symcon_repo_layout.md            # this document
 +├── conf.py                              # Sphinx + MyST + Napoleon + furo (task 28;
-+│                                        #   decided in plan/prompts/reports/27_docs_plan §3, TD-1/TD-2)
++│                                        #   decided in development/records/27_docs_plan §3, TD-1/TD-2)
 +├── index.md                             # site landing page (MyST, hand-written)
 +├── glossary.md                          # science-in software glossary backing the tutorials
 +├── tutorials/                           # tutorial track T0–T8 (T0–T2 landed; MyST, hand-written)
@@ -518,10 +518,10 @@ following diff is therefore **drafted, not applied**.
 
 ## 7. Open questions (trunk decisions, TD-numbered — to be seeded into TRUNK_DECISIONS.md)
 
-- **TD-29.1** Ratify the zero-move structure: keep `plan/prompts/reports/` as the single
+- **TD-29.1** Ratify the zero-move structure: keep `development/records/` as the single
   deliverables tree with kind-labelled index; ratify this document's own location as the
   K12 pattern instance. (Alternative: `plan/design/` split — priced out in §4.3.)
-- **TD-29.2** Create `plan/TRUNK_DECISIONS.md` per §5.1 and adopt the `TD-PENDING:`
+- **TD-29.2** Create `development/DECISIONS.md` per §5.1 and adopt the `TD-PENDING:`
   marker; amend AGENTS.md (one sentence in Workflow item 6) and prompts/README
   (invariants) to route future sign-off flags through it. AGENTS.md is trunk-owned —
   this needs the sign-off before the migration task may touch either file.
@@ -531,7 +531,7 @@ following diff is therefore **drafted, not applied**.
   (verdict table, §5) — editing an unexecuted prompt is cheap but is still an edit of
   another task's file, hence trunk.
 - **TD-29.5** Generalize `.github/PULL_REQUEST_TEMPLATE.md` line 3 from
-  `plan/steps/____ — one step per PR` to `plan/steps/____ or task NN — one step/task
+  `development/specs/____ — one step per PR` to `development/specs/____ or task NN — one step/task
   per PR` (one line; the DoD checklist already fits both).
 - **TD-29.6** Whether K13 external-facing drafts *beyond* tasks 23/24 get a
   `plan/drafts/` home, or `reports/<theme>/` stays the pattern. No action until a third
@@ -547,8 +547,8 @@ following diff is therefore **drafted, not applied**.
 
 ## 8. Ready-to-lift migration task spec
 
-Written in the `plan/prompts/` register (cf. `21_ci_hardening.md`); allocate as
-`plan/prompts/31_plan_structure_migration.md` (next free N-series number; 29 = this
+Written in the `development/plans/` register (cf. `21_ci_hardening.md`); allocate as
+`development/plans/31_plan_structure_migration.md` (next free N-series number; 29 = this
 analysis, 30 = phase-spec authoring).
 
 ---
@@ -558,26 +558,26 @@ analysis, 30 = phase-spec authoring).
 **Branch:** `task/31-plan-structure-migration` (from `main`; verify
 `git branch --show-current` before every commit). One commit per item A–E (5 commits +
 report). **Prerequisite:** trunk sign-off on TD-29.1/29.2/29.3 (and 29.8 for item D) in
-`plan/prompts/reports/29_plan_structure/29_plan_structure.md` §7. TD-29.4/29.5/29.7 are
+`development/records/29_plan_structure/29_plan_structure.md` §7. TD-29.4/29.5/29.7 are
 NOT in scope here (24-prompt edit, PR template, and `docs/architecture/*` are other
 tasks'/trunk's files).
 
-## Hard rules (restated; full list in plan/prompts/README.md)
+## Hard rules (restated; full list in development/plans/README.md)
 
 - This task moves and renames NOTHING: `git diff main..HEAD --stat` must show only
   added files and the two named refreshes; any `rename` or `delete` line is an
-  automatic failure. Zero edits to `docs/architecture/*`, any `plan/steps/*` file, any
-  prompt file other than `plan/prompts/README.md`, any `reports/*` file other than the
+  automatic failure. Zero edits to `docs/architecture/*`, any `development/{specs,plans,records}/S*` file, any
+  prompt file other than `development/plans/README.md`, any `reports/*` file other than the
   new `reports/README.md`, `REFERENCES.lock`, or anything under `packages/`, `docs/`,
   `.github/`, `.claude/`, `.opencode/`.
-- When seeding `plan/TRUNK_DECISIONS.md`, copy decision text **verbatim** from the
+- When seeding `development/DECISIONS.md`, copy decision text **verbatim** from the
   cited source lines (tolerances, signatures — character-exact). If a source line does
   not say what §5.1 of the task-29 proposal claims it says, STOP on that row and report
   the discrepancy; do not paraphrase around it.
 - No tolerance changes, no pin changes, no data in git (nothing here should go near any
   of these — their appearance in the diff is a stop condition).
 
-## Item A — `plan/README.md`
+## Item A — `development/archive/plan_tree_map.md`
 
 **Change:** create it with exactly four sections lifted from the task-29 proposal:
 (1) the taxonomy table (§2.1), (2) the naming convention (§3.2, incl. the N-series
@@ -585,11 +585,11 @@ allocation rule), (3) the forward SPEC/STATUS templates (§3.3), (4) the plan/do
 boundary policy (§5.2). Link the proposal as the rationale record; do not restate its
 analysis.
 
-**Verify:** `grep -c "^## " plan/README.md` → 4; every relative path mentioned in the
-file exists (`grep -oE 'plan/[A-Za-z0-9_/.]+' plan/README.md | sort -u | while read p;
+**Verify:** `grep -c "^## " development/archive/plan_tree_map.md` → 4; every relative path mentioned in the
+file exists (`grep -oE 'plan/[A-Za-z0-9_/.]+' development/archive/plan_tree_map.md | sort -u | while read p;
 do test -e "$p" || echo "MISSING $p"; done` → no output).
 
-## Item B — `plan/TRUNK_DECISIONS.md`
+## Item B — `development/DECISIONS.md`
 
 **Change:** create the register per proposal §5.1: rule paragraph + table. Seed rows,
 each with `Source` pointing at the exact file+section/line: the seven
@@ -603,26 +603,26 @@ that it supersedes §5/§6 going forward; the report stays frozen.
 row count ≥ 19; `grep -c "TD-PENDING" plan/ -r` — record the count in the report
 (expected 0 today; the marker is forward-only).
 
-## Item C — `plan/prompts/README.md` register refresh
+## Item C — `development/plans/README.md` register refresh
 
 **Change:** in the execution-order table, add rows for 26 (executed; prompt ad hoc,
 not committed; report committed), 27 (executed; deliverable
 `reports/27_docs_plan/`), 28 (executed), 29 (executed; deliverable
 `reports/29_plan_structure/`), 30 (unchanged), 31 (this task); add one "Number
-allocation" paragraph (proposal §3.2 item 3) and a pointer line to `plan/README.md`
+allocation" paragraph (proposal §3.2 item 3) and a pointer line to `development/archive/plan_tree_map.md`
 for taxonomy/templates. Touch nothing else in the file — the invariants, gate table,
 and caches sections are load-bearing verbatim.
 
-**Verify:** `git diff main..HEAD -- plan/prompts/README.md` shows additions only
+**Verify:** `git diff main..HEAD -- development/plans/README.md` shows additions only
 inside the table region plus the two new paragraphs (no deleted lines other than
 table-row reflow); the gate-baseline table is byte-identical.
 
 ## Item D — root `README.md` refresh (needs TD-29.8)
 
 **Change:** replace the "Status: pre-implementation…" paragraph with a current status
-(vertical slice S01–S14 merged; post-slice task register in `plan/prompts/`; docs site
+(vertical slice S01–S14 merged; post-slice task register in `development/plans/`; docs site
 built from `docs/` via task 28); extend the Contents table with
-`plan/IMPLEMENTATION_REPORT.md`, `plan/TRUNK_DECISIONS.md`, `plan/prompts/`; keep the
+`development/records/IMPLEMENTATION_REPORT.md`, `development/DECISIONS.md`, `development/plans/`; keep the
 Bootstrap section but retitle it as historical or update the commands to the current
 entry points (`/implement-step`, the prompts register). Do not change License/Contents
 rows that are still accurate.
@@ -630,7 +630,7 @@ rows that are still accurate.
 **Verify:** `grep -n "pre-implementation\|No framework code exists" README.md` → empty;
 missing-path loop over all `plan/`/`docs/` paths named in the file → no output.
 
-## Item E — `plan/prompts/reports/README.md`
+## Item E — `development/records/README.md`
 
 **Change:** create a ≤40-line index: one row per existing entry (26, 27, 28, 29) with
 kind labels per the taxonomy (execution report / design document), plus the two
@@ -639,16 +639,16 @@ external-facing drafts) marked "created by their tasks — do not pre-create", a
 flat-vs-subdir naming rule.
 
 **Verify:** every path row exists on disk except the two future dirs, which must NOT
-exist (`test ! -e plan/prompts/reports/upstream -a ! -e plan/prompts/reports/prs`).
+exist (`test ! -e development/records/upstream -a ! -e development/records/prs`).
 
 ## Acceptance criteria
 
 1. Items A–E done exactly as scoped (or explicitly reported blocked), one commit each.
-2. Diff scope: `git diff main..HEAD --stat` touches ONLY `plan/README.md`,
-   `plan/TRUNK_DECISIONS.md`, `plan/prompts/README.md`, `README.md`,
-   `plan/prompts/reports/README.md`, and the task report. No renames, no deletions.
+2. Diff scope: `git diff main..HEAD --stat` touches ONLY `development/archive/plan_tree_map.md`,
+   `development/DECISIONS.md`, `development/plans/README.md`, `README.md`,
+   `development/records/README.md`, and the task report. No renames, no deletions.
 3. All link/existence loops (items A–E) pass; the two docs-site checks below pass.
-4. Report `plan/prompts/reports/31_plan_structure_migration_REPORT.md` committed:
+4. Report `development/records/31_plan_structure_migration_REPORT.md` committed:
    per-item verification output, the TRUNK_DECISIONS row count and any verbatim-copy
    discrepancies found, and the recorded gate numbers.
 
@@ -667,7 +667,7 @@ this in the report with the diff listing as evidence).
 
 ## Stop rules
 
-- Any item would require editing `docs/architecture/*`, any `plan/steps/*` file, any
+- Any item would require editing `docs/architecture/*`, any `development/{specs,plans,records}/S*` file, any
   prompt other than the register, an executed report, `REFERENCES.lock`, or anything
   outside the acceptance-2 file list → STOP that item, mark "blocked — needs trunk
   decision", continue others.
@@ -681,8 +681,8 @@ this in the report with the diff listing as evidence).
 - Re-run every verification gate yourself, including the sphinx `-W` build and the
   missing-path loops (run them from the repo root, not the report's word).
 - Diff discipline: confirm zero renames/deletions and the exact 6-file scope; confirm
-  `plan/prompts/README.md`'s gate-baseline table and invariants section are
-  byte-identical to `main` (`git diff main..HEAD -- plan/prompts/README.md` inspected
+  `development/plans/README.md`'s gate-baseline table and invariants section are
+  byte-identical to `main` (`git diff main..HEAD -- development/plans/README.md` inspected
   hunk by hunk).
 - TRUNK_DECISIONS spot-check: pick 5 rows at random, open the cited Source, confirm
   character-exact tolerance/signature text and correct status; confirm TD-1/2/3 rows

@@ -14,7 +14,7 @@ constructor parameters (e.g. `Relaxation(tau=30min)` vs `tau=5min`) hash
 identically, because `_DraftCall` carries only tag/slots/dt (`component` is
 `compare=False`). T3 must never serve a cached binary for a different tau.
 
-## Hard rules (restated; full list in plan/prompts/README.md)
+## Hard rules (restated; full list in development/plans/README.md)
 
 - This touches S05 core code (`packages/symcon-core/src/symcon/core/plan/bind.py`).
   The **frozen interfaces may not change**: `ExecutionPlan.bind(composition, schema,
@@ -104,7 +104,7 @@ identically, because `_DraftCall` carries only tag/slots/dt (`component` is
    `test_scm_plan.py`, `test_jw_plan.py`, `test_jw_plan_equivalence.py` non-slow).
 3. Full gate green (README baselines, adjusted only by YOUR added tests — state
    exact new counts).
-4. Report `plan/prompts/reports/22_plan_hash_REPORT.md`: design conformance,
+4. Report `development/records/22_plan_hash_REPORT.md`: design conformance,
    any justified deviation, new gate baselines.
 
 ## Verification gates

@@ -12,15 +12,15 @@ the SPECs before any implementation prompt is issued against them.
 
 ## Inputs (read fully, in this order)
 
-1. `plan/outlines/<phase>.md` — the frozen scope sketch (your contract: cover
+1. `development/ideas/<phase>.md` — the frozen scope sketch (your contract: cover
    everything it names; add nothing it doesn't, except mechanically implied glue).
 2. `docs/architecture/symcon_architecture.md` — ONLY the §§ the outline cites.
-3. `plan/00_OVERVIEW.md` §1 (agent contract) and 2–3 EXISTING step folders as
-   templates — the best exemplars are `plan/steps/S05_vault_plan_t1/`,
-   `plan/steps/S08_graupel_component/`, `plan/steps/S12_nonhydro_hosting/`
+3. `development/records/00_OVERVIEW.md` §1 (agent contract) and 2–3 EXISTING step folders as
+   templates — the best exemplars are `development/{specs,plans}/S05_vault_plan_t1.md`,
+   `development/{specs,plans}/S08_graupel_component.md`, `development/{specs,plans}/S12_nonhydro_hosting.md`
    (read their SPEC.md + PLAN.md; your files must match their structure, register,
    and level of detail).
-4. `plan/IMPLEMENTATION_REPORT.md` §4–§6 — the findings and follow-ups your SPECs
+4. `development/records/IMPLEMENTATION_REPORT.md` §4–§6 — the findings and follow-ups your SPECs
    must not contradict and should, where relevant, absorb (e.g. any P5 SPEC must
    require config digests in compiled-artifact cache keys per the S05/S22 line;
    any P2 SPEC must state the exchange-transpose test obligations of §8.7 if it
@@ -28,7 +28,7 @@ the SPECs before any implementation prompt is issued against them.
 
 ## Structure to produce (per step; mirror the existing folders exactly)
 
-`plan/steps/SXX_<snake_name>/SPEC.md`:
+`development/specs/SXX_<snake_name>.md`:
 - Header: `# SXX — <title>` + `**Lane:** ... · **Depends on:** <steps> ·
   **Unblocks:** <steps>` (derive the DAG from the outline; when in doubt make
   dependencies MORE conservative, never less).
@@ -51,11 +51,11 @@ the SPECs before any implementation prompt is issued against them.
     (`assert_array_equal`);
   - include the fast-gate budget criterion if the step adds fast-tier tests.
 
-`plan/steps/SXX_<snake_name>/PLAN.md`:
+`development/plans/SXX_<snake_name>.md`:
 - Numbered task ordering starting with **reference mining** (name candidate repos/
   paths AS HINTS and say so — the S01–S14 convention that paths are discovered,
   not trusted, and every source lands in REFERENCES.lock at mining time).
-- A `**Pitfalls:**` paragraph. Mine `plan/IMPLEMENTATION_REPORT.md` §4 for
+- A `**Pitfalls:**` paragraph. Mine `development/records/IMPLEMENTATION_REPORT.md` §4 for
   phase-relevant traps (e.g. for P2: background-child survival, chunk-resume via
   restart protocols, np=4 CI budget; for P5: domain-carrying fields — the wgtfacq
   lesson — and config-digest cache keys; for P3: the S07/S08 hosting pattern,
@@ -76,11 +76,11 @@ the SPECs before any implementation prompt is issued against them.
 2. Each SPEC/PLAN passes the structural checklist above — self-audit each file
    against it and include the checklist per step in your report.
 3. The DAG is stated in every SPEC header and is acyclic; a proposed update to
-   `plan/00_OVERVIEW.md` §2's mermaid graph is included in your report AS A DIFF
+   `development/records/00_OVERVIEW.md` §2's mermaid graph is included in your report AS A DIFF
    SNIPPET ONLY (do not edit 00_OVERVIEW.md — trunk applies it at approval).
-4. No file outside `plan/steps/<new folders>/` and your report is touched. The
+4. No file outside `development/{specs,plans}/<new files>` and your report is touched. The
    full fast gate still passes untouched (formality; run once).
-5. Report `plan/prompts/reports/30_specs_<phase>_REPORT.md`: mapping table,
+5. Report `development/records/30_specs_<phase>_REPORT.md`: mapping table,
    per-step checklists, open design questions EXPLICITLY listed for the human
    trunk review (do not bury uncertainty inside confident-sounding SPEC text —
    an honest "TRUNK DECISION NEEDED:" marker inside a SPEC is the correct way to

@@ -2,34 +2,34 @@
 
 **Branch:** `task/29-plan-structure` (items executed immediately after the task-29
 proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
-**Spec:** `plan/prompts/reports/29_plan_structure/29_plan_structure.md` §8 ·
+**Spec:** `development/records/29_plan_structure/29_plan_structure.md` §8 ·
 **Commits:** items A–E one commit each (`f009d5b`, `48212ab`, `199f967`, `aa7dbc6`,
 `06585c8`) + this report.
 
 ## Per-item summary
 
-- **A — `plan/README.md`** (new): exactly 4 sections (taxonomy table, naming convention
+- **A — `development/archive/plan_tree_map.md`** (new): exactly 4 sections (taxonomy table, naming convention
   incl. N-series allocation rule, forward SPEC/STATUS templates incl. the
   artifact-regeneration-command rule, plan/docs boundary policy). `grep -c "^## "` = 4.
-- **B — `plan/TRUNK_DECISIONS.md`** (new): rule paragraph + 19 rows: 7 slice sign-off
+- **B — `development/DECISIONS.md`** (new): rule paragraph + 19 rows: 7 slice sign-off
   items copied verbatim from `IMPLEMENTATION_REPORT.md` §5 (status `pending`, no
   evidence yet); TD-27.1–3 (`signed-off`, evidence task-28 merge `cbbec36`); TD-29.1–9
   with statuses per the owner's proceed instruction (29.1/2/3/8/9 signed-off,
   29.4/5/6/7 pending). No verbatim-copy discrepancies found against the sources.
-  `grep -r "TD-PENDING" plan/` returns only rule/definition text (plan/README.md,
+  `grep -r "TD-PENDING" plan/` returns only rule/definition text (development/archive/plan_tree_map.md,
   TRUNK_DECISIONS.md, the 29 proposal) — zero live markers, as expected forward-only.
-- **C — `plan/prompts/README.md`** (refresh): added one section ("Task-number
-  register") with the allocation rule, the pointer paragraph to `plan/README.md` /
+- **C — `development/plans/README.md`** (refresh): added one section ("Task-number
+  register") with the allocation rule, the pointer paragraph to `development/archive/plan_tree_map.md` /
   `TRUNK_DECISIONS.md`, and a 13-row register table (10, 20–31). Purely additive:
-  `git diff main..HEAD -- plan/prompts/README.md` has **0 deleted lines**; invariants,
+  `git diff main..HEAD -- development/plans/README.md` has **0 deleted lines**; invariants,
   gate-baseline table, and caches sections byte-identical.
 - **D — root `README.md`** (refresh; TD-29.8): status paragraph replaced
   (slice-merged state, task register, docs site), Contents table extended
   (`STATUS.md` in the steps row, `IMPLEMENTATION_REPORT.md`, `TRUNK_DECISIONS.md`,
-  `plan/prompts/`, `plan/README.md`, `docs/`), Bootstrap section replaced by
+  `development/plans/`, `development/archive/plan_tree_map.md`, `docs/`), Bootstrap section replaced by
   "Working on the repo" with current commands.
   `grep -n "pre-implementation\|No framework code exists" README.md` → empty.
-- **E — `plan/prompts/reports/README.md`** (new): kind-labelled index of 26/27/28/29/31
+- **E — `development/records/README.md`** (new): kind-labelled index of 26/27/28/29/31
   plus the two declared-future dirs. `upstream/` and `prs/` confirmed NOT created.
 
 ## Verification gates
@@ -38,9 +38,9 @@ proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
 uv run sphinx-build -E -W --keep-going -b html docs /tmp/task31-docs-check   → exit 0
 uv run ruff check .                                                          → All checks passed!
 uv run ruff format --check .                                                 → 173 files already formatted (== main)
-git diff main..HEAD --stat → only: plan/prompts/reports/29_plan_structure/29_plan_structure.md (task 29),
-  plan/README.md, plan/TRUNK_DECISIONS.md, plan/prompts/README.md, README.md,
-  plan/prompts/reports/README.md, this report. No renames, no deletions.
+git diff main..HEAD --stat → only: development/records/29_plan_structure/29_plan_structure.md (task 29),
+  development/archive/plan_tree_map.md, development/DECISIONS.md, development/plans/README.md, README.md,
+  development/records/README.md, this report. No renames, no deletions.
 uv run pytest packages -m "not gpu and not slow" -q → recorded below at completion
 ```
 

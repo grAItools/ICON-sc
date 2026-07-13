@@ -1,7 +1,7 @@
 # symcon Implementation Plan — Overview
 
 **Implements:** *symcon architecture* v1.3 + *symcon repo layout* (companion documents; §-references point into the architecture doc).
-**Horizon:** vertical slice fully specified — SCM physics column (satad + graupel, SUS coupling, F-tier gradients) and idealized dycore (NonhydroSolver + diffusion + Jablonowski–Williamson, T1 plan) — with post-slice phases outlined in `outlines/`.
+**Horizon:** vertical slice fully specified — SCM physics column (satad + graupel, SUS coupling, F-tier gradients) and idealized dycore (NonhydroSolver + diffusion + Jablonowski–Williamson, T1 plan) — with post-slice phases outlined in `development/ideas/`.
 **Execution model:** sequential trunk (S01–S05) with two parallel lanes (A: column, B: dycore) that fork after S03. Human review gate on every trunk merge; lane steps land by PR.
 
 ---
@@ -64,6 +64,6 @@ Parallelism: after S03 merges, lanes A and B proceed concurrently with the remai
 
 Repo layout exactly as the layout document (uv workspace; `symcon-core` / `symcon-icon` / `symcon-bridges`; import-linter `core ↛ icon`). Test markers: `gpu`, `mpi`, `slow`, `data` (fetches remote reference data). Backend parametrization: component tests run `embedded` + `gtfn_cpu` always, `gtfn_gpu` under the `gpu` marker. All floating-point comparisons through one `symcon.core.testing.assert_allclose` wrapper that reports worst-offender location and relative/absolute error — tolerance forensics matter at L2.
 
-## 5. Post-slice phases (outlined only — see `outlines/`)
+## 5. Post-slice phases (outlined only — see `development/ideas/`)
 
 P2 distributed execution · P3 full NWP physics + bridges · P4 ingestion & real data (L5) · P5 tiers T2/T3 · P6 differentiable distributed + DA/hybrid demos · P7 presets, docs, anemoi.

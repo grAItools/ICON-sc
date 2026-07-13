@@ -11,10 +11,10 @@ Every gpu-marked test since S07 (satad, graupel, dycore, diffusion, JW plan
 equivalence — the `gtfn_gpu` backend legs) has only ever been *skip-validated*:
 written, collected, and confirmed to skip cleanly without a device, but never
 executed. S14's acceptance "bitwise per backend" is evidence-backed for `gtfn_cpu`
-only. This is flagged in the sign-off ledger (`plan/IMPLEMENTATION_REPORT.md` §5) and
+only. This is flagged in the sign-off ledger (`development/records/IMPLEMENTATION_REPORT.md` §5) and
 in the S07/S08/S12/S14 STATUS files.
 
-## Hard rules (restated; full list in plan/prompts/README.md)
+## Hard rules (restated; full list in development/plans/README.md)
 
 - **You may not change any test tolerance, assertion, or marker.** If a gpu test
   FAILS, that is a finding to report with full output — not something to fix by
@@ -27,11 +27,11 @@ in the S07/S08/S12/S14 STATUS files.
 
 ## Procedure
 
-1. Read `plan/prompts/README.md` in full. Read the gpu-relevant STATUS notes:
-   `plan/steps/S07_satad_component/STATUS.md` (Review fixes section),
-   `plan/steps/S08_graupel_component/STATUS.md`,
-   `plan/steps/S12_nonhydro_hosting/STATUS.md`,
-   `plan/steps/S14_plan_through_dycore/STATUS.md` (Review fixes: the gpu PR note).
+1. Read `development/plans/README.md` in full. Read the gpu-relevant STATUS notes:
+   `development/records/S07_satad_component/STATUS.md` (Review fixes section),
+   `development/records/S08_graupel_component/STATUS.md`,
+   `development/records/S12_nonhydro_hosting/STATUS.md`,
+   `development/records/S14_plan_through_dycore/STATUS.md` (Review fixes: the gpu PR note).
 2. Install the GPU stack into the workspace env WITHOUT touching any pinned file:
    `uv pip install --prerelease=allow -c constraints/gpu-cuda12.txt "cupy-cuda12x==13.6.0" "gt4py[cuda12]==1.1.10"`
    Then verify: `uv run python -c "import cupy; print(cupy.cuda.runtime.getDeviceCount())"` → ≥1.
@@ -47,14 +47,14 @@ in the S07/S08/S12/S14 STATUS files.
    `uv run pytest <file> -m gpu -q` for each file from step 3, data files last
    (they need the archives in `~/.cache/symcon/icon4py-testdata`).
 5. For every failure: capture the FULL pytest failure block verbatim into
-   `plan/prompts/artifacts/` is NOT allowed (gitignored artifacts live outside plan/)
+   `development/plans/artifacts/` is NOT allowed (gitignored artifacts live outside plan/)
    — instead paste it into your task report and, if a product-code fix is warranted,
    fix on this branch with a test-backed justification. If a failure looks like a
    tolerance issue (values close but not equal), you MUST NOT touch the tolerance:
    report the measured deviation, the field, the test, and stop on that item.
 6. After any product-code change, re-run the FULL CPU gate (all 8 commands from
    README.md) to prove CPU behavior is unchanged, plus the touched gpu files.
-7. Write `plan/prompts/reports/20_gpu_validation_REPORT.md` (create `reports/`):
+7. Write `development/records/20_gpu_validation_REPORT.md` (create `development/records/`):
    device + driver + cupy versions; the collected gpu-leg list; per-file results
    (passed/failed/skipped with timings); every failure verbatim + disposition;
    whether S14's "bitwise per backend" now holds for gtfn_gpu (the
