@@ -68,15 +68,17 @@ uv run mypy --strict -p symcon.core
 uv run lint-imports
 ```
 
-Baseline at the S14 merge (`main` = `0c5b693`, warm caches — see "Caches" below):
+Baseline after the task-26 merge (`main` = `a38ca01`, warm caches — see "Caches"
+below). Keep this table current: a merged task that adds tests must update it in
+the same commit (the ruff-format file count moves with any new file):
 
 | Command | Baseline |
 |---|---|
-| fast (`not gpu and not slow`) | 736 passed, 1 skipped (mpi), ~13–15 min warm |
-| slow, no data | 30 passed, ~5 min |
+| fast (`not gpu and not slow`) | 739 passed, 1 skipped (mpi), ~13–15 min warm |
+| slow, no data | 31 passed, ~5–13 min |
 | data, not slow | 43 passed, ~7 min |
 | data and slow | 76 passed, 1 skipped, ~32 min |
-| ruff check / format | `All checks passed!` / `171 files already formatted` |
+| ruff check / format | `All checks passed!` / `173 files already formatted` |
 | mypy | `Success: no issues found in 50 source files` |
 | lint-imports | `Contracts: 2 kept, 0 broken` |
 
