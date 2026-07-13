@@ -28,6 +28,33 @@ scope — scope discipline is the main anti-drift device.
 
 Tasks 1–5 are independent of each other except where noted inside the files.
 
+## Task-number register (the single allocator)
+
+A task number is allocated by adding a row here **at assignment**, even when the prompt
+text is delivered ad hoc and never committed (the row says so). Numbers are strictly
+monotonic, never reused; gaps are never backfilled. On a collision, the first-registered
+number wins and the latecomer takes the next free one. Full naming convention, file
+taxonomy, forward SPEC/STATUS templates, and the plan/docs boundary policy live in
+`plan/README.md`; the living trunk-decision/sign-off register is
+`plan/TRUNK_DECISIONS.md` (it supersedes `plan/IMPLEMENTATION_REPORT.md` §5/§6 going
+forward).
+
+| N | Task | Prompt | Status | Deliverable |
+|---|---|---|---|---|
+| 10 | review protocol | `10_REVIEW_PROTOCOL.md` | living protocol | — |
+| 20 | gpu validation | `20_gpu_validation.md` | pending | `reports/20_gpu_validation_REPORT.md` |
+| 21 | ci hardening | `21_ci_hardening.md` | pending | `reports/21_ci_hardening_REPORT.md` |
+| 22 | plan-hash config digest | `22_plan_hash_config_digest.md` | pending | `reports/22_plan_hash_REPORT.md` |
+| 23 | upstream reports | `23_upstream_reports.md` | pending | `reports/upstream/` |
+| 24 | pr publication | `24_pr_publication.md` | pending | `reports/prs/` |
+| 25 | cf multistage t1 | `25_cf_multistage_t1.md` | pending | `reports/25_cf_multistage_REPORT.md` |
+| 26 | gridgen integration | ad hoc (not committed) | executed | `reports/26_gridgen_integration_REPORT.md` |
+| 27 | docs plan | ad hoc (not committed) | executed | `reports/27_docs_plan/27_docs_plan.md` |
+| 28 | docs implementation | `28_docs_implementation.md` | executed | `reports/28_docs_implementation_REPORT.md` |
+| 29 | plan-structure proposal | ad hoc (not committed) | executed | `reports/29_plan_structure/29_plan_structure.md` |
+| 30 | author phase specs | `30_author_phase_specs.md` | pending | `reports/30_specs_<phase>_REPORT.md` |
+| 31 | plan-structure migration | 29 proposal §8 (liftable spec) | executed | `reports/31_plan_structure_migration_REPORT.md` |
+
 ## Invariants that apply to EVERY task (also restated inside each prompt)
 
 - Authority order on any conflict:
