@@ -145,7 +145,12 @@ plan-hash-pinned to their preset builders; dispatch-overhead evidence recorded.
 16-core host, otherwise idle):
 
 ```
-PLACEHOLDER
+model:                 JW dry (R02B04, 35 levels), backend gtfn_cpu
+steps per repeat:      20  (repeats: 3, best reported)
+T0 per step:              3680.7 ms  (median 3736.8 ms)
+T1 per step:              3433.3 ms  (median 3488.6 ms)
+host-side delta:           247.4 ms/step  (6.7% of T0)
+one-time bind cost:         3.30 s  (negotiation + materialize + step 0)
 ```
 
 Reading: the composed JW step is kernel-dominated (two hosted gtfn granules,
@@ -158,7 +163,25 @@ where kernel time shrinks but dispatch does not (the P5/T2 motivation).
 
 ## 5. Gates
 
-PLACEHOLDER
+All green on the step branch (16-core host; gt4py/gt4py-data caches warm):
+
+- `pytest packages -m "not gpu and not slow" -q` — **736 passed, 1 skipped (mpi)**,
+  **14:08 warm-cache** (acceptance 5: ≤ 15 min — met, with thin margin; an 18:30
+  first run paid one-time gtfn compiles of the new S14 plan-path variants, and the
+  three S08 embedded graupel L2 cases dominate at ~10 min combined — trunk candidates
+  if the margin erodes further).
+- 24 h JW T0≡T1 bitwise (`test_jw_plan_equivalence.py -m "not gpu"`, acceptance 1):
+  **2 passed** (288 composed steps in lockstep, every prognostic exact at every step +
+  final checkpoint diagnostics), 25:27.
+- `-m "slow and not gpu and not data"` — **30 passed**, 5:20.
+- `-m "data and not slow and not gpu"` — **43 passed**, 6:33.
+- `-m "data and slow and not gpu"` — **76 passed, 1 skipped** (upstream MCH-only
+  initial-step), 32:04.
+- S14 test files in isolation: substep-outer + publication **20 passed**; JW
+  plan-equivalence file green standalone.
+- `ruff check` clean · `ruff format --check` 171 files clean ·
+  `mypy --strict -p symcon.core` clean (50 files) · `lint-imports` 2 contracts kept.
+- Benchmark artifact: §4 (run alone on an otherwise idle host).
 
 ## 6. Follow-ups
 
