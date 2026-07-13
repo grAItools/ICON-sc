@@ -40,6 +40,7 @@ def test_generated_file_reads_through_reader() -> None:
     assert connectivities["C2E"].shape == (N_CELLS, 3)
     assert connectivities["C2V"].shape == (N_CELLS, 3)
     assert connectivities["E2C"].shape == (N_EDGES, 2)
+    assert raw.coordinates["vertex_lat"].shape == (N_VERTICES,)
     # S11 normalization contract: 0-based with -1 as the invalid marker.
     for name, table in connectivities.items():
         assert table.min() >= -1, f"{name} violates 0-based/-1 normalization"
@@ -56,6 +57,8 @@ def test_generation_is_deterministic(tmp_path: object) -> None:
     assert raw_a.uuid == raw_b.uuid
     for name in ("C2E", "C2V", "E2C"):
         np.testing.assert_array_equal(raw_a.connectivities[name], raw_b.connectivities[name])
+    for name, values in raw_a.coordinates.items():
+        np.testing.assert_array_equal(values, raw_b.coordinates[name], err_msg=name)
 
 
 def test_icongrid_offset_providers_and_refin_ctrl() -> None:

@@ -38,7 +38,8 @@ helper docstrings, and the test-module docstring.
    size compiles gtfn variants) with a gpu-marked gtfn_gpu leg (skips cleanly
    without a device; unvalidated on hardware like all gpu legs — task 20).
 
-## Evidence base (pre-adoption probes, reproduced by the tests)
+## Evidence base (pre-adoption probes; the tests reproduce all of it — after the
+## review round-1 fix, including coordinate determinism)
 
 - Generated R2B2 (1280 cells / 1920 edges / 642 vertices) loads through
   `read_grid_file` and `from_file` (icon4py GridManager path).

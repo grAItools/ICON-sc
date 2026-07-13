@@ -235,6 +235,10 @@ def generated_grid(
 ) -> Any:
     """A symcon ``IconGrid`` built from a generated grid file.
 
+    Same boundary as :func:`generated_grid_file`: generated grids are test
+    fixtures, **never** substitutes for the official archive grids in
+    savepoint-parity work.
+
     Convenience over :func:`generated_grid_file` + :func:`symcon.icon.grid.from_file`;
     ``ctx`` defaults to the embedded backend (pass a gtfn context for factory work —
     the icon4py factories do not support the embedded backend upstream).
