@@ -31,8 +31,13 @@ and paste:
 >>> t.attrs["units"]
 'K'
 >>> t.attrs["location"]
-'cell'
+<Location.CELL: 'cell'>
 ```
+
+That last value is stored as an *enumeration* — a type that admits exactly
+three values (cell, edge, vertex), so a misspelled location cannot exist in
+the state at all; its printed form names both the type and the value,
+`'cell'`.
 
 Fields are `xarray.DataArray`s: the `data` inside is an ordinary NumPy (or,
 on GPU, CuPy) array, and the wrapper carries the metadata. Three conventions

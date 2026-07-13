@@ -4,6 +4,16 @@ Software terms used by the tutorials, defined from the science in. One
 paragraph each; tutorials link here on first use. (Terms for the planned
 pages T3–T8 are added when those pages land.)
 
+## CI (continuous integration)
+
+An automated referee that re-runs every check on every proposed change to the
+code: the full test suite — from stencil-level comparisons against ICON
+reference data up to multi-hour model integrations — plus the documentation
+build, executed by machines before any change is accepted. When a tutorial
+says a script is "CI-tested", it means exactly that: the code you are reading
+is re-run automatically on every change, so it cannot silently rot the way a
+paper's code appendix can.
+
 ## state dictionary
 
 The model state as one Python dictionary: each entry maps a field name

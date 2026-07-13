@@ -71,7 +71,7 @@ expressed:
   version (tutorial T7 covers this).
 
 **Everything here runs.** The code shown above is included directly from the
-CI-tested example file. Run it yourself from a repository checkout (about a
+[CI-tested](../glossary.md#ci-continuous-integration) example file. Run it yourself from a repository checkout (about a
 minute on a laptop CPU):
 
 ```bash

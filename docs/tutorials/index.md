@@ -5,8 +5,9 @@ saturation adjustment, a dycore, and a parameterization are; you should not
 need to know what an API or a design pattern is before starting. Every page
 opens with a science question, introduces at most two or three software terms
 (each defined in the [glossary](../glossary.md)), and builds on runnable,
-CI-tested scripts from the repository's `examples/` directory — the code you
-see is included from the tested files, never copied by hand.
+[CI-tested](../glossary.md#ci-continuous-integration) scripts from the
+repository's `examples/` directory — the code you see is included from the
+tested files, never copied by hand.
 
 ## Available now
 

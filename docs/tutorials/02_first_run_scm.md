@@ -7,7 +7,9 @@ smallest experiment that exercises real parameterizations in their real
 calling order — and it is small enough to run in under a minute on a laptop.
 
 This page walks `examples/01_scm_column.py` end to end. All code shown is
-included directly from that CI-tested file; nothing is copied by hand.
+included directly from that
+[CI-tested](../glossary.md#ci-continuous-integration) file; nothing is copied
+by hand.
 
 **Everything here runs.** From a repository checkout:
 
@@ -55,8 +57,10 @@ One call builds everything: the components, their coupling, the constraint
 and bus checks, and the initial column — a decaying-isothermal reference
 atmosphere whose humidity is scaled so the lower troposphere starts
 supersaturated (so condensation and precipitation begin immediately). The
-default configuration is a frozen dataclass; here it is, from the preset
-module itself:
+default configuration is a typed configuration object whose values are fixed
+once it is created — like a namelist that cannot be edited mid-run, so the
+settings a run started with are exactly the settings it finished with. Here
+it is, from the preset module itself:
 
 ```{literalinclude} ../../packages/symcon-icon/src/symcon/icon/presets/scm.py
 :language: python

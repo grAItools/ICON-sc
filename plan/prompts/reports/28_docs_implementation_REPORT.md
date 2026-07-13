@@ -15,8 +15,8 @@
   in `constraints/` changed.
 - `uv lock`: lockfile grows only. `git diff uv.lock` contains **zero** changed
   lines matching `gt4py|icon4py|jax`. The only removed lines are four
-  `markdown-it-py` dependency-list entries replaced by python-version-marked
-  variants (see "Findings" 1). `uv lock --check` passes.
+  dependency-list entries — 3× `markdown-it-py` and 1× `mdurl` — replaced by
+  python-version-marked variants (see "Findings" 1). `uv lock --check` passes.
 - `docs/conf.py`: the prompt's block verbatim, plus three config-only additions
   (see "Deviations" 1): `exclude_patterns = ["_build", "api/README.md"]` and
   `myst_heading_anchors = 2`.
@@ -150,7 +150,7 @@ docs); item C — 3 (forward refs to item D docs); first item D build — 17
 (glossary `(term-x)=` explicit targets do not resolve as `file.md#fragment` ids;
 fixed by `myst_heading_anchors = 2` + linking heading slugs, "Deviations" 1).
 
-### Built-site page inventory (22 content pages + generated indices)
+### Built-site page inventory (23 content pages + 3 generated = 26 HTML files)
 
 | Section | Pages |
 |---|---|
@@ -224,10 +224,11 @@ known upstream MCH-only skip); `test_jw_datatest.py`+`test_jw_plan.py` 4;
    not by `uv lock`. Existing pins are untouched. If the trunk wants the lock
    *itself* clamped to 8.1.x for all pythons, that is an upper-bound decision
    (`sphinx>=8.1,<8.2`) it should make explicitly — not taken here.
-2. The 4 removed lines in the `uv.lock` diff are this fork's mechanical
-   consequence (unversioned `markdown-it-py` dependency entries → two
-   version-marked entries); `markdown-it-py` was previously locked at 4.2.0,
-   which myst-parser 4.0.1 (py3.10) cannot use — 3.0.0 is selected there.
+2. The 4 removed lines in the `uv.lock` diff (3× `markdown-it-py`, 1× `mdurl`
+   dependency-list entries) are this fork's mechanical consequence — each
+   unversioned entry becomes two python-version-marked entries;
+   `markdown-it-py` was previously locked at 4.2.0, which myst-parser 4.0.1
+   (py3.10) cannot use — 3.0.0 is selected there, and `mdurl` forks with it.
 3. The repo README's "Status: pre-implementation" paragraph is stale (the slice
    exists); out of scope here, noted for a future trunk-owned README refresh.
 
@@ -238,3 +239,57 @@ empty and `git diff main..HEAD -- packages/` empty (no docstring edits);
 `constraints/` diff is exactly the four TD-2 pins + one comment line; the T2
 literalinclude line ranges (`1-14`, `29-44`) against `examples/01_scm_column.py`.
 The one-time Pages→GitHub Actions repo setting remains for a human.
+
+## Review fixes (round 1)
+
+Reviewer verdict: request-changes. All five findings addressed; only
+`docs/**`, the two workflow files, and this report were touched (confirmed
+with `git diff --stat` before committing). No gates beyond the ones below were
+required (no `packages/`, `constraints/`, or lockfile change).
+
+1. **MAJOR — T1 transcript untruthful for `attrs["location"]`.** The tutorial
+   showed `'cell'`; a real REPL prints the enum repr. Fixed by showing the
+   truthful `<Location.CELL: 'cell'>` plus one audience-friendly sentence
+   (enumeration = only three admissible values, so a misspelled location
+   cannot exist in the state). No product code touched (no `__repr__` added).
+   **Re-execution evidence:** the pycon block was machine-extracted from the
+   final page (6 input lines, 3 expected output lines), its exact statements
+   piped into `uv run python -i`, and stdout diffed line-by-line against the
+   tutorial's output lines: `diff -u` empty → `T1 TRANSCRIPT DIFF-CLEAN`.
+   T0 and T2 contain no pycon transcripts (`grep '>>>'` over all tutorial and
+   site pages: 0 further matches); T2's quoted *run output* block was already
+   verified verbatim in item D (unchanged in this round).
+2. **MINOR — uv.lock removed-lines description.** Corrected in both places
+   (item A bullet, Findings 2): the four removed lines are 3×
+   `markdown-it-py` + 1× `mdurl` dependency-list entries (verified:
+   `git diff main -- uv.lock | grep '^-' | sort | uniq -c`).
+3. **MINOR — page-count contradiction.** Inventory header corrected to
+   "23 content pages + 3 generated = 26 HTML files".
+4. **MINOR — audience-contract violations.** T2's "frozen dataclass" replaced
+   with "a typed configuration object whose values are fixed once it is
+   created — like a namelist that cannot be edited mid-run…". New glossary
+   entry "CI (continuous integration)" written science-in ("an automated
+   referee that re-runs every check on every proposed change…"); first use
+   per page linked to it (tutorials/index.md, 00_what_is_symcon.md,
+   02_first_run_scm.md); subsequent uses (e.g. tutorials/index.md
+   "CI-enforced" in the T7 abstract) kept as plain text per the finding.
+5. **INFO — docs.yml hardening.** `python-version: "3.10"` added to the
+   setup-uv step (matching lint.yml), so the sphinx 8.1.3 / py<3.11 lock fork
+   selection does not hinge on `.python-version` alone. `yaml.safe_load`
+   re-validated.
+
+Verification after fixes: `uv run sphinx-build -E -W --keep-going -b html
+docs docs/_build/html` → exit 0 (with `-W`, i.e. **0 warnings**); built HTML
+spot-checks: `id="ci-continuous-integration"` present in glossary.html and
+linked from all three pages, `Location.CELL` present in the built T1;
+`uv run ruff check .` → `All checks passed!`; `uv run ruff format --check .`
+→ `173 files already formatted`.
+
+### Branch-scope note (not this task's change)
+
+Commit `6abd1b9` ("docs: refresh prompts-README gate baselines post task 26")
+was committed onto this branch by the **orchestrator** (shared working tree
+had this branch checked out) rather than main. It touches only
+`plan/prompts/README.md`, is authorized (reviewer INFO-7 baseline refresh),
+and rides along in this branch per the coordinator's instruction — it is not
+an undeclared out-of-scope touch by task 28.
