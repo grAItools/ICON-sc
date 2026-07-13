@@ -32,6 +32,10 @@ dev = [
   "import-linter>=2.1",
   "pre-commit>=4.0",
   "matplotlib>=3.8",
+  # task 28: docs build — plan 27_docs_plan §3.3 (TD-2); pins in constraints/cpu-ci.txt.
+  "sphinx>=8.1",
+  "myst-parser>=4.0",
+  "furo>=2025.12.19",
 ]
 
 [tool.uv]
