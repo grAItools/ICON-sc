@@ -1,6 +1,6 @@
 ## Step
 
-`plan/steps/____` — one step per PR.
+`development/specs/____` — one step per PR.
 
 ## Definition of done (AGENTS.md)
 

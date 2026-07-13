@@ -48,7 +48,7 @@ laptop.
   canonical) and the [repository layout](architecture/symcon_repo_layout.md).
 - Software terms defined science-in: the [glossary](glossary.md).
 - Contributing or running the implementation plan? See `AGENTS.md` and
-  `plan/` in the repository — developer process documents are deliberately
+  `development/` in the repository — developer process documents are deliberately
   not reworked as user docs.
 
 ```{toctree}
