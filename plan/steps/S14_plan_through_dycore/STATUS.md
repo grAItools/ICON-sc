@@ -204,3 +204,17 @@ All green on the step branch (16-core host; gt4py/gt4py-data caches warm):
 
 - Benchmark output committed verbatim in §4 (no data files; `artifacts/`
   unused). Probe logs under the session scratchpad.
+
+## Review fixes (round 1)
+
+- Benchmark docstring corrected: the JW dycore unrolls to **21** BoundCalls at
+  ndyn_substeps=5 (1 ingress + 5 begin + 10 stage calls + 4 end + 1 egress), not 13
+  (reviewer MINOR 1; measured from `plan.describe()`).
+- **⚠ PR NOTE (reviewer MINOR 2):** acceptance 1's "bitwise per backend" is
+  evidence-backed for **gtfn_cpu only** — the `[gtfn_gpu]` leg has never executed
+  anywhere (no CUDA device/cupy in the implementation or review environments; skip
+  verified clean). First GPU-runner execution must be watched, together with the
+  gpu-marked legs accumulated since S07 (same standing note in S07/S08/S12 STATUSes).
+- test_nonhydro_component.py docstring cross-reference corrected (S12 §1.5/§3).
+- Reviewer INFO 3 (CadenceMask `on_segment` forwarding in direct interpretation —
+  unreachable today, latent T2 seam) recorded as a follow-up.

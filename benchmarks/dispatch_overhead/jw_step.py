@@ -9,7 +9,8 @@ repeat, best/median reported):
   machinery (negotiation, ingress, DataArray wrapping) around the two hosted
   granules per step;
 - **T1**: ``ExecutionPlan.run_step`` on the frozen plan — the dycore unrolled
-  substep-outer (13 BoundCalls) + diffusion (1 BoundCall) + 1 vault swap.
+  substep-outer (21 BoundCalls at ndyn_substeps=5: 1 ingress + 5 begin + 10
+stage calls + 4 end + 1 egress) + diffusion (1 BoundCall) + 1 vault swap.
 
 The delta is the host-side dispatch cost the §8.2 phase split removes; on this
 model the hosted gtfn kernels dominate the step, so expect the delta to be a

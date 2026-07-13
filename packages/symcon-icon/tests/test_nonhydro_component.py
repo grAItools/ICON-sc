@@ -742,7 +742,7 @@ def test_plan_tier_binds_and_runs_the_component() -> None:
     exactly that path with the stubbed granule.
 
     Under the plan tier the ``__call__`` zero-fill convenience is bypassed, so the
-    bound state must carry the bus slots explicitly (declared in STATUS §2).
+    bound state must carry the bus slots explicitly (declared in STATUS S12 §1.5/§3).
     """
     import dataclasses as _dataclasses
 
