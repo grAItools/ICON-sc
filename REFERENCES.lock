@@ -461,3 +461,12 @@ paths = ["cupy_backends/cuda/api/runtime.pyx", "cupy/cuda/graph.pyx", "docs cupy
 taken = "S14 benchmark gpu leg feasibility: cupy exposes stream capture (Stream.begin_capture/end_capture -> cupy.cuda.Graph with the raw cudaGraph_t as Graph.graph) but does NOT bind cudaGraphGetNodes or cudaGraphDebugDotPrint at v13.0.0 (runtime.pyx graph surface: graphDestroy/graphExecDestroy/graphLaunch/graphUpload only) - so a kernel-launch count needs a ctypes cudaGraphGetNodes call on Graph.graph after capturing one T1 step. Capture also fails across host seams (numpy work, cudaMalloc), which is itself the T2 segment observation the benchmark records. gtfn_gpu kernels launch inside compiled nanobind modules, so Python-level cupy call hooks cannot see them - capture-based counting is the only cupy-reachable mechanism."
 step = "S14"
 date = "2026-07-12"
+
+[[ref]]
+id = "icon-grid-generator"
+url = "https://github.com/ofuhrer/icon-grid-generator"
+commit = "2e8aa97a9833203ee2bda0ec2fbe235ed3ff2e80"  # v0.3.2, PyPI-published
+paths = ["src/grid_generator/_netcdf.py", "src/grid_generator/grid_generator.py", "tests/grid_assertions.py", "tests/test_grid_correctness_matrix.py", "docs/design.md"]
+taken = "Evaluation (no code dependency yet): pure-numpy ICON-style grid generator (BSD-3, Oliver Fuhrer/MeteoSwiss). Empirically verified against the symcon stack: a generated R2B2 file loads through symcon.icon.grid.reader + from_file (icon4py GridManager path), refin_ctrl/uuidOfHGrid present (deterministic uuid5 per spec), offset providers built, and all 38 metrics + 16 interpolation factory fields compute all-finite on gtfn_cpu. NetCDF writer emits real ICON conventions (1-based tables, refin_*_ctrl, start/end_idx, parent indices); spring optimization included; torus/channel/LAM specs supported. NOT numerically equivalent to official DWD gridgen output (own spring iterations; verification upstream is invariant-based, no DWD-reference comparison) - unusable for savepoint-parity work, suitable for synthetic-grid tests, convergence ladders, torus experiments, LAM/P2 fixtures."
+step = "evaluation (pre-adoption; see plan/prompts if a task is cut)"
+date = "2026-07-13"
