@@ -14,6 +14,9 @@ extensions = [
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
 myst_enable_extensions = ["dollarmath", "colon_fence"]
+# Auto-generate anchors for h1/h2 so tutorials can link glossary entries as
+# glossary.md#<term-slug> (MyST resolves file#fragment against heading anchors).
+myst_heading_anchors = 2
 autodoc_typehints = "description"
 autodoc_member_order = "bysource"
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}

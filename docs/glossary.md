@@ -4,7 +4,6 @@ Software terms used by the tutorials, defined from the science in. One
 paragraph each; tutorials link here on first use. (Terms for the planned
 pages T3–T8 are added when those pages land.)
 
-(term-state-dictionary)=
 ## state dictionary
 
 The model state as one Python dictionary: each entry maps a field name
@@ -14,7 +13,6 @@ prognostic and diagnostic fields a model description paper tabulates — held
 in one place, and the *only* channel through which processes see each other's
 work. Components never share data behind the state's back.
 
-(term-component)=
 ## component
 
 One process of the model — saturation adjustment, graupel microphysics, the
@@ -24,7 +22,6 @@ with a state it returns its updates. A parameterization you can call, by
 itself, on a column state; the composition machinery checks its declarations
 against everything else's before a run starts.
 
-(term-run-script)=
 ## run script
 
 The single, legible source of compositional truth: one short Python script
@@ -33,7 +30,6 @@ output goes. It carries the same information as an ICON namelist plus the
 calling-order knowledge otherwise buried in the interface code — but it is
 readable top to bottom, and every claim in it is machine-checked at startup.
 
-(term-property-contract)=
 ## property contract
 
 The component's published list of what fields it reads and writes, with units
@@ -42,7 +38,6 @@ model description paper. If a scheme asks for temperature in K on cell
 centers and the state holds something else, the mismatch is an error message
 naming the component and field, not a silent wrong answer.
 
-(term-canonical-units)=
 ## canonical units
 
 One fixed unit per field name, registry-enforced (`air_temperature` is always
@@ -51,7 +46,6 @@ units, so no unit conversion ever needs to happen between processes — the
 convenience of automatic conversion exists for interactive use, but in
 production any conversion that would silently allocate and copy is an error.
 
-(term-staggering-as-api)=
 ## staggering as API
 
 On ICON's triangular C-grid the normal wind lives on cell *edges* while
@@ -62,7 +56,6 @@ mismatches, and any reconstruction between locations (e.g. edge winds to
 cell-center u, v for physics) is a visible, named step — never a hidden
 convenience.
 
-(term-preset)=
 ## preset
 
 A named, pre-built composition whose scientific behaviour has been validated
@@ -72,7 +65,6 @@ attached as machine-checked constraints. You can build compositions the
 preset would forbid (that is the point of a research framework), but only the
 preset carries the *validated* label.
 
-(term-slow-tendency-bus)=
 ## slow-tendency bus
 
 How slow physics hands its heating and momentum rates to the dynamical core —
