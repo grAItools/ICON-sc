@@ -1,0 +1,48 @@
+# TRUNK_DECISIONS — living register of trunk decisions and human sign-offs
+
+The single place where trunk/human decisions are tracked. Rules: append-mostly (rows are
+added, and their `Status` field updated in place; nothing else is edited); every new
+`TD-PENDING:` line in any STATUS.md or task report gets a row here **in the same PR**;
+decision text that quotes a tolerance or signature is copied verbatim from its source.
+This register supersedes `plan/IMPLEMENTATION_REPORT.md` §5 (sign-off ledger) and §6
+(standing follow-ups) going forward — that report stays frozen as the historical record.
+Conventions: ID `TD-<origin>.<k>` where origin is the step (`S08`) or task (`27`) that
+raised it. Status: `pending` / `signed-off` / `rejected` / `superseded(TD-…)`. `Date` is the
+date the decision was raised at its source.
+
+Seeded 2026-07-13 by task 31 (spec: `plan/prompts/reports/29_plan_structure/29_plan_structure.md` §8).
+
+## Sign-off items from the S01–S14 slice (mirrors IMPLEMENTATION_REPORT §5, verbatim)
+
+| ID | Date | Decision (verbatim from source) | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-S05.1 | 2026-07-09 | Zero-traffic acceptance operationalization (settrace can't see C-level `dict.__getitem__`; tracemalloc protocol) | pending | `plan/steps/S05_vault_plan_t1/STATUS.md` deviations 4–5 banner; IMPLEMENTATION_REPORT §5 | — |
+| TD-S08.1 | 2026-07-10 | `CONSERVATION_RTOL_COLD = 1e-3` (characterized cold-glaciation leak; upstream report follow-up) | pending | `plan/steps/S08_graupel_component/STATUS.md`; IMPLEMENTATION_REPORT §5 | — |
+| TD-S09.1 | 2026-07-11 | Tracer negativity `≥ −QMIN`; whole-run `CONSERVATION_RTOL = 1e-11` | pending | `plan/steps/S09_scm_composition/STATUS.md`; IMPLEMENTATION_REPORT §5 | — |
+| TD-S10.1 | 2026-07-11 | QMIN atol floor on acceptances 1/7 | pending | `plan/steps/S10_ftier_column_gradients/STATUS.md` tolerance note; IMPLEMENTATION_REPORT §5 | — |
+| TD-S12.1 | 2026-07-11 | vn `atol = 1e-11` on EXCLAIM_APE multi-substep parity (reviewer recommends granting) | pending | `plan/steps/S12_nonhydro_hosting/STATUS.md` deviation 8; IMPLEMENTATION_REPORT §5 | — |
+| TD-S13.1 | 2026-07-12 | `jablonowski_williamson` mandatory `static` kwarg (frozen-signature change); pooch→sha256-manifest swap | pending | `plan/steps/S13_diffusion_jw_l4/STATUS.md` deviations 6, 11; IMPLEMENTATION_REPORT §5 | — |
+| TD-S14.1 | 2026-07-13 | "Bitwise per backend" evidence-backed for gtfn_cpu only (gpu leg never executed) | pending | `plan/steps/S14_plan_through_dycore/STATUS.md` review-fixes note; IMPLEMENTATION_REPORT §5 | — |
+
+## Decisions from task 27 (docs stack) — executed by task 28
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-27.1 | 2026-07-13 | Docs stack: Sphinx + MyST-Parser + Napoleon + furo; layout-doc line "`docs/api/` # sphinx + autodoc from py.typed sources" is complied with via MyST (no layout-doc edit required to proceed); MkDocs alternative rejected | signed-off | `plan/prompts/reports/27_docs_plan/27_docs_plan.md` §3.2 (TD-1) | task-28 merge `cbbec36` |
+| TD-27.2 | 2026-07-13 | Docs dependency additions: dev-group lower bounds `sphinx>=8.1`, `myst-parser>=4.0`, `furo>=2025.12.19`; `constraints/cpu-ci.txt` pins sphinx==8.1.3, myst-parser==4.0.1, furo==2025.12.19, docutils==0.21.2 | signed-off | `27_docs_plan.md` §3.3 (TD-2) | task-28 merge `cbbec36` |
+| TD-27.3 | 2026-07-13 | Docstring convention: Google-style sections going forward, Napoleon-parsed; existing corpus kept, convert-on-touch; ruff `D` with shrink-only ignore baseline | signed-off | `27_docs_plan.md` §3.4/§4 (TD-3) | task-28 merge `cbbec36` |
+
+## Decisions from task 29 (plan-structure proposal)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `plan/prompts/reports/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §4, §7 | fill with the task-31 merge commit |
+| TD-29.2 | 2026-07-13 | Create `plan/TRUNK_DECISIONS.md` (this file) + `TD-PENDING:` marker | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §5.1, §7 | fill with the task-31 merge commit |
+| TD-29.3 | 2026-07-13 | N-series allocation rule + forward SPEC/STATUS templates adopted (recorded in `plan/README.md`; register + allocation rule in prompts-README) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §3.2–3.3, §7, §8 items A/C | fill with the task-31 merge commit |
+| TD-29.4 | 2026-07-13 | Extend unexecuted task 24's scope with a thin `CONTRIBUTING.md` at publication time | pending | `29_plan_structure.md` §5, §7 | — |
+| TD-29.5 | 2026-07-13 | Generalize `.github/PULL_REQUEST_TEMPLATE.md` line 3 to cover tasks as well as steps | pending | `29_plan_structure.md` §7 | — |
+| TD-29.6 | 2026-07-13 | Home for future external-facing drafts beyond tasks 23/24 (`plan/drafts/` vs `reports/<theme>/`) | pending (no action until a third external-draft task exists) | `29_plan_structure.md` §7 | — |
+| TD-29.7 | 2026-07-13 | Apply the layout-doc §4 revision (drafted diff: docs/ tree incl. conf.py/tutorials/glossary/names_registry carve-out/api reword, docs.yml workflow line, v1.2→v1.3 errata, self-listing); absorbs 27 §3.2's additive clarification | pending — trunk-only edit of `docs/architecture/symcon_repo_layout.md` | `29_plan_structure.md` §6.3 | — |
+| TD-29.8 | 2026-07-13 | Root README refresh (drop the stale pre-implementation status; current Contents) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §7 | fill with the task-31 merge commit |
+| TD-29.9 | 2026-07-13 | No CHANGELOG until the P7 versioning/release step; format (Keep-a-Changelog vs towncrier) decided together with the release tooling then. (ID beyond the proposal's numbered 29.1–29.8: the CHANGELOG verdict in §5 was required but unnumbered.) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §5 | fill with the task-31 merge commit |
+| TD-29.10 | 2026-07-13 | Trunk-owned wording amendments: AGENTS.md Workflow item 6 (extend the STATUS/PR sentence to cover tasks) and the prompts-README invariants paragraph (point sign-off flags at this register) — per proposal §5.1/§7 | pending — trunk-only edits | `29_plan_structure.md` §5.1, §7 | — |
