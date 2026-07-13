@@ -60,6 +60,13 @@ tutorials/index
 
 ```{toctree}
 :hidden:
+:caption: API reference
+
+api/index
+```
+
+```{toctree}
+:hidden:
 :caption: Architecture
 
 architecture/symcon_architecture
