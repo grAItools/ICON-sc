@@ -1,4 +1,4 @@
-# references/ — local reference documents (gitignored)
+# development/references/local/ — local reference documents (gitignored)
 
 Third-party documents used by the plan but not redistributable in this repository.
 Drop them here so agents and humans share paths:

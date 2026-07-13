@@ -1,3 +1,5 @@
+> Superseded by the development/ tree (task 33, TD-33.1); kept for reference.
+
 # plan/ — repo process memory: map, naming, templates, boundary
 
 This directory is the repo-internal process memory: plans, contracts, records, and
