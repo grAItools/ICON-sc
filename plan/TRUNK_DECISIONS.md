@@ -7,8 +7,8 @@ decision text that quotes a tolerance or signature is copied verbatim from its s
 This register supersedes `plan/IMPLEMENTATION_REPORT.md` §5 (sign-off ledger) and §6
 (standing follow-ups) going forward — that report stays frozen as the historical record.
 Conventions: ID `TD-<origin>.<k>` where origin is the step (`S08`) or task (`27`) that
-raised it. Status: `pending` / `signed-off` / `rejected` / `superseded(TD-…)`. `Date` is the
-date the decision was raised at its source.
+raised it. Status: `pending` / `signed-off` / `rejected` / `superseded(TD-…)`. `Date` is the date the
+decision entered main (the merge of its source).
 
 Seeded 2026-07-13 by task 31 (spec: `plan/prompts/reports/29_plan_structure/29_plan_structure.md` §8).
 
@@ -36,13 +36,13 @@ Seeded 2026-07-13 by task 31 (spec: `plan/prompts/reports/29_plan_structure/29_p
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `plan/prompts/reports/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §4, §7 | fill with the task-31 merge commit |
-| TD-29.2 | 2026-07-13 | Create `plan/TRUNK_DECISIONS.md` (this file) + `TD-PENDING:` marker | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §5.1, §7 | fill with the task-31 merge commit |
-| TD-29.3 | 2026-07-13 | N-series allocation rule + forward SPEC/STATUS templates adopted (recorded in `plan/README.md`; register + allocation rule in prompts-README) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §3.2–3.3, §7, §8 items A/C | fill with the task-31 merge commit |
+| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `plan/prompts/reports/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | signed-off | `29_plan_structure.md` §4, §7 | task-31 merge `58a51f7` |
+| TD-29.2 | 2026-07-13 | Create `plan/TRUNK_DECISIONS.md` (this file) + `TD-PENDING:` marker | signed-off | `29_plan_structure.md` §5.1, §7 | task-31 merge `58a51f7` |
+| TD-29.3 | 2026-07-13 | N-series allocation rule + forward SPEC/STATUS templates adopted (recorded in `plan/README.md`; register + allocation rule in prompts-README) | signed-off | `29_plan_structure.md` §3.2–3.3, §7, §8 items A/C | task-31 merge `58a51f7` |
 | TD-29.4 | 2026-07-13 | Extend unexecuted task 24's scope with a thin `CONTRIBUTING.md` at publication time | pending | `29_plan_structure.md` §5, §7 | — |
 | TD-29.5 | 2026-07-13 | Generalize `.github/PULL_REQUEST_TEMPLATE.md` line 3 to cover tasks as well as steps | pending | `29_plan_structure.md` §7 | — |
 | TD-29.6 | 2026-07-13 | Home for future external-facing drafts beyond tasks 23/24 (`plan/drafts/` vs `reports/<theme>/`) | pending (no action until a third external-draft task exists) | `29_plan_structure.md` §7 | — |
 | TD-29.7 | 2026-07-13 | Apply the layout-doc §4 revision (drafted diff: docs/ tree incl. conf.py/tutorials/glossary/names_registry carve-out/api reword, docs.yml workflow line, v1.2→v1.3 errata, self-listing); absorbs 27 §3.2's additive clarification | pending — trunk-only edit of `docs/architecture/symcon_repo_layout.md` | `29_plan_structure.md` §6.3 | — |
-| TD-29.8 | 2026-07-13 | Root README refresh (drop the stale pre-implementation status; current Contents) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §7 | fill with the task-31 merge commit |
-| TD-29.9 | 2026-07-13 | No CHANGELOG until the P7 versioning/release step; format (Keep-a-Changelog vs towncrier) decided together with the release tooling then. (ID beyond the proposal's numbered 29.1–29.8: the CHANGELOG verdict in §5 was required but unnumbered.) | pending — sign-off at the task-31 PR/merge | `29_plan_structure.md` §5 | fill with the task-31 merge commit |
+| TD-29.8 | 2026-07-13 | Root README refresh (drop the stale pre-implementation status; current Contents) | signed-off | `29_plan_structure.md` §7 | task-31 merge `58a51f7` |
+| TD-29.9 | 2026-07-13 | No CHANGELOG until the P7 versioning/release step; format (Keep-a-Changelog vs towncrier) decided together with the release tooling then. (ID beyond the proposal's numbered 29.1–29.8: the CHANGELOG verdict in §5 was required but unnumbered.) | signed-off (deferral) | `29_plan_structure.md` §5 | task-31 merge `58a51f7` |
 | TD-29.10 | 2026-07-13 | Trunk-owned wording amendments: AGENTS.md Workflow item 6 (extend the STATUS/PR sentence to cover tasks) and the prompts-README invariants paragraph (point sign-off flags at this register) — per proposal §5.1/§7 | pending — trunk-only edits | `29_plan_structure.md` §5.1, §7 | — |

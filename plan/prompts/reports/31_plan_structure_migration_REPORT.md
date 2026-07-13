@@ -95,7 +95,7 @@ implementer-run gate completed for this task; the reviewer's run is the evidence
   to be filled with the merge commit; the register no longer contains any sign-off not
   backed by a reviewable act.
 - MINOR 1 — the `Date` column of proposal §5.1 restored to all three register tables
-  (dates = when each decision was raised at its source); previously an undeclared
+  (dates = when each decision entered main via the merge of its source); previously an undeclared
   deviation.
 - MINOR 2 — TD-29.2's buried open action (AGENTS.md Workflow-6 + prompts-README
   invariants amendments) extracted to its own pending row TD-29.10.
