@@ -1,4 +1,4 @@
-# TRUNK_DECISIONS — living register of trunk decisions and human sign-offs
+# DECISIONS — trunk-decision and sign-off register
 
 The single place where trunk/human decisions are tracked. Rules: append-mostly (rows are
 added, and their `Status` field updated in place; nothing else is edited); every new
@@ -9,6 +9,7 @@ This register supersedes `development/records/IMPLEMENTATION_REPORT.md` §5 (sig
 Conventions: ID `TD-<origin>.<k>` where origin is the step (`S08`) or task (`27`) that
 raised it. Status: `pending` / `signed-off` / `rejected` / `superseded(TD-…)`. `Date` is the date the
 decision entered main (the merge of its source).
+Formerly plan/TRUNK_DECISIONS.md (renamed in task 33, TD-33.3).
 
 Seeded 2026-07-13 by task 31 (spec: `development/records/29_plan_structure/29_plan_structure.md` §8).
 
@@ -36,13 +37,22 @@ Seeded 2026-07-13 by task 31 (spec: `development/records/29_plan_structure/29_pl
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `development/records/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | signed-off | `29_plan_structure.md` §4, §7 | task-31 merge `58a51f7` |
+| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `development/records/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | superseded(TD-33.1) | `29_plan_structure.md` §4, §7 | task-31 merge `58a51f7` |
 | TD-29.2 | 2026-07-13 | Create `development/DECISIONS.md` (this file) + `TD-PENDING:` marker | signed-off | `29_plan_structure.md` §5.1, §7 | task-31 merge `58a51f7` |
 | TD-29.3 | 2026-07-13 | N-series allocation rule + forward SPEC/STATUS templates adopted (recorded in `development/archive/plan_tree_map.md`; register + allocation rule in prompts-README) | signed-off | `29_plan_structure.md` §3.2–3.3, §7, §8 items A/C | task-31 merge `58a51f7` |
 | TD-29.4 | 2026-07-13 | Extend unexecuted task 24's scope with a thin `CONTRIBUTING.md` at publication time | pending | `29_plan_structure.md` §5, §7 | — |
 | TD-29.5 | 2026-07-13 | Generalize `.github/PULL_REQUEST_TEMPLATE.md` line 3 to cover tasks as well as steps | pending | `29_plan_structure.md` §7 | — |
-| TD-29.6 | 2026-07-13 | Home for future external-facing drafts beyond tasks 23/24 (`plan/drafts/` vs `reports/<theme>/`) | pending (no action until a third external-draft task exists) | `29_plan_structure.md` §7 | — |
-| TD-29.7 | 2026-07-13 | Apply the layout-doc §4 revision (drafted diff: docs/ tree incl. conf.py/tutorials/glossary/names_registry carve-out/api reword, docs.yml workflow line, v1.2→v1.3 errata, self-listing); absorbs 27 §3.2's additive clarification | pending — trunk-only edit of `docs/architecture/symcon_repo_layout.md` | `29_plan_structure.md` §6.3 | — |
+| TD-29.6 | 2026-07-13 | Home for future external-facing drafts beyond tasks 23/24 (`plan/drafts/` vs `reports/<theme>/`) | superseded(TD-33.1) | `29_plan_structure.md` §7 | — |
+| TD-29.7 | 2026-07-13 | Apply the layout-doc §4 revision (drafted diff: docs/ tree incl. conf.py/tutorials/glossary/names_registry carve-out/api reword, docs.yml workflow line, v1.2→v1.3 errata, self-listing); absorbs 27 §3.2's additive clarification | superseded(TD-33.4) | `29_plan_structure.md` §6.3 | — |
 | TD-29.8 | 2026-07-13 | Root README refresh (drop the stale pre-implementation status; current Contents) | signed-off | `29_plan_structure.md` §7 | task-31 merge `58a51f7` |
 | TD-29.9 | 2026-07-13 | No CHANGELOG until the P7 versioning/release step; format (Keep-a-Changelog vs towncrier) decided together with the release tooling then. (ID beyond the proposal's numbered 29.1–29.8: the CHANGELOG verdict in §5 was required but unnumbered.) | signed-off (deferral) | `29_plan_structure.md` §5 | task-31 merge `58a51f7` |
 | TD-29.10 | 2026-07-13 | Trunk-owned wording amendments: AGENTS.md Workflow item 6 (extend the STATUS/PR sentence to cover tasks) and the prompts-README invariants paragraph (point sign-off flags at this register) — per proposal §5.1/§7 | pending — trunk-only edits | `29_plan_structure.md` §5.1, §7 | — |
+
+## Decisions from task 33 (structure migration)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-33.1 | (merge) | `development/` tree reorganization adopted per task-32 evaluation as amended by owner iteration; full migration; `plan/` deleted. **Supersedes TD-29.1** (zero-move) **and TD-29.6** (external-drafts home: resolved as "no dedicated folder") | pending | ADR-0001 + `development/plans/33_structure_migration.md` §1 | — |
+| TD-33.2 | (merge) | Content-frozen amendment: "frozen" = content-frozen; mechanical path retargeting confined to link/path strings permitted in sanctioned migration commits, isolated for word-diff verification | pending | ADR-0002 | — |
+| TD-33.3 | (merge) | Register renamed/moved to `development/DECISIONS.md`; ledger/ADR no-merge relationship (register = sign-off rows, `adr/` = reasoning; architecture-shaped decisions get both) | pending | ADR-0003 | — |
+| TD-33.4 | (merge) | Proposed revision of `docs/architecture/symcon_repo_layout.md` repo tree (diff artifact `development/records/33_structure_migration/layout_doc_revision.diff`); owner applies or rejects. Marks the re-draft of TD-29.7 | pending | `development/plans/33_structure_migration.md` §5.13 | — |
