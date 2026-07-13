@@ -54,6 +54,8 @@ forward).
 | 29 | plan-structure proposal | ad hoc (not committed) | executed | `reports/29_plan_structure/29_plan_structure.md` |
 | 30 | author phase specs | `30_author_phase_specs.md` | pending | `reports/30_specs_<phase>_REPORT.md` |
 | 31 | plan-structure migration | 29 proposal §8 (liftable spec) | executed | `reports/31_plan_structure_migration_REPORT.md` |
+| 32 | development-structure evaluation | ad hoc (not committed) | executed | `reports/32_docs_development_structure/32_docs_development_structure.md` |
+| 33 | structure migration (plan → development/) | `33_structure_migration.md` | pending | `development/records/33_structure_migration/REPORT.md` (born in the new tree) |
 
 ## Invariants that apply to EVERY task (also restated inside each prompt)
 
