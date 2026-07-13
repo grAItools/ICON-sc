@@ -18,6 +18,8 @@ dev = [
   "hypothesis>=6.100",
   # S06 datatest bridge: icon4py serialbox fixtures (pinned pair, constraints/cpu-ci.txt).
   "symcon-icon[datatest]",
+  # task 26: synthetic grid fixtures (pin in constraints/cpu-ci.txt).
+  "symcon-icon[gridgen]",
   # S10 F-tier: CPU jax for the functional lowering + L8 gradient tests (pin recorded in
   # constraints/cpu-ci.txt). mpi4jax (the rest of the [jax] extra) arrives with the
   # distributed F-tier step; pulling it here would drag an MPI toolchain into the CPU gate.

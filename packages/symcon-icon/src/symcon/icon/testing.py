@@ -39,8 +39,11 @@ from symcon.icon.grid.vertical import (
 
 __all__ = [
     "DATATEST_AVAILABLE",
+    "GRIDGEN_AVAILABLE",
     "MOIST_PROFILE_IDS",
     "download_grid_file",
+    "generated_grid",
+    "generated_grid_file",
     "isothermal_column",
     "moist_test_column",
     "require_datatest",
@@ -171,6 +174,81 @@ def moist_test_column(
     else:
         qv = np.zeros(nlev, dtype=np.float64)
     return _column_state(grid, temp, pres, pres_ifc, qv, n_cell=n_cell, time=time)
+
+
+# --- synthetic generated grids (task 26) ----------------------------------------------
+
+#: True when the optional ``icon-grid-generator`` package (``symcon-icon[gridgen]``
+#: extra; exact pin in constraints/cpu-ci.txt) is importable.
+GRIDGEN_AVAILABLE = importlib.util.find_spec("grid_generator") is not None
+
+
+def generated_grid_file(
+    spec: str = "R2B2",
+    *,
+    cache_dir: str | pathlib.Path | None = None,
+) -> pathlib.Path:
+    """Generate (once, then cache) an ICON-style grid NetCDF file for tests.
+
+    The single quarantine point for the optional ``icon-grid-generator``
+    dependency. Generated grids are ICON-*convention* files — they load through
+    :func:`symcon.icon.grid.from_file` (icon4py ``GridManager``) and the S11
+    metrics/interpolation factories run all-finite on them — but they are **not
+    numerically equivalent to official DWD gridgen output** (own spring
+    optimization, own uuid): never use them where serialized-savepoint parity is
+    the oracle. Generation is fully deterministic (uuid5 per spec; topology and
+    coordinates bitwise-stable across runs), so the cache key is just
+    ``<package version>-<spec>`` under ``~/.cache/symcon/generated-grids``.
+    """
+    if not GRIDGEN_AVAILABLE:
+        raise ModuleNotFoundError(
+            "icon-grid-generator is not installed; install the symcon-icon[gridgen] "
+            "extra (pinned in constraints/cpu-ci.txt) to use generated test grids."
+        )
+    import importlib.metadata
+
+    from grid_generator import generate_grid
+
+    version = importlib.metadata.version("icon-grid-generator")
+    root = (
+        pathlib.Path(cache_dir)
+        if cache_dir is not None
+        else pathlib.Path.home() / ".cache" / "symcon" / "generated-grids"
+    )
+    root.mkdir(parents=True, exist_ok=True)
+    path = root / f"igg-{version}-{spec.replace('/', '_')}.nc"
+    if not path.exists():
+        # Write-then-rename so an interrupted generation never leaves a truncated
+        # file behind under the cache key.
+        tmp = path.with_suffix(".nc.partial")
+        generate_grid(spec).to_netcdf(str(tmp))
+        tmp.replace(path)
+    return path
+
+
+def generated_grid(
+    spec: str = "R2B2",
+    *,
+    ctx: Any | None = None,
+    num_levels: int = 35,
+    cache_dir: str | pathlib.Path | None = None,
+) -> Any:
+    """A symcon ``IconGrid`` built from a generated grid file.
+
+    Same boundary as :func:`generated_grid_file`: generated grids are test
+    fixtures, **never** substitutes for the official archive grids in
+    savepoint-parity work.
+
+    Convenience over :func:`generated_grid_file` + :func:`symcon.icon.grid.from_file`;
+    ``ctx`` defaults to the embedded backend (pass a gtfn context for factory work —
+    the icon4py factories do not support the embedded backend upstream).
+    """
+    from symcon.core import ComputeContext
+    from symcon.icon.grid import from_file
+
+    context = ctx if ctx is not None else ComputeContext("embedded")
+    path = generated_grid_file(spec, cache_dir=cache_dir)
+    return from_file(str(path), context, num_levels=num_levels)
 
 
 # --- icon4py datatest bridge ----------------------------------------------------------

@@ -24,6 +24,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Synthetic ICON-style grid generation for tests (task 26): reader/factory/convergence
+# fixtures without archive downloads. Exact pin in constraints/cpu-ci.txt. Test-tier
+# only — generated grids are NOT numerically equivalent to official DWD gridgen output
+# and must never substitute for the archive grids in savepoint-parity work.
+gridgen = ["icon-grid-generator>=0.3.2"]
 # icon4py serialbox datatest bridge (symcon.icon.testing); versions pinned by
 # constraints/cpu-ci.txt. icon4py-testing imports diffusion/dycore/microphysics and the
 # standalone driver at import time, hence the transitive members appear explicitly.
