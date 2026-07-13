@@ -2005,6 +2005,19 @@ wheels = [
 ]
 
 [[package]]
+name = "icon-grid-generator"
+version = "0.3.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/88/2f/f10a3c315b86407325a7e5f33bde52c054c1562f69217020591e2e43c0cb/icon_grid_generator-0.3.2.tar.gz", hash = "sha256:984b7c4c686444ccf5d2bcec13cc4c742bbe22d0276910819bd6b3d4c4ca017d", size = 1039507, upload-time = "2026-07-07T11:50:44.127Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/df/65f85ac03a209768184f0ff3c063f2f656279d3b6edf2b547fa89ef99e0c/icon_grid_generator-0.3.2-py3-none-any.whl", hash = "sha256:f25628432f75ea31d36727b454577b44a0b543b449b76f5df20e82478e99ca66", size = 63872, upload-time = "2026-07-07T11:50:42.771Z" },
+]
+
+[[package]]
 name = "icon4py-atmosphere-diffusion"
 version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5353,10 +5366,14 @@ datatest = [
     { name = "icon4py-standalone-driver" },
     { name = "icon4py-testing" },
 ]
+gridgen = [
+    { name = "icon-grid-generator" },
+]
 
 [package.metadata]
 requires-dist = [
     { name = "array-api-compat", specifier = ">=1.4" },
+    { name = "icon-grid-generator", marker = "extra == 'gridgen'", specifier = ">=0.3.2" },
     { name = "icon4py-atmosphere-diffusion", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
     { name = "icon4py-atmosphere-dycore", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
     { name = "icon4py-atmosphere-microphysics", specifier = ">=0.2.0" },
@@ -5369,7 +5386,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.23.3" },
     { name = "symcon-core", editable = "packages/symcon-core" },
 ]
-provides-extras = ["datatest"]
+provides-extras = ["gridgen", "datatest"]
 
 [[package]]
 name = "symcon-workspace"
@@ -5395,7 +5412,7 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-mpi" },
     { name = "ruff" },
-    { name = "symcon-icon", extra = ["datatest"] },
+    { name = "symcon-icon", extra = ["datatest", "gridgen"] },
 ]
 
 [package.metadata]
@@ -5418,6 +5435,7 @@ dev = [
     { name = "pytest-mpi", specifier = ">=0.6" },
     { name = "ruff", specifier = ">=0.9" },
     { name = "symcon-icon", extras = ["datatest"], editable = "packages/symcon-icon" },
+    { name = "symcon-icon", extras = ["gridgen"], editable = "packages/symcon-icon" },
 ]
 
 [[package]]
