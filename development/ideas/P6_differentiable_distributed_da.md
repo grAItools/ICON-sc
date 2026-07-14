@@ -1,0 +1,5 @@
+**Status:** accepted-roadmap (graduates to development/specs/ via task 30).
+
+# P6 — Differentiable distributed + DA/hybrid demos (outline)
+**After:** S10 + P2 · **Architecture:** §8.5–8.7, §10
+Steps: (a) `DifferentiableHaloExchange` — transpose-rule custom_vjp over mpi4jax; dot-product test THROUGH the exchange at np=4 (the L8 flagship); (b) F-tier over a distributed idealized configuration (scan + remat, per-rank jit); (c) `custom`-route hardening — one gtfn kernel behind jax.ffi with hand adjoint (satad or diffusion) as the pattern-setter; (d) demos: ParamTree calibration on SCM vs reference, toy 4D-Var on JW (window vjp), online hybrid training upgrade of the anemoi path; (e) GHEX-via-ffi performance variant if mpi4jax limits. Exit: L8 green under MPI.

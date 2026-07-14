@@ -1,0 +1,31 @@
+# Proposed revision of docs/architecture/symcon_repo_layout.md §4 "Repo-level trees"
+# (task 33, TD-33.4). Owner applies or rejects — the layout doc is trunk-owned;
+# task 33 does not edit it. Apply from the repo root: git apply <this file>.
+#
+# Discrepancy record (plan §5.13 vs reality): the migration plan expected a `plan/`
+# node in the §4 repo tree ("line ~104") and possibly a top-level `references/` node.
+# Neither exists in the current document — line 104 is the `symcon.core.plan`
+# source-package node in the §1 packages tree (never-touch), and the §4 tree lists
+# only examples/, validation/, benchmarks/, tools/, docs/, .github/workflows/.
+# This diff therefore ADDS the `development/` node (one line per folder) before the
+# `docs/` node; there is no `references/` node to delete.
+--- a/docs/architecture/symcon_repo_layout.md
++++ b/docs/architecture/symcon_repo_layout.md
+@@ -279,6 +279,17 @@
+ ├── names_audit.py                       # registry ↔ CF table ↔ GRIB2 consistency checks
+ └── constraints_update.py                # regenerate constraints/ lockfiles against fresh gt4py/icon4py
+
++development/                             # repo-internal process memory — never a Sphinx source (task 33, TD-33.1)
++├── README.md                            # map of the tree
++├── DECISIONS.md                         # living trunk-decision and sign-off register
++├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary
++├── adr/                                 # architecture decision records (NNNN-<kebab-title>.md)
++├── ideas/                               # future proposals; phase outlines P2–P7
++├── specs/                               # frozen step/feature contracts (SXX_*.md)
++├── plans/                               # step PLANs + task prompts; README.md = task-number register
++├── records/                             # outcome documents frozen at merge: STATUS files, task reports
++└── references/                          # per-source reference cards + local/ (gitignored)
++
+ docs/
+ ├── architecture/symcon_architecture.md  # the v1.2 document, canonical
+ ├── coupling.md                          # operator semantics, preset catalogue, validated/experimental

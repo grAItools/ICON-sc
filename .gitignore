@@ -29,11 +29,11 @@ testdata/
 *.grb2
 *.zarr/
 # plan artifacts & agent-local files
-plan/steps/*/artifacts/
+development/records/*/artifacts/
 .claude/settings.local.json
 # local reference documents
-references/*
-!references/README.md
+development/references/local/*
+!development/references/local/README.md
 # native-driver build cache never lands in-repo, but belt and braces
 *.sdfg
 *.so

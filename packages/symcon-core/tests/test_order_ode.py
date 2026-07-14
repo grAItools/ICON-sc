@@ -6,7 +6,7 @@ fp64, RK2 (Heun) as every Eₗ, Δt ∈ {T/64 … T/1024}. Expected slopes per t
 SSUS(λ=0.3) ≈ 1; slope tolerance ±0.15 (contract).
 
 The module also emits the convergence plot artifact (PLAN item 5) into
-``plan/steps/S04_coupling_algebra/artifacts/`` for the human gate.
+``development/records/S04_coupling_algebra/artifacts/`` for the human gate.
 """
 
 from __future__ import annotations
@@ -98,7 +98,9 @@ def test_convergence_plot_artifact(fits: dict[str, OrderFit]) -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    artifacts = Path(__file__).resolve().parents[3] / "plan/steps/S04_coupling_algebra/artifacts"
+    artifacts = (
+        Path(__file__).resolve().parents[3] / "development/records/S04_coupling_algebra/artifacts"
+    )
     artifacts.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(7.0, 5.0))
     for scheme, fit in sorted(fits.items()):

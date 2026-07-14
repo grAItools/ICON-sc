@@ -1,7 +1,7 @@
 """S14 in-scope benchmark: JW per-step wall time, T0 vs T1 (report-only).
 
 Observation, not threshold (SPEC S14 acceptance 4) — the numbers land in
-plan/steps/S14_plan_through_dycore/STATUS.md. Two legs over independently
+development/records/S14_plan_through_dycore/STATUS.md. Two legs over independently
 built JW models (the dycore is stateful), pyperf-style repetition (N steps per
 repeat, best/median reported):
 
