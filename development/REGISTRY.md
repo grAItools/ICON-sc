@@ -14,7 +14,7 @@ decision entered main (the merge of its source).
 Formerly DECISIONS.md (renamed in work unit 035, TD-35.3); before that
 plan/TRUNK_DECISIONS.md.
 
-Seeded 2026-07-13 by task 31 (spec: `development/records/029_plan_structure_record/29_plan_structure.md` §8).
+Seeded 2026-07-13 by work unit 031 (spec: `development/records/029_plan_structure_record/29_plan_structure.md` §8).
 
 ## 1. Document register (the single allocator)
 
@@ -133,7 +133,7 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 
 ## 3. Decision register
 
-## Sign-off items from the S01–S14 slice (mirrors IMPLEMENTATION_REPORT §5, verbatim)
+### Sign-off items from the 001–014 slice (mirrors IMPLEMENTATION_REPORT §5, verbatim)
 
 | ID | Date | Decision (verbatim from source) | Status | Source | Evidence |
 |---|---|---|---|---|---|
@@ -145,7 +145,7 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 | TD-S13.1 | 2026-07-12 | `jablonowski_williamson` mandatory `static` kwarg (frozen-signature change); pooch→sha256-manifest swap | pending | `development/records/013_diffusion_jw_l4_record/STATUS.md` deviations 6, 11; IMPLEMENTATION_REPORT §5 | — |
 | TD-S14.1 | 2026-07-13 | "Bitwise per backend" evidence-backed for gtfn_cpu only (gpu leg never executed) | pending | `development/records/014_plan_through_dycore_record/STATUS.md` review-fixes note; IMPLEMENTATION_REPORT §5 | — |
 
-## Decisions from task 27 (docs stack) — executed by task 28
+### Decisions from work unit 027 (docs stack) — executed by work unit 028
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
@@ -153,7 +153,7 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 | TD-27.2 | 2026-07-13 | Docs dependency additions: dev-group lower bounds `sphinx>=8.1`, `myst-parser>=4.0`, `furo>=2025.12.19`; `constraints/cpu-ci.txt` pins sphinx==8.1.3, myst-parser==4.0.1, furo==2025.12.19, docutils==0.21.2 | signed-off | `27_docs_plan.md` §3.3 (TD-2) | task-28 merge `cbbec36` |
 | TD-27.3 | 2026-07-13 | Docstring convention: Google-style sections going forward, Napoleon-parsed; existing corpus kept, convert-on-touch; ruff `D` with shrink-only ignore baseline | signed-off | `27_docs_plan.md` §3.4/§4 (TD-3) | task-28 merge `cbbec36` |
 
-## Decisions from task 29 (plan-structure proposal)
+### Decisions from work unit 029 (plan-structure proposal)
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
@@ -168,7 +168,7 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 | TD-29.9 | 2026-07-13 | No CHANGELOG until the P7 versioning/release step; format (Keep-a-Changelog vs towncrier) decided together with the release tooling then. (ID beyond the proposal's numbered 29.1–29.8: the CHANGELOG verdict in §5 was required but unnumbered.) | signed-off (deferral) | `29_plan_structure.md` §5 | task-31 merge `58a51f7` |
 | TD-29.10 | 2026-07-13 | Trunk-owned wording amendments: AGENTS.md Workflow item 6 (extend the STATUS/PR sentence to cover tasks) and the prompts-README invariants paragraph (point sign-off flags at this register) — per proposal §5.1/§7 | pending — trunk-only edits | `29_plan_structure.md` §5.1, §7 | — |
 
-## Decisions from task 33 (structure migration)
+### Decisions from work unit 033 (structure migration)
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
@@ -177,7 +177,7 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 | TD-33.3 | 2026-07-14 | Register renamed/moved to `development/DECISIONS.md`; ledger/ADR no-merge relationship (register = sign-off rows, `adr/` = reasoning; architecture-shaped decisions get both) | signed-off | adr 045 | task-33 merge `10ecafb` |
 | TD-33.4 | 2026-07-14 | Proposed revision of `docs/architecture/symcon_repo_layout.md` repo tree (diff artifact `development/records/033_structure_migration_record/layout_doc_revision.diff`); owner applies or rejects. Marks the re-draft of TD-29.7 | signed-off | `development/plans/033_structure_migration_plan.md` §5.13 | owner-applied, trunk commit `f053659` |
 
-## Decisions from work unit 035 (naming migration)
+### Decisions from work unit 035 (naming migration)
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|

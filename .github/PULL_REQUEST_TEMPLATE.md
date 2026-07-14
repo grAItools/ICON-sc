@@ -1,15 +1,15 @@
-## Step
+## Work unit
 
-`development/specs/____` — one step per PR.
+`development/specs/____` / `development/plans/____` — one work unit per PR.
 
 ## Definition of done (AGENTS.md)
 
-- [ ] Every SPEC acceptance criterion has a passing test (list any waived, with STATUS.md justification)
-- [ ] Frozen interfaces match the SPEC exactly
+- [ ] Every spec acceptance criterion has a passing test (list any waived, with justification in the record)
+- [ ] Frozen interfaces match the spec exactly
 - [ ] `REFERENCES.lock` updated for all mined sources (SHAs included)
-- [ ] Gate green: pytest (`not gpu` minimum + step-required markers), ruff, mypy (core strict), lint-imports
+- [ ] Gate green: pytest (`not gpu` minimum + required markers), ruff, mypy (core strict), lint-imports
 - [ ] No data files, no dependency pin changes
-- [ ] `STATUS.md` written: built / deviations / follow-ups / artifacts
+- [ ] Record written (`development/records/NNN_*_record/`): built / deviations / follow-ups / artifacts
 
 ## Deviations & notes for the reviewer
 

@@ -45,7 +45,9 @@ laptop.
 - Looking up a class or function? The [API reference](api/index.md).
 - The full design, with every tension and decision recorded: the
   [architecture document](architecture/symcon_architecture.md) (v1.3,
-  canonical) and the [repository layout](architecture/symcon_repo_layout.md).
+  canonical). The repository-layout policy lives with the developer process
+  documents in the repository (`development/policies/repo_layout.md`) and is
+  deliberately not part of this site.
 - Software terms defined science-in: the [glossary](glossary.md).
 - Contributing or running the implementation plan? See `AGENTS.md` and
   `development/` in the repository — developer process documents are deliberately
@@ -70,7 +72,6 @@ api/index
 :caption: Architecture
 
 architecture/symcon_architecture
-architecture/symcon_repo_layout
 ```
 
 ```{toctree}

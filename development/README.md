@@ -11,8 +11,8 @@ multi-file deliverables (inner files keep their names). NNN is a three-digit glo
 sequence allocated in `REGISTRY.md` §1 at assignment; one number per work unit, shared
 across its idea/spec/plan/record; kind suffix = singular folder name (`idea`, `spec`,
 `plan`, `record`, `adr`). Exempt: `policies/*` (snake_case, unnumbered), all
-`README.md`, `REGISTRY.md`, `archive/*` contents. Historical names ("step S08",
-"task 26") translate via the remap table in `REGISTRY.md` §2.
+`README.md`, `REGISTRY.md`, `archive/*` contents. Historical names (`S08_…`,
+`26_…_REPORT`, `P2_…`) translate via the remap table in `REGISTRY.md` §2.
 
 ## Lifecycle
 
