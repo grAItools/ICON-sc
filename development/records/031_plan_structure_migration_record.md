@@ -2,7 +2,7 @@
 
 **Branch:** `task/29-plan-structure` (items executed immediately after the task-29
 proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
-**Spec:** `development/records/29_plan_structure/29_plan_structure.md` §8 ·
+**Spec:** `development/records/029_plan_structure_record/29_plan_structure.md` §8 ·
 **Commits:** items A–E one commit each (`f009d5b`, `48212ab`, `199f967`, `aa7dbc6`,
 `06585c8`) + this report.
 
@@ -11,7 +11,7 @@ proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
 - **A — `development/archive/plan_tree_map.md`** (new): exactly 4 sections (taxonomy table, naming convention
   incl. N-series allocation rule, forward SPEC/STATUS templates incl. the
   artifact-regeneration-command rule, plan/docs boundary policy). `grep -c "^## "` = 4.
-- **B — `development/DECISIONS.md`** (new): rule paragraph + 19 rows: 7 slice sign-off
+- **B — `development/REGISTRY.md`** (new): rule paragraph + 19 rows: 7 slice sign-off
   items copied verbatim from `IMPLEMENTATION_REPORT.md` §5 (status `pending`, no
   evidence yet); TD-27.1–3 (`signed-off`, evidence task-28 merge `cbbec36`); TD-29.1–9
   with statuses per the owner's proceed instruction (29.1/2/3/8/9 signed-off,
@@ -38,8 +38,8 @@ proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
 uv run sphinx-build -E -W --keep-going -b html docs /tmp/task31-docs-check   → exit 0
 uv run ruff check .                                                          → All checks passed!
 uv run ruff format --check .                                                 → 173 files already formatted (== main)
-git diff main..HEAD --stat → only: development/records/29_plan_structure/29_plan_structure.md (task 29),
-  development/archive/plan_tree_map.md, development/DECISIONS.md, development/plans/README.md, README.md,
+git diff main..HEAD --stat → only: development/records/029_plan_structure_record/29_plan_structure.md (task 29),
+  development/archive/plan_tree_map.md, development/REGISTRY.md, development/plans/README.md, README.md,
   development/records/README.md, this report. No renames, no deletions.
 uv run pytest packages -m "not gpu and not slow" -q → recorded below at completion
 ```

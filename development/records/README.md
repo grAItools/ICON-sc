@@ -13,7 +13,7 @@ Every outcome document of a merged work unit lives here (liveness rules and temp
   their owning task.
 - **Slice-level records:** `00_OVERVIEW.md` (the S01–S14 implementation plan: agent
   contract, dependency DAG, lanes) and `IMPLEMENTATION_REPORT.md` (the slice process
-  record; its §5/§6 are superseded going forward by `development/DECISIONS.md`).
+  record; its §5/§6 are superseded going forward by `development/REGISTRY.md`).
 
 ## Step records (S01–S14)
 
@@ -38,12 +38,12 @@ Every outcome document of a merged work unit lives here (liveness rules and temp
 
 | Entry | Task | Kind |
 |---|---|---|
-| `26_gridgen_integration_REPORT.md` | 26 (prompt ad hoc, not committed) | execution report |
-| `27_docs_plan/27_docs_plan.md` | 27 (prompt ad hoc, not committed) | design document — docs-stack evaluation and plan; TD-27.1–3 in `development/DECISIONS.md` |
-| `28_docs_implementation_REPORT.md` | 28 (`../plans/28_docs_implementation.md`) | execution report |
-| `29_plan_structure/29_plan_structure.md` | 29 (prompt ad hoc, not committed) | design document — plan/memory structure analysis + proposal; TD-29.x in `development/DECISIONS.md`; §8 is the liftable task-31 spec |
-| `31_plan_structure_migration_REPORT.md` | 31 (prompt: 29 proposal §8) | execution report |
-| `32_docs_development_structure/32_docs_development_structure.md` | 32 (prompt ad hoc, not committed) | design document — development-tree evaluation; decisions implemented by task 33 |
-| `33_structure_migration/REPORT.md` | 33 (`../plans/33_structure_migration.md`) | execution report (+ sidecar `layout_doc_revision.diff`, TD-33.4) |
+| `026_gridgen_integration_record.md` | 26 (prompt ad hoc, not committed) | execution report |
+| `027_docs_plan_record/27_docs_plan.md` | 27 (prompt ad hoc, not committed) | design document — docs-stack evaluation and plan; TD-27.1–3 in `development/REGISTRY.md` |
+| `028_docs_implementation_record.md` | 28 (`../plans/028_docs_implementation_plan.md`) | execution report |
+| `029_plan_structure_record/29_plan_structure.md` | 29 (prompt ad hoc, not committed) | design document — plan/memory structure analysis + proposal; TD-29.x in `development/REGISTRY.md`; §8 is the liftable task-31 spec |
+| `031_plan_structure_migration_record.md` | 31 (prompt: 29 proposal §8) | execution report |
+| `032_docs_development_structure_record/32_docs_development_structure.md` | 32 (prompt ad hoc, not committed) | design document — development-tree evaluation; decisions implemented by task 33 |
+| `033_structure_migration_record/REPORT.md` | 33 (`../plans/033_structure_migration_plan.md`) | execution report (+ sidecar `layout_doc_revision.diff`, TD-33.4) |
 | `upstream/` | 23 (unexecuted) | external-facing drafts (icon4py issue texts) — created by task 23, do not pre-create |
 | `prs/` | 24 (unexecuted) | external-facing drafts (per-step PR bodies, publish script) — created by task 24, do not pre-create |

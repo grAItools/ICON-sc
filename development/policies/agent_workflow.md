@@ -5,7 +5,7 @@ and the implementer/reviewer loop.
 
 ## Workflow for a step
 
-1. Pick a step whose dependencies are merged (DAG: `development/records/00_OVERVIEW.md`
+1. Pick a step whose dependencies are merged (DAG: `development/records/000_overview_record.md`
    §2). Branch: `step/SXX-short-name`; tasks branch as `task/NN-short-name`.
 2. Read the spec (`development/specs/SXX_*.md`) fully, then the plan
    (`development/plans/SXX_*.md`). SPEC's *Frozen interfaces* are load-bearing for

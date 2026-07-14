@@ -10,7 +10,7 @@ lowering that makes the composed model differentiable (`jax.jvp`/`jax.vjp`).
 (satad + graupel, SUS coupling, F-tier gradients) and the idealized dycore
 (NonhydroSolver + diffusion + Jablonowski–Williamson, T1 plan) are built, validated
 (L2 parity at upstream tolerances; 9-day L4 bitwise-zero vs the icon4py driver;
-T0 ≡ T1 bitwise through the dycore), and merged — see `development/records/IMPLEMENTATION_REPORT.md`.
+T0 ≡ T1 bitwise through the dycore), and merged — see `development/records/036_implementation_report_record.md`.
 Post-slice work proceeds as numbered tasks registered in `development/plans/README.md`;
 a Sphinx documentation site builds from `docs/` (task 28).
 
@@ -19,9 +19,9 @@ a Sphinx documentation site builds from `docs/` (task 28).
 | path | what |
 |---|---|
 | `docs/architecture/symcon_architecture.md` | the architecture, v1.3 — canonical; §-refs everywhere point here |
-| `docs/architecture/symcon_repo_layout.md` | target repository layout the steps build toward |
+| `development/policies/repo_layout.md` | target repository layout the steps build toward |
 | `development/` | repo-internal process memory (map in its README): policies, ADRs, ideas, specs, plans, records, reference cards |
-| `development/DECISIONS.md` | living register of trunk decisions and human sign-offs |
+| `development/REGISTRY.md` | living register of trunk decisions and human sign-offs |
 | `development/policies/` | living rules: agent workflow, naming, liveness, gates, reference mining, review protocol, docs boundary |
 | `development/specs/`, `development/plans/` | frozen step contracts (`SXX_*.md`) and step PLANs / task prompts; `plans/README.md` is the task-number register |
 | `development/records/` | outcome documents, frozen at merge: `SXX_*/STATUS.md`, task reports, `00_OVERVIEW.md` (agent contract, dependency DAG, lanes), `IMPLEMENTATION_REPORT.md` (process record of the S01–S14 slice) |
@@ -34,7 +34,7 @@ a Sphinx documentation site builds from `docs/` (task 28).
 
 ## Working on the repo
 
-Implementation steps run per the DAG in `development/records/00_OVERVIEW.md` (`/implement-step
+Implementation steps run per the DAG in `development/records/000_overview_record.md` (`/implement-step
 SXX_<name>` with Claude Code or OpenCode); the S01–S14 slice is complete. Post-slice
 work is assigned as numbered task prompts — see the register and the non-negotiable
 invariants in `development/plans/README.md`. Every step/task lands as one PR; the definition

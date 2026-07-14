@@ -281,7 +281,7 @@ tools/
 
 development/                             # repo-internal process memory — never a Sphinx source (task 33, TD-33.1)
 ├── README.md                            # map of the tree
-├── DECISIONS.md                         # living trunk-decision and sign-off register
+├── REGISTRY.md                         # living trunk-decision and sign-off register
 ├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary
 ├── adr/                                 # architecture decision records (NNNN-<kebab-title>.md)
 ├── ideas/                               # future proposals; phase outlines P2–P7

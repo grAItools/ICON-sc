@@ -27,6 +27,6 @@ numbers are allocated. The spec, plan, and record of one work unit share one ID.
   four-digit, allocated by the next free number in `development/adr/README.md`'s index.
 - **Policies**: `development/policies/<snake_topic>.md`, one topic each.
 - **Sign-off marker:** any line in a STATUS or report that requires trunk/human action
-  carries the literal token `TD-PENDING:` and gets a row in `development/DECISIONS.md`
+  carries the literal token `TD-PENDING:` and gets a row in `development/REGISTRY.md`
   in the same PR. `grep -rn "TD-PENDING" development/` must only return lines whose
   register row is still open.

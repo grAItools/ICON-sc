@@ -4,7 +4,7 @@
 
 This directory is the repo-internal process memory: plans, contracts, records, and
 registers for the agent-driven implementation. Rationale and full analysis:
-`development/records/29_plan_structure/29_plan_structure.md` (task 29). This file states
+`development/records/029_plan_structure_record/29_plan_structure.md` (task 29). This file states
 the rules; it does not restate the analysis.
 
 ## 1. Taxonomy — what each file kind is and how it may change
@@ -14,8 +14,8 @@ the rules; it does not restate the analysis.
 | Canonical architecture | trunk-edited only | `docs/architecture/*.md` |
 | Working agreement | living, trunk-gated | `AGENTS.md` (+ `CLAUDE.md` shim) |
 | Provenance ledger | append-only | `REFERENCES.lock` |
-| Plan overview / task register | living | `development/records/00_OVERVIEW.md`, `development/plans/README.md` |
-| Trunk-decision register | living, append-mostly | `development/DECISIONS.md` |
+| Plan overview / task register | living | `development/records/000_overview_record.md`, `development/plans/README.md` |
+| Trunk-decision register | living, append-mostly | `development/REGISTRY.md` |
 | Step contract (SPEC) | frozen at step start | `development/specs/SXX_*.md` |
 | Step how-to (PLAN) | frozen at step start | `development/plans/SXX_*.md` |
 | Step record (STATUS) | frozen at merge — never retro-edited | `development/records/SXX_*/STATUS.md` |
@@ -25,7 +25,7 @@ the rules; it does not restate the analysis.
 | Task execution report | frozen at task merge | `development/records/NN_*_REPORT.md` |
 | Design document / proposal | frozen; decisions extracted to the register | `development/records/NN_<name>/NN_<name>.md` |
 | External-facing draft | frozen after human publishes | `development/records/<theme>/` (e.g. `upstream/`, `prs/`) |
-| Process report (slice-level) | frozen | `development/records/IMPLEMENTATION_REPORT.md` (its §5/§6 are superseded going forward by `TRUNK_DECISIONS.md`) |
+| Process report (slice-level) | frozen | `development/records/036_implementation_report_record.md` (its §5/§6 are superseded going forward by `TRUNK_DECISIONS.md`) |
 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed, headered); `docs/_build/`, `development/records/*/artifacts/` (untracked) |
 | Published site source | living | `docs/{conf.py,index.md,glossary.md,tutorials/,api/}` |
 | Agent tooling / CI templates | living | `.claude/`, `.opencode/`, `.github/` |
@@ -51,7 +51,7 @@ the rules; it does not restate the analysis.
   - External-facing drafts: thematic subdirs under `reports/` as the owning prompt
     names them; indexed in `development/records/README.md`.
 - **Sign-off marker:** any line in a STATUS or report that requires trunk/human action
-  carries the literal token `TD-PENDING:` and gets a row in `development/DECISIONS.md`
+  carries the literal token `TD-PENDING:` and gets a row in `development/REGISTRY.md`
   in the same PR. `grep -rn "TD-PENDING" plan/` must only return lines whose register
   row is still open.
 
@@ -69,7 +69,7 @@ the rules; it does not restate the analysis.
   untracked artifact *with its regeneration command*, never as a bare path.
 - **Task prompts** follow the register format of `development/plans/README.md`
   (Hard rules → Items → Acceptance criteria → Verification gates → Review checklist,
-  cf. `21_ci_hardening.md`).
+  cf. `021_ci_hardening_plan.md`).
 
 ## 4. plan/ ↔ docs/ boundary policy
 
@@ -78,7 +78,7 @@ the rules; it does not restate the analysis.
 2. `docs/` is the published surface. Its only trunk-frozen zone is `architecture/`;
    everything else there is living site source.
 3. Plan content wanted user-facing is *rewritten* under `docs/` (tutorials cite
-   `development/records/IMPLEMENTATION_REPORT.md` as author-side source material, without links) —
+   `development/records/036_implementation_report_record.md` as author-side source material, without links) —
    never included, symlinked, or excerpted mechanically. P7's architecture
    canonicalization owns any future exception.
 4. Generated files are committed under `docs/` only with a `GENERATED FILE` header

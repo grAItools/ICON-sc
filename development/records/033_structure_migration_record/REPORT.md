@@ -3,7 +3,7 @@
 **Branch:** `task/33-structure-migration` · **Date:** 2026-07-14 · **State:** executed,
 all gates green (dated outputs in §4)
 
-Plan: `development/plans/33_structure_migration.md` (frozen at assignment). Commits:
+Plan: `development/plans/033_structure_migration_plan.md` (frozen at assignment). Commits:
 C1 `0e54c42` (moves) · C2 `2a1943d` (retargets) · C3 `69d0384` (governance + skeleton)
 · C4 `41ee2c0` (living rewrites) · C5 `27e1fff` (code/config/tooling + diff artifact)
 · C6 = this report.
@@ -146,7 +146,7 @@ rows 32/33 per plan §5.5; deliverable paths of all rows retargeted to `records/
 
 ## 6. Diff artifact and by-design gate hits
 
-`development/records/33_structure_migration/layout_doc_revision.diff` — verified with
+`development/records/033_structure_migration_record/layout_doc_revision.diff` — verified with
 `git apply --check` (applies cleanly). **Discrepancy vs plan §5.13** (recorded in the
 artifact header): the current layout doc has no `plan/` node in its §4 repo tree
 (line 104 is the `symcon.core.plan` package node) and no top-level `references/`

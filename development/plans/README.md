@@ -20,13 +20,13 @@ discipline is the main anti-drift device.
 
 | Order | Prompt | Needs | Difficulty for a weak model |
 |---|---|---|---|
-| 1 | `20_gpu_validation.md` | a CUDA machine | low (run + record) |
-| 2 | `21_ci_hardening.md` | — | low-medium (mechanical, many small edits) |
-| 3 | `22_plan_hash_config_digest.md` | — | medium (touches S05 core; strictly specced) |
-| 4 | `23_upstream_reports.md` | — | low (writing, evidence already exists) |
-| 5 | `24_pr_publication.md` | push access + human | low (drafting; human presses the buttons) |
-| 6 | `25_cf_multistage_t1.md` | — | **high — prefer a strong model**; prompt included so scope is frozen either way |
-| 7 | `30_author_phase_specs.md` | trunk decision on which phase | medium-high (design writing, heavily templated) |
+| 1 | `020_gpu_validation_plan.md` | a CUDA machine | low (run + record) |
+| 2 | `021_ci_hardening_plan.md` | — | low-medium (mechanical, many small edits) |
+| 3 | `022_plan_hash_config_digest_plan.md` | — | medium (touches S05 core; strictly specced) |
+| 4 | `023_upstream_reports_plan.md` | — | low (writing, evidence already exists) |
+| 5 | `024_pr_publication_plan.md` | push access + human | low (drafting; human presses the buttons) |
+| 6 | `025_cf_multistage_t1_plan.md` | — | **high — prefer a strong model**; prompt included so scope is frozen either way |
+| 7 | `030_author_phase_specs_plan.md` | trunk decision on which phase | medium-high (design writing, heavily templated) |
 
 Tasks 1–5 are independent of each other except where noted inside the files.
 
@@ -40,27 +40,27 @@ taxonomy, and forward SPEC/STATUS templates live in
 `development/policies/naming_conventions.md` and
 `development/policies/records_and_liveness.md`; the development/docs boundary policy is
 `development/policies/docs_boundary.md`; the living trunk-decision/sign-off register is
-`development/DECISIONS.md` (it supersedes `development/records/IMPLEMENTATION_REPORT.md`
+`development/REGISTRY.md` (it supersedes `development/records/036_implementation_report_record.md`
 §5/§6 going forward).
 
 | N | Task | Prompt | Status | Deliverable |
 |---|---|---|---|---|
 | 10 | review protocol | `development/policies/review_protocol.md` (moved in task 33) | living protocol | — |
-| 20 | gpu validation | `20_gpu_validation.md` | pending | `records/20_gpu_validation_REPORT.md` |
-| 21 | ci hardening | `21_ci_hardening.md` | pending | `records/21_ci_hardening_REPORT.md` |
-| 22 | plan-hash config digest | `22_plan_hash_config_digest.md` | pending | `records/22_plan_hash_REPORT.md` |
-| 23 | upstream reports | `23_upstream_reports.md` | pending | `records/upstream/` |
-| 24 | pr publication | `24_pr_publication.md` | pending | `records/prs/` |
-| 25 | cf multistage t1 | `25_cf_multistage_t1.md` | pending | `records/25_cf_multistage_REPORT.md` |
-| 26 | gridgen integration | ad hoc (not committed) | executed | `records/26_gridgen_integration_REPORT.md` |
-| 27 | docs plan | ad hoc (not committed) | executed | `records/27_docs_plan/27_docs_plan.md` |
-| 28 | docs implementation | `28_docs_implementation.md` | executed | `records/28_docs_implementation_REPORT.md` |
-| 29 | plan-structure proposal | ad hoc (not committed) | executed | `records/29_plan_structure/29_plan_structure.md` |
-| 30 | author phase specs | `30_author_phase_specs.md` | pending | `records/30_specs_<phase>_REPORT.md` |
-| 31 | plan-structure migration | 29 proposal §8 (liftable spec) | executed | `records/31_plan_structure_migration_REPORT.md` |
-| 32 | structure evaluation | ad hoc (not committed) | executed | `records/32_docs_development_structure/` |
-| 33 | structure migration | `33_structure_migration.md` | executed | `records/33_structure_migration/` |
-| 34 | naming-convention iteration | ad hoc (not committed) | executed | `records/34_naming_iteration/34_naming_iteration.md` |
+| 20 | gpu validation | `020_gpu_validation_plan.md` | pending | `records/20_gpu_validation_REPORT.md` |
+| 21 | ci hardening | `021_ci_hardening_plan.md` | pending | `records/21_ci_hardening_REPORT.md` |
+| 22 | plan-hash config digest | `022_plan_hash_config_digest_plan.md` | pending | `records/22_plan_hash_REPORT.md` |
+| 23 | upstream reports | `023_upstream_reports_plan.md` | pending | `records/upstream/` |
+| 24 | pr publication | `024_pr_publication_plan.md` | pending | `records/prs/` |
+| 25 | cf multistage t1 | `025_cf_multistage_t1_plan.md` | pending | `records/25_cf_multistage_REPORT.md` |
+| 26 | gridgen integration | ad hoc (not committed) | executed | `records/026_gridgen_integration_record.md` |
+| 27 | docs plan | ad hoc (not committed) | executed | `records/027_docs_plan_record/27_docs_plan.md` |
+| 28 | docs implementation | `028_docs_implementation_plan.md` | executed | `records/028_docs_implementation_record.md` |
+| 29 | plan-structure proposal | ad hoc (not committed) | executed | `records/029_plan_structure_record/29_plan_structure.md` |
+| 30 | author phase specs | `030_author_phase_specs_plan.md` | pending | `records/30_specs_<phase>_REPORT.md` |
+| 31 | plan-structure migration | 29 proposal §8 (liftable spec) | executed | `records/031_plan_structure_migration_record.md` |
+| 32 | structure evaluation | ad hoc (not committed) | executed | `records/032_docs_development_structure_record/` |
+| 33 | structure migration | `033_structure_migration_plan.md` | executed | `records/033_structure_migration_record/` |
+| 34 | naming-convention iteration | ad hoc (not committed) | executed | `records/034_naming_iteration_record/34_naming_iteration.md` |
 | 35 | naming migration | `035_naming_migration_plan.md` | pending | `records/035_naming_migration_record/` |
 
 ## Invariants that apply to EVERY task (also restated inside each prompt)
@@ -97,7 +97,7 @@ that changes any count updates that file in the same commit).
 
 ## Background reading (skim before any task)
 
-- `development/records/IMPLEMENTATION_REPORT.md` — what was built, findings, the sign-off ledger.
+- `development/records/036_implementation_report_record.md` — what was built, findings, the sign-off ledger.
 - `AGENTS.md` — the working agreement (binding).
-- `development/records/00_OVERVIEW.md` — DAG and conventions; §5 names the post-slice phases,
+- `development/records/000_overview_record.md` — DAG and conventions; §5 names the post-slice phases,
   outlined in `development/ideas/`.

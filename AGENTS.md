@@ -34,7 +34,7 @@ generation (e.g., the S13 icon4py driver run) is cached via pooch — never reru
 
 ## Reference corpus
 
-Pinned per `development/records/00_OVERVIEW.md` §3: icon4py, gt4py, ICON open-source
+Pinned per `development/records/000_overview_record.md` §3: icon4py, gt4py, ICON open-source
 Fortran, sympl (upstream + stubbiali `oop` fork), tasmania, the ICON 2025 tutorial and the
 Ubbiali thesis. Per-source cards: `development/references/` (local PDFs go in its
 gitignored `local/`); mining and `REFERENCES.lock` rules:

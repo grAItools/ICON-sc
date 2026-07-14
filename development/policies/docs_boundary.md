@@ -9,7 +9,7 @@ process memory.
    hyperlinked from `docs/` site pages** (prose mentions without links are fine),
    **never deployed**.
 3. Development content wanted user-facing is *rewritten* under `docs/` (tutorials cite
-   `development/records/IMPLEMENTATION_REPORT.md` as author-side source material,
+   `development/records/036_implementation_report_record.md` as author-side source material,
    without links) — never included, symlinked, or excerpted mechanically. P7's
    architecture canonicalization owns any future exception.
 4. Generated files are committed under `docs/` only with a `GENERATED FILE` header

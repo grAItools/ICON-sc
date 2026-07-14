@@ -1,7 +1,7 @@
 # policies/ — living rules for development
 
 Policies are living, trunk-gated; agents follow them and propose changes via `ideas/`
-or a `development/DECISIONS.md` row — never by silently editing during a task.
+or a `development/REGISTRY.md` row — never by silently editing during a task.
 
 | Policy | One line |
 |---|---|

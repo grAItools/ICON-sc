@@ -6,7 +6,7 @@ Sphinx source and is never published — see `policies/docs_boundary.md`.
 
 | Folder / file | What |
 |---|---|
-| `DECISIONS.md` | living trunk-decision and sign-off register (the only living file at this level) |
+| `REGISTRY.md` | living trunk-decision and sign-off register (the only living file at this level) |
 | `policies/` | living rules: workflow, naming, liveness, gates, mining, review protocol, docs boundary |
 | `adr/` | architecture decision records, `NNNN-<kebab-title>.md` (Nygard format) |
 | `ideas/` | future proposals; the migrated phase outlines P2–P7 |
@@ -21,6 +21,6 @@ Where to start:
 - **Implementing** a step/task: its spec in `specs/` and plan/prompt in `plans/`,
   workflow in `policies/agent_workflow.md`.
 - **Reviewing**: `policies/review_protocol.md` plus the task's own review checklist.
-- **Deciding** (trunk/human): `DECISIONS.md` for the pending rows; `adr/` for the
+- **Deciding** (trunk/human): `REGISTRY.md` for the pending rows; `adr/` for the
   reasoning behind structural decisions.
-- **History of the S01–S14 slice**: `records/`, overview in `records/00_OVERVIEW.md`.
+- **History of the S01–S14 slice**: `records/`, overview in `records/000_overview_record.md`.

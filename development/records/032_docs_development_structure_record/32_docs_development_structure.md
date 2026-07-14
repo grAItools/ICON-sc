@@ -13,7 +13,7 @@ supersedes it. The register handles this by its own convention — TD-29.1's `St
 only its *conclusion* ("move nothing") is on the table.
 
 **Where this document lives.** It was commissioned into
-`development/records/32_docs_development_structure/` per the current (task-29) convention.
+`development/records/032_docs_development_structure_record/` per the current (task-29) convention.
 Under the refined structure of §2 it would be
 `docs/development/records/32_docs_development_structure/` — task deliverables are records.
 The irony is the same bootstrapping one task 29 recorded; it resolves the same way: the
@@ -193,7 +193,7 @@ Sound as specified (idea, motivation, benefits, risks; reviewed/prioritized). Tw
 populations to place:
 
 - **Phase outlines (`development/ideas/P2…P7.md`)** are *not* ideas — they are the accepted
-  roadmap, input contract for task 30 (phase-spec authoring), and `development/records/00_OVERVIEW.md` §5
+  roadmap, input contract for task 30 (phase-spec authoring), and `development/records/000_overview_record.md` §5
   points at them. They freeze in the archive; their content graduates directly into `specs/`
   when a phase is specced. Copying them into `ideas/` would create a second source of truth.
 - **Open questions parked in the register** (e.g., the old TD-29.6) are the ideas/ natural
@@ -227,7 +227,7 @@ built the slice… scope discipline is the main anti-drift device"). Two consequ
 prompts 20–25/30 (unexecuted — their literal paths are the contract a weak model follows),
 `docs/conf.py`'s header, ~30 historical documents, **and runtime path construction in
 committed test code** (`test_order_ode.py`, `test_order_burgers.py` build
-`development/records/S04_coupling_algebra/artifacts` at runtime). A `git mv` preserves blame but
+`development/records/004_coupling_algebra_record/artifacts` at runtime). A `git mv` preserves blame but
 every *content* citation inside frozen records dangles, and fixing them is forbidden
 (no retro-edits). `REFERENCES.lock` `step` fields are bare ids ("S08"), not paths — safe
 either way.
@@ -261,7 +261,7 @@ what was taken, which step) is ledger-shaped, not document-shaped.
 
 **`references/` md cards are the human layer above it**: one card per *source* (icon4py,
 gt4py, icon-fortran, sympl, tasmania, tutorial PDF, thesis — the §3 corpus of
-`development/records/00_OVERVIEW.md`, ≈8 cards), not per lock entry. Card contents: canonical URL, pinned
+`development/records/000_overview_record.md`, ≈8 cards), not per lock entry. Card contents: canonical URL, pinned
 version/SHA and where the pin is decided (`constraints/`), license, role in the project,
 gotchas (e.g., "gitlab.dwd.de does not resolve; use the gitlab.dkrz.de mirror"), and a
 pointer to `REFERENCES.lock` for the consultation ledger. Hand-curated, living; **not**
@@ -296,7 +296,7 @@ can survive with the dev-tree card folder linking to it — decision point 8. No
 - **(d) `TRUNK_DECISIONS.md`** — moves to `docs/development/TRUNK_DECISIONS.md`, top of the
   dev tree next to `adr/` (relationship in §2.4). It is the living register; leaving the
   only living ledger inside a frozen archive would be incoherent. Cost: ~6 living files
-  reference `development/DECISIONS.md` (root README, plan/README, prompts README, reports
+  reference `development/REGISTRY.md` (root README, plan/README, prompts README, reports
   README, AGENTS-adjacent wording) — all living, all updatable; frozen citations (report 29,
   TD rows' own Source columns) stay valid via the archive banner.
 - **(e) Phase outlines** — stay frozen in the archive (§2.5); future roadmap items are born

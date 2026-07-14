@@ -6,7 +6,7 @@ must be merged to `main` first (its report folder is in the move map §4), and t
 rebased/merged onto that `main` before execution starts.
 
 **Deliverable:** the migration executed per this plan + the execution report
-`development/records/33_structure_migration/REPORT.md` (born in the new tree).
+`development/records/033_structure_migration_record/REPORT.md` (born in the new tree).
 
 This prompt is frozen at assignment. Do not "improve" it beyond its stated scope. Where it
 conflicts with reality (a file listed here does not exist, a path already changed), stop,
@@ -303,7 +303,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
     `.claude/commands/review-step.md` and the `.opencode` twin for planning paths (none
     found at plan-writing time; verify).
 13. **Layout-doc diff artifact** (do NOT edit the doc): produce
-    `development/records/33_structure_migration/layout_doc_revision.diff` — a unified diff
+    `development/records/033_structure_migration_record/layout_doc_revision.diff` — a unified diff
     against `docs/architecture/symcon_repo_layout.md` replacing the `plan/` node in the §4
     repo tree (line ~104) with the `development/` tree (one line per folder) and deleting
     the top-level `references/` node if present. The owner applies it (TD-33.4).
@@ -373,7 +373,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
 6. **Tree checks**: `git ls-files plan/ references/` outputs nothing; `[ ! -d plan ]`;
    `ls development/` shows exactly the §1 folders + `README.md` + `DECISIONS.md`.
 
-## 8. Report — `development/records/33_structure_migration/REPORT.md`
+## 8. Report — `development/records/033_structure_migration_record/REPORT.md`
 
 Header (branch/date/state per the STATUS template in `policies/records_and_liveness.md`),
 then: (1) move ledger — confirm §4 executed, list every deviation; (2) retarget statistics —

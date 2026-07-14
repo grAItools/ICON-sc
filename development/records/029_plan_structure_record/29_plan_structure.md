@@ -6,7 +6,7 @@ and the execution is specced as a liftable task in §8). · **Date:** 2026-07-12
 `main` = `cbbec36`, post task-28 merge).
 
 **Where this document lives, and the bootstrapping irony.** This proposal was commissioned
-into `development/records/29_plan_structure/29_plan_structure.md` — a location chosen
+into `development/records/029_plan_structure_record/29_plan_structure.md` — a location chosen
 *before* the naming convention it proposes existed. Under the convention of §3 (which
 blesses the task-27 pattern: a task whose deliverable *is a document* gets a
 `reports/NN_<name>/NN_<name>.md` subdirectory; a task whose deliverable is *executed work*
@@ -28,7 +28,7 @@ accurate. The five real structural problems, in order of cost:
 
 1. **The sign-off/trunk-decision ledger is buried and unmarked.** The single
    most-load-bearing content (what needs human sign-off; what the trunk decided) lives in
-   the frozen `development/records/IMPLEMENTATION_REPORT.md` §5, in three unmerged TD items inside a
+   the frozen `development/records/036_implementation_report_record.md` §5, in three unmerged TD items inside a
    report subdirectory (`27_docs_plan.md` §3), and in ~25 scattered STATUS flags with **no
    machine-greppable token** — the flags use at least four spellings ("HUMAN SIGN-OFF
    REQUIRED", "flag for human sign-off", "needs trunk", a warning glyph) and "TD-" appears
@@ -52,14 +52,14 @@ accurate. The five real structural problems, in order of cost:
    enumerable ways (§6).
 
 **The proposal moves nothing.** Every existing path stays (§4). The fix is: three new
-files (`development/archive/plan_tree_map.md`, `development/DECISIONS.md`, `development/records/README.md`),
+files (`development/archive/plan_tree_map.md`, `development/REGISTRY.md`, `development/records/README.md`),
 two content refreshes of *living* documents (root `README.md`, the register table in
 `development/plans/README.md`), one canonical sign-off marker convention going forward, and
 one trunk-owned layout-doc revision (drafted as a diff in §6.3, not applied). Rationale:
 the cross-reference census (§4.3) found ~90 inbound references to plan paths across
 prompts, agent tooling, CI-adjacent files, *executed* task records, and — critically —
 **hard-coded paths in committed test code** (`test_order_ode.py`,
-`test_order_burgers.py` construct `development/records/S04_coupling_algebra/artifacts` at
+`test_order_burgers.py` construct `development/records/004_coupling_algebra_record/artifacts` at
 runtime). Any move therefore either breaks the weak-model prompt workflow, edits
 historical records (forbidden), or touches test code for zero functional gain. A
 beautiful greenfield tree loses to registers and indexes here.
@@ -83,8 +83,8 @@ Every memory/planning/documentation file, grouped; line counts from the working 
 
 | Path | Lines | Kind | State |
 |---|---|---|---|
-| `development/records/00_OVERVIEW.md` | 69 | plan overview: agent contract, DAG, lanes, reference corpus, phases | current; §5 points at `outlines/` |
-| `development/records/IMPLEMENTATION_REPORT.md` | 206 | process record of the S01–S14 slice; §2 merge ledger, §4 findings, **§5 human sign-off ledger**, §6 standing follow-ups | frozen historical record *containing living content* (§5, §6) — the central misfit (M2) |
+| `development/records/000_overview_record.md` | 69 | plan overview: agent contract, DAG, lanes, reference corpus, phases | current; §5 points at `outlines/` |
+| `development/records/036_implementation_report_record.md` | 206 | process record of the S01–S14 slice; §2 merge ledger, §4 findings, **§5 human sign-off ledger**, §6 standing follow-ups | frozen historical record *containing living content* (§5, §6) — the central misfit (M2) |
 
 ### 1.3 `development/{specs,plans,records}/` — 14 triads
 
@@ -148,7 +148,7 @@ Those tasks were evidently assigned by ad-hoc prompt text never committed to the
 |---|---|---|
 | `architecture/symcon_architecture.md` | canonical architecture (trunk-owned, edit-forbidden) | v1.3; since task 28 *also* a Sphinx source, read-only |
 | `architecture/symcon_repo_layout.md` | canonical layout companion | calls the architecture doc "v1.2" (L283); omits itself from its own §4 `docs/` tree; §4 diverged from reality (§6) |
-| `conf.py` | Sphinx config (task 28) | header cites `development/records/27_docs_plan/27_docs_plan.md §3`; `exclude_patterns = ["_build", "api/README.md"]` |
+| `conf.py` | Sphinx config (task 28) | header cites `development/records/027_docs_plan_record/27_docs_plan.md §3`; `exclude_patterns = ["_build", "api/README.md"]` |
 | `index.md`, `glossary.md` | hand-written site pages (MyST) | index L51 mentions `plan/` as prose only — no link into plan/ from the published site |
 | `tutorials/` (index + T0/T1/T2) | hand-written tutorial track | link `../architecture/symcon_architecture.md` (relative, inside docs/) |
 | `names_registry.md` | **generated, committed** (`GENERATED FILE — do not edit… tools/names_audit.py`) | a committed generated artifact in the docs tree — layout doc silent (M10) |
@@ -175,7 +175,7 @@ is not in layout §4. No workflow references any plan path.
 | K1 | Canonical architecture | trunk-edited only | `docs/architecture/*.md` (2) |
 | K2 | Working agreement | living, trunk-gated | `AGENTS.md`, `CLAUDE.md` |
 | K3 | Provenance ledger | append-only | `REFERENCES.lock` |
-| K4 | Plan overview / register | living | `development/records/00_OVERVIEW.md`, `development/plans/README.md` |
+| K4 | Plan overview / register | living | `development/records/000_overview_record.md`, `development/plans/README.md` |
 | K5 | Step contract (SPEC) | frozen at step start | `development/specs/SXX_*.md` (14) |
 | K6 | Step how-to (PLAN) | frozen at step start | `development/plans/SXX_*.md` (14) |
 | K7 | Step record (STATUS) | frozen at merge (historical) | `development/records/SXX_*/STATUS.md` (14) |
@@ -185,7 +185,7 @@ is not in layout §4. No workflow references any plan path.
 | K11 | Task execution report | frozen at task merge | `reports/26_*_REPORT.md`, `28_*_REPORT.md` |
 | K12 | Design document / proposal | frozen; decisions extracted to register | `reports/27_docs_plan/`, this file |
 | K13 | External-facing draft | frozen after human publishes | future `reports/upstream/`, `reports/prs/` |
-| K14 | Process report (slice-level) | frozen | `development/records/IMPLEMENTATION_REPORT.md` |
+| K14 | Process report (slice-level) | frozen | `development/records/036_implementation_report_record.md` |
 | K15 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed); `docs/_build/`, `development/records/*/artifacts/` (untracked) |
 | K16 | Published site source | living | `docs/{conf.py,index.md,glossary.md,tutorials/,api/}` |
 | K17 | Agent tooling / CI templates | living | `.claude/`, `.opencode/`, `.github/PULL_REQUEST_TEMPLATE.md` |
@@ -196,7 +196,7 @@ is not in layout §4. No workflow references any plan path.
 - **M1** `27_docs_plan.md` is a K12 design document living under `reports/` among K11
   execution reports, in the only subdirectory, with no suffix — three simultaneous
   deviations from its siblings. (Resolution: bless, don't move — §3.)
-- **M2** `development/records/IMPLEMENTATION_REPORT.md` is a frozen K14 record whose §5 (sign-off
+- **M2** `development/records/036_implementation_report_record.md` is a frozen K14 record whose §5 (sign-off
   ledger) and §6 (standing follow-ups) are *living* content: prompts 20/24/30 point
   agents at §5/§4–6 as current state, but the file can never be updated without editing
   a historical record. Liveness mixing, not location, is the defect.
@@ -211,7 +211,7 @@ is not in layout §4. No workflow references any plan path.
   calls load-bearing for concurrent lanes is sometimes just missing, so absence cannot
   be read as "this step freezes nothing".
 - **M7** Root README stale (pre-implementation claim; Contents table missing
-  `development/plans/`, `development/records/IMPLEMENTATION_REPORT.md`, the docs site).
+  `development/plans/`, `development/records/036_implementation_report_record.md`, the docs site).
 - **M8** PR template hard-codes the step shape; tasks 20–30 also land by PR and get a
   template whose first line is wrong for them.
 - **M9** Layout doc: "v1.2" mislabel (L283), self-omission from §4, §4 `docs/` and
@@ -253,7 +253,7 @@ forward template (§3.3) and the register (§5.1).
 | Steps | `SXX_<snake>` dirs; fixed triad filenames | `S01_repo_scaffold` … `S14_plan_through_dycore` | none; two-digit, zero-padded |
 | Phases | `PN_<snake>.md` | `P2_distributed` … `P7` | P1 implicitly = the slice; never named |
 | Prompts | `NN_<snake>.md`, tens-banded | `10_REVIEW_PROTOCOL` (protocol), `20`–`25`, `28`, `30` | 26/27/29 consumed without files; 10-band vs 20+-band unstated |
-| Reports | `NN_<snake>_REPORT.md` flat | 26, 28 | vs `27_docs_plan/27_docs_plan.md` (subdir, no suffix) vs future `upstream/`, `prs/` (thematic, unnumbered) |
+| Reports | `NN_<snake>_REPORT.md` flat | 26, 28 | vs `027_docs_plan_record/27_docs_plan.md` (subdir, no suffix) vs future `upstream/`, `prs/` (thematic, unnumbered) |
 | Plan root | `00_`-prefixed overview | `00_OVERVIEW.md` | `IMPLEMENTATION_REPORT.md` unprefixed |
 
 ### 3.2 Proposed single convention
@@ -287,7 +287,7 @@ step folders. Concretely:
 4. **Forward STATUS/SPEC templates** (next steps only, no retro-edits): §3.3.
 5. **Canonical sign-off marker** (new, forward): any line in any STATUS/report that
    requires trunk/human action carries the literal token `TD-PENDING:` and is mirrored
-   as a row in `development/DECISIONS.md` within the same PR. `grep -rn "TD-PENDING"`
+   as a row in `development/REGISTRY.md` within the same PR. `grep -rn "TD-PENDING"`
    must return only lines whose register row is still open.
 
 ### 3.3 Forward templates (to be appended to prompts/README by the migration task)
@@ -344,20 +344,20 @@ symcon/
 
 | Existing path | Target | Action |
 |---|---|---|
-| `README.md` | same | content refresh (status paragraph + Contents rows for `development/plans/`, `development/records/IMPLEMENTATION_REPORT.md`, `development/DECISIONS.md`, docs site) |
+| `README.md` | same | content refresh (status paragraph + Contents rows for `development/plans/`, `development/records/036_implementation_report_record.md`, `development/REGISTRY.md`, docs site) |
 | `AGENTS.md`, `CLAUDE.md`, `REFERENCES.lock` | same | none |
-| `development/records/00_OVERVIEW.md` | same | none |
-| `development/records/IMPLEMENTATION_REPORT.md` | same | none (stays frozen; superseded-by relationship declared *in* TRUNK_DECISIONS, not by editing the report) |
+| `development/records/000_overview_record.md` | same | none |
+| `development/records/036_implementation_report_record.md` | same | none (stays frozen; superseded-by relationship declared *in* TRUNK_DECISIONS, not by editing the report) |
 | `development/{specs,plans,records}/**` (42 files) | same | none — zero content edits, zero moves |
 | `development/ideas/**` (6 files) | same | none |
 | `development/plans/README.md` | same | content refresh (register + rules + templates) |
 | `development/plans/10,20–25,28,30_*.md` | same | none (executed AND unexecuted prompts untouched) |
 | `development/records/26,28_*_REPORT.md` | same | none |
-| `development/records/27_docs_plan/` | same | none |
+| `development/records/027_docs_plan_record/` | same | none |
 | `docs/**` (all) | same | none by the agent task; layout-doc diff (§6.3) is trunk/human |
 | `.github/`, `.claude/`, `.opencode/` | same | none by the agent task; PR template = TD-29.5 |
 | — | `development/archive/plan_tree_map.md` | NEW |
-| — | `development/DECISIONS.md` | NEW |
+| — | `development/REGISTRY.md` | NEW |
 | — | `development/records/README.md` | NEW |
 
 Zero `git mv`. Zero edits to K1/K5/K6/K7/K10/K11/K12/K14 files. The only edited files
@@ -373,9 +373,9 @@ move can price itself.
 
 | Target | Referenced by (file: approx. lines) |
 |---|---|
-| `development/{specs,plans,records}/**` | `AGENTS.md` (10, 23, 44), `CLAUDE.md` (9), `README.md` (21), `.github/PULL_REQUEST_TEMPLATE.md` (3), `.claude/commands/implement-step.md` (3, 12), `.claude/settings.json` (29: permission glob `Edit(development/specs/**)`), `.opencode/command/implement-step.md` (6, 15), `development/plans/README.md` (44), `10_REVIEW_PROTOCOL.md` (27), prompts 20 (31–34), 21 (9), 23 (23, 38–39), 25 (27), 30 (19–20, 31, 54, 81), `IMPLEMENTATION_REPORT.md` (11), **test code:** `packages/symcon-core/tests/test_order_burgers.py` (87), `test_order_ode.py` (9, 101) — runtime `parents[3]/"development/records/S04_coupling_algebra/artifacts"`; **benchmarks:** `benchmarks/dispatch_overhead/jw_step.py` (4), `benchmarks/s05_dispatch.py` (4); `.gitignore` (32) |
-| `development/records/00_OVERVIEW.md` | `AGENTS.md` (10, 45), `README.md` (20, 41), `development/plans/README.md` (114), prompt 30 (18, 79–80), 27 report (330) |
-| `development/records/IMPLEMENTATION_REPORT.md` | `development/plans/README.md` (112), prompts 20 (14), 24 (11, 19), 30 (23, 58), 27 report (84, 103, 121, 130) |
+| `development/{specs,plans,records}/**` | `AGENTS.md` (10, 23, 44), `CLAUDE.md` (9), `README.md` (21), `.github/PULL_REQUEST_TEMPLATE.md` (3), `.claude/commands/implement-step.md` (3, 12), `.claude/settings.json` (29: permission glob `Edit(development/specs/**)`), `.opencode/command/implement-step.md` (6, 15), `development/plans/README.md` (44), `10_REVIEW_PROTOCOL.md` (27), prompts 20 (31–34), 21 (9), 23 (23, 38–39), 25 (27), 30 (19–20, 31, 54, 81), `IMPLEMENTATION_REPORT.md` (11), **test code:** `packages/symcon-core/tests/test_order_burgers.py` (87), `test_order_ode.py` (9, 101) — runtime `parents[3]/"development/records/004_coupling_algebra_record/artifacts"`; **benchmarks:** `benchmarks/dispatch_overhead/jw_step.py` (4), `benchmarks/s05_dispatch.py` (4); `.gitignore` (32) |
+| `development/records/000_overview_record.md` | `AGENTS.md` (10, 45), `README.md` (20, 41), `development/plans/README.md` (114), prompt 30 (18, 79–80), 27 report (330) |
+| `development/records/036_implementation_report_record.md` | `development/plans/README.md` (112), prompts 20 (14), 24 (11, 19), 30 (23, 58), 27 report (84, 103, 121, 130) |
 | `development/ideas/` | `README.md` (22), `development/plans/README.md` (115), prompt 30 (15), 27 report (604) |
 | `development/plans/README.md` | `10_REVIEW_PROTOCOL.md` (32), prompts 20–22, 25, 28, 30 ("Hard rules" headers), 27 report (394), 28 report (293) |
 | `development/records/**` | `docs/conf.py` (1–2: `27_docs_plan.md §3`), prompts 20 (57), 21 (127), 22 (107), 23 (5, 70, 75, 86 → `upstream/`), 24 (21, 33, 42, 54, 58 → `prs/`), 25 (95), 28 (1, 10, 195), 30 (83), 27 report (self, 391, 576) |
@@ -385,7 +385,7 @@ move can price itself.
 False-positive guard for any future migration grep: `plan/` also names the **source
 module** `symcon/core/plan/` (`plan/bind.py`, `plan/ops.py`, `plan/native/templates/`)
 in `docs/architecture/symcon_repo_layout.md` (104, 150, 156, 300, 303) and
-`development/ideas/P2_distributed.md` (3) — never rewrite those.
+`development/ideas/037_p2_distributed_idea.md` (3) — never rewrite those.
 
 Priced-out alternatives this census kills:
 
@@ -402,17 +402,17 @@ Priced-out alternatives this census kills:
 
 | Candidate | Verdict | Rationale |
 |---|---|---|
-| **`development/DECISIONS.md`** | **Needed NOW** | The single most-referenced-hardest-to-find content. Today it is: `IMPLEMENTATION_REPORT.md` §5 (7 rows, frozen), 27 §3 TD-1/2/3 (signed off implicitly by task 28's execution — nowhere recorded), and ~25 STATUS flags across S05–S13 with no common token (S05:104 "HUMAN SIGN-OFF REQUIRED (PR)…", S08:137 "…CONSERVATION_RTOL_COLD = 1e-3…", S10:109 heading "Tolerance note (flag for human sign-off)", S13:109 "JW initializer signature CHANGE (frozen interface — needs trunk…", S13:324 a flag *self-resolving in prose*). Format in §5.1. |
+| **`development/REGISTRY.md`** | **Needed NOW** | The single most-referenced-hardest-to-find content. Today it is: `IMPLEMENTATION_REPORT.md` §5 (7 rows, frozen), 27 §3 TD-1/2/3 (signed off implicitly by task 28's execution — nowhere recorded), and ~25 STATUS flags across S05–S13 with no common token (S05:104 "HUMAN SIGN-OFF REQUIRED (PR)…", S08:137 "…CONSERVATION_RTOL_COLD = 1e-3…", S10:109 heading "Tolerance note (flag for human sign-off)", S13:109 "JW initializer signature CHANGE (frozen interface — needs trunk…", S13:324 a flag *self-resolving in prose*). Format in §5.1. |
 | Decision-record convention (ADR) | **Needed now, as register rows — not an ADR directory** | The 27 pattern (full analysis in a K12 document, decision extracted to a register row with a link) already works and produced better artifacts than one-page ADRs would. A `plan/adr/` tree would add a fourth document kind for zero information. Revisit only if P7's release process wants published decision history. |
 | **`CONTRIBUTING.md`** | **Needed LATER — at task 24 (publication)** | Today every contributor is an agent bound by AGENTS.md + prompts/README; a third entry point would drift. The moment the repo is pushed and PRs invite humans (task 24), add a *thin* CONTRIBUTING.md that points at AGENTS.md, the gate table, and the PR template — one screen, no duplicated rules. Add as an item to task 24's scope at execution (its prompt is unexecuted; scope addition is a trunk call, TD-29.4). |
 | CHANGELOG / policy | **Not needed now; policy decision now, file at P7** | Nothing is released; versioning + release automation are explicitly P7-scoped (`development/ideas/P7`). Record the policy as a TRUNK_DECISIONS row ("no CHANGELOG until P7 versioning step; then Keep-a-Changelog or towncrier decided with the release tooling") so the question stops being re-asked. |
-| **`plan/` ↔ `docs/` boundary policy** | **Needed NOW** (a section in the new `development/archive/plan_tree_map.md`, §5.2) | Task 28 made the boundary real: the Sphinx site publishes `docs/` only, and today the only plan-mention in the site is prose (`docs/index.md` L51, no link). Unwritten, the next tutorial author will hyperlink `development/records/IMPLEMENTATION_REPORT.md` (T2/T4/T6/T7 in 27 §1.2 all cite it as *source material*) and either 404 the published site or drag process memory into it. |
+| **`plan/` ↔ `docs/` boundary policy** | **Needed NOW** (a section in the new `development/archive/plan_tree_map.md`, §5.2) | Task 28 made the boundary real: the Sphinx site publishes `docs/` only, and today the only plan-mention in the site is prose (`docs/index.md` L51, no link). Unwritten, the next tutorial author will hyperlink `development/records/036_implementation_report_record.md` (T2/T4/T6/T7 in 27 §1.2 all cite it as *source material*) and either 404 the published site or drag process memory into it. |
 | `docs/coupling.md`, `docs/porting_guide.md` | **Needed later — P7-owned; do not create** | Promised by layout §4; 27 §6 already fences both to P7 ("the nav gets no placeholder that would imply a promise"). Noted here; no action. |
 | `development/archive/plan_tree_map.md` | **Needed NOW** | The taxonomy/naming/boundary content of this proposal needs a durable, discoverable home; `00_OVERVIEW.md` is the *slice plan* and prompts/README is the *task register* — neither should absorb repo-memory policy. |
 | `development/records/README.md` | **Needed NOW** | Three kinds (K11/K12/K13) and three naming patterns coexist in one directory; a 20-line index labelling each entry ends M1/M3 without moving anything. |
 | Others considered | not needed | `MAINTAINERS`/CODEOWNERS (single-owner repo), `SECURITY.md` (pre-publication), a plan glossary (docs/glossary.md exists and is user-facing; AGENTS.md defines the process terms). |
 
-### 5.1 `development/DECISIONS.md` — specified format
+### 5.1 `development/REGISTRY.md` — specified format
 
 Append-mostly table + one rule paragraph. Columns:
 `ID` (`TD-NN.k`, NN = originating task/step number, k = ordinal) · `Date` · `Decision`
@@ -521,7 +521,7 @@ following diff is therefore **drafted, not applied**.
 - **TD-29.1** Ratify the zero-move structure: keep `development/records/` as the single
   deliverables tree with kind-labelled index; ratify this document's own location as the
   K12 pattern instance. (Alternative: `plan/design/` split — priced out in §4.3.)
-- **TD-29.2** Create `development/DECISIONS.md` per §5.1 and adopt the `TD-PENDING:`
+- **TD-29.2** Create `development/REGISTRY.md` per §5.1 and adopt the `TD-PENDING:`
   marker; amend AGENTS.md (one sentence in Workflow item 6) and prompts/README
   (invariants) to route future sign-off flags through it. AGENTS.md is trunk-owned —
   this needs the sign-off before the migration task may touch either file.
@@ -558,7 +558,7 @@ analysis, 30 = phase-spec authoring).
 **Branch:** `task/31-plan-structure-migration` (from `main`; verify
 `git branch --show-current` before every commit). One commit per item A–E (5 commits +
 report). **Prerequisite:** trunk sign-off on TD-29.1/29.2/29.3 (and 29.8 for item D) in
-`development/records/29_plan_structure/29_plan_structure.md` §7. TD-29.4/29.5/29.7 are
+`development/records/029_plan_structure_record/29_plan_structure.md` §7. TD-29.4/29.5/29.7 are
 NOT in scope here (24-prompt edit, PR template, and `docs/architecture/*` are other
 tasks'/trunk's files).
 
@@ -570,7 +570,7 @@ tasks'/trunk's files).
   prompt file other than `development/plans/README.md`, any `reports/*` file other than the
   new `reports/README.md`, `REFERENCES.lock`, or anything under `packages/`, `docs/`,
   `.github/`, `.claude/`, `.opencode/`.
-- When seeding `development/DECISIONS.md`, copy decision text **verbatim** from the
+- When seeding `development/REGISTRY.md`, copy decision text **verbatim** from the
   cited source lines (tolerances, signatures — character-exact). If a source line does
   not say what §5.1 of the task-29 proposal claims it says, STOP on that row and report
   the discrepancy; do not paraphrase around it.
@@ -589,7 +589,7 @@ analysis.
 file exists (`grep -oE 'plan/[A-Za-z0-9_/.]+' development/archive/plan_tree_map.md | sort -u | while read p;
 do test -e "$p" || echo "MISSING $p"; done` → no output).
 
-## Item B — `development/DECISIONS.md`
+## Item B — `development/REGISTRY.md`
 
 **Change:** create the register per proposal §5.1: rule paragraph + table. Seed rows,
 each with `Source` pointing at the exact file+section/line: the seven
@@ -622,7 +622,7 @@ table-row reflow); the gate-baseline table is byte-identical.
 **Change:** replace the "Status: pre-implementation…" paragraph with a current status
 (vertical slice S01–S14 merged; post-slice task register in `development/plans/`; docs site
 built from `docs/` via task 28); extend the Contents table with
-`development/records/IMPLEMENTATION_REPORT.md`, `development/DECISIONS.md`, `development/plans/`; keep the
+`development/records/036_implementation_report_record.md`, `development/REGISTRY.md`, `development/plans/`; keep the
 Bootstrap section but retitle it as historical or update the commands to the current
 entry points (`/implement-step`, the prompts register). Do not change License/Contents
 rows that are still accurate.
@@ -645,10 +645,10 @@ exist (`test ! -e development/records/upstream -a ! -e development/records/prs`)
 
 1. Items A–E done exactly as scoped (or explicitly reported blocked), one commit each.
 2. Diff scope: `git diff main..HEAD --stat` touches ONLY `development/archive/plan_tree_map.md`,
-   `development/DECISIONS.md`, `development/plans/README.md`, `README.md`,
+   `development/REGISTRY.md`, `development/plans/README.md`, `README.md`,
    `development/records/README.md`, and the task report. No renames, no deletions.
 3. All link/existence loops (items A–E) pass; the two docs-site checks below pass.
-4. Report `development/records/31_plan_structure_migration_REPORT.md` committed:
+4. Report `development/records/031_plan_structure_migration_record.md` committed:
    per-item verification output, the TRUNK_DECISIONS row count and any verbatim-copy
    discrepancies found, and the recorded gate numbers.
 

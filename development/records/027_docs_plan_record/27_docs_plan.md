@@ -2,7 +2,7 @@
 
 **Branch:** `task/27-docs-plan` · **Deliverable:** this document (plan only — no tooling
 config, no product code). The implementation is specified in §5 in the
-`development/plans/` register, ready to lift into `development/plans/28_docs_implementation.md`.
+`development/plans/` register, ready to lift into `development/plans/028_docs_implementation_plan.md`.
 
 **Owner requirements (verbatim intent):**
 
@@ -81,7 +81,7 @@ bus slot — run for an hour, written to NetCDF, plotted. The reader edits one c
 value and reruns. Introduces: *preset*, *slow-tendency bus* (as "how slow physics
 hands its heating rates to the core, ICON's operational arrangement"). Sources:
 `examples/01_scm_column.py`; `symcon/icon/presets/scm.py`; architecture §4.2 (bus),
-tutorial §3.7.2 lineage; `development/records/IMPLEMENTATION_REPORT.md` S09 row.
+tutorial §3.7.2 lineage; `development/records/036_implementation_report_record.md` S09 row.
 
 **T3 — Processes as components: calling saturation adjustment by hand.**
 A parameterization is an object you can call interactively on a column state —
@@ -100,7 +100,7 @@ machinery (`must_follow`/`must_precede`, the validated/experimental label) that 
 "legal code" from being mistaken for "right science". Introduces: *federation/
 coupling operator*, *validated preset*. Sources: architecture §1 T1, §4.2, §4.3
 table, §11.7; the three-line SSUS swap in §5.1; S04 coupling formal-order results in
-`development/records/IMPLEMENTATION_REPORT.md` §3; `validation/L7` (per layout doc).
+`development/records/036_implementation_report_record.md` §3; `validation/L7` (per layout doc).
 
 **T5 — The dynamical core and a global test: the baroclinic wave.**
 The dycore is not decomposed into per-tendency pieces — it *is* a time loop
@@ -118,7 +118,7 @@ bitwise comparison of 9-day forecasts is the wrong question and what the right o
 is); restart reproducibility; provenance stamping (config + grid UUIDs + versions in
 every output). Introduces: *tolerance as contract*. Sources: architecture §9;
 `validation/README.md`, `validation/L4_idealized/README.md`;
-`development/records/IMPLEMENTATION_REPORT.md` §3 (bitwise-zero L4 result, ε-twin envelope numbers).
+`development/records/036_implementation_report_record.md` §3 (bitwise-zero L4 result, ε-twin envelope numbers).
 
 **T7 — The same model, faster: plans and execution tiers.**
 Why a Python loop over components is fine for a column and a ceiling for a global GPU
@@ -127,7 +127,7 @@ then a frozen plan executes the identical arithmetic — and the claim is not rh
 it is a CI-enforced bitwise T0≡T1 gate (24 simulated hours through the dycore,
 exactly equal at every step on every prognostic). Introduces: *bind time*,
 *execution plan*, *tier*. Sources: architecture §8.1–8.3; S14 rows of
-`development/records/IMPLEMENTATION_REPORT.md` (§3 headline + dispatch benchmark);
+`development/records/036_implementation_report_record.md` (§3 headline + dispatch benchmark);
 `benchmarks/dispatch_overhead/`.
 
 **T8 — Asking the model "what if": gradients, sensitivities, parameter estimation.**
@@ -327,7 +327,7 @@ not* in the first iteration (unverified pins; myst-nb waits for a real
 ### 3.4 Trunk decision TD-3 — docstring convention (see §4)
 
 Adopting Google-style sections repo-wide going forward + ruff `D` enforcement
-touches the definition-of-done in `development/records/00_OVERVIEW.md` §1.4 ("new public API has
+touches the definition-of-done in `development/records/000_overview_record.md` §1.4 ("new public API has
 docstrings") only additively, but it is a repo-wide convention change → trunk
 sign-off alongside TD-1/TD-2, then it binds all future steps.
 
@@ -376,10 +376,10 @@ undocumented public defs / 217 role lines. A full-coverage push is **not** scope
 
 ---
 
-## 5. Implementation plan (→ `development/plans/28_docs_implementation.md`)
+## 5. Implementation plan (→ `development/plans/028_docs_implementation_plan.md`)
 
-The following is written in the `development/plans/` register (cf. `21_ci_hardening.md`,
-`22_plan_hash_config_digest.md`) and can be lifted nearly verbatim.
+The following is written in the `development/plans/` register (cf. `021_ci_hardening_plan.md`,
+`022_plan_hash_config_digest_plan.md`) and can be lifted nearly verbatim.
 
 ---
 
@@ -388,7 +388,7 @@ The following is written in the `development/plans/` register (cf. `21_ci_harden
 **Branch:** `task/28-docs-implementation` (from `main`; verify
 `git branch --show-current` before every commit). One commit per item A–F below
 (6 commits + report). **Prerequisite:** trunk sign-off on TD-1/TD-2/TD-3 of
-`development/records/27_docs_plan/27_docs_plan.md` (this task implements that
+`development/records/027_docs_plan_record/27_docs_plan.md` (this task implements that
 plan; do not re-litigate the stack choice).
 
 ## Hard rules (restated; full list in development/plans/README.md)
@@ -573,7 +573,7 @@ uv run ruff check . --select D --statistics   # paste into report (the baseline)
 4. `git diff main..HEAD --stat` touches ONLY: `pyproject.toml`, `uv.lock`,
    `constraints/cpu-ci.txt`, `.gitignore`, `docs/**` (new files; `docs/architecture/`
    byte-identical), `.github/workflows/docs.yml`, `.github/workflows/lint.yml`, and
-   the report `development/records/28_docs_implementation_REPORT.md`.
+   the report `development/records/028_docs_implementation_record.md`.
 5. Report includes: built-site page inventory, warning triage table, ruff `D`
    baseline statistics, the "Pages → GitHub Actions" human action item.
 
@@ -601,7 +601,7 @@ uv run ruff check . --select D --statistics   # paste into report (the baseline)
 
 ## 6. Out of scope / drift fences (first iteration)
 
-Per `development/ideas/P7_presets_docs_anemoi.md`, P7 owns "docs build (architecture doc
+Per `development/ideas/042_p7_presets_docs_anemoi_idea.md`, P7 owns "docs build (architecture doc
 canonicalized, API autodoc, porting guide from the S07/S08/P3 pattern); versioning +
 release automation". This plan **pulls forward** the docs *tooling* and the
 user-tutorial track (which P7 does not mention and this plan adds); it must not

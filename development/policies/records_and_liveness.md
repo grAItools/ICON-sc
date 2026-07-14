@@ -14,21 +14,21 @@ templates for new SPECs, STATUS records, and task prompts.
 | ADR | frozen after accepted; `Status:` field mutable | `development/adr/NNNN-*.md` |
 | Idea / phase outline | living until graduated (`Status:` header; graduated → spec SXX) | `development/ideas/*.md` |
 | Task register | living | `development/plans/README.md` |
-| Trunk-decision register | living, append-mostly | `development/DECISIONS.md` |
+| Trunk-decision register | living, append-mostly | `development/REGISTRY.md` |
 | Step/feature contract (SPEC) | frozen at acceptance | `development/specs/SXX_*.md` |
 | Step how-to (PLAN) | frozen at step start | `development/plans/SXX_*.md` |
 | Task prompt | frozen at assignment | `development/plans/NN_*.md` |
 | Step record (STATUS) | frozen at merge — never retro-edited | `development/records/SXX_*/STATUS.md` |
 | Task execution report | frozen at task merge | `development/records/NN_*_REPORT.md` |
 | Design document / proposal | frozen; decisions extracted to the register | `development/records/NN_<name>/NN_<name>.md` |
-| Process report (slice-level) | frozen | `development/records/IMPLEMENTATION_REPORT.md` (its §5/§6 are superseded going forward by `DECISIONS.md`) |
+| Process report (slice-level) | frozen | `development/records/036_implementation_report_record.md` (its §5/§6 are superseded going forward by `REGISTRY.md`) |
 | Reference card | living (updated on pin/corpus decisions) | `development/references/*.md` |
 | Archive | dead — kept for reference; nothing authoritative | `development/archive/` |
 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed, headered); `docs/_build/`, `development/records/*/artifacts/` (untracked) |
 | Published site source | living | `docs/{conf.py,index.md,glossary.md,tutorials/,api/}` |
 | Agent tooling / CI templates | living | `.claude/`, `.opencode/`, `.github/` |
 
-**Content-frozen rule (ADR-0002):** "frozen" means content-frozen — mechanical path
+**Content-frozen rule (adr 044):** "frozen" means content-frozen — mechanical path
 retargeting confined to link/path strings is permitted in a sanctioned migration
 commit, isolated so `git diff --word-diff` shows path strings only; header-line
 *additions* above the original text may be sanctioned case-by-case by the migration
@@ -50,4 +50,4 @@ plan. All other edits to frozen documents remain violations.
   every untracked artifact *with its regeneration command*, never as a bare path.
 - **Task prompts** follow the register format of `development/plans/README.md`
   (Hard rules → Items → Acceptance criteria → Verification gates → Review checklist,
-  cf. `21_ci_hardening.md`).
+  cf. `021_ci_hardening_plan.md`).
