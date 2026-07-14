@@ -38,7 +38,7 @@ One number per work unit, shared by its idea/spec/plan/record files
 | 007 | satad_component | spec + plan + record | executed |
 | 008 | graupel_component | spec + plan + record | executed |
 | 009 | scm_composition | spec + plan + record | executed |
-| 010 | review_protocol | — | living protocol, exempt from the scheme (moved to `policies/review_protocol.md` in work unit 033) |
+| 010 | ftier_column_gradients | spec + plan + record | executed |
 | 011 | icon_grid_metrics | spec + plan + record | executed |
 | 012 | nonhydro_hosting | spec + plan + record | executed |
 | 013 | diffusion_jw_l4 | spec + plan + record | executed |
@@ -73,8 +73,10 @@ One number per work unit, shared by its idea/spec/plan/record files
 | 047 | docs_stack | adr | accepted |
 | 048 | gridgen_adoption | adr | accepted |
 
-Numbers 011–014 continue the S-series (the review protocol consumed 10 before becoming
-a policy); 015–019 were never allocated and stay open per the never-backfill rule.
+Numbers 000–014 are the remapped S-series work units. The old N-series number 10
+(the review protocol) is superseded by this remap: the protocol is a policy
+(`policies/review_protocol.md`), unnumbered and exempt from the scheme. Numbers 015–019
+were never allocated and stay open per the never-backfill rule.
 
 ## 2. Remap table (permanent — the bridge for historical names and `REFERENCES.lock` ids)
 

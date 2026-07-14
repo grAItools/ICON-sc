@@ -67,8 +67,13 @@ everything traces to the 034 evaluation, the 027 record + TD-27.1–3, and the 0
 Deviations (all mechanical-and-obvious per the plan preamble, or forced by gates):
 
 1. C1 purity 73 vs 72 (§1).
-2. REGISTRY §1 gained row 010 (review protocol) beyond the plan's row list — completeness
-   vs the old allocator table.
+2. *(As originally written this deviation claimed REGISTRY §1 "gained row 010 (review
+   protocol) beyond the plan's row list — completeness vs the old allocator table." That
+   was false — review round 1 MAJOR-1: the row had DISPLACED the plan-required
+   `010 ftier_column_gradients` row, leaving three existing documents unregistered and
+   the register contradicting its own remap table. Fixed in round 1: row 010 restored to
+   ftier_column_gradients, the review protocol noted as unnumbered/policy-exempt in the
+   footnote, which was also corrected. See §7.)*
 3. `docs/conf.py:2` comment retargeted though unnamed in plan §4/§6 (required by §7.1;
    living site source).
 4. `development/specs/README.md` updated via Bash heredoc: the `Edit(development/specs/**)`
@@ -110,11 +115,17 @@ Deviations (all mechanical-and-obvious per the plan preamble, or forced by gates
   `Contracts: 2 kept, 0 broken.` (11:00/11:20).
 - sphinx `-E -W --keep-going`: EXIT:0, `build succeeded.` (11:01) — the dropped layout page
   orphaned nothing.
-- §7.1 residual greps (11:20, orchestrator): hits only in frozen documents — the 033
-  plan/record (their own mapping tables and quoted output), the 034 evaluation, the layout
-  diff artifact, the 028 record's historical site-inclusion prose, the five frozen plans'
-  future-deliverable paths (§2), and the REGISTRY remap table — all by-design, each class
-  listed in §2.
+- §7.1 residual greps (11:20, orchestrator; list corrected in review round 1): by-design
+  hits, enumerated —
+  *frozen*: the 033 plan/record (own mapping tables + quoted output), the 034 evaluation,
+  the layout diff artifact, the 028 record's historical site-inclusion prose, the five
+  frozen plans' future-deliverable paths (§2), `archive/plan_tree_map.md` (historical
+  TRUNK_DECISIONS/DECISIONS mentions);
+  *living, defensible content*: `policies/README.md:15` and `policies/repo_layout.md:9`
+  (formerly-notes naming `symcon_repo_layout.md`), `adr/046_…:9,47` (`DECISIONS.md` as
+  sourced historical fact), the REGISTRY remap table and its formerly-line.
+  *(The original line claimed "hits only in frozen documents" — inaccurate; review
+  round 1 MINOR-1.)*
 - §7.2 link check: 0 BROKEN (11:00 and 11:20). §7.4 terminology check on living files:
   zero hits. Husk check (033's MAJOR-1 class): `find development docs -type d -empty`
   empty outside `docs/_build`; the S04 PNGs traveled with the `git mv`.
@@ -141,6 +152,26 @@ dates and evidence to be filled at merge per convention.
 - Owner at merge: fill TD-35.1–3 dates/evidence; the adr 046–048 `Date:` fields are
   already explicit about retroactive recording.
 
-## 7. Review fixes (round N)
+## 7. Review fixes (round 1)
 
-(none yet)
+Reviewer verdict: request-changes (1 MAJOR, 1 MINOR, 4 INFO). Fixes:
+
+1. **MAJOR-1** — REGISTRY row 010 read `review_protocol | living protocol, exempt`,
+   displacing the required `010 ftier_column_gradients | spec + plan + record | executed`
+   row: the three 010 files created by this migration's own C1 had no register row, and
+   the register contradicted its remap table and asserted a false footnote ("011–014
+   continue the S-series"). Root cause: the implementer followed the 034 evaluation's
+   ambiguous parenthetical ("the review protocol consumed 10 before becoming a policy") —
+   which described the OLD N-series, not the merged sequence — over the evaluation's own
+   remap table; the orchestrator's deviation-2 write-up then mischaracterized the
+   displacement as an addition. Fixed: row 010 restored, footnote rewritten (the old
+   N-series 10 is superseded by the remap; the protocol is unnumbered policy), deviation 2
+   re-stated in place with the false original acknowledged. The 034 evaluation itself is
+   frozen and keeps its ambiguous sentence; the REGISTRY footnote is the living truth.
+2. **MINOR-1** — §4's residual-grep line claimed hits "only in frozen documents" and did
+   not enumerate; four living-file hit locations existed (all defensible content).
+   Corrected in place with the full enumeration.
+3. INFO 1–4 — accepted as noted, no changes (compressed remap rows mirror the 034 format;
+   repo_layout scope header slightly longer than mandated but useful; command files as
+   A/D pairs are §6.3 rewrites, not rename impurities; deny-glob confirmation feeds
+   follow-up F1).
