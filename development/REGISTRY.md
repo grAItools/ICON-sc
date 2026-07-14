@@ -24,7 +24,7 @@ monotonic, never reused; gaps are never backfilled — 015–019 stay open forev
 collision, the first-registered number wins and the latecomer takes the next free one.
 One number per work unit, shared by its idea/spec/plan/record files
 (`NNN_<slug>_<kind>`, TD-35.1, adr 046); single-kind documents consume one number.
-**Next free number: 049.**
+**Next free number: 050.**
 
 | NNN | slug | kinds | status |
 |---|---|---|---|
@@ -72,6 +72,7 @@ One number per work unit, shared by its idea/spec/plan/record files
 | 046 | document_naming_scheme | adr | accepted |
 | 047 | docs_stack | adr | accepted |
 | 048 | gridgen_adoption | adr | accepted |
+| 049 | work_structure_iteration | record | executed (plan ad hoc, not committed) |
 
 Numbers 000–014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
