@@ -279,6 +279,17 @@ tools/
 ├── names_audit.py                       # registry ↔ CF table ↔ GRIB2 consistency checks
 └── constraints_update.py                # regenerate constraints/ lockfiles against fresh gt4py/icon4py
 
+development/                             # repo-internal process memory — never a Sphinx source (task 33, TD-33.1)
+├── README.md                            # map of the tree
+├── DECISIONS.md                         # living trunk-decision and sign-off register
+├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary
+├── adr/                                 # architecture decision records (NNNN-<kebab-title>.md)
+├── ideas/                               # future proposals; phase outlines P2–P7
+├── specs/                               # frozen step/feature contracts (SXX_*.md)
+├── plans/                               # step PLANs + task prompts; README.md = task-number register
+├── records/                             # outcome documents frozen at merge: STATUS files, task reports
+└── references/                          # per-source reference cards + local/ (gitignored)
+
 docs/
 ├── architecture/symcon_architecture.md  # the v1.2 document, canonical
 ├── coupling.md                          # operator semantics, preset catalogue, validated/experimental
