@@ -60,6 +60,7 @@ taxonomy, and forward SPEC/STATUS templates live in
 | 31 | plan-structure migration | 29 proposal §8 (liftable spec) | executed | `records/31_plan_structure_migration_REPORT.md` |
 | 32 | structure evaluation | ad hoc (not committed) | executed | `records/32_docs_development_structure/` |
 | 33 | structure migration | `33_structure_migration.md` | executed | `records/33_structure_migration/` |
+| 34 | naming-convention iteration | ad hoc (not committed) | executed | `records/34_naming_iteration/34_naming_iteration.md` |
 
 ## Invariants that apply to EVERY task (also restated inside each prompt)
 
