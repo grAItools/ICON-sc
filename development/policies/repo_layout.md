@@ -1,8 +1,10 @@
-# symcon: Repository Layout
+# repo_layout — the repository layout, packaging boundaries, and layout conventions
 
-**Companion to:** *symcon architecture* v1.3 · Section references (§) point into that document.
-
----
+Scope: the monorepo tree, the three-distribution packaging and import-boundary
+structure, and the layout conventions that carry architectural weight. Section
+references (§) point into `docs/architecture/symcon_architecture.md` (v1.3).
+Formerly `docs/architecture/symcon_repo_layout.md` (moved and made a living policy in
+work unit 035, TD-35.2).
 
 ## 0. Top-level decisions
 
@@ -281,7 +283,7 @@ tools/
 
 development/                             # repo-internal process memory — never a Sphinx source (task 33, TD-33.1)
 ├── README.md                            # map of the tree
-├── REGISTRY.md                         # living trunk-decision and sign-off register
+├── REGISTRY.md                          # living trunk-decision and sign-off register
 ├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary
 ├── adr/                                 # architecture decision records (NNNN-<kebab-title>.md)
 ├── ideas/                               # future proposals; phase outlines P2–P7
