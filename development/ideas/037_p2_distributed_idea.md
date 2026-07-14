@@ -1,4 +1,4 @@
-**Status:** accepted-roadmap (graduates to development/specs/ via task 30).
+**Status:** accepted-roadmap (graduates to development/specs/ via plan 030).
 
 # P2 — Distributed execution (outline)
 **After:** S14 · **Architecture:** §6

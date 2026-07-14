@@ -18,7 +18,7 @@ mandatory for the bodies you draft).
 
 1. Read `development/records/036_implementation_report_record.md` fully (§2 merge ledger, §5 sign-off ledger)
    and `AGENTS.md` (workflow item 6: STATUS contents; PR-per-step).
-2. For each step S01–S14, draft `development/records/prs/SXX_pr_body.md`:
+2. For each step S01–S14, draft `development/records/024_pr_publication_record/SXX_pr_body.md`:
    - Title: `SXX: <one-line what>` (take it from the merge commit subject).
    - Sections: **What** (from the step STATUS "What was built", compressed to
      ≤10 bullets); **Verification** (the step's gate numbers from its STATUS,
@@ -30,7 +30,7 @@ mandatory for the bodies you draft).
      **References** (the REFERENCES.lock entry ids the step added).
    - End the body with the standard footer:
      `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
-3. Draft `development/records/prs/publish.sh` — NOT executable by you; a
+3. Draft `development/records/024_pr_publication_record/publish.sh` — NOT executable by you; a
    plain-text script the human runs. It must: push each `step/SXX-*` branch; open
    each PR **based on the previous step's branch** (S01 against the default
    branch; SXX against `step/S(XX-1)-...`) so each PR shows only its own diff —
@@ -39,7 +39,7 @@ mandatory for the bodies you draft).
    Order: S01→S14. Include `set -euo pipefail` and an echo before each action.
 4. Cross-check each drafted body against its STATUS: every sign-off item from
    report §5 MUST appear in the corresponding body. Build a checklist table in
-   `development/records/prs/INDEX.md` (step | branch | base | sign-off items |
+   `development/records/024_pr_publication_record/INDEX.md` (step | branch | base | sign-off items |
    body file) for the human.
 
 ## What NOT to do
@@ -51,11 +51,11 @@ mandatory for the bodies you draft).
 ## Acceptance criteria
 
 1. 14 body files + `publish.sh` + `INDEX.md` committed under
-   `development/records/prs/`.
+   `development/records/024_pr_publication_record/`.
 2. Every §5 sign-off item appears verbatim-quoted in exactly the right body.
 3. `publish.sh` is internally consistent (each `--head` branch exists — verify with
    `git branch --list 'step/*'`; each `--body-file` path exists).
-4. Nothing outside `development/records/prs/` touched; fast gate baseline
+4. Nothing outside `development/records/024_pr_publication_record/` touched; fast gate baseline
    unchanged (run it once as a formality).
 
 ## Review checklist (appended to 10_REVIEW_PROTOCOL.md for this task)

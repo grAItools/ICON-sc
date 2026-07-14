@@ -1,4 +1,4 @@
-**Status:** accepted-roadmap (graduates to development/specs/ via task 30).
+**Status:** accepted-roadmap (graduates to development/specs/ via plan 030).
 
 # P7 — Presets, docs, anemoi, release hygiene (outline)
 **After:** P3/P4 mature

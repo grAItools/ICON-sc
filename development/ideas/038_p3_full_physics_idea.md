@@ -1,4 +1,4 @@
-**Status:** accepted-roadmap (graduates to development/specs/ via task 30).
+**Status:** accepted-roadmap (graduates to development/specs/ via plan 030).
 
 # P3 — Full NWP physics suite + bridges (outline)
 **After:** S09 pattern established; parallelizable per scheme · **Architecture:** §4.3, §11.1–11.2

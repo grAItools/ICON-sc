@@ -54,7 +54,7 @@ in the S07/S08/S12/S14 STATUS files.
    report the measured deviation, the field, the test, and stop on that item.
 6. After any product-code change, re-run the FULL CPU gate (all 8 commands from
    README.md) to prove CPU behavior is unchanged, plus the touched gpu files.
-7. Write `development/records/20_gpu_validation_REPORT.md` (create `development/records/`):
+7. Write `development/records/020_gpu_validation_record.md`:
    device + driver + cupy versions; the collected gpu-leg list; per-file results
    (passed/failed/skipped with timings); every failure verbatim + disposition;
    whether S14's "bitwise per backend" now holds for gtfn_gpu (the

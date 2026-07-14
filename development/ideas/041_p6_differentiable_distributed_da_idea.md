@@ -1,4 +1,4 @@
-**Status:** accepted-roadmap (graduates to development/specs/ via task 30).
+**Status:** accepted-roadmap (graduates to development/specs/ via plan 030).
 
 # P6 — Differentiable distributed + DA/hybrid demos (outline)
 **After:** S10 + P2 · **Architecture:** §8.5–8.7, §10

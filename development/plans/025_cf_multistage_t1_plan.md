@@ -92,7 +92,7 @@ raising the current error (true duplicate occurrence).
 ## Acceptance criteria
 
 Either (A) feature complete: tests 1–4 green + full README gate green + report
-`development/records/25_cf_multistage_REPORT.md` describing the cell-aliasing
+`development/records/025_cf_multistage_t1_record.md` describing the cell-aliasing
 mechanism and why the corruption guard stays intact; or (B) design outcome: no
 code change (or a reverted branch), plus the report containing the attempted
 approach, the exact guard/equivalence failure evidence, and a concrete design for

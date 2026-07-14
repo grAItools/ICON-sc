@@ -2,7 +2,7 @@
 
 **Branch:** `task/23-upstream-reports` (from `main`; verify `git branch
 --show-current` before every commit). **Scope: writing three report drafts into
-`development/records/upstream/` — you change NO product code and NO tests.** The
+`development/records/023_upstream_reports_record/` — you change NO product code and NO tests.** The
 drafts are for a human to review and submit to github.com/C2SM/icon4py; you do NOT
 open issues yourself.
 
@@ -67,12 +67,12 @@ as a data point upstream may want.
 
 ## Acceptance criteria
 
-1. Three drafts committed under `development/records/upstream/`, every claim
+1. Three drafts committed under `development/records/023_upstream_reports_record/`, every claim
    double-cited (in-repo + upstream file:line at the pinned SHA).
 2. Draft 1's reproduction snippet is icon4py-only (no symcon import) and you have
    verified it runs (`uv run python <<the snippet>>` in a scratch file under /tmp)
    producing the reported magnitudes.
-3. No product/test/doc file outside `development/records/upstream/` is touched.
+3. No product/test/doc file outside `development/records/023_upstream_reports_record/` is touched.
 4. Full fast gate untouched-green as a formality:
    `uv run pytest packages -m "not gpu and not slow" -q` matches the current
    baseline (see README; may be 733 if Task 21 merged first — check `git log`).
@@ -83,7 +83,7 @@ as a data point upstream may want.
   (clone/fetch at the SHA if needed) and comparing line contents.
 - Run Draft 1's snippet yourself; the numbers must reproduce within the stated
   bounds (they are deterministic).
-- `git diff main..HEAD --stat`: only files under `development/records/upstream/`.
+- `git diff main..HEAD --stat`: only files under `development/records/023_upstream_reports_record/`.
   Anything else is a MAJOR finding.
 - Check every number in the drafts against its cited source; an uncited or
   unreproducible number is a MAJOR finding (these documents leave the repo — they

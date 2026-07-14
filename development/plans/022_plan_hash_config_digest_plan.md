@@ -104,7 +104,7 @@ identically, because `_DraftCall` carries only tag/slots/dt (`component` is
    `test_scm_plan.py`, `test_jw_plan.py`, `test_jw_plan_equivalence.py` non-slow).
 3. Full gate green (README baselines, adjusted only by YOUR added tests — state
    exact new counts).
-4. Report `development/records/22_plan_hash_REPORT.md`: design conformance,
+4. Report `development/records/022_plan_hash_config_digest_record.md`: design conformance,
    any justified deviation, new gate baselines.
 
 ## Verification gates

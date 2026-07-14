@@ -26,7 +26,7 @@
       "Bash(rm -rf:*)",
       "Bash(sudo:*)",
       "Edit(docs/architecture/**)",
-      "Edit(development/specs/**)",
+      "Edit(development/specs/*_spec.md)",
       "Edit(LICENSE)"
     ]
   }

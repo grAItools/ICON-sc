@@ -80,7 +80,7 @@ the SPECs before any implementation prompt is issued against them.
    SNIPPET ONLY (do not edit 00_OVERVIEW.md — trunk applies it at approval).
 4. No file outside `development/{specs,plans}/<new files>` and your report is touched. The
    full fast gate still passes untouched (formality; run once).
-5. Report `development/records/30_specs_<phase>_REPORT.md`: mapping table,
+5. Report `development/records/030_author_phase_specs_record/<phase>.md`: mapping table,
    per-step checklists, open design questions EXPLICITLY listed for the human
    trunk review (do not bury uncertainty inside confident-sounding SPEC text —
    an honest "TRUNK DECISION NEEDED:" marker inside a SPEC is the correct way to
