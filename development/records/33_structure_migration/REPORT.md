@@ -89,9 +89,11 @@ All commands run from the repo root on `task/33-structure-migration` after C5.
   `development/DECISIONS.md:12` (the mandated "Formerly plan/TRUNK_DECISIONS.md"
   line); `development/adr/0001…:27` and `development/adr/0003…:8` (ADR prose naming
   the old file historically); `development/records/31_plan_structure_migration_REPORT.md:76`
-  (§2 above); `development/plans/33_structure_migration.md` (47 hits, §2 above); the
-  two untracked `prompts-backups*.md` under `development/references/local/` (owner
-  notes, gitignored). **Deviation from the plan's expectation:** the plan predicts
+  (§2 above); `development/plans/33_structure_migration.md` (47 hits, §2 above); and
+  this report's own quotations of old paths (self-referential, like the plan's).
+  *(Correction, review round 1: an earlier revision of this line also listed the two
+  untracked `prompts-backups*.md` files as hits — they contain zero pattern matches.)*
+  **Deviation from the plan's expectation:** the plan predicts
   exactly one hit at `docs/architecture/symcon_repo_layout.md:104`; that line is the
   `symcon.core.plan` source-package node (never-touch) and does not match the grep
   pattern — the layout doc contributes zero hits (see the note inside
@@ -120,10 +122,14 @@ All commands run from the repo root on `task/33-structure-migration` after C5.
 - **§7.5 Sphinx** (2026-07-14 01:29 CEST):
   `uv run sphinx-build -E -W --keep-going -b html docs docs/_build/html` → exit 0,
   `build succeeded.`
-- **§7.6 tree checks** (2026-07-14 01:28 CEST): `git ls-files plan/ references/` →
-  empty; `plan/` and `references/` directories gone; `ls development/` = `DECISIONS.md
+- **§7.6 tree checks** (2026-07-14 01:28 CEST; corrected in review round 1):
+  `git ls-files plan/ references/` → empty; `ls development/` = `DECISIONS.md
   README.md adr archive ideas plans policies records references specs` (exactly the
-  §1 tree).
+  §1 tree). *(Correction: the original revision of this line claimed the `plan/` and
+  `references/` directories were gone — false when written: empty, untracked
+  directory husks remained after the untracked-file relocations (review MAJOR-1).
+  Removed via `find plan references -depth -type d -empty -delete` in round 1;
+  `[ ! -d plan ]` and `[ ! -d references ]` now pass, re-checked 2026-07-14.)*
 - **Untouchables:** `git diff main -- docs/architecture REFERENCES.lock constraints/
   uv.lock` → empty (2026-07-14 01:33 CEST).
 
@@ -187,6 +193,30 @@ Follow-ups:
   owner notes relocated as-is; the owner may want to consolidate them (the outlines
   copy is a strict prefix of the other).
 
-## 8. Review fixes (round N)
+## 8. Review fixes (round 1)
 
-(none yet)
+Reviewer verdict: request-changes (1 MAJOR, 2 MINOR, 4 INFO). Fixes applied:
+
+1. **MAJOR-1** — empty, untracked `plan/`/`references/` directory husks survived the
+   migration (git tracks no directories; the untracked-file `mv`s left the skeletons),
+   so plan §7.6's `[ ! -d plan ]` failed; §4's original "directories gone" line was
+   written without observing that check. Fixed: husks deleted, §7.6 re-run green,
+   §4 line corrected in place with the correction marked. Root cause of the false
+   line: the report's gate section was drafted from the implementer's C5-time
+   worklog and finalized across the implementer→orchestrator session handoff without
+   re-observing the §7.6 predicate.
+2. **MINOR-2** — §4's §7.1a hit list named the two untracked `prompts-backups*.md`
+   files as residual-grep hits; they contain zero matches. Corrected in place;
+   the report's own self-referential quotations added to the accounted set.
+3. **MINOR-3** — C2 had retargeted the Decision-text cell of the superseded TD-29.1
+   row, making the historical zero-move decision read as if it had ratified
+   `development/records/`. Restored the original wording (`plan/prompts/reports/`),
+   Status flip untouched — the ADR-0002 exemption class the implementer already
+   applied to the task-31 report. Neighboring rows checked: TD-29.2 "(this file)" and
+   TD-29.3's pointer stay retargeted (their subjects survive under new names — the
+   pointers remain true); TD-29.6's `plan/drafts/` was never retargeted (correct).
+4. INFO-4/5/6/7 — accepted as noted, no changes: the C6 review-protocol polish stands
+   as declared (deviation 8); `records_and_liveness.md`'s "frozen at step start"
+   wording kept (equivalent in effect to §3.2's "at acceptance/assignment");
+   the two by-design historical mentions (20_gpu_validation.md:50, archived map:55)
+   left; the plan-internal defects list already covered by §7.

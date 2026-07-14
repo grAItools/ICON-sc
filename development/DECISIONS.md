@@ -37,7 +37,7 @@ Seeded 2026-07-13 by task 31 (spec: `development/records/29_plan_structure/29_pl
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `development/records/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | superseded(TD-33.1) | `29_plan_structure.md` §4, §7 | task-31 merge `58a51f7` |
+| TD-29.1 | 2026-07-13 | Zero-move plan structure ratified: `plan/prompts/reports/` stays the single deliverables tree with kind-labelled index; task-27 subdir pattern blessed for document-deliverables (task 29's own location conforms) | superseded(TD-33.1) | `29_plan_structure.md` §4, §7 | task-31 merge `58a51f7` |
 | TD-29.2 | 2026-07-13 | Create `development/DECISIONS.md` (this file) + `TD-PENDING:` marker | signed-off | `29_plan_structure.md` §5.1, §7 | task-31 merge `58a51f7` |
 | TD-29.3 | 2026-07-13 | N-series allocation rule + forward SPEC/STATUS templates adopted (recorded in `development/archive/plan_tree_map.md`; register + allocation rule in prompts-README) | signed-off | `29_plan_structure.md` §3.2–3.3, §7, §8 items A/C | task-31 merge `58a51f7` |
 | TD-29.4 | 2026-07-13 | Extend unexecuted task 24's scope with a thin `CONTRIBUTING.md` at publication time | pending | `29_plan_structure.md` §5, §7 | — |
