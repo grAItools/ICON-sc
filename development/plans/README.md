@@ -61,6 +61,7 @@ taxonomy, and forward SPEC/STATUS templates live in
 | 32 | structure evaluation | ad hoc (not committed) | executed | `records/32_docs_development_structure/` |
 | 33 | structure migration | `33_structure_migration.md` | executed | `records/33_structure_migration/` |
 | 34 | naming-convention iteration | ad hoc (not committed) | executed | `records/34_naming_iteration/34_naming_iteration.md` |
+| 35 | naming migration | `035_naming_migration_plan.md` | pending | `records/035_naming_migration_record/` |
 
 ## Invariants that apply to EVERY task (also restated inside each prompt)
 
