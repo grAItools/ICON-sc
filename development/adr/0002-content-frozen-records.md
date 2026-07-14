@@ -1,6 +1,6 @@
 # 0002 — "Frozen" means content-frozen; sanctioned mechanical path retargeting
 
-**Status:** accepted · **Date:** (merge of task 33)
+**Status:** accepted · **Date:** 2026-07-14
 
 ## Context
 

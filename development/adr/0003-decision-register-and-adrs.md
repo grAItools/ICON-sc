@@ -1,6 +1,6 @@
 # 0003 — The decision register and ADRs are two instruments, not merged
 
-**Status:** accepted · **Date:** (merge of task 33)
+**Status:** accepted · **Date:** 2026-07-14
 
 ## Context
 

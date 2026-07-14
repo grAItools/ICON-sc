@@ -1,6 +1,6 @@
 # 0001 — Reorganize the repo process memory into a top-level `development/` tree
 
-**Status:** accepted · **Date:** (merge of task 33)
+**Status:** accepted · **Date:** 2026-07-14
 
 ## Context
 
