@@ -8,7 +8,7 @@ an exact push/PR command script for the human to review and execute.
 
 All 14 step branches (`step/S01-repo-scaffold` … `step/S14-plan-through-dycore`)
 exist locally, each already merged into local `main` in DAG order (merge ledger:
-`development/records/IMPLEMENTATION_REPORT.md` §2). AGENTS.md requires one PR per step. Seven
+`development/records/036_implementation_report_record.md` §2). AGENTS.md requires one PR per step. Seven
 steps carry HUMAN SIGN-OFF items (report §5) that must be visible in their PR
 bodies. `origin/main` is at the pre-slice commit; the PR template, if any, lives in
 `.github/` (check for `PULL_REQUEST_TEMPLATE`; if present, its structure is
@@ -16,7 +16,7 @@ mandatory for the bodies you draft).
 
 ## Procedure
 
-1. Read `development/records/IMPLEMENTATION_REPORT.md` fully (§2 merge ledger, §5 sign-off ledger)
+1. Read `development/records/036_implementation_report_record.md` fully (§2 merge ledger, §5 sign-off ledger)
    and `AGENTS.md` (workflow item 6: STATUS contents; PR-per-step).
 2. For each step S01–S14, draft `development/records/prs/SXX_pr_body.md`:
    - Title: `SXX: <one-line what>` (take it from the merge commit subject).

@@ -1,32 +1,36 @@
-# naming_conventions — ID series, file naming, and the allocation rule
+# naming_conventions — document naming, the global sequence, and allocation
 
-Scope: how development-memory files are named and how S/P/N-series numbers and ADR
-numbers are allocated. The spec, plan, and record of one work unit share one ID.
+Scope: how development-memory files are named, how document numbers are allocated, and
+the sign-off marker. The scheme is TD-35.1 (`adr 046`); the idea, spec, plan, and
+record of one work unit share one number.
 
-- **S-series** (implementation steps): one ID `SXX_<snake>` across the kind-folders —
-  `development/specs/SXX_<snake>.md`, `development/plans/SXX_<snake>.md`,
-  `development/records/SXX_<snake>/STATUS.md`, optional untracked
-  `development/records/SXX_<snake>/artifacts/`. Phase steps continue the series
-  (S15+). Two digits, zero-padded.
-- **P-series** (phase outlines): `development/ideas/PN_<snake>.md`. The file stays as
-  a record after the phase is specced (`Status:` header per `development/ideas/README.md`).
-- **N-series** (post-slice tasks): two-digit, strictly monotonic, never reused, gaps
-  never backfilled. Bands: `0x` ordering prefixes (only `00_OVERVIEW`), `10–19`
-  protocols, `20+` tasks.
-  - Prompt file: `development/plans/NN_<snake>.md`. **Allocation rule:** the number is
-    allocated by adding a row to the register table in `development/plans/README.md`
-    *at assignment*, even when the prompt text is delivered ad hoc and never committed
-    (the row then says so). The register is the single allocator; on a collision the
-    first-registered number wins and the latecomer takes the next free one.
-  - Execution report: `development/records/NN_<snake>_REPORT.md` (flat, suffixed).
-  - Document-deliverable (design doc / proposal / multi-file): subdirectory
-    `development/records/NN_<snake>/NN_<snake>.md` (+ sidecar files).
-  - External-facing drafts: thematic subdirs under `development/records/` as the
-    owning prompt names them; indexed in `development/records/README.md`.
-- **ADRs** (the one exception to snake_case): `development/adr/NNNN-<kebab-title>.md`,
-  four-digit, allocated by the next free number in `development/adr/README.md`'s index.
-- **Policies**: `development/policies/<snake_topic>.md`, one topic each.
-- **Sign-off marker:** any line in a STATUS or report that requires trunk/human action
-  carries the literal token `TD-PENDING:` and gets a row in `development/DECISIONS.md`
-  in the same PR. `grep -rn "TD-PENDING" development/` must only return lines whose
-  register row is still open.
+- **Lifecycle documents** (`ideas/`, `specs/`, `plans/`, `records/`, `adr/`):
+  `NNN_<slug>_<kind>.md`, or `NNN_<slug>_<kind>/` for multi-file deliverables (inner
+  files keep their names; optional untracked `NNN_<slug>_record/artifacts/`).
+  - `NNN` = three-digit zero-padded global sequence, numbering consecutively across
+    kinds; allocation order = assignment order.
+  - One number per work unit, shared across its lifecycle files:
+    `005_vault_plan_t1_spec.md` / `_plan.md` / `_record/`. Single-kind documents (an
+    ADR, a standalone record) consume one number.
+  - Kind suffix = singular of the folder name: `idea`, `spec`, `plan`, `record`, `adr`.
+- **Allocation rule:** the number is allocated by adding a row to the document register
+  (`development/REGISTRY.md` §1) *at assignment*, even when the plan text is delivered
+  ad hoc and never committed (the row then says so). The register is the single
+  allocator: numbers are strictly monotonic, never reused; gaps are never backfilled
+  (015–019 stay open). On a collision, the first-registered number wins and the
+  latecomer takes the next free one.
+- **Exemptions:** `policies/` files are unnumbered snake_case, one topic each; all
+  `README.md` files, `REGISTRY.md`, and `archive/` contents (documents arrive there
+  under their dying names) are also exempt.
+- **History:** the corpus was renamed to this scheme by work unit 035. The former
+  S-series ("S08"), P-series, N-series, and `NNNN-<kebab-title>` ADR names survive
+  only as historical wording in frozen records and as `REFERENCES.lock` ids — the
+  remap table in `development/REGISTRY.md` §2 is the bridge. Never renumber history.
+- **ADR citation form:** `adr NNN` (e.g. `adr 044`). An accepted ADR is frozen except
+  its `Status:` field.
+- **Branch convention:** `work/NNN-<slug>` (forward-only; existing remote branches keep
+  their historical `step/SXX-*` / `task/NN-*` names).
+- **Sign-off marker:** any line in a record that requires trunk/human action carries
+  the literal token `TD-PENDING:` and gets a row in `development/REGISTRY.md` in the
+  same PR. `grep -rn "TD-PENDING" development/` must only return lines whose register
+  row is still open.

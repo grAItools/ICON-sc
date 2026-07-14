@@ -4,7 +4,7 @@
 
 ## Context
 
-The repo has a living trunk-decision/sign-off register (`development/DECISIONS.md`,
+The repo has a living trunk-decision/sign-off register (`development/REGISTRY.md`,
 formerly `plan/TRUNK_DECISIONS.md`) whose rows track pending/signed-off human
 decisions via the `TD-PENDING:` marker contract. The reorganization (ADR-0001)
 introduces `adr/` for Nygard-style architecture decision records. The overlap

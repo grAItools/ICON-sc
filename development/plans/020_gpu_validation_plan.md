@@ -11,7 +11,7 @@ Every gpu-marked test since S07 (satad, graupel, dycore, diffusion, JW plan
 equivalence — the `gtfn_gpu` backend legs) has only ever been *skip-validated*:
 written, collected, and confirmed to skip cleanly without a device, but never
 executed. S14's acceptance "bitwise per backend" is evidence-backed for `gtfn_cpu`
-only. This is flagged in the sign-off ledger (`development/records/IMPLEMENTATION_REPORT.md` §5) and
+only. This is flagged in the sign-off ledger (`development/records/036_implementation_report_record.md` §5) and
 in the S07/S08/S12/S14 STATUS files.
 
 ## Hard rules (restated; full list in development/plans/README.md)
@@ -28,10 +28,10 @@ in the S07/S08/S12/S14 STATUS files.
 ## Procedure
 
 1. Read `development/plans/README.md` in full. Read the gpu-relevant STATUS notes:
-   `development/records/S07_satad_component/STATUS.md` (Review fixes section),
-   `development/records/S08_graupel_component/STATUS.md`,
-   `development/records/S12_nonhydro_hosting/STATUS.md`,
-   `development/records/S14_plan_through_dycore/STATUS.md` (Review fixes: the gpu PR note).
+   `development/records/007_satad_component_record/STATUS.md` (Review fixes section),
+   `development/records/008_graupel_component_record/STATUS.md`,
+   `development/records/012_nonhydro_hosting_record/STATUS.md`,
+   `development/records/014_plan_through_dycore_record/STATUS.md` (Review fixes: the gpu PR note).
 2. Install the GPU stack into the workspace env WITHOUT touching any pinned file:
    `uv pip install --prerelease=allow -c constraints/gpu-cuda12.txt "cupy-cuda12x==13.6.0" "gt4py[cuda12]==1.1.10"`
    Then verify: `uv run python -c "import cupy; print(cupy.cuda.runtime.getDeviceCount())"` → ≥1.

@@ -85,7 +85,8 @@ def test_convergence_plot_artifact(fits: dict[str, OrderFit]) -> None:
     import matplotlib.pyplot as plt
 
     artifacts = (
-        Path(__file__).resolve().parents[3] / "development/records/S04_coupling_algebra/artifacts"
+        Path(__file__).resolve().parents[3]
+        / "development/records/004_coupling_algebra_record/artifacts"
     )
     artifacts.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(7.0, 5.0))

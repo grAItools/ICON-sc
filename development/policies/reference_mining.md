@@ -2,7 +2,7 @@
 
 Scope: how external references are mined and recorded; the pinned reference pair.
 
-**Mine references before writing code.** Candidate module paths in PLANs are hints —
+**Mine references before writing code.** Candidate module paths in plans are hints —
 icon4py/gt4py reorganize; discover the real paths, then append an entry to
 `REFERENCES.lock` for every source consulted (schema in that file). Scientific
 constants and algorithm structure come from references, never from memory or

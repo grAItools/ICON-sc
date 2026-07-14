@@ -112,7 +112,7 @@ isolation.
   below: sub-µs timesteps are a real T0 driver limitation.
 - **matplotlib added to the dev dependency group** (PLAN item 5 requires plot
   artifacts). Dev-only; not a gt4py/icon4py pin change. Plots land in the
-  gitignored `development/records/S04_coupling_algebra/artifacts/` and regenerate with
+  gitignored `development/records/004_coupling_algebra_record/artifacts/` and regenerate with
   the suite (tests skip cleanly if matplotlib is absent).
 - **Diagnostics of a stepper are those of the first (ψⁿ) evaluation** (tasmania's
   convention); later stage evaluations feed the scheme only. Documented in the
@@ -166,8 +166,8 @@ isolation.
 
 ## Artifacts
 
-- `development/records/S04_coupling_algebra/artifacts/convergence_ode.png` (acceptance 1)
-- `development/records/S04_coupling_algebra/artifacts/convergence_burgers.png` (acceptance 2)
+- `development/records/004_coupling_algebra_record/artifacts/convergence_ode.png` (acceptance 1)
+- `development/records/004_coupling_algebra_record/artifacts/convergence_burgers.png` (acceptance 2)
 
 Both are gitignored (repo policy); regenerate with
 `uv run pytest packages/symcon-core/tests/test_order_ode.py packages/symcon-core/tests/test_order_burgers.py`.

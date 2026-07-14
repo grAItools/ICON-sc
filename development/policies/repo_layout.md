@@ -1,8 +1,10 @@
-# symcon: Repository Layout
+# repo_layout — the repository layout, packaging boundaries, and layout conventions
 
-**Companion to:** *symcon architecture* v1.3 · Section references (§) point into that document.
-
----
+Scope: the monorepo tree, the three-distribution packaging and import-boundary
+structure, and the layout conventions that carry architectural weight. Section
+references (§) point into `docs/architecture/symcon_architecture.md` (v1.3).
+Formerly `docs/architecture/symcon_repo_layout.md` (moved and made a living policy in
+work unit 035, TD-35.2).
 
 ## 0. Top-level decisions
 
@@ -279,15 +281,15 @@ tools/
 ├── names_audit.py                       # registry ↔ CF table ↔ GRIB2 consistency checks
 └── constraints_update.py                # regenerate constraints/ lockfiles against fresh gt4py/icon4py
 
-development/                             # repo-internal process memory — never a Sphinx source (task 33, TD-33.1)
+development/                             # repo-internal process memory — never a Sphinx source (TD-33.1)
 ├── README.md                            # map of the tree
-├── DECISIONS.md                         # living trunk-decision and sign-off register
-├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary
-├── adr/                                 # architecture decision records (NNNN-<kebab-title>.md)
-├── ideas/                               # future proposals; phase outlines P2–P7
-├── specs/                               # frozen step/feature contracts (SXX_*.md)
-├── plans/                               # step PLANs + task prompts; README.md = task-number register
-├── records/                             # outcome documents frozen at merge: STATUS files, task reports
+├── REGISTRY.md                          # living registry: document numbers, remap table, trunk decisions
+├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary, repo layout
+├── adr/                                 # architecture decision records (NNN_<slug>_adr.md)
+├── ideas/                               # future proposals; phase outlines P2–P7 (NNN_<slug>_idea.md)
+├── specs/                               # frozen work-unit contracts (NNN_<slug>_spec.md)
+├── plans/                               # frozen work-unit plans (NNN_<slug>_plan.md)
+├── records/                             # outcome documents frozen at merge (NNN_<slug>_record{.md,/})
 └── references/                          # per-source reference cards + local/ (gitignored)
 
 docs/
