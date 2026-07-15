@@ -28,7 +28,7 @@ proposal/spec/plan/report files (`<kind>-<NNNN>-<kebab-slug>`); single-kind docu
 consume one number. ADRs are no longer registered here: they number independently in
 `development/ADRs/` (index: `ADRs/README.md`); the former ADR rows 043–048 remapped to
 ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
-**Next free number: 0051.**
+**Next free number: 0052.**
 
 | NNNN | slug | kinds | status |
 |---|---|---|---|
@@ -72,6 +72,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0042 | p7-presets-docs-anemoi | proposal | accepted-roadmap |
 | 0049 | work-structure-iteration | report | executed (plan ad hoc, not committed) |
 | 0050 | work-tree-migration | plan + report | executed |
+| 0051 | kebab-and-flat-reports | plan + report | pending (plan `development/work/plans/plan-0051-kebab-and-flat-reports.md`) |
 
 Numbers 0000–0014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
