@@ -71,7 +71,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0041 | p6-differentiable-distributed-da | proposal | accepted-roadmap |
 | 0042 | p7-presets-docs-anemoi | proposal | accepted-roadmap |
 | 0049 | work-structure-iteration | report | executed (plan ad hoc, not committed) |
-| 0050 | work-tree-migration | plan + report | this work unit (plan `development/work/plans/plan-0050-work-tree-migration.md`) |
+| 0050 | work-tree-migration | plan + report | executed |
 
 Numbers 0000–0014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
@@ -238,6 +238,6 @@ are unchanged.
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-50.1 | (merge) | `development/work/` tree with kind-prefixed names: lifecycle folders `work/{proposals,specs,plans,reports}` (ex-`ideas`, ex-`records`); files `<kind>-<NNNN>-<kebab-slug>`, four digits, **numeric values preserved** from the three-digit ids (never compact-renumbered — the remap is §2b); lifecycle vocabulary proposal → spec → plan → report | pending | ADR-0006 | — |
-| TD-50.2 | (merge) | `ADRs/` independence: own Nygard sequence from 0000 (043–048 → 0000–0005 in order), the deliberate uppercase exception (the repo's only non-lowercase folder), citation form `ADR-NNNN`; supersedes ADR-0003's sequence/suffix clauses | pending | ADR-0006 | — |
-| TD-50.3 | (merge) | `REFERENCES.lock` → `development/references/lock.toml`; the header-title edit sanctioned (append-only binds the `[[ref]]` entries, not the schema comment); entries and their historical `step` ids untouched | pending | ADR-0006; 049 evaluation §3 | — |
+| TD-50.1 | 2026-07-15 | `development/work/` tree with kind-prefixed names: lifecycle folders `work/{proposals,specs,plans,reports}` (ex-`ideas`, ex-`records`); files `<kind>-<NNNN>-<kebab-slug>`, four digits, **numeric values preserved** from the three-digit ids (never compact-renumbered — the remap is §2b); lifecycle vocabulary proposal → spec → plan → report | signed-off | ADR-0006 | work-0050 merge `fcdb527` |
+| TD-50.2 | 2026-07-15 | `ADRs/` independence: own Nygard sequence from 0000 (043–048 → 0000–0005 in order), the deliberate uppercase exception (the repo's only non-lowercase folder), citation form `ADR-NNNN`; supersedes ADR-0003's sequence/suffix clauses | signed-off | ADR-0006 | work-0050 merge `fcdb527` |
+| TD-50.3 | 2026-07-15 | `REFERENCES.lock` → `development/references/lock.toml`; the header-title edit sanctioned (append-only binds the `[[ref]]` entries, not the schema comment); entries and their historical `step` ids untouched | signed-off | ADR-0006; 049 evaluation §3 | work-0050 merge `fcdb527` |
