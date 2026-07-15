@@ -203,10 +203,12 @@ positive.
 - **F1** (renews 035's F2): when plans 0020–0025/0030 are executed, restate their
   output paths in the `work/` scheme at execution time; their current
   `development/records/0NN_*_record*` strings are by-design residuals.
-- **F2**: ~60 `REFERENCES.lock` mentions in `packages/**`/`validation/**` provenance
-  comments and `jw_step.py:24` are outside §6.4's sanction and still cite the old
-  name; the lock header's formerly-note and REGISTRY §2b bridge them. A trunk-called
-  mechanical sweep (comment-only, no code) could retire them.
+- **F2**: 86 `REFERENCES.lock` mention-lines *(count corrected in review round 1 from
+  "~60"; reviewer measurement: 83 in 45 files under `packages/`, 2 in
+  `validation/L4_idealized/`, 1 at `benchmarks/dispatch_overhead/jw_step.py:24`)* in
+  provenance comments are outside §6.4's sanction and still cite the old name; the
+  lock header's formerly-note and REGISTRY §2b bridge them. A trunk-called mechanical
+  sweep (comment-only, no code) could retire them.
 - Owner at merge: fill TD-50.1–3 dates/evidence; flip REGISTRY row 0050 to executed.
 
 ## 7. Artifacts
