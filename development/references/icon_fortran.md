@@ -3,8 +3,8 @@
 **Source:** ICON open-source release — icon-model.org → gitlab.dwd.de/icon/icon-model;
 consulted via the canonical public mirror https://gitlab.dkrz.de/icon/icon-model
 **Pinned:** tag `icon-2026.04-public`
-(`8597da45ef4b86323f3fb844caedc4ae5e1ffc01`) — corpus pin, see `REFERENCES.lock`
-entries and `development/records/000_overview_record.md` §3.
+(`8597da45ef4b86323f3fb844caedc4ae5e1ffc01`) — corpus pin, see `development/references/lock.toml`
+entries and `development/work/reports/report-0000-overview.md` §3.
 **License:** BSD-3
 
 ## Role in the project
@@ -26,4 +26,4 @@ verification target and the disagreement goes in the step's STATUS record
 
 ## Consultation ledger
 
-`grep -n 'id = "icon-fortran' REFERENCES.lock` — one `[[ref]]` entry per consultation.
+`grep -n 'id = "icon-fortran' development/references/lock.toml` — one `[[ref]]` entry per consultation.

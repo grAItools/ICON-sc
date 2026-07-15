@@ -27,4 +27,4 @@ Fortran and icon4py disagree (working agreement, `AGENTS.md`).
 
 ## Consultation ledger
 
-`grep -n 'id = "icon4py' REFERENCES.lock` — one `[[ref]]` entry per consultation.
+`grep -n 'id = "icon4py' development/references/lock.toml` — one `[[ref]]` entry per consultation.

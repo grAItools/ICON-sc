@@ -6,7 +6,7 @@ must be merged to `main` first (its report folder is in the move map §4), and t
 rebased/merged onto that `main` before execution starts.
 
 **Deliverable:** the migration executed per this plan + the execution report
-`development/records/033_structure_migration_record/REPORT.md` (born in the new tree).
+`development/work/reports/report-0033-structure-migration/REPORT.md` (born in the new tree).
 
 This prompt is frozen at assignment. Do not "improve" it beyond its stated scope. Where it
 conflicts with reality (a file listed here does not exist, a path already changed), stop,
@@ -66,7 +66,7 @@ references/                  DELETED (content absorbed into development/referenc
   before every commit. Commit messages end with the `Co-Authored-By:` trailer for your model.
 - **No data files in git. No dependency pin changes. No tolerance changes. No test edits**
   beyond the two path-string updates in §5.11 (and their docstrings).
-- **`REFERENCES.lock` is not modified** — not even path strings; its `step` fields are bare
+- **`development/references/lock.toml` is not modified** — not even path strings; its `step` fields are bare
   IDs and its `paths` fields describe *external* repos.
 - **`docs/architecture/*` is never edited** (deny-listed). The one planning-path reference in
   `docs/architecture/symcon_repo_layout.md:104` is handled as a proposed-diff artifact for
@@ -244,8 +244,8 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
    `**License:** …` · `## Role in the project` (2–4 sentences) · `## Gotchas` (e.g.
    icon_fortran: "gitlab.dwd.de does not resolve; use the gitlab.dkrz.de mirror";
    sympl: upstream + stubbiali `oop` fork) · `## Consultation ledger` → one line pointing
-   at `REFERENCES.lock` (grep by source id). Facts come from `records/00_OVERVIEW.md` §3,
-   `REFERENCES.lock` entries, and `constraints/cpu-ci.txt` — **no facts from memory**.
+   at `development/references/lock.toml` (grep by source id). Facts come from `records/00_OVERVIEW.md` §3,
+   `development/references/lock.toml` entries, and `constraints/cpu-ci.txt` — **no facts from memory**.
    `README.md`: card index + the ownership rule (cards are living, updated only when a pin
    or corpus decision changes; the lock is the machine ledger, appended per consultation).
    `local/` keeps the moved README (row 18) — rewrite its first line to name the new path.
@@ -303,7 +303,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
     `.claude/commands/review-step.md` and the `.opencode` twin for planning paths (none
     found at plan-writing time; verify).
 13. **Layout-doc diff artifact** (do NOT edit the doc): produce
-    `development/records/033_structure_migration_record/layout_doc_revision.diff` — a unified diff
+    `development/work/reports/report-0033-structure-migration/layout_doc_revision.diff` — a unified diff
     against `docs/architecture/symcon_repo_layout.md` replacing the `plan/` node in the §4
     repo tree (line ~104) with the `development/` tree (one line per folder) and deleting
     the top-level `references/` node if present. The owner applies it (TD-33.4).
@@ -373,9 +373,9 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
 6. **Tree checks**: `git ls-files plan/ references/` outputs nothing; `[ ! -d plan ]`;
    `ls development/` shows exactly the §1 folders + `README.md` + `DECISIONS.md`.
 
-## 8. Report — `development/records/033_structure_migration_record/REPORT.md`
+## 8. Report — `development/work/reports/report-0033-structure-migration/REPORT.md`
 
-Header (branch/date/state per the STATUS template in `policies/records_and_liveness.md`),
+Header (branch/date/state per the STATUS template in `policies/document_kinds.md`),
 then: (1) move ledger — confirm §4 executed, list every deviation; (2) retarget statistics —
 hits rewritten per §5.1 row, ambiguous matches left + why; (3) untracked files relocated;
 (4) gate outputs — the summary line of each §7 command verbatim, dated; (5) register rows
@@ -396,9 +396,9 @@ Scope first: the diff touches only §4–§5 files. Then verify, with evidence p
    TD-29.1/29.6/29.7 statuses flipped exactly as §3.3, no other row cells changed.
 5. Policies contain the load-bearing content (spot-check: gate baselines table present
    verbatim in `verification_gates.md`; allocation rule in `naming_conventions.md`;
-   templates in `records_and_liveness.md`); AGENTS.md lost no hard rule (diff it).
+   templates in `document_kinds.md`); AGENTS.md lost no hard rule (diff it).
 6. Reference cards: every `**Pinned:**` value matches `constraints/cpu-ci.txt` /
-   `REFERENCES.lock` — a card fact with no source is MAJOR.
+   `development/references/lock.toml` — a card fact with no source is MAJOR.
 7. Report honesty: gate outputs dated and verbatim; deviations declared.
 
 Verdict per protocol: `approve` or `request-changes` with MAJOR/MINOR/INFO findings,

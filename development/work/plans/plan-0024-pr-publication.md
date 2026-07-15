@@ -8,7 +8,7 @@ an exact push/PR command script for the human to review and execute.
 
 All 14 step branches (`step/S01-repo-scaffold` … `step/S14-plan-through-dycore`)
 exist locally, each already merged into local `main` in DAG order (merge ledger:
-`development/records/036_implementation_report_record.md` §2). AGENTS.md requires one PR per step. Seven
+`development/work/reports/report-0036-implementation-report.md` §2). AGENTS.md requires one PR per step. Seven
 steps carry HUMAN SIGN-OFF items (report §5) that must be visible in their PR
 bodies. `origin/main` is at the pre-slice commit; the PR template, if any, lives in
 `.github/` (check for `PULL_REQUEST_TEMPLATE`; if present, its structure is
@@ -16,7 +16,7 @@ mandatory for the bodies you draft).
 
 ## Procedure
 
-1. Read `development/records/036_implementation_report_record.md` fully (§2 merge ledger, §5 sign-off ledger)
+1. Read `development/work/reports/report-0036-implementation-report.md` fully (§2 merge ledger, §5 sign-off ledger)
    and `AGENTS.md` (workflow item 6: STATUS contents; PR-per-step).
 2. For each step S01–S14, draft `development/records/024_pr_publication_record/SXX_pr_body.md`:
    - Title: `SXX: <one-line what>` (take it from the merge commit subject).
@@ -27,7 +27,7 @@ mandatory for the bodies you draft).
      `## ⚠ HUMAN SIGN-OFF REQUIRED` section quoting the exact flagged item);
      **Review history** (rounds and what the review caught — one line per round,
      from the report §2 table + STATUS "Review fixes" sections);
-     **References** (the REFERENCES.lock entry ids the step added).
+     **References** (the development/references/lock.toml entry ids the step added).
    - End the body with the standard footer:
      `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
 3. Draft `development/records/024_pr_publication_record/publish.sh` — NOT executable by you; a

@@ -20,5 +20,5 @@ interpolation factory fields computing all-finite.
 
 ## Consultation ledger
 
-`grep -n 'id = "icon-grid-generator' REFERENCES.lock` — one `[[ref]]` entry per
+`grep -n 'id = "icon-grid-generator' development/references/lock.toml` — one `[[ref]]` entry per
 consultation.

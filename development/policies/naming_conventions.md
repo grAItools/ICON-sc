@@ -10,7 +10,7 @@ record of one work unit share one number.
   - `NNN` = three-digit zero-padded global sequence, numbering consecutively across
     kinds; allocation order = assignment order.
   - One number per work unit, shared across its lifecycle files:
-    `005_vault_plan_t1_spec.md` / `_plan.md` / `_record/`. Single-kind documents (an
+    `spec-0005-vault-plan-t1.md` / `_plan.md` / `_record/`. Single-kind documents (an
     ADR, a standalone record) consume one number.
   - Kind suffix = singular of the folder name: `idea`, `spec`, `plan`, `record`, `adr`.
 - **Allocation rule:** the number is allocated by adding a row to the document register
@@ -24,7 +24,7 @@ record of one work unit share one number.
   under their dying names) are also exempt.
 - **History:** the corpus was renamed to this scheme by work unit 035. The former
   S-series ("S08"), P-series, N-series, and `NNNN-<kebab-title>` ADR names survive
-  only as historical wording in frozen records and as `REFERENCES.lock` ids — the
+  only as historical wording in frozen records and as `development/references/lock.toml` ids — the
   remap table in `development/REGISTRY.md` §2 is the bridge. Never renumber history.
 - **ADR citation form:** `adr NNN` (e.g. `adr 044`). An accepted ADR is frozen except
   its `Status:` field.

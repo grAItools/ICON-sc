@@ -24,4 +24,4 @@ requires. Backend objects `gtx.gtfn_cpu`/`gtx.gtfn_gpu` are
 
 ## Consultation ledger
 
-`grep -n 'id = "gt4py' REFERENCES.lock` — one `[[ref]]` entry per consultation.
+`grep -n 'id = "gt4py' development/references/lock.toml` — one `[[ref]]` entry per consultation.

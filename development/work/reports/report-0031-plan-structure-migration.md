@@ -2,7 +2,7 @@
 
 **Branch:** `task/29-plan-structure` (items executed immediately after the task-29
 proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
-**Spec:** `development/records/029_plan_structure_record/29_plan_structure.md` §8 ·
+**Spec:** `development/work/reports/report-0029-plan-structure/29_plan_structure.md` §8 ·
 **Commits:** items A–E one commit each (`f009d5b`, `48212ab`, `199f967`, `aa7dbc6`,
 `06585c8`) + this report.
 
@@ -18,10 +18,10 @@ proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
   29.4/5/6/7 pending). No verbatim-copy discrepancies found against the sources.
   `grep -r "TD-PENDING" plan/` returns only rule/definition text (development/archive/plan_tree_map.md,
   TRUNK_DECISIONS.md, the 29 proposal) — zero live markers, as expected forward-only.
-- **C — `development/plans/README.md`** (refresh): added one section ("Task-number
+- **C — `development/work/plans/README.md`** (refresh): added one section ("Task-number
   register") with the allocation rule, the pointer paragraph to `development/archive/plan_tree_map.md` /
   `TRUNK_DECISIONS.md`, and a 13-row register table (10, 20–31). Purely additive:
-  `git diff main..HEAD -- development/plans/README.md` has **0 deleted lines**; invariants,
+  `git diff main..HEAD -- development/work/plans/README.md` has **0 deleted lines**; invariants,
   gate-baseline table, and caches sections byte-identical.
 - **D — root `README.md`** (refresh; TD-29.8): status paragraph replaced
   (slice-merged state, task register, docs site), Contents table extended
@@ -29,7 +29,7 @@ proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
   `development/plans/`, `development/archive/plan_tree_map.md`, `docs/`), Bootstrap section replaced by
   "Working on the repo" with current commands.
   `grep -n "pre-implementation\|No framework code exists" README.md` → empty.
-- **E — `development/records/README.md`** (new): kind-labelled index of 26/27/28/29/31
+- **E — `development/work/reports/README.md`** (new): kind-labelled index of 26/27/28/29/31
   plus the two declared-future dirs. `upstream/` and `prs/` confirmed NOT created.
 
 ## Verification gates
@@ -38,9 +38,9 @@ proposal on owner instruction — see Deviations) · **Date:** 2026-07-13 ·
 uv run sphinx-build -E -W --keep-going -b html docs /tmp/task31-docs-check   → exit 0
 uv run ruff check .                                                          → All checks passed!
 uv run ruff format --check .                                                 → 173 files already formatted (== main)
-git diff main..HEAD --stat → only: development/records/029_plan_structure_record/29_plan_structure.md (task 29),
-  development/archive/plan_tree_map.md, development/REGISTRY.md, development/plans/README.md, README.md,
-  development/records/README.md, this report. No renames, no deletions.
+git diff main..HEAD --stat → only: development/work/reports/report-0029-plan-structure/29_plan_structure.md (task 29),
+  development/archive/plan_tree_map.md, development/REGISTRY.md, development/work/plans/README.md, README.md,
+  development/work/reports/README.md, this report. No renames, no deletions.
 uv run pytest packages -m "not gpu and not slow" -q → recorded below at completion
 ```
 

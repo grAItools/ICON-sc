@@ -4,7 +4,7 @@
 
 This directory is the repo-internal process memory: plans, contracts, records, and
 registers for the agent-driven implementation. Rationale and full analysis:
-`development/records/029_plan_structure_record/29_plan_structure.md` (task 29). This file states
+`development/work/reports/report-0029-plan-structure/29_plan_structure.md` (task 29). This file states
 the rules; it does not restate the analysis.
 
 ## 1. Taxonomy — what each file kind is and how it may change
@@ -13,8 +13,8 @@ the rules; it does not restate the analysis.
 |---|---|---|
 | Canonical architecture | trunk-edited only | `docs/architecture/*.md` |
 | Working agreement | living, trunk-gated | `AGENTS.md` (+ `CLAUDE.md` shim) |
-| Provenance ledger | append-only | `REFERENCES.lock` |
-| Plan overview / task register | living | `development/records/000_overview_record.md`, `development/plans/README.md` |
+| Provenance ledger | append-only | `development/references/lock.toml` |
+| Plan overview / task register | living | `development/work/reports/report-0000-overview.md`, `development/work/plans/README.md` |
 | Trunk-decision register | living, append-mostly | `development/REGISTRY.md` |
 | Step contract (SPEC) | frozen at step start | `development/specs/SXX_*.md` |
 | Step how-to (PLAN) | frozen at step start | `development/plans/SXX_*.md` |
@@ -25,7 +25,7 @@ the rules; it does not restate the analysis.
 | Task execution report | frozen at task merge | `development/records/NN_*_REPORT.md` |
 | Design document / proposal | frozen; decisions extracted to the register | `development/records/NN_<name>/NN_<name>.md` |
 | External-facing draft | frozen after human publishes | `development/records/<theme>/` (e.g. `upstream/`, `prs/`) |
-| Process report (slice-level) | frozen | `development/records/036_implementation_report_record.md` (its §5/§6 are superseded going forward by `TRUNK_DECISIONS.md`) |
+| Process report (slice-level) | frozen | `development/work/reports/report-0036-implementation-report.md` (its §5/§6 are superseded going forward by `TRUNK_DECISIONS.md`) |
 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed, headered); `docs/_build/`, `development/records/*/artifacts/` (untracked) |
 | Published site source | living | `docs/{conf.py,index.md,glossary.md,tutorials/,api/}` |
 | Agent tooling / CI templates | living | `.claude/`, `.opencode/`, `.github/` |
@@ -41,7 +41,7 @@ the rules; it does not restate the analysis.
   never backfilled. Bands: `0x` plan-root ordering prefixes (only `00_OVERVIEW`),
   `10–19` protocols, `20+` tasks.
   - Prompt file: `development/plans/NN_<snake>.md`. **Allocation rule:** the number is
-    allocated by adding a row to the register table in `development/plans/README.md` *at
+    allocated by adding a row to the register table in `development/work/plans/README.md` *at
     assignment*, even when the prompt text is delivered ad hoc and never committed
     (the row then says so). The register is the single allocator; on a collision the
     first-registered number wins and the latecomer takes the next free one.
@@ -49,7 +49,7 @@ the rules; it does not restate the analysis.
   - Document-deliverable (design doc / proposal / multi-file): subdirectory
     `development/records/NN_<snake>/NN_<snake>.md` (+ sidecar files).
   - External-facing drafts: thematic subdirs under `reports/` as the owning prompt
-    names them; indexed in `development/records/README.md`.
+    names them; indexed in `development/work/reports/README.md`.
 - **Sign-off marker:** any line in a STATUS or report that requires trunk/human action
   carries the literal token `TD-PENDING:` and gets a row in `development/REGISTRY.md`
   in the same PR. `grep -rn "TD-PENDING" plan/` must only return lines whose register
@@ -67,9 +67,9 @@ the rules; it does not restate the analysis.
   `## 8. Review fixes (round N)`.
   **Artifact-reference rule:** `development/records/*/artifacts/` is gitignored; cite every
   untracked artifact *with its regeneration command*, never as a bare path.
-- **Task prompts** follow the register format of `development/plans/README.md`
+- **Task prompts** follow the register format of `development/work/plans/README.md`
   (Hard rules → Items → Acceptance criteria → Verification gates → Review checklist,
-  cf. `021_ci_hardening_plan.md`).
+  cf. `plan-0021-ci-hardening.md`).
 
 ## 4. plan/ ↔ docs/ boundary policy
 
@@ -78,7 +78,7 @@ the rules; it does not restate the analysis.
 2. `docs/` is the published surface. Its only trunk-frozen zone is `architecture/`;
    everything else there is living site source.
 3. Plan content wanted user-facing is *rewritten* under `docs/` (tutorials cite
-   `development/records/036_implementation_report_record.md` as author-side source material, without links) —
+   `development/work/reports/report-0036-implementation-report.md` as author-side source material, without links) —
    never included, symlinked, or excerpted mechanically. P7's architecture
    canonicalization owns any future exception.
 4. Generated files are committed under `docs/` only with a `GENERATED FILE` header

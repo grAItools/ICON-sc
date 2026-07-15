@@ -46,7 +46,7 @@ else — `symcon.core` itself still imports without jax):**
   (§11.8: one source of numerical truth per scheme, held mechanically).
 - `microphysics.py` — `_graupel_functional`: line-by-line `lax.scan` port of
   the granule's 26-slot sedimentation scan + the at-ground flux program
-  (REFERENCES.lock `icon4py-graupel-stencils`), with the double-where guard
+  (development/references/lock.toml `icon4py-graupel-stencils`), with the double-where guard
   discipline on every branch-guarded `log`/division (NaN-free primal *and*
   gradients). Coefficients the granule precomputes with `math.gamma` are
   re-derived **in-trace** via `gammaln` from the ParamTree so parameter

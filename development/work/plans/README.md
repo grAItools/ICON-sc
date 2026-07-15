@@ -21,13 +21,13 @@ stated scope — scope discipline is the main anti-drift device.
 
 | Order | Plan | Needs | Difficulty for a weak model |
 |---|---|---|---|
-| 1 | `020_gpu_validation_plan.md` | a CUDA machine | low (run + record) |
-| 2 | `021_ci_hardening_plan.md` | — | low-medium (mechanical, many small edits) |
-| 3 | `022_plan_hash_config_digest_plan.md` | — | medium (touches the 005 core; strictly specced) |
-| 4 | `023_upstream_reports_plan.md` | — | low (writing, evidence already exists) |
-| 5 | `024_pr_publication_plan.md` | push access + human | low (drafting; human presses the buttons) |
-| 6 | `025_cf_multistage_t1_plan.md` | — | **high — prefer a strong model**; plan included so scope is frozen either way |
-| 7 | `030_author_phase_specs_plan.md` | trunk decision on which phase | medium-high (design writing, heavily templated) |
+| 1 | `plan-0020-gpu-validation.md` | a CUDA machine | low (run + record) |
+| 2 | `plan-0021-ci-hardening.md` | — | low-medium (mechanical, many small edits) |
+| 3 | `plan-0022-plan-hash-config-digest.md` | — | medium (touches the 005 core; strictly specced) |
+| 4 | `plan-0023-upstream-reports.md` | — | low (writing, evidence already exists) |
+| 5 | `plan-0024-pr-publication.md` | push access + human | low (drafting; human presses the buttons) |
+| 6 | `plan-0025-cf-multistage-t1.md` | — | **high — prefer a strong model**; plan included so scope is frozen either way |
+| 7 | `plan-0030-author-phase-specs.md` | trunk decision on which phase | medium-high (design writing, heavily templated) |
 
 Work units 020–024 are independent of each other except where noted inside the files.
 
@@ -37,10 +37,10 @@ The document register (allocation at assignment, strictly monotonic, no reuse, n
 backfill) is `development/REGISTRY.md` §1; the old→new name remap is §2 there. Full
 naming convention and file taxonomy:
 `development/policies/naming_conventions.md` and
-`development/policies/records_and_liveness.md`; the development/docs boundary policy is
+`development/policies/document_kinds.md`; the development/docs boundary policy is
 `development/policies/docs_boundary.md`; the living trunk-decision/sign-off register is
 `development/REGISTRY.md` (it supersedes
-`development/records/036_implementation_report_record.md` §5/§6 going forward).
+`development/work/reports/report-0036-implementation-report.md` §5/§6 going forward).
 
 ## Invariants that apply to EVERY work unit (also restated inside each plan)
 
@@ -60,7 +60,7 @@ naming convention and file taxonomy:
   another work unit's files. Merged work units' records are historical — never edit
   them; new findings go in YOUR record.
 - Every consulted external source (icon4py, gt4py, ICON Fortran, docs) gets an entry
-  appended to `REFERENCES.lock` (schema in that file's header) **at the moment of
+  appended to `development/references/lock.toml` (schema in that file's header) **at the moment of
   consultation**, with a commit SHA or tag. Pinned pair: icon4py v0.2.0
   (`28d32c45afb4dbea1da6b6e5170202f08b4adb88`) + gt4py 1.1.10; ICON Fortran
   icon-2026.04-public (`8597da45…`) via the **gitlab.dkrz.de** mirror
@@ -75,7 +75,7 @@ unit that changes any count updates that file in the same commit).
 
 ## Background reading (skim before any work unit)
 
-- `development/records/036_implementation_report_record.md` — what was built, findings, the sign-off ledger.
+- `development/work/reports/report-0036-implementation-report.md` — what was built, findings, the sign-off ledger.
 - `AGENTS.md` — the working agreement (binding).
-- `development/records/000_overview_record.md` — DAG and conventions; §5 names the post-slice phases,
+- `development/work/reports/report-0000-overview.md` — DAG and conventions; §5 names the post-slice phases,
   outlined in `development/ideas/`.

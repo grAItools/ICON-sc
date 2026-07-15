@@ -4,9 +4,9 @@
 
 - **`symcon/icon/components/fast/microphysics.py`**: `Microphysics(Stepper, Factory)` +
   `Graupel(Microphysics)` wrapping the icon4py single-moment six-class graupel granule
-  (microphysics package, pinned v0.2.0; REFERENCES.lock `icon4py-graupel`), the gt4py
+  (microphysics package, pinned v0.2.0; development/references/lock.toml `icon4py-graupel`), the gt4py
   port of ICON's `gscp_graupel.f90` (real path discovered:
-  `src/granules/microphysics_1mom_schemes/`, REFERENCES.lock `icon-fortran-graupel`).
+  `src/granules/microphysics_1mom_schemes/`, development/references/lock.toml `icon-fortran-graupel`).
   - **Scheme selection by registry name** (SPEC in-scope): `Microphysics` is an S02
     `Factory` registry root; concrete schemes subclass it and register under their
     `name` class attribute. `Microphysics(grid, cfg, ctx, scheme="graupel")` (the

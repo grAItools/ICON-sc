@@ -12,7 +12,7 @@ plan-hash-pinned to their preset builders; dispatch-overhead evidence recorded.
    (`"stage_outer"` default = the Fig. 3.10 orchestration S05 already compiled;
    `"substep_outer"` = ICON's nesting). A substep-outer core is unrolled into
    the exact op order of `perform_dyn_substepping` / the icon4py driver
-   (REFERENCES.lock `icon4py-driver-substep-op-order`,
+   (development/references/lock.toml `icon4py-driver-substep-op-order`,
    `icon-fortran-substep-op-order`):
    `plan_ingress(n)` → per substep [`plan_substep_begin` (private carry swaps)
    → `substep_array_call(stage, substep)` per stage → `plan_substep_end`
@@ -66,7 +66,7 @@ plan-hash-pinned to their preset builders; dispatch-overhead evidence recorded.
    T0-vs-T1 per-step wall time with repetition; gpu path records a
    kernel-launch count by capturing one T1 step into a CUDA graph via cupy
    stream capture + ctypes `cudaGraphGetNodes` (cupy v13 binds no node
-   enumeration — REFERENCES.lock `cupy-graph-launch-count`), reporting a
+   enumeration — development/references/lock.toml `cupy-graph-launch-count`), reporting a
    capture failure position as the T2 segment observation. Artifact in §4.
 9. **Two latent S05 compiler fixes** (found by the new coverage, both
    hash-preimage-relevant):

@@ -9,7 +9,7 @@ Grid-dependent tests needed ICON grid files; sourcing every fixture from the off
 archives couples the test tier to external data logistics. Work unit 026 evaluated and
 adopted the icon-grid-generator package (v0.3.2 PyPI, repo SHA `2e8aa97a…`,
 BSD-3-Clause, Oliver Fuhrer/MeteoSwiss); the evidence and boundary are recorded in
-`development/records/026_gridgen_integration_record.md`.
+`development/work/reports/report-0026-gridgen-integration.md`.
 
 ## Decision
 

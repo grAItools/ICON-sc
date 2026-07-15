@@ -11,10 +11,10 @@ Every gpu-marked test since S07 (satad, graupel, dycore, diffusion, JW plan
 equivalence — the `gtfn_gpu` backend legs) has only ever been *skip-validated*:
 written, collected, and confirmed to skip cleanly without a device, but never
 executed. S14's acceptance "bitwise per backend" is evidence-backed for `gtfn_cpu`
-only. This is flagged in the sign-off ledger (`development/records/036_implementation_report_record.md` §5) and
+only. This is flagged in the sign-off ledger (`development/work/reports/report-0036-implementation-report.md` §5) and
 in the S07/S08/S12/S14 STATUS files.
 
-## Hard rules (restated; full list in development/plans/README.md)
+## Hard rules (restated; full list in development/work/plans/README.md)
 
 - **You may not change any test tolerance, assertion, or marker.** If a gpu test
   FAILS, that is a finding to report with full output — not something to fix by
@@ -27,11 +27,11 @@ in the S07/S08/S12/S14 STATUS files.
 
 ## Procedure
 
-1. Read `development/plans/README.md` in full. Read the gpu-relevant STATUS notes:
-   `development/records/007_satad_component_record/STATUS.md` (Review fixes section),
-   `development/records/008_graupel_component_record/STATUS.md`,
-   `development/records/012_nonhydro_hosting_record/STATUS.md`,
-   `development/records/014_plan_through_dycore_record/STATUS.md` (Review fixes: the gpu PR note).
+1. Read `development/work/plans/README.md` in full. Read the gpu-relevant STATUS notes:
+   `development/work/reports/report-0007-satad-component/STATUS.md` (Review fixes section),
+   `development/work/reports/report-0008-graupel-component/STATUS.md`,
+   `development/work/reports/report-0012-nonhydro-hosting/STATUS.md`,
+   `development/work/reports/report-0014-plan-through-dycore/STATUS.md` (Review fixes: the gpu PR note).
 2. Install the GPU stack into the workspace env WITHOUT touching any pinned file:
    `uv pip install --prerelease=allow -c constraints/gpu-cuda12.txt "cupy-cuda12x==13.6.0" "gt4py[cuda12]==1.1.10"`
    Then verify: `uv run python -c "import cupy; print(cupy.cuda.runtime.getDeviceCount())"` → ≥1.

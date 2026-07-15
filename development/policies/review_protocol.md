@@ -50,7 +50,7 @@ is part of your instructions.
    declared. Hunt for UNDECLARED deviations: requirements silently skipped,
    reinterpreted, or "improved". An inaccurate claim in the report is at minimum a
    MINOR finding even when the code is correct.
-6. **Check REFERENCES.lock** if the work unit consulted external sources: entries
+6. **Check development/references/lock.toml** if the work unit consulted external sources: entries
    present, SHAs pinned, claims match the actual source content (spot-check at least
    one).
 

@@ -4,7 +4,7 @@
 the same branch — one PR). First document born under the convention it implements.
 
 **Deliverable:** the migration executed per this plan + the record
-`development/records/035_naming_migration_record/REPORT.md`.
+`development/work/reports/report-0035-naming-migration/REPORT.md`.
 
 This plan is frozen at assignment. It implements the owner-accepted evaluation
 `development/records/34_naming_iteration/34_naming_iteration.md` (all §9 recommendations
@@ -237,7 +237,7 @@ notification that will not come. Additional checks:
    → zero hits (kind vocabulary only). Frozen files excluded by construction.
 5. `git diff main -- docs/architecture/symcon_architecture.md REFERENCES.lock constraints/ uv.lock` empty.
 
-## 8. Record — `development/records/035_naming_migration_record/REPORT.md`
+## 8. Record — `development/work/reports/report-0035-naming-migration/REPORT.md`
 
 Per the STATUS template: rename ledger (72 confirmed), retarget statistics + judgment
 calls, REGISTRY restructure summary, gate outputs verbatim and dated, deviations,

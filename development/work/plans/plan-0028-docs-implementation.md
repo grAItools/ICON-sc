@@ -1,4 +1,4 @@
-<!-- Lifted from development/records/027_docs_plan_record/27_docs_plan.md §5 (task 27).
+<!-- Lifted from development/work/reports/report-0027-docs-plan/27_docs_plan.md §5 (task 27).
      Trunk sign-off on TD-1/TD-2/TD-3: granted by the project owner on 2026-07-13
      ("proceed with the docs implementation plan"). -->
 
@@ -7,10 +7,10 @@
 **Branch:** `task/28-docs-implementation` (from `main`; verify
 `git branch --show-current` before every commit). One commit per item A–F below
 (6 commits + report). **Prerequisite:** trunk sign-off on TD-1/TD-2/TD-3 of
-`development/records/027_docs_plan_record/27_docs_plan.md` (this task implements that
+`development/work/reports/report-0027-docs-plan/27_docs_plan.md` (this task implements that
 plan; do not re-litigate the stack choice).
 
-## Hard rules (restated; full list in development/plans/README.md)
+## Hard rules (restated; full list in development/work/plans/README.md)
 
 - No tolerance changes. No data in git. Do not edit `docs/architecture/*` (the
   tutorials and toctrees may *include* those files read-only, never modify them),
@@ -192,7 +192,7 @@ uv run ruff check . --select D --statistics   # paste into report (the baseline)
 4. `git diff main..HEAD --stat` touches ONLY: `pyproject.toml`, `uv.lock`,
    `constraints/cpu-ci.txt`, `.gitignore`, `docs/**` (new files; `docs/architecture/`
    byte-identical), `.github/workflows/docs.yml`, `.github/workflows/lint.yml`, and
-   the report `development/records/028_docs_implementation_record.md`.
+   the report `development/work/reports/report-0028-docs-implementation.md`.
 5. Report includes: built-site page inventory, warning triage table, ruff `D`
    baseline statistics, the "Pages → GitHub Actions" human action item.
 

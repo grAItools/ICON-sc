@@ -13,13 +13,13 @@ supersedes it. The register handles this by its own convention — TD-29.1's `St
 only its *conclusion* ("move nothing") is on the table.
 
 **Where this document lives.** It was commissioned into
-`development/records/032_docs_development_structure_record/` per the current (task-29) convention.
+`development/work/reports/report-0032-docs-development-structure/` per the current (task-29) convention.
 Under the refined structure of §2 it would be
 `docs/development/records/32_docs_development_structure/` — task deliverables are records.
 The irony is the same bootstrapping one task 29 recorded; it resolves the same way: the
 location is correct under the rules in force at commission time, and history freezes in place
 (§5). Register note: per the allocation rule, number 32 needs a row in
-`development/plans/README.md` — this task's file-scope constraint (new files only) means that row
+`development/work/plans/README.md` — this task's file-scope constraint (new files only) means that row
 lands with the migration task's PR; recorded here so the allocator does not drift.
 
 ---
@@ -137,7 +137,7 @@ invariant becomes: *published surface = `docs/` minus `docs/development/`*; `doc
 ### 2.3 `docs/development/policies/`
 
 **Strengths.** Today's living rules are scattered across `AGENTS.md` (hard rules),
-`development/archive/plan_tree_map.md` (taxonomy, naming, templates, boundary), and `development/plans/README.md`
+`development/archive/plan_tree_map.md` (taxonomy, naming, templates, boundary), and `development/work/plans/README.md`
 (invariants, verification-gate baselines, caches). One policy per file, updated as needed,
 is strictly better than three multi-purpose READMEs.
 
@@ -193,7 +193,7 @@ Sound as specified (idea, motivation, benefits, risks; reviewed/prioritized). Tw
 populations to place:
 
 - **Phase outlines (`development/ideas/P2…P7.md`)** are *not* ideas — they are the accepted
-  roadmap, input contract for task 30 (phase-spec authoring), and `development/records/000_overview_record.md` §5
+  roadmap, input contract for task 30 (phase-spec authoring), and `development/work/reports/report-0000-overview.md` §5
   points at them. They freeze in the archive; their content graduates directly into `specs/`
   when a phase is specced. Copying them into `ideas/` would create a second source of truth.
 - **Open questions parked in the register** (e.g., the old TD-29.6) are the ideas/ natural
@@ -209,7 +209,7 @@ no numbers (ideas churn; they get a number only on graduating to a spec, from th
 scope, frozen interfaces, acceptance criteria) → `specs/`; PLAN.md (ordered tasks, mining
 instructions, pitfalls) → `plans/`. The owner's plans/ definition — complete-but-minimal,
 anti-drift, usable as prompts for mid-tier LLMs — is *verbatim* the discipline
-`development/plans/README.md` already states ("written for LLM agents weaker than the ones that
+`development/work/plans/README.md` already states ("written for LLM agents weaker than the ones that
 built the slice… scope discipline is the main anti-drift device"). Two consequences:
 
 1. **Merge `development/plans/` into `plans/`** (future tasks). A task prompt *is* an
@@ -227,7 +227,7 @@ built the slice… scope discipline is the main anti-drift device"). Two consequ
 prompts 20–25/30 (unexecuted — their literal paths are the contract a weak model follows),
 `docs/conf.py`'s header, ~30 historical documents, **and runtime path construction in
 committed test code** (`test_order_ode.py`, `test_order_burgers.py` build
-`development/records/004_coupling_algebra_record/artifacts` at runtime). A `git mv` preserves blame but
+`development/work/reports/report-0004-coupling-algebra/artifacts` at runtime). A `git mv` preserves blame but
 every *content* citation inside frozen records dangles, and fixing them is forbidden
 (no retro-edits). `REFERENCES.lock` `step` fields are bare ids ("S08"), not paths — safe
 either way.
@@ -261,7 +261,7 @@ what was taken, which step) is ledger-shaped, not document-shaped.
 
 **`references/` md cards are the human layer above it**: one card per *source* (icon4py,
 gt4py, icon-fortran, sympl, tasmania, tutorial PDF, thesis — the §3 corpus of
-`development/records/000_overview_record.md`, ≈8 cards), not per lock entry. Card contents: canonical URL, pinned
+`development/work/reports/report-0000-overview.md`, ≈8 cards), not per lock entry. Card contents: canonical URL, pinned
 version/SHA and where the pin is decided (`constraints/`), license, role in the project,
 gotchas (e.g., "gitlab.dwd.de does not resolve; use the gitlab.dkrz.de mirror"), and a
 pointer to `REFERENCES.lock` for the consultation ledger. Hand-curated, living; **not**

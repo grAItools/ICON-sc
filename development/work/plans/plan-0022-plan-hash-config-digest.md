@@ -14,7 +14,7 @@ constructor parameters (e.g. `Relaxation(tau=30min)` vs `tau=5min`) hash
 identically, because `_DraftCall` carries only tag/slots/dt (`component` is
 `compare=False`). T3 must never serve a cached binary for a different tau.
 
-## Hard rules (restated; full list in development/plans/README.md)
+## Hard rules (restated; full list in development/work/plans/README.md)
 
 - This touches S05 core code (`packages/symcon-core/src/symcon/core/plan/bind.py`).
   The **frozen interfaces may not change**: `ExecutionPlan.bind(composition, schema,

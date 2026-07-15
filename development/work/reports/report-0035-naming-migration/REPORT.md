@@ -3,7 +3,7 @@
 **Branch:** `work/035-naming-migration` · **Date:** 2026-07-14 · **State:** executed, all
 gates green (dated outputs in §4)
 
-Plan: `development/plans/035_naming_migration_plan.md` (frozen at assignment). Commits:
+Plan: `development/work/plans/plan-0035-naming-migration.md` (frozen at assignment). Commits:
 C1 `df63266` (renames) · C2 `a0d27e6` (retargets) · C3 `e8346a6` (new/restructured
 content) · C4 `41ff7a7` (living edits, tooling, code strings, docs) · C5 = this record.
 Execution split: C1–C4 and the fast/static gates by the implementer agent; remaining gates,

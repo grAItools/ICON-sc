@@ -100,7 +100,7 @@
 - **ICON Fortran source:** `gitlab.dwd.de` does not resolve from this host; used the
   canonical public mirror `gitlab.dkrz.de/icon/icon-model` (icon-model.org's
   published location), tag `icon-2026.04-public`, commit `8597da45` — recorded in
-  REFERENCES.lock. icon4py (v0.2.0) and this ICON release agree on every constant
+  development/references/lock.toml. icon4py (v0.2.0) and this ICON release agree on every constant
   used here; no icon4py-vs-Fortran disagreement to record. (Noted for later steps:
   icon4py's `SPECIFIC_HEAT_CAPACITY_ICE = 2108.0` has no exact match in this ICON
   release (`ci = 2106.0` in the sea-ice section); S06 does not use it — flag for
@@ -133,7 +133,7 @@
 ## Artifacts
 
 - `docs/names_registry.md` (generated registry table, committed).
-- REFERENCES.lock: two new S06 entries (icon4py v0.2.0 mining scope; icon-fortran
+- development/references/lock.toml: two new S06 entries (icon4py v0.2.0 mining scope; icon-fortran
   DKRZ mirror `8597da45`).
 
 ## Review fixes (round 1)

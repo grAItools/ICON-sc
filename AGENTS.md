@@ -35,10 +35,10 @@ rerun in CI.
 
 ## Reference corpus
 
-Pinned per `development/records/000_overview_record.md` §3: icon4py, gt4py, ICON
+Pinned per `development/work/reports/report-0000-overview.md` §3: icon4py, gt4py, ICON
 open-source Fortran, sympl (upstream + stubbiali `oop` fork), tasmania, the ICON 2025
 tutorial and the Ubbiali thesis. Per-source cards: `development/references/` (local PDFs
-go in its gitignored `local/`); mining and `REFERENCES.lock` rules:
+go in its gitignored `local/`); mining and `development/references/lock.toml` rules:
 `development/policies/reference_mining.md`. When ICON Fortran and icon4py disagree,
 icon4py's serialized data is the verification target and the disagreement goes in your
 record.

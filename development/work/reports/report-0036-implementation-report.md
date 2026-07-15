@@ -9,7 +9,7 @@ This report is the process memory of the implementation: how each step landed, w
 reviews caught, the scientific/engineering findings worth keeping, and the ledger of
 items that still need human sign-off at PR time. Detailed per-step accounts live in
 `development/records/SXX_*/STATUS.md`; provenance of every consulted source is in
-`REFERENCES.lock`.
+`development/references/lock.toml`.
 
 ---
 
@@ -18,7 +18,7 @@ items that still need human sign-off at PR time. Detailed per-step accounts live
 Every step ran the same loop, per the AGENTS.md working agreement:
 
 1. **Implementer agent** — branch `step/SXX-*` from merged main; mine references first
-   (append to `REFERENCES.lock` at mining time, SHAs pinned); implement against the
+   (append to `development/references/lock.toml` at mining time, SHAs pinned); implement against the
    SPEC's frozen interfaces exactly; acceptance tests as the definition of done; full
    gate (pytest partitions, ruff, `mypy --strict` on symcon-core, import-linter);
    STATUS.md with deviations declared.

@@ -81,7 +81,7 @@ isolation.
 
 - **`rk2` is Heun, not tasmania's midpoint RK2.** SPEC S04 names "rk2 (Heun)"
   explicitly; tasmania's `rk2` is the Gear/midpoint variant. Heun == the 2-stage
-  SSP RK in upstream sympl (cross-mined; REFERENCES.lock). Both are second
+  SSP RK in upstream sympl (cross-mined; development/references/lock.toml). Both are second
   order; the acceptance slopes are scheme-family invariants.
 - **Stepper display names.** The S02 `Factory` contract owns the `name` class
   attribute (registration key), so stepper instances expose the scheme key as
@@ -112,7 +112,7 @@ isolation.
   below: sub-µs timesteps are a real T0 driver limitation.
 - **matplotlib added to the dev dependency group** (PLAN item 5 requires plot
   artifacts). Dev-only; not a gt4py/icon4py pin change. Plots land in the
-  gitignored `development/records/004_coupling_algebra_record/artifacts/` and regenerate with
+  gitignored `development/work/reports/report-0004-coupling-algebra/artifacts/` and regenerate with
   the suite (tests skip cleanly if matplotlib is absent).
 - **Diagnostics of a stepper are those of the first (ψⁿ) evaluation** (tasmania's
   convention); later stage evaluations feed the scheme only. Documented in the
@@ -166,15 +166,15 @@ isolation.
 
 ## Artifacts
 
-- `development/records/004_coupling_algebra_record/artifacts/convergence_ode.png` (acceptance 1)
-- `development/records/004_coupling_algebra_record/artifacts/convergence_burgers.png` (acceptance 2)
+- `development/work/reports/report-0004-coupling-algebra/artifacts/convergence_ode.png` (acceptance 1)
+- `development/work/reports/report-0004-coupling-algebra/artifacts/convergence_burgers.png` (acceptance 2)
 
 Both are gitignored (repo policy); regenerate with
 `uv run pytest packages/symcon-core/tests/test_order_ode.py packages/symcon-core/tests/test_order_burgers.py`.
 
 ## References consulted
 
-Appended to `REFERENCES.lock` at mining time: tasmania
+Appended to `development/references/lock.toml` at mining time: tasmania
 `75b46ac0737c88ea201274692ab6883e803efb29` (federations, steppers + fused STS
 stage ops, ConcurrentCoupling, DynamicalCore, DataArrayDictOperator), sympl
 upstream `512809ef35d2daf898b8747a717271ed4d2b684d` (SSP RK 2/3-stage

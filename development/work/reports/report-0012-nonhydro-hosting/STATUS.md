@@ -8,7 +8,7 @@
 nonhydrostatic solver + velocity advection hosted as **one** symcon component
 (wrap-don't-rewrite, §4.4: the ~50 predictor/corrector stencil programs stay icon4py
 granule internals; symcon invokes `run_predictor_step`/`run_corrector_step` exactly
-as icon4py's own integration tests and driver do — REFERENCES.lock
+as icon4py's own integration tests and driver do — development/references/lock.toml
 `icon4py-solve-nonhydro`, `icon4py-solve-nonhydro-tests`,
 `icon4py-driver-dyn-substepping`).
 

@@ -2,7 +2,7 @@
 
 **Branch:** `task/26-gridgen-integration` · **Date:** 2026-07-13
 **Upstream:** icon-grid-generator v0.3.2 (PyPI), repo SHA `2e8aa97a…`
-(BSD-3-Clause, Oliver Fuhrer/MeteoSwiss). REFERENCES.lock entry
+(BSD-3-Clause, Oliver Fuhrer/MeteoSwiss). development/references/lock.toml entry
 `icon-grid-generator` (appended at evaluation time, commit `2dddc29`).
 
 ## What was adopted, and the boundary

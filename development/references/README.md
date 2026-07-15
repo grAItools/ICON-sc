@@ -4,7 +4,7 @@ One card per external source: canonical URL, the pin and where it is decided, li
 role in the project, gotchas, and a pointer into the consultation ledger.
 
 **Ownership rule:** cards are living but updated only when a pin or corpus decision
-changes; `REFERENCES.lock` (repo root) is the machine ledger, appended per
+changes; `development/references/lock.toml` (repo root) is the machine ledger, appended per
 consultation — the cards never duplicate its per-consultation entries.
 Non-redistributable local documents (PDFs) live in `local/` (gitignored).
 

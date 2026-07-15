@@ -3,7 +3,7 @@
 **Branch:** `task/21-ci-hardening` (from `main`; verify `git branch --show-current`
 before every commit). One commit per item below (5 commits + report).
 
-## Hard rules (restated; full list in development/plans/README.md)
+## Hard rules (restated; full list in development/work/plans/README.md)
 
 - No tolerance changes. No pin changes. No data in git. Do not edit
   `docs/architecture/*`, any SPEC/PLAN, or completed steps' STATUS files.

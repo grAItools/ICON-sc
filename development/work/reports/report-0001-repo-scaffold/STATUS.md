@@ -9,7 +9,7 @@
 - **Three PEP 420 namespace distributions**: `symcon-core` (extras `gpu`/`jax`/`mpi`/`native`),
   `symcon-icon` (deps: symcon-core, icon4py-common>=0.2.0), `symcon-bridges` (deps:
   symcon-core, cffi). All ship `py.typed`; namespace verified to span all three install roots.
-- **Pin decision** (constraints/cpu-ci.txt, gpu-cuda12.txt, REFERENCES.lock): **icon4py 0.2.0**
+- **Pin decision** (constraints/cpu-ci.txt, gpu-cuda12.txt, development/references/lock.toml): **icon4py 0.2.0**
   (tag v0.2.0 = `28d32c45afb4dbea1da6b6e5170202f08b4adb88`) + **gt4py==1.1.10** — the latest
   tagged icon4py release, with every subpackage published on PyPI, whose metadata pins
   gt4py==1.1.10 exactly. icon4py HEAD at mining time pinned gt4py==1.1.11; we pin the released
@@ -76,4 +76,4 @@
 ## Artifacts
 
 - Tripwire evidence: commits `1b5247b` → `ad76822` on this branch.
-- REFERENCES.lock entries `icon4py` (v0.2.0) and `gt4py` (v1.1.10), step S01.
+- development/references/lock.toml entries `icon4py` (v0.2.0) and `gt4py` (v1.1.10), step S01.

@@ -123,7 +123,7 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
 - **`icon:ddt_*` bus slots are not seeded**: no units source was mined for them in S02
   (they belong to S04's bus work; sympl's tendency `units + " s^-1"` convention is the
   obvious derivation, but that is S04's call to record).
-- **icon4py-vs-architecture naming disagreement recorded** (also in REFERENCES.lock):
+- **icon4py-vs-architecture naming disagreement recorded** (also in development/references/lock.toml):
   icon4py files exner/theta_v/vn under CF-style standard names
   (`dimensionless_exner_function`, …); architecture §2.5 namespaces them `icon:` as
   solver-internal. Architecture doc wins (authority order); units/short names taken from
@@ -144,7 +144,7 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
 
 ## Artifacts
 
-- `REFERENCES.lock`: +4 entries (sympl upstream, sympl-oop fork, tasmania, icon4py v0.2.0
+- `development/references/lock.toml`: +4 entries (sympl upstream, sympl-oop fork, tasmania, icon4py v0.2.0
   states metadata), appended at mining time.
 - No benchmarks/plots required by the SPEC.
 

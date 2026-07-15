@@ -3,7 +3,7 @@
 **Branch:** `task/33-structure-migration` · **Date:** 2026-07-14 · **State:** executed,
 all gates green (dated outputs in §4)
 
-Plan: `development/plans/033_structure_migration_plan.md` (frozen at assignment). Commits:
+Plan: `development/work/plans/plan-0033-structure-migration.md` (frozen at assignment). Commits:
 C1 `0e54c42` (moves) · C2 `2a1943d` (retargets) · C3 `69d0384` (governance + skeleton)
 · C4 `41ee2c0` (living rewrites) · C5 `27e1fff` (code/config/tooling + diff artifact)
 · C6 = this report.
@@ -85,7 +85,7 @@ Left alone (by design / ambiguous), each still matching the §7.1 pattern:
 All commands run from the repo root on `task/33-structure-migration` after C5.
 
 - **§7.1a residual-path grep** (2026-07-14 01:28 CEST) — hits, all accounted:
-  `REFERENCES.lock:471` (untouchable append-only ledger, hard rule);
+  `development/references/lock.toml:471` (untouchable append-only ledger, hard rule);
   `development/DECISIONS.md:12` (the mandated "Formerly plan/TRUNK_DECISIONS.md"
   line); `development/adr/0001…:27` and `development/adr/0003…:8` (ADR prose naming
   the old file historically); `development/records/31_plan_structure_migration_REPORT.md:76`
@@ -146,7 +146,7 @@ rows 32/33 per plan §5.5; deliverable paths of all rows retargeted to `records/
 
 ## 6. Diff artifact and by-design gate hits
 
-`development/records/033_structure_migration_record/layout_doc_revision.diff` — verified with
+`development/work/reports/report-0033-structure-migration/layout_doc_revision.diff` — verified with
 `git apply --check` (applies cleanly). **Discrepancy vs plan §5.13** (recorded in the
 artifact header): the current layout doc has no `plan/` node in its §4 repo tree
 (line 104 is the `symcon.core.plan` package node) and no top-level `references/`
@@ -216,7 +216,7 @@ Reviewer verdict: request-changes (1 MAJOR, 2 MINOR, 4 INFO). Fixes applied:
    TD-29.3's pointer stay retargeted (their subjects survive under new names — the
    pointers remain true); TD-29.6's `plan/drafts/` was never retargeted (correct).
 4. INFO-4/5/6/7 — accepted as noted, no changes: the C6 review-protocol polish stands
-   as declared (deviation 8); `records_and_liveness.md`'s "frozen at step start"
+   as declared (deviation 8); `document_kinds.md`'s "frozen at step start"
    wording kept (equivalent in effect to §3.2's "at acceptance/assignment");
    the two by-design historical mentions (20_gpu_validation.md:50, archived map:55)
    left; the plan-internal defects list already covered by §7.

@@ -1,4 +1,4 @@
-# records_and_liveness — what each file kind is and how it may change
+# document_kinds — what each file kind is and how it may change
 
 Scope: the taxonomy of development-memory kinds, their liveness rules, and the forward
 templates for new specs, plans, and records.
@@ -9,7 +9,7 @@ templates for new specs, plans, and records.
 |---|---|---|
 | Canonical architecture | trunk-edited only | `docs/architecture/*.md` |
 | Working agreement | living, trunk-gated | `AGENTS.md` (+ `CLAUDE.md` shim) |
-| Provenance ledger | append-only | `REFERENCES.lock` |
+| Provenance ledger | append-only | `development/references/lock.toml` |
 | Policy | living, trunk-gated | `development/policies/*.md` |
 | ADR | frozen after accepted; `Status:` field mutable | `development/adr/NNN_*_adr.md` |
 | Idea / phase outline | living until graduated (`Status:` header; graduated → spec NNN) | `development/ideas/NNN_*_idea.md` |
@@ -18,7 +18,7 @@ templates for new specs, plans, and records.
 | Work-unit plan | frozen at assignment | `development/plans/NNN_*_plan.md` |
 | Work-unit record (STATUS/REPORT) | frozen at merge — never retro-edited | `development/records/NNN_*_record{.md,/}` |
 | Design document / proposal | frozen; decisions extracted to the register | `development/records/NNN_*_record/` (the deliverable *is* the document) |
-| Process report (slice-level) | frozen | `development/records/036_implementation_report_record.md` (its §5/§6 are superseded going forward by `REGISTRY.md`) |
+| Process report (slice-level) | frozen | `development/work/reports/report-0036-implementation-report.md` (its §5/§6 are superseded going forward by `REGISTRY.md`) |
 | Reference card | living (updated on pin/corpus decisions) | `development/references/*.md` |
 | Archive | dead — kept for reference; nothing authoritative | `development/archive/` |
 | Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed, headered); `docs/_build/`, `development/records/*/artifacts/` (untracked) |
@@ -46,5 +46,5 @@ plan. All other edits to frozen documents remain violations.
   **Artifact-reference rule:** `development/records/*/artifacts/` is gitignored; cite
   every untracked artifact *with its regeneration command*, never as a bare path.
 - **Plans** follow the register format (Hard rules → Items → Acceptance criteria →
-  Verification gates → Review checklist, cf. `development/plans/021_ci_hardening_plan.md`);
-  how plans are used: `development/plans/README.md`.
+  Verification gates → Review checklist, cf. `development/work/plans/plan-0021-ci-hardening.md`);
+  how plans are used: `development/work/plans/README.md`.

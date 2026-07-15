@@ -6,7 +6,7 @@ the same branch — one PR). First document born under the convention it impleme
 **Deliverable:** the migration + the record
 `development/work/reports/report-0050-work-tree-migration.md`.
 
-Frozen at assignment. Implements `development/records/049_work_structure_iteration_record.md`
+Frozen at assignment. Implements `development/work/reports/report-0049-work-structure-iteration.md`
 (owner-confirmed 2026-07-14: value-preserving 4-digit remap; ADRs/ independent from 0000;
 proposals/reports renames; `document_kinds.md`; lock.toml move; REGISTRY/READMEs stay in
 place with contents updated; **archive/ stays at the development/ root** — it must accept

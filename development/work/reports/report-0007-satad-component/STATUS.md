@@ -18,7 +18,7 @@
   the icon4py saturation-adjustment granule (microphysics package, pinned v0.2.0) —
   the T-based formulation (`temperature`/`qv`/`qc`/`rho`), chosen because it is the
   variant with serialized ICON reference data (PLAN pitfall; choice recorded in
-  REFERENCES.lock `icon4py-satad`/`icon4py-muphys-satad`). cvd bookkeeping confirmed
+  development/references/lock.toml `icon4py-satad`/`icon4py-muphys-satad`). cvd bookkeeping confirmed
   against `mo_satad.f90` (`lwdocvd = L_v(T)/cvd`) — no cpd conversion anywhere.
   - Frozen ctor `SaturationAdjustment(grid_or_column, cfg, ctx)`; `grid_or_column` is
     the S06 `VerticalGrid` (column path: a trivial pointwise icon4py grid is built
@@ -34,7 +34,7 @@
     `air_density`, out the first three adjusted; `differentiable: "custom"` declared
     on the outputs (rules deferred to S10). `coupling_constraints.admissible_operators
     = {"sequential_update_splitting"}` per tutorial §3.7.2 (satad appears twice in the
-    fast-physics SUS chain; REFERENCES.lock `icon-tutorial-2025`).
+    fast-physics SUS chain; development/references/lock.toml `icon-tutorial-2025`).
   - `SaturationAdjustmentConfig(max_iter=10, tolerance=1e-3)` transcribed from icon4py.
 - **Dependencies** (no pin changes): `icon4py-atmosphere-microphysics>=0.2.0` added to
   `symcon-icon` (already a member of the pinned 0.2.0 set via the datatest extra; the

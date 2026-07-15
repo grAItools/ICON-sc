@@ -10,4 +10,4 @@
   (`NNN_<slug>_{spec,plan}.md`); the architecture doc is large — read the §s the spec
   cites rather than the whole file into context.
 - When mining icon4py/ICON sources, clone shallowly into `/tmp` (never into the repo) and
-  record SHAs in `REFERENCES.lock` immediately, not at the end.
+  record SHAs in `development/references/lock.toml` immediately, not at the end.

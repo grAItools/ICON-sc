@@ -8,7 +8,7 @@ After the `development/` reorganization (adr 043) the tree still carried four na
 series (S-series steps, P-series outlines, two-digit N-series tasks, four-digit kebab
 ADRs), plus `DECISIONS.md` sitting next to a folder of decision records. The owner
 asked for one convention; the evaluation is work unit 034
-(`development/records/034_naming_iteration_record/34_naming_iteration.md` §3, decision
+(`development/work/reports/report-0034-naming-iteration/34_naming_iteration.md` §3, decision
 points 3 and 5 of §9, confirmed by the owner).
 
 ## Decision
@@ -31,7 +31,7 @@ frozen files are moved, never renamed-and-reworded):
 - **Remap, never renumber history.** Existing numbers are preserved where they exist;
   previously-unnumbered or scheme-colliding documents got fresh numbers at migration
   (work unit 035). The full old→new table is a permanent section of `REGISTRY.md`
-  (§2) — the bridge for historical names and `REFERENCES.lock` step ids, which stay as
+  (§2) — the bridge for historical names and `development/references/lock.toml` step ids, which stay as
   written. Gaps (015–019) stay open forever, consistent with the never-backfill rule.
 - **ADR citation form:** `adr NNN` (ADR-0001/0002/0003 → `adr 043`/`adr 044`/
   `adr 045`; historical `ADR-000N` wording in frozen records translates via the remap

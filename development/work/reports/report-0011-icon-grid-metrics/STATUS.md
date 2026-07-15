@@ -34,7 +34,7 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
   (16) are exactly the S12/S13 consumption set mined from icon4py
   `dycore_states.{MetricStateNonHydro,InterpolationState}` +
   `diffusion_states.{DiffusionMetricState,DiffusionInterpolationState}`
-  (REFERENCES.lock `icon4py-dycore-diffusion-static-state`) — the S12 SPEC names S11
+  (development/references/lock.toml `icon4py-dycore-diffusion-static-state`) — the S12 SPEC names S11
   as the coordination point for this list.
 - **`names.py`** — registry extended by 47 `icon:` rows (metrics + interpolation
   statics); `docs/names_registry.md` regenerated via `tools/names_audit.py`.
@@ -65,12 +65,12 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
 3. **Metrics/interpolation parity** — `tests/test_static_fields_datatest.py`
    (markers `data`+`slow`): 36 metrics cases + `nflat_gradp` + 16 interpolation
    cases on **EXCLAIM_APE**, each at icon4py's own per-field tolerances. Provenance:
-   most rows from their v0.2.0 factory tests (REFERENCES.lock
+   most rows from their v0.2.0 factory tests (development/references/lock.toml
    `icon4py-grid-metrics-tests`); six fields have no upstream factory test
    (rho_ref_mc, theta_ref_ic, d_exner_dz_ref_ic, theta_ref_me, rho_ref_me,
    wgtfac_e) and use the tolerances of icon4py's test_reference_atmosphere.py /
    test_metric_fields.py instead — the strict dallclose default rtol=1e-12/atol=0
-   (rho_ref_me: rtol=1e-10) — REFERENCES.lock `icon4py-refatm-metric-field-tests`.
+   (rho_ref_me: rtol=1e-10) — development/references/lock.toml `icon4py-refatm-metric-field-tests`.
    Boundary-zone slicing (`LATERAL_BOUNDARY_LEVEL_2` starts for
    zdiff/vertoffset_gradp, geofac_rot, RBF coefficients) mirrors upstream exactly.
    A closure test asserts the parity tables cover every produced field and that all
@@ -181,7 +181,7 @@ horizontal grid stack on real ICON grid files, per the wrap-don't-rewrite preced
   (test_reference_atmosphere.py l.91/149/186/232-233, test_metric_fields.py l.367):
   the strict dallclose default rtol=1e-12/atol=0, rho_ref_me rtol=1e-10. All six
   green at the tightened tolerances on gtfn_cpu/EXCLAIM_APE. Provenance corrected
-  in the test docstring, §2.3 above, and REFERENCES.lock (appended corrective entry
+  in the test docstring, §2.3 above, and development/references/lock.toml (appended corrective entry
   `icon4py-refatm-metric-field-tests`; the ledger is append-only).
 - **MINOR 2:** `keep_skip_values` extension of `from_file` declared in D5.
 - **MINOR 3:** `_check` now passes `equal_nan=False` to `assert_allclose`

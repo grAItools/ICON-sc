@@ -10,7 +10,7 @@
     that vapor and liquid phase are in equilibrium before entering the slow physics
     parameterizations") **and** the actual interface code (`mo_nh_interface_nwp.f90`:
     satad → surface → turbdiff → `nwp_microphysics`, whose second satad lives inside
-    `mo_nwp_gscp_interface.f90`) — REFERENCES.lock `icon-tutorial-2025` (S09 entry)
+    `mo_nwp_gscp_interface.f90`) — development/references/lock.toml `icon-tutorial-2025` (S09 entry)
     and `icon-fortran-nwp-interface`.
   - `SCM_COUPLING_CONSTRAINTS`: the tutorial's ordering prose as machine-checkable
     constraints — `mphys: must_follow=("satad",), must_precede=("satad",)` plus the
@@ -123,7 +123,7 @@ deliberate chaining bug would still "run" but fails this test).
   rounds to the *nearest* multiple (ties up). Not resolved locally (S03 interface is
   frozen; changing it is a trunk decision). For the S09 preset default
   (dt_slow = 10·dt exactly) both rules coincide; the non-divisor test (285 s → 300 s)
-  documents the symcon rule. Recorded in the REFERENCES.lock S09 tutorial entry.
+  documents the symcon rule. Recorded in the development/references/lock.toml S09 tutorial entry.
 - **Instance-level coupling constraints**: the SPEC wants `SCM_FAST_ORDER ... with
   constraints`; the ordering constraints live on the preset-built *instances*
   (named `satad`/`mphys`), because S07/S08 class declarations are frozen and a

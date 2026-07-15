@@ -2,7 +2,7 @@
 
 **Source:** https://doi.org/10.3929/ethz-b-000546695 (S. Ubbiali, ETH diss. no. 28022)
 **Pinned:** the published dissertation — corpus pin, see
-`development/records/000_overview_record.md` §3; local copy
+`development/work/reports/report-0000-overview.md` §3; local copy
 `development/references/local/phd_thesis_ubbiali.pdf`.
 **License:** not recorded
 
@@ -22,5 +22,5 @@ Fig. 3.8–3.10: tiers, fast-tendency call pipeline, substep fractions).
 
 ## Consultation ledger
 
-`grep -n 'id = "ubbiali-thesis' REFERENCES.lock` — one `[[ref]]` entry per
+`grep -n 'id = "ubbiali-thesis' development/references/lock.toml` — one `[[ref]]` entry per
 consultation.

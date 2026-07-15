@@ -6,7 +6,7 @@ recorded retroactively by work unit 035)
 ## Context
 
 Work unit 027 evaluated documentation stacks for the published site
-(`development/records/027_docs_plan_record/27_docs_plan.md`; decisions TD-27.1–3,
+(`development/work/reports/report-0027-docs-plan/27_docs_plan.md`; decisions TD-27.1–3,
 signed off and executed by work unit 028). The measured constraint: the existing
 docstring corpus (78 module docstrings, 346 public-API docstrings) is
 Sphinx-flavored narrative — it renders natively under Sphinx (roles → links,

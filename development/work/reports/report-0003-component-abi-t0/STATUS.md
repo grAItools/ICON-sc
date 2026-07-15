@@ -159,7 +159,7 @@ Module map exactly as SPEC in-scope (all under `packages/symcon-core/src/symcon/
 
 ## Artifacts
 
-- `REFERENCES.lock`: +3 entries (sympl-oop component ABI/wrappers/monitor shapes; sympl
+- `development/references/lock.toml`: +3 entries (sympl-oop component ABI/wrappers/monitor shapes; sympl
   upstream NetCDFMonitor semantics + Fig. 1/2 usage pattern; tasmania substep semantics),
   appended at mining time. Reference clones reused from S02 (same SHAs, verified).
 - No benchmarks/plots required by the SPEC.
