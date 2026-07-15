@@ -24,8 +24,8 @@ is part of your instructions.
 1. **Scope check first.** `git diff main..HEAD --stat`. Every touched file must be
    plausibly required by the plan. Touches to any of the following are automatic
    MAJOR findings unless the plan explicitly authorized them:
-   `docs/architecture/*`, any `development/specs/*.md` or executed plan
-   (`development/plans/NNN_*_plan.md`), any merged work unit's record,
+   `docs/architecture/*`, any `development/work/specs/*.md` or executed plan
+   (`development/work/plans/plan-NNNN-*.md`), any merged work unit's report,
    `constraints/*.txt` version changes, `uv.lock` version bumps, any test tolerance
    value, any deleted/weakened assertion, any marker change on an existing test.
 2. **Run the full gate battery yourself** (commands and baselines in
@@ -46,7 +46,7 @@ is part of your instructions.
    (`assert_array_equal`, `==` on bytes) — any `allclose` in a bitwise contract is a
    MAJOR finding.
 5. **Check honesty of the report.** The implementer's final report and the work
-   unit's record must match the code. Every deviation from the plan must be
+   unit's report must match the code. Every deviation from the plan must be
    declared. Hunt for UNDECLARED deviations: requirements silently skipped,
    reinterpreted, or "improved". An inaccurate claim in the report is at minimum a
    MINOR finding even when the code is correct.

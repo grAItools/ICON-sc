@@ -1,6 +1,6 @@
 # 046 — The `NNN_<slug>_<kind>` document naming scheme
 
-**Status:** accepted · **Date:** 2026-07-14
+**Status:** accepted; sequence/suffix clauses superseded-by-0006 (number-sharing and exemption clauses stand) · **Date:** 2026-07-14
 
 ## Context
 

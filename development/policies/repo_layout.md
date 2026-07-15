@@ -283,14 +283,16 @@ tools/
 
 development/                             # repo-internal process memory — never a Sphinx source (TD-33.1)
 ├── README.md                            # map of the tree
-├── REGISTRY.md                          # living registry: document numbers, remap table, trunk decisions
-├── policies/                            # living rules: workflow, naming, liveness, gates, mining, review, docs boundary, repo layout
-├── adr/                                 # architecture decision records (NNN_<slug>_adr.md)
-├── ideas/                               # future proposals; phase outlines P2–P7 (NNN_<slug>_idea.md)
-├── specs/                               # frozen work-unit contracts (NNN_<slug>_spec.md)
-├── plans/                               # frozen work-unit plans (NNN_<slug>_plan.md)
-├── records/                             # outcome documents frozen at merge (NNN_<slug>_record{.md,/})
-└── references/                          # per-source reference cards + local/ (gitignored)
+├── REGISTRY.md                          # living registry: work ids (4-digit), remap tables, trunk decisions
+├── policies/                            # living rules: workflow, naming, kinds, gates, mining, review, docs boundary, repo layout
+├── ADRs/                                # architecture decision records (NNNN-<kebab-title>.md, own sequence from 0000)
+├── work/
+│   ├── proposals/                       # future proposals; phase outlines P2–P7 (proposal-NNNN-<kebab>.md)
+│   ├── specs/                           # frozen work-unit contracts (spec-NNNN-<kebab>.md)
+│   ├── plans/                           # frozen work-unit plans (plan-NNNN-<kebab>.md)
+│   └── reports/                         # outcome documents frozen at merge (report-NNNN-<kebab>{.md,/})
+├── archive/                             # dead documents of any kind
+└── references/                          # per-source reference cards + lock.toml (machine ledger) + local/ (gitignored)
 
 docs/
 ├── architecture/symcon_architecture.md  # the v1.2 document, canonical

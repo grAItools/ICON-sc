@@ -37,7 +37,7 @@ the same commit (the ruff-format file count moves with any new file):
 Rules for reading gate output:
 - **Passed counts may only grow** (you added tests). Any `failed`, any `error`, or a
   *drop* in passed counts you cannot attribute line-by-line to your own intentional
-  test removal (which requires justification in your record) means: **stop, do not
+  test removal (which requires justification in your report) means: **stop, do not
   commit, report the failure verbatim** (the full pytest failure block, not a summary).
 - `skipped` must only ever be: the 1 mpi opt-in skip, gpu-marked tests on a machine
   without CUDA, and the 1 upstream MCH-only diffusion skip. Any NEW skip is a finding
