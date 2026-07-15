@@ -2,7 +2,7 @@
 
 **Source:** https://github.com/stubbiali/tasmania
 **Pinned:** `75b46ac0737c88ea201274692ab6883e803efb29` — corpus pin, see
-`REFERENCES.lock` (not a package dependency; not in `constraints/`).
+`development/references/lock.toml` (not a package dependency; not in `constraints/`).
 **License:** not recorded
 
 ## Role in the project
@@ -24,4 +24,4 @@ ops generalize.
 
 ## Consultation ledger
 
-`grep -n 'id = "tasmania' REFERENCES.lock` — one `[[ref]]` entry per consultation.
+`grep -n 'id = "tasmania' development/references/lock.toml` — one `[[ref]]` entry per consultation.

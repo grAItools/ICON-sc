@@ -1,5 +1,5 @@
 # symcon docs — Sphinx configuration (task 28; stack decided in
-# development/records/027_docs_plan_record/27_docs_plan.md §3, TD-1/TD-2).
+# development/work/reports/report-0027-docs-plan/27_docs_plan.md §3, TD-1/TD-2).
 # Autodoc imports the *installed* workspace packages — no sys.path manipulation.
 
 project = "symcon"

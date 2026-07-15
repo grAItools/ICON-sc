@@ -2,7 +2,7 @@
 
 **Source:** DWD/MPI-M ICON tutorial —
 https://www.dwd.de/EN/ourservices/nwv_icon_tutorial/nwv_icon_tutorial.html
-**Pinned:** 2025 edition — corpus pin, see `development/records/000_overview_record.md` §3;
+**Pinned:** 2025 edition — corpus pin, see `development/work/reports/report-0000-overview.md` §3;
 local copy `development/references/local/icon-model-tutorial-2025.pdf`.
 **License:** not recorded
 
@@ -24,5 +24,5 @@ Process ordering, fast/slow semantics, JW/idealized configuration (ch. 3–4).
 
 ## Consultation ledger
 
-`grep -n 'id = "icon-tutorial-2025' REFERENCES.lock` — one `[[ref]]` entry per
+`grep -n 'id = "icon-tutorial-2025' development/references/lock.toml` — one `[[ref]]` entry per
 consultation.

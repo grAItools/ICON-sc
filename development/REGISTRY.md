@@ -3,10 +3,10 @@
 One file, two registers: the document-number register (§1, with the permanent old→new
 remap table in §2) and the trunk-decision/sign-off register (§3). Rules for the
 decision register: append-mostly (rows are added, and their `Status` field updated in
-place; nothing else is edited); every new `TD-PENDING:` line in any record gets a row
+place; nothing else is edited); every new `TD-PENDING:` line in any report gets a row
 here **in the same PR**; decision text that quotes a tolerance or signature is copied
 verbatim from its source. This register supersedes
-`development/records/036_implementation_report_record.md` §5 (sign-off ledger) and §6
+`development/work/reports/report-0036-implementation-report.md` §5 (sign-off ledger) and §6
 (standing follow-ups) going forward — that report stays frozen as the historical record.
 Conventions: ID `TD-<origin>.<k>` where origin is the work unit (`S08`, `27`, `35`) that
 raised it. Status: `pending` / `signed-off` / `rejected` / `superseded(TD-…)`. `Date` is the date the
@@ -14,76 +14,81 @@ decision entered main (the merge of its source).
 Formerly DECISIONS.md (renamed in work unit 035, TD-35.3); before that
 plan/TRUNK_DECISIONS.md.
 
-Seeded 2026-07-13 by work unit 031 (spec: `development/records/029_plan_structure_record/29_plan_structure.md` §8).
+Seeded 2026-07-13 by work unit 031 (spec: `development/work/reports/report-0029-plan-structure/29_plan_structure.md` §8).
 
 ## 1. Document register (the single allocator)
 
 A number is allocated by adding a row here **at assignment**, even when the plan text
 is delivered ad hoc and never committed (the row says so). Numbers are strictly
-monotonic, never reused; gaps are never backfilled — 015–019 stay open forever. On a
+monotonic, never reused; gaps are never backfilled — 0015–0019 stay open forever. On a
 collision, the first-registered number wins and the latecomer takes the next free one.
-One number per work unit, shared by its idea/spec/plan/record files
-(`NNN_<slug>_<kind>`, TD-35.1, adr 046); single-kind documents consume one number.
-**Next free number: 050.**
+One number per work unit — four digits since work unit 0050, numeric values preserved
+from the three-digit scheme (TD-50.1, ADR-0006) — shared by its
+proposal/spec/plan/report files (`<kind>-<NNNN>-<kebab-slug>`); single-kind documents
+consume one number. ADRs are no longer registered here: they number independently in
+`development/ADRs/` (index: `ADRs/README.md`); the former ADR rows 043–048 remapped to
+ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
+**Next free number: 0051.**
 
-| NNN | slug | kinds | status |
+| NNNN | slug | kinds | status |
 |---|---|---|---|
-| 000 | overview | record | executed (S01–S14 slice overview, frozen) |
-| 001 | repo_scaffold | spec + plan + record | executed |
-| 002 | core_state_contracts | spec + plan + record | executed |
-| 003 | component_abi_t0 | spec + plan + record | executed |
-| 004 | coupling_algebra | spec + plan + record | executed |
-| 005 | vault_plan_t1 | spec + plan + record | executed |
-| 006 | vertical_grid_thermo | spec + plan + record | executed |
-| 007 | satad_component | spec + plan + record | executed |
-| 008 | graupel_component | spec + plan + record | executed |
-| 009 | scm_composition | spec + plan + record | executed |
-| 010 | ftier_column_gradients | spec + plan + record | executed |
-| 011 | icon_grid_metrics | spec + plan + record | executed |
-| 012 | nonhydro_hosting | spec + plan + record | executed |
-| 013 | diffusion_jw_l4 | spec + plan + record | executed |
-| 014 | plan_through_dycore | spec + plan + record | executed |
-| 020 | gpu_validation | plan | pending |
-| 021 | ci_hardening | plan | pending |
-| 022 | plan_hash_config_digest | plan | pending |
-| 023 | upstream_reports | plan | pending |
-| 024 | pr_publication | plan | pending |
-| 025 | cf_multistage_t1 | plan | pending |
-| 026 | gridgen_integration | record | executed (plan ad hoc, not committed) |
-| 027 | docs_plan | record | executed (plan ad hoc, not committed) |
-| 028 | docs_implementation | plan + record | executed |
-| 029 | plan_structure | record | executed (plan ad hoc, not committed) |
-| 030 | author_phase_specs | plan | pending |
-| 031 | plan_structure_migration | record | executed (plan: 029 record §8) |
-| 032 | docs_development_structure | record | executed (plan ad hoc, not committed) |
-| 033 | structure_migration | plan + record | executed |
-| 034 | naming_iteration | record | executed (plan ad hoc, not committed) |
-| 035 | naming_migration | plan + record | this work unit |
-| 036 | implementation_report | record | executed (S01–S14 slice process record, frozen) |
-| 037 | p2_distributed | idea | accepted-roadmap |
-| 038 | p3_full_physics | idea | accepted-roadmap |
-| 039 | p4_ingestion_realdata | idea | accepted-roadmap |
-| 040 | p5_tiers_t2_t3 | idea | accepted-roadmap |
-| 041 | p6_differentiable_distributed_da | idea | accepted-roadmap |
-| 042 | p7_presets_docs_anemoi | idea | accepted-roadmap |
-| 043 | development_tree_reorganization | adr | accepted |
-| 044 | content_frozen_records | adr | accepted |
-| 045 | decision_register_and_adrs | adr | accepted |
-| 046 | document_naming_scheme | adr | accepted |
-| 047 | docs_stack | adr | accepted |
-| 048 | gridgen_adoption | adr | accepted |
-| 049 | work_structure_iteration | record | executed (plan ad hoc, not committed) |
+| 0000 | overview | report | executed (S01–S14 slice overview, frozen) |
+| 0001 | repo-scaffold | spec + plan + report | executed |
+| 0002 | core-state-contracts | spec + plan + report | executed |
+| 0003 | component-abi-t0 | spec + plan + report | executed |
+| 0004 | coupling-algebra | spec + plan + report | executed |
+| 0005 | vault-plan-t1 | spec + plan + report | executed |
+| 0006 | vertical-grid-thermo | spec + plan + report | executed |
+| 0007 | satad-component | spec + plan + report | executed |
+| 0008 | graupel-component | spec + plan + report | executed |
+| 0009 | scm-composition | spec + plan + report | executed |
+| 0010 | ftier-column-gradients | spec + plan + report | executed |
+| 0011 | icon-grid-metrics | spec + plan + report | executed |
+| 0012 | nonhydro-hosting | spec + plan + report | executed |
+| 0013 | diffusion-jw-l4 | spec + plan + report | executed |
+| 0014 | plan-through-dycore | spec + plan + report | executed |
+| 0020 | gpu-validation | plan | pending |
+| 0021 | ci-hardening | plan | pending |
+| 0022 | plan-hash-config-digest | plan | pending |
+| 0023 | upstream-reports | plan | pending |
+| 0024 | pr-publication | plan | pending |
+| 0025 | cf-multistage-t1 | plan | pending |
+| 0026 | gridgen-integration | report | executed (plan ad hoc, not committed) |
+| 0027 | docs-plan | report | executed (plan ad hoc, not committed) |
+| 0028 | docs-implementation | plan + report | executed |
+| 0029 | plan-structure | report | executed (plan ad hoc, not committed) |
+| 0030 | author-phase-specs | plan | pending |
+| 0031 | plan-structure-migration | report | executed (plan: 0029 report §8) |
+| 0032 | docs-development-structure | report | executed (plan ad hoc, not committed) |
+| 0033 | structure-migration | plan + report | executed |
+| 0034 | naming-iteration | report | executed (plan ad hoc, not committed) |
+| 0035 | naming-migration | plan + report | executed |
+| 0036 | implementation-report | report | executed (S01–S14 slice process report, frozen) |
+| 0037 | p2-distributed | proposal | accepted-roadmap |
+| 0038 | p3-full-physics | proposal | accepted-roadmap |
+| 0039 | p4-ingestion-realdata | proposal | accepted-roadmap |
+| 0040 | p5-tiers-t2-t3 | proposal | accepted-roadmap |
+| 0041 | p6-differentiable-distributed-da | proposal | accepted-roadmap |
+| 0042 | p7-presets-docs-anemoi | proposal | accepted-roadmap |
+| 0049 | work-structure-iteration | report | executed (plan ad hoc, not committed) |
+| 0050 | work-tree-migration | plan + report | this work unit (plan `development/work/plans/plan-0050-work-tree-migration.md`) |
 
-Numbers 000–014 are the remapped S-series work units. The old N-series number 10
+Numbers 0000–0014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
-(`policies/review_protocol.md`), unnumbered and exempt from the scheme. Numbers 015–019
-were never allocated and stay open per the never-backfill rule.
+(`policies/review_protocol.md`), unnumbered and exempt from the scheme. Numbers
+0015–0019 were never allocated and stay open per the never-backfill rule. Work ids
+0043–0048 were consumed by the former ADR rows (now `ADRs/0000`–`0005`, see §2b) and
+are never reused.
 
-## 2. Remap table (permanent — the bridge for historical names and `REFERENCES.lock` ids)
+## 2. Remap table (permanent — the bridge for historical names and `development/references/lock.toml` ids)
 
 Old→new for every file renamed by work unit 035 (commit C1). Historical wording in
 frozen records ("step S08", "task 26", `ADR-0002`, old paths) translates via this
-table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
+table; `development/references/lock.toml` step ids ("S08") stay as written and resolve here.
+**Note (work 0050):** the "New" column shows the 035 names; those files were renamed
+again by work unit 0050 — every "New" entry resolves further via §2b below (the second
+hop of the historical bridge, e.g. `S08` → `008_graupel_component_spec.md` →
+`spec-0008-graupel-component.md`).
 
 | Old | New |
 |---|---|
@@ -134,25 +139,64 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 | `development/DECISIONS.md` | `development/REGISTRY.md` |
 | `docs/architecture/symcon_repo_layout.md` | `development/policies/repo_layout.md` |
 
+## 2b. Remap table (work 0050 — the second hop: 035 names → the `work/` tree)
+
+Old→new for every file renamed by work unit 0050 (commit C1, 84 renames; TD-50.1,
+ADR-0006). Paths are relative to `development/` unless prefixed. Slug rule: the 035
+name's snake slug converted to kebab (`_`→`-`); inner files of folder-shaped reports
+are unchanged.
+
+| Old (035 scheme) | New (work 0050) |
+|---|---|
+| `specs/NNN_<slug>_spec.md` (001…014) | `work/specs/spec-0NNN-<kebab-slug>.md` |
+| `specs/README.md` | `work/specs/README.md` |
+| `plans/NNN_<slug>_plan.md` (001…014, 020…025, 028, 030, 033, 035) | `work/plans/plan-0NNN-<kebab-slug>.md` |
+| `plans/README.md` | `work/plans/README.md` |
+| `records/000_overview_record.md` | `work/reports/report-0000-overview.md` |
+| `records/NNN_<slug>_record/` (001…014, the STATUS folders) | `work/reports/report-0NNN-<kebab-slug>/` |
+| `records/026_gridgen_integration_record.md` | `work/reports/report-0026-gridgen-integration.md` |
+| `records/027_docs_plan_record/` | `work/reports/report-0027-docs-plan/` |
+| `records/028_docs_implementation_record.md` | `work/reports/report-0028-docs-implementation.md` |
+| `records/029_plan_structure_record/` | `work/reports/report-0029-plan-structure/` |
+| `records/031_plan_structure_migration_record.md` | `work/reports/report-0031-plan-structure-migration.md` |
+| `records/032_docs_development_structure_record/` | `work/reports/report-0032-docs-development-structure/` |
+| `records/033_structure_migration_record/` (incl. `layout_doc_revision.diff`) | `work/reports/report-0033-structure-migration/` |
+| `records/034_naming_iteration_record/` | `work/reports/report-0034-naming-iteration/` |
+| `records/035_naming_migration_record/` | `work/reports/report-0035-naming-migration/` |
+| `records/036_implementation_report_record.md` | `work/reports/report-0036-implementation-report.md` |
+| `records/049_work_structure_iteration_record.md` | `work/reports/report-0049-work-structure-iteration.md` |
+| `records/README.md` | `work/reports/README.md` |
+| `ideas/NNN_<slug>_idea.md` (037…042) | `work/proposals/proposal-0NNN-<kebab-slug>.md` |
+| `ideas/README.md` | `work/proposals/README.md` |
+| `adr/043_development_tree_reorganization_adr.md` (cited `adr 043`) | `ADRs/0000-development-tree-reorganization.md` (cite `ADR-0000`) |
+| `adr/044_content_frozen_records_adr.md` (cited `adr 044`) | `ADRs/0001-content-frozen-records.md` (cite `ADR-0001`) |
+| `adr/045_decision_register_and_adrs_adr.md` (cited `adr 045`) | `ADRs/0002-decision-register-and-adrs.md` (cite `ADR-0002`) |
+| `adr/046_document_naming_scheme_adr.md` (cited `adr 046`) | `ADRs/0003-document-naming-scheme.md` (cite `ADR-0003`) |
+| `adr/047_docs_stack_adr.md` (cited `adr 047`) | `ADRs/0004-docs-stack.md` (cite `ADR-0004`) |
+| `adr/048_gridgen_adoption_adr.md` (cited `adr 048`) | `ADRs/0005-gridgen-adoption.md` (cite `ADR-0005`) |
+| `adr/README.md` | `ADRs/README.md` |
+| `REFERENCES.lock` (repo root) | `development/references/lock.toml` |
+| `policies/records_and_liveness.md` | `policies/document_kinds.md` |
+
 ## 3. Decision register
 
 ### Sign-off items from the 001–014 slice (mirrors IMPLEMENTATION_REPORT §5, verbatim)
 
 | ID | Date | Decision (verbatim from source) | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-S05.1 | 2026-07-09 | Zero-traffic acceptance operationalization (settrace can't see C-level `dict.__getitem__`; tracemalloc protocol) | pending | `development/records/005_vault_plan_t1_record/STATUS.md` deviations 4–5 banner; IMPLEMENTATION_REPORT §5 | — |
-| TD-S08.1 | 2026-07-10 | `CONSERVATION_RTOL_COLD = 1e-3` (characterized cold-glaciation leak; upstream report follow-up) | pending | `development/records/008_graupel_component_record/STATUS.md`; IMPLEMENTATION_REPORT §5 | — |
-| TD-S09.1 | 2026-07-11 | Tracer negativity `≥ −QMIN`; whole-run `CONSERVATION_RTOL = 1e-11` | pending | `development/records/009_scm_composition_record/STATUS.md`; IMPLEMENTATION_REPORT §5 | — |
-| TD-S10.1 | 2026-07-11 | QMIN atol floor on acceptances 1/7 | pending | `development/records/010_ftier_column_gradients_record/STATUS.md` tolerance note; IMPLEMENTATION_REPORT §5 | — |
-| TD-S12.1 | 2026-07-11 | vn `atol = 1e-11` on EXCLAIM_APE multi-substep parity (reviewer recommends granting) | pending | `development/records/012_nonhydro_hosting_record/STATUS.md` deviation 8; IMPLEMENTATION_REPORT §5 | — |
-| TD-S13.1 | 2026-07-12 | `jablonowski_williamson` mandatory `static` kwarg (frozen-signature change); pooch→sha256-manifest swap | pending | `development/records/013_diffusion_jw_l4_record/STATUS.md` deviations 6, 11; IMPLEMENTATION_REPORT §5 | — |
-| TD-S14.1 | 2026-07-13 | "Bitwise per backend" evidence-backed for gtfn_cpu only (gpu leg never executed) | pending | `development/records/014_plan_through_dycore_record/STATUS.md` review-fixes note; IMPLEMENTATION_REPORT §5 | — |
+| TD-S05.1 | 2026-07-09 | Zero-traffic acceptance operationalization (settrace can't see C-level `dict.__getitem__`; tracemalloc protocol) | pending | `development/work/reports/report-0005-vault-plan-t1/STATUS.md` deviations 4–5 banner; IMPLEMENTATION_REPORT §5 | — |
+| TD-S08.1 | 2026-07-10 | `CONSERVATION_RTOL_COLD = 1e-3` (characterized cold-glaciation leak; upstream report follow-up) | pending | `development/work/reports/report-0008-graupel-component/STATUS.md`; IMPLEMENTATION_REPORT §5 | — |
+| TD-S09.1 | 2026-07-11 | Tracer negativity `≥ −QMIN`; whole-run `CONSERVATION_RTOL = 1e-11` | pending | `development/work/reports/report-0009-scm-composition/STATUS.md`; IMPLEMENTATION_REPORT §5 | — |
+| TD-S10.1 | 2026-07-11 | QMIN atol floor on acceptances 1/7 | pending | `development/work/reports/report-0010-ftier-column-gradients/STATUS.md` tolerance note; IMPLEMENTATION_REPORT §5 | — |
+| TD-S12.1 | 2026-07-11 | vn `atol = 1e-11` on EXCLAIM_APE multi-substep parity (reviewer recommends granting) | pending | `development/work/reports/report-0012-nonhydro-hosting/STATUS.md` deviation 8; IMPLEMENTATION_REPORT §5 | — |
+| TD-S13.1 | 2026-07-12 | `jablonowski_williamson` mandatory `static` kwarg (frozen-signature change); pooch→sha256-manifest swap | pending | `development/work/reports/report-0013-diffusion-jw-l4/STATUS.md` deviations 6, 11; IMPLEMENTATION_REPORT §5 | — |
+| TD-S14.1 | 2026-07-13 | "Bitwise per backend" evidence-backed for gtfn_cpu only (gpu leg never executed) | pending | `development/work/reports/report-0014-plan-through-dycore/STATUS.md` review-fixes note; IMPLEMENTATION_REPORT §5 | — |
 
 ### Decisions from work unit 027 (docs stack) — executed by work unit 028
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-27.1 | 2026-07-13 | Docs stack: Sphinx + MyST-Parser + Napoleon + furo; layout-doc line "`docs/api/` # sphinx + autodoc from py.typed sources" is complied with via MyST (no layout-doc edit required to proceed); MkDocs alternative rejected | signed-off | `development/records/027_docs_plan_record/27_docs_plan.md` §3.2 (TD-1) | task-28 merge `cbbec36` |
+| TD-27.1 | 2026-07-13 | Docs stack: Sphinx + MyST-Parser + Napoleon + furo; layout-doc line "`docs/api/` # sphinx + autodoc from py.typed sources" is complied with via MyST (no layout-doc edit required to proceed); MkDocs alternative rejected | signed-off | `development/work/reports/report-0027-docs-plan/27_docs_plan.md` §3.2 (TD-1) | task-28 merge `cbbec36` |
 | TD-27.2 | 2026-07-13 | Docs dependency additions: dev-group lower bounds `sphinx>=8.1`, `myst-parser>=4.0`, `furo>=2025.12.19`; `constraints/cpu-ci.txt` pins sphinx==8.1.3, myst-parser==4.0.1, furo==2025.12.19, docutils==0.21.2 | signed-off | `27_docs_plan.md` §3.3 (TD-2) | task-28 merge `cbbec36` |
 | TD-27.3 | 2026-07-13 | Docstring convention: Google-style sections going forward, Napoleon-parsed; existing corpus kept, convert-on-touch; ruff `D` with shrink-only ignore baseline | signed-off | `27_docs_plan.md` §3.4/§4 (TD-3) | task-28 merge `cbbec36` |
 
@@ -175,17 +219,25 @@ table; `REFERENCES.lock` step ids ("S08") stay as written and resolve here.
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-33.1 | 2026-07-14 | `development/` tree reorganization adopted per task-32 evaluation as amended by owner iteration; full migration; `plan/` deleted. **Supersedes TD-29.1** (zero-move) **and TD-29.6** (external-drafts home: resolved as "no dedicated folder") | signed-off | adr 043 + `development/plans/033_structure_migration_plan.md` §1 | task-33 merge `10ecafb` |
-| TD-33.2 | 2026-07-14 | Content-frozen amendment: "frozen" = content-frozen; mechanical path retargeting confined to link/path strings permitted in sanctioned migration commits, isolated for word-diff verification | signed-off | adr 044 | task-33 merge `10ecafb` |
-| TD-33.3 | 2026-07-14 | Register renamed/moved to `development/DECISIONS.md`; ledger/ADR no-merge relationship (register = sign-off rows, `adr/` = reasoning; architecture-shaped decisions get both) | signed-off | adr 045 | task-33 merge `10ecafb` |
-| TD-33.4 | 2026-07-14 | Proposed revision of `docs/architecture/symcon_repo_layout.md` repo tree (diff artifact `development/records/033_structure_migration_record/layout_doc_revision.diff`); owner applies or rejects. Marks the re-draft of TD-29.7 | signed-off | `development/plans/033_structure_migration_plan.md` §5.13 | owner-applied, trunk commit `f053659` |
+| TD-33.1 | 2026-07-14 | `development/` tree reorganization adopted per task-32 evaluation as amended by owner iteration; full migration; `plan/` deleted. **Supersedes TD-29.1** (zero-move) **and TD-29.6** (external-drafts home: resolved as "no dedicated folder") | signed-off | ADR-0000 + `development/work/plans/plan-0033-structure-migration.md` §1 | task-33 merge `10ecafb` |
+| TD-33.2 | 2026-07-14 | Content-frozen amendment: "frozen" = content-frozen; mechanical path retargeting confined to link/path strings permitted in sanctioned migration commits, isolated for word-diff verification | signed-off | ADR-0001 | task-33 merge `10ecafb` |
+| TD-33.3 | 2026-07-14 | Register renamed/moved to `development/DECISIONS.md`; ledger/ADR no-merge relationship (register = sign-off rows, `adr/` = reasoning; architecture-shaped decisions get both) | signed-off | ADR-0002 | task-33 merge `10ecafb` |
+| TD-33.4 | 2026-07-14 | Proposed revision of `docs/architecture/symcon_repo_layout.md` repo tree (diff artifact `development/work/reports/report-0033-structure-migration/layout_doc_revision.diff`); owner applies or rejects. Marks the re-draft of TD-29.7 | signed-off | `development/work/plans/plan-0033-structure-migration.md` §5.13 | owner-applied, trunk commit `f053659` |
 
 ### Decisions from work unit 035 (naming migration)
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-35.1 | 2026-07-14 | `NNN_<slug>_<kind>` naming scheme: one global three-digit sequence, one number per work unit shared across its idea/spec/plan/record files, kind suffix = singular folder name; exempt: `policies/*`, all `README.md`, `REGISTRY.md`, `archive/*` contents; history remapped, never renumbered (§2); ADR citation form `adr NNN`; forward branch convention `work/NNN-<slug>` | signed-off | `adr 046`; 034 evaluation §3/§9 (`development/records/034_naming_iteration_record/34_naming_iteration.md`) | work-035 merge `d3257df` |
+| TD-35.1 | 2026-07-14 | `NNN_<slug>_<kind>` naming scheme: one global three-digit sequence, one number per work unit shared across its idea/spec/plan/record files, kind suffix = singular folder name; exempt: `policies/*`, all `README.md`, `REGISTRY.md`, `archive/*` contents; history remapped, never renumbered (§2); ADR citation form `adr NNN`; forward branch convention `work/NNN-<slug>` | signed-off | `ADR-0003`; 034 evaluation §3/§9 (`development/work/reports/report-0034-naming-iteration/34_naming_iteration.md`) | work-035 merge `d3257df` |
 | TD-35.2 | 2026-07-14 | Repo-layout doc moved to `development/policies/repo_layout.md` (living policy, trunk-gated) and removed from the published site; the canonical trunk-frozen set is `docs/architecture/symcon_architecture.md` alone | signed-off | 034 evaluation §2 | work-035 merge `d3257df` |
 | TD-35.3 | 2026-07-14 | `DECISIONS.md` renamed `REGISTRY.md`, absorbing the document-number allocator from `plans/README.md`: one file, two registers (documents + trunk decisions) | signed-off | 034 evaluation §1 | work-035 merge `d3257df` |
 | TD-35.4 | 2026-07-14 | F1: `.claude/settings.json` deny glob narrowed `Edit(development/specs/**)` → `Edit(development/specs/*_spec.md)` — spec files stay protected, the living `specs/README.md` becomes editable | signed-off | 035 record §6 F1 | trunk commit `1980f0d` |
 | TD-35.5 | 2026-07-14 | F2: output paths in the unexecuted plans 020–025/030 and the idea `Status:` headers restated in the `NNN_<slug>_<kind>` scheme — a sanctioned edit of frozen-at-assignment plans (unconsumed contracts; owner-instructed), same class as the 032 evaluation decision point 10 | signed-off | 035 record §6 F2 | trunk commit `1980f0d` |
+
+### Decisions from work unit 0050 (work-tree migration)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-50.1 | (merge) | `development/work/` tree with kind-prefixed names: lifecycle folders `work/{proposals,specs,plans,reports}` (ex-`ideas`, ex-`records`); files `<kind>-<NNNN>-<kebab-slug>`, four digits, **numeric values preserved** from the three-digit ids (never compact-renumbered — the remap is §2b); lifecycle vocabulary proposal → spec → plan → report | pending | ADR-0006 | — |
+| TD-50.2 | (merge) | `ADRs/` independence: own Nygard sequence from 0000 (043–048 → 0000–0005 in order), the deliberate uppercase exception (the repo's only non-lowercase folder), citation form `ADR-NNNN`; supersedes ADR-0003's sequence/suffix clauses | pending | ADR-0006 | — |
+| TD-50.3 | (merge) | `REFERENCES.lock` → `development/references/lock.toml`; the header-title edit sanctioned (append-only binds the `[[ref]]` entries, not the schema comment); entries and their historical `step` ids untouched | pending | ADR-0006; 049 evaluation §3 | — |

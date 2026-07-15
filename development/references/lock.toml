@@ -1,0 +1,472 @@
+# lock.toml — provenance ledger (append-only; one [[ref]] per consulted source; formerly REFERENCES.lock at the repo root, moved by work unit 0050)
+# Agents: append at mining time, not at PR time. Schema:
+#
+# [[ref]]
+# id = "icon4py"                        # short handle used in code comments/tests
+# url = "https://github.com/C2SM/icon4py"
+# commit = "<full sha>"                  # or tag; never a branch name alone
+# paths = ["model/atmosphere/..."]       # files/modules actually read or depended on
+# taken = "graupel granule invocation pattern + test tolerances (rtol=..., atol=...)"
+# step = "S08"
+# date = "YYYY-MM-DD"
+#
+# Pinned-version decisions (gt4py/icon4py pair) additionally land in constraints/ (S01).
+
+[[ref]]
+id = "icon4py"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["pyproject.toml", "uv.lock", "model/common/pyproject.toml", "model/common/src/icon4py/model/common/"]
+taken = "Pin decision: icon4py 0.2.0 is the latest tagged release and every subpackage distribution (icon4py-common, icon4py-atmosphere-{advection,diffusion,dycore,microphysics,muphys}, icon4py-driver, icon4py-standalone-driver, icon4py-testing, icon4py-tools) is published on PyPI at 0.2.0. Its published metadata pins gt4py==1.1.10 exactly, so that is the tested pair. Import root verified as icon4py.model.common. GPU extra spelling: icon4py-common[cuda12] -> cupy-cuda12x>=13.0 + gt4py[cuda12]. Symbolic names used by later SPECs: icon4py.common -> icon4py-common, icon4py.dycore -> icon4py-atmosphere-dycore, etc. Repo HEAD at mining time (7341a32954d6db5d982fe3d69363f63198844cf2) pins gt4py==1.1.11; we pin the released pair, not HEAD."
+step = "S01"
+date = "2026-07-08"
+
+[[ref]]
+id = "gt4py"
+url = "https://github.com/GridTools/gt4py"
+commit = "v1.1.10"  # PyPI release consumed as sdist/wheel, not from git
+paths = ["PyPI metadata gt4py==1.1.10"]
+taken = "gt4py 1.1.10 chosen because icon4py-common 0.2.0 pins it exactly. requires-python: >=3.10,<3.15 (excl. 3.13.10, 3.14.1). cuda12 extra -> cupy-cuda12x>=12.0."
+step = "S01"
+date = "2026-07-08"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_core/units.py", "sympl/_core/time.py", "sympl/_core/dataarray.py"]
+taken = "Upstream property/units semantics: pint UnitRegistry with %/degree cleanup and degrees_north/degrees_east/percent definitions; units_are_same == identity via registry equality (1 K vs 2 K compare unequal quantities -> non-identity); cftime-aware datetime() factory keyed by calendar string ('proleptic_gregorian' -> stdlib datetime, else cftime.Datetime* classes). symcon drops the implicit any-unit conversion path (data_array_to_units) in favor of canonical units + strict mode."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl-oop"
+url = "https://github.com/stubbiali/sympl"
+commit = "5491978331ef7d6b7dc7995b9a5726713b5de7a7"  # branch oop
+paths = ["sympl/_core/factory.py", "sympl/_core/static_checkers.py", "sympl/_core/dynamic_checkers.py", "sympl/_core/dynamic_operators.py", "sympl/_core/units.py"]
+taken = "Checker/Operator/Factory mechanisms ported as semantics (thesis Fig. 3.5): MetaFactory registers subclasses on class creation keyed by class attr `name`, duplicate name -> error, Factory.factory(name) resolves through per-base subregistry with informative error on unknown name. Static checkers validate property dicts from definitions only (dict type, units present, dims present, alias bijectivity); dynamic checkers cross definitions with actual data (missing/extra fields, actual-vs-target dims, dim-length consistency) with errors naming field + component. Dynamic operators own target-dims resolution and raw-field extraction. lru_cache on the pint registry call = the cached identity check pattern."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/utils/timex.py"]
+taken = "Ubbiali Timer: class-level tree of labelled nested sections (Node with parent/children/level/total_calls/total_runtime), only-nested-stops asserted, cupy device synchronize before tic/toc. symcon ports the idea with an injectable sync callback instead of a hard cupy dependency, and instance-based (not class-global) state."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "icon4py"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/src/icon4py/model/common/states/data.py", "model/common/src/icon4py/model/common/states/model.py", "model/common/src/icon4py/model/common/states/metadata.py"]
+taken = "Seed rows for the canonical names/units registry (S02 state/names.py): CF standard names, canonical unit strings and ICON Fortran short names for prognostics (air_density kg m-3/rho, virtual_potential_temperature K/theta_v, dimensionless exner 1/exner, upward_air_velocity m s-1/w, normal/tangential velocity m s-1/vn,vt), common tracers (specific_humidity 1/qv, specific_{cloud,ice,rain,snow,graupel}_content 1/qc..qg) and diagnostics (eastward_wind u, northward_wind v, air_temperature K/temp, air_virtual_temperature K/tempv, air_pressure Pa/pres, air_pressure_at_ground_level Pa/pres_sfc). FieldMetaData TypedDict (standard_name+units required; long_name/icon_var_name optional) confirms the registry columns. '_on_interface_levels' naming ('height_on_interface_levels') confirms the suffix convention. NOTE: icon4py files exner/theta_v/vn under CF-style standard names; symcon per architecture doc S2.5 namespaces solver-internal quantities as icon:exner_function, icon:normal_wind, icon:virtual_potential_temperature — units/short names taken from icon4py, namespacing from the architecture doc."
+step = "S02"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl-oop"
+url = "https://github.com/stubbiali/sympl"
+commit = "5491978331ef7d6b7dc7995b9a5726713b5de7a7"  # branch oop
+paths = ["sympl/_core/core_components.py", "sympl/_core/steppers.py", "sympl/_core/wrappers.py", "sympl/_core/monitors.py", "sympl/_core/base_component.py"]
+taken = "Ubbiali component ABI shapes (thesis SS4.1-4.2 via architecture doc): __call__ with caller-provided out DataArray dicts; array_call receiving BOTH input and output raw-buffer dicts and writing in place; allocate_diagnostic/allocate_tendency/allocate_output hooks invoked exactly for the output fields the caller did not provide; call sequence = inflow checks -> raw extract -> out checks -> allocate missing -> array_call -> outflow checks -> DataArray wrap (checks skippable via enable_checks; symcon routes them through S02 Static/DynamicChecker + Ingress/EgressPlan instead). UpdateFrequencyWrapper = CallingFrequency donor: fires when state['time'] >= last_update_time + update_timedelta, else returns cached output verbatim; last_update_time is the phase. ScalingWrapper: per-category scale-factor dicts validated against the wrapped component's property dicts at construction, inputs scaled into attr-preserving copies, outputs/tendencies/diagnostics scaled after the call, __getattr__ delegation. Monitor base = abstract store(state). symcon deviations: single flat out= mapping instead of out_tendencies/out_diagnostics/out_state (SPEC S03 frozen interface), timestep passed into array_call uniformly, tendencies_in_diagnostics/TracerPacker not ported (out of S03 scope)."
+step = "S03"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_components/netcdf.py", "sympl/_core/wrappers.py", "docs/timestepping.rst", "docs/monitors.rst"]
+taken = "NetCDFMonitor semantics donor: Monitor caching stored states keyed by time and writing one NetCDF file, store_names selection of a variable subset, write_on_store synchronous mode, aliases out of scope. symcon S03 keeps the store(state)->one-file contract but reimplements xarray-based (dependency: netcdf4 engine) with a full-file rewrite per store (T0-dumb) and provenance global attrs. Upstream UpdateFrequencyWrapper cross-checked against the oop fork (identical firing rule). Docs quickstart/timestepping give the paper Fig.1/Fig.2 usage pattern reproduced by the S03 acceptance test: standalone diagnostic call; loop of diagnostic update -> tendencies -> stepper -> monitor.store -> advance time."
+step = "S03"
+date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/framework/sequential_update_splitting.py", "src/tasmania/framework/options.py"]
+taken = "Substepping semantics donor for symcon Subcycle: per-section integer substeps clamped to >=1 (max(substeps, 1)); a substepped section integrates with timestep/substeps applied substeps times, chaining each provisional state into the next call. symcon S03 lifts this into a standalone Subcycle(stepper, n=None, ratio_provider=None) wrapper (architecture SS4.2: the generic combinator survives outside DynamicalCore); ratio_provider (CFL-adaptive style) is symcon's addition per SPEC, called once per outer step with the current state."
+step = "S03"
+date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/framework/concurrent_coupling.py", "src/tasmania/framework/steppers.py", "src/tasmania/framework/parallel_splitting.py", "src/tasmania/framework/sequential_tendency_splitting.py", "src/tasmania/framework/sequential_update_splitting.py", "src/tasmania/framework/dycore.py", "src/tasmania/framework/subclasses/tendency_steppers/{forward_euler,rk2,rk3ws}.py", "src/tasmania/framework/subclasses/sequential_tendency_steppers/{forward_euler,rk2,rk3ws}.py", "src/tasmania/framework/subclasses/stencil_definitions/algorithms.py", "src/tasmania/utils/xarrayx.py"]
+taken = "Coupling-algebra reference implementations (architecture S4.2): ConcurrentCoupling serial policy (diagnostics of earlier members visible to later members via aux state; tendencies accumulated into shared out_tendencies); TendencyStepper/SequentialTendencyStepper as name-keyed factories wrapping one ConcurrentCoupling (multi-arg constructor collapses args into a CC); scheme coefficients: forward_euler psi+dt*k; rk2 = midpoint (0.5*dt provisional then full-dt update; symcon deviates -> Heun per SPEC S04, cross-checked against sympl SSPRungeKutta 2-stage); rk3ws provisional fractions 1/3 then 1/2 then full dt (Wicker-Skamarock per Doms/Baldauf COSMO doc); STS stepper first-stage recombinations sts_rk2_0 out=0.5*(psi_n+psi_prv+dt*tnd) and sts_rk3ws_0 out=(2*psi_n+psi_prv+dt*tnd)/3 == E(psi_n,dt;P+(psi_prv-psi_n)/dt) stage forms (symcon implements the equivalent generic forcing G=(psi_prv-psi_n)/dt added to every tendency evaluation); ParallelSplitting recombination via iaddsub state_prv+=(psi_l-psi_n) per shared field (eq 2.10d thesis); STS federation: every section integrates from the step-initial state with the previous section's provisional output as forcing, diagnostics written onto the provisional state, state['time'] pinned back to the current level between sections; SUS federation: sections chained in place, each stepping the state left by its predecessor, time re-pinned per section; per-section TimeIntegrationOptions(component, scheme) -> symcon's (component, stepper_name) pairs; DynamicalCore: fast_tendency_component called once per stage on the latest provisional state before stage_array_call, substep tier with per-stage substep_fractions (fraction of the total substep count; substep dt = dt/N), stages/substep_fractions abstract properties, allocate_stage_output hooks. Not ported: execution policies ('as_parallel'), enforce_horizontal_boundary, promoter components, substepped PS/STS/SUS sections (tasmania raises NotImplementedError there too), DataArrayDictOperator gt4py stencil dispatch (symcon: numpy-level dict_axpy at T0)."
+step = "S04"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_components/timesteppers.py"]
+taken = "SSP Runge-Kutta coefficients (Shu & Osher 1988, via Durran 2nd ed as cited in the sympl docstring): 3-stage ssprk3 psi1=psi+dt*f(psi); psi2=3/4*psi+1/4*(psi1+dt*f(psi1)); psi_np1=1/3*psi+2/3*(psi2+dt*f(psi2)). 2-stage variant psi_np1=1/2*(psi+psi1+dt*f(psi1)) == Heun == SPEC S04's 'rk2 (Heun)' (cross-check that Heun is SSPRK2; tasmania's rk2 is the midpoint scheme instead — deviation recorded in STATUS)."
+step = "S04"
+date = "2026-07-09"
+
+[[ref]]
+id = "ubbiali-thesis"
+url = "https://doi.org/10.3929/ethz-b-000546695"
+commit = "ETH diss. no. 28022 (local references/phd_thesis_ubbiali.pdf)"
+paths = ["SS2.3 (eqs 2.8-2.13)", "SS2.4.1 (Table 2.1 second-order clauses)", "SS2.5.2 (Burgers experiment design)", "SS3.5 + Fig. 3.8-3.10 (DynamicalCore tiers and call pipeline)"]
+taken = "Coupling definitions implemented verbatim: FC (2.8) E0(psi,dt;D+P); LFC (2.9) E0(psi,dt;D+P^n) with P^n frozen at the step-initial state; PS (2.10) each process integrated independently from psi^n, recombination psi^{n+1}=sum_l psi_l^{n+1}-L*psi^n (2.10d); STS (2.11) psi_0=E0(psi^n,dt;D), psi_l=E_l(psi^n,dt;P_l+(psi_{l-1}^{n+1}-psi^n)/dt) — the forcing always uses the step-initial psi^n; SUS (2.12) chained correctors; SSUS (2.13a-e) reverse pass over lam*dt with E_l^*, core over dt, forward pass over (1-lam)*dt, E_l^* != E_l explicitly legal (SS2.3.5). Expected measured orders (Table 2.1 + SS2.4.1 discussion): FC unconditionally 2; LFC/PS/STS/SUS effectively 1 (their second-order clauses rarely hold); SSUS second-order iff lam=1/2. DynamicalCore (SS3.5, Fig 3.9/3.10): slow tendencies enter as an input port held constant across the step; fast_tendency_component (ConcurrentCoupling) evaluated once per stage on the latest provisional state; super-fast tier substeps each stage with substep dt = dt/N and per-stage substep counts proportional to the stage fractions (Fig 3.10: N=6, 3-stage WS-RK fractions 1/3,1/2,1 -> 2,3,6 substeps). Burgers experiment (SS2.5.2): diffusion treated as the parameterization, advection as dynamics, EOC measured over a dt ladder — symcon's acceptance 2 transposes this to 1-D with a relaxation physics term and self-convergence pairs."
+step = "S04"
+date = "2026-07-09"
+
+[[ref]]
+id = "tasmania"
+url = "https://github.com/stubbiali/tasmania"
+commit = "75b46ac0737c88ea201274692ab6883e803efb29"
+paths = ["src/tasmania/utils/xarrayx.py", "src/tasmania/framework/subclasses/stencil_definitions/algorithms.py", "src/tasmania/framework/steppers.py", "src/tasmania/framework/parallel_splitting.py", "src/tasmania/framework/sequential_tendency_splitting.py"]
+taken = "Op-algebra donor for the S05 plan ops: DataArrayDictOperator's kernel set (iadd/iaddsub 'inout_a += in_b - in_c'/fma 'out = in_a + f*in_b'/sts_rk2_0 'out = 0.5*(in_field + in_field_prv + dt*in_tnd)') is the closed set of dict-arithmetic shapes the T0 coupling algebra needs; symcon's Axpy op generalizes fma/iadd/iaddsub to one k-ary assign-or-accumulate multi-axpy with an optional trailing divisor (covers ssprk3's '(psi + 2*(psi_2 + dt*k3))/3' without a new op) and DiffScale realizes the STS forcing '(psi_prv - psi_n)/dt' that tasmania fuses into sts_*_0 stage kernels. PS recombination op order re-derived from parallel_splitting.py: accumulator seeded by the first section's provisional state, then per further section (+psi_l, -psi_n) — the k-ary Axpy term order T1 must replay for bitwise T0 equivalence."
+step = "S05"
+date = "2026-07-09"
+
+[[ref]]
+id = "sympl"
+url = "https://github.com/mcgibbon/sympl"
+commit = "512809ef35d2daf898b8747a717271ed4d2b684d"
+paths = ["sympl/_core/wrappers.py"]
+taken = "UpdateFrequencyWrapper firing rule re-consulted for the cadence-mask compilation: fires when state['time'] >= last_update_time + update_timedelta, first call always fires (last_update_time None). With the S03 rounding-to-multiple rule (period = nearest positive integer multiple m of the loop dt) a fresh wrapper therefore fires exactly at step indices == 0 (mod m), which is the per-signature mask the S05 compiler precomputes; the cached output becomes persistent vault/tendency slots that replay by simply not being rewritten on non-fire steps."
+step = "S05"
+date = "2026-07-09"
+
+[[ref]]
+id = "icon4py"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair)
+paths = ["model/common/src/icon4py/model/common/constants.py", "model/common/src/icon4py/model/common/grid/vertical.py", "model/common/src/icon4py/model/common/metrics/reference_atmosphere.py", "model/common/src/icon4py/model/common/diagnostic_calculations/stencils/diagnose_temperature.py", "model/common/src/icon4py/model/common/diagnostic_calculations/stencils/diagnose_surface_pressure.py", "model/common/tests/common/grid/unit_tests/test_vertical.py", "model/testing/src/icon4py/model/testing/{fixtures/datatest.py,datatest_utils.py,definitions.py,serialbox.py,config.py,data_handling.py}", "model/testing/pyproject.toml"]
+taken = "S06 mining: (a) constants.py values + Fortran symbol mapping (rd=287.04, cpd=1004.64, cvd=cpd-rd, rv=461.51, cpv=1869.46, rcpl=3.1733, clw=(rcpl+1)*cpd, alv=2.5008e6, als=2.8345e6, alf=als-alv, tmelt=273.15, t3=273.16, vtmpc1=rv/rd-1, grav=9.80665, p0ref=1e5, p0sl_bg=101325, t0sl_bg=288.15, del_t_bg=75, h_scal_bg=1e4, earth radius/omega, dbl_eps) — cross-checked against ICON Fortran (see icon-fortran ref below); (b) VerticalGridConfig namelist defaults (mo_sleve_nml/nonhydrostatic_nml: min_lay_thckn=50, max_lay_thckn=25000, htop_thcknlimit=15000, top_height=23500, flat_height=16000, stretch_fac=1, damp_height=45000, htop_moist_proc=22500, SLEVE decay params) and VerticalGrid semantics: vct_a index starts at model top, nrdmax/_determine_damping_height_index = argmax(where(vct_a>=damp_height)), kstart_moist via interface midpoints < htop_moist_proc, nflatlev = max(where(vct_a>=flat_height)); get_vct_a_and_vct_b analytic formula vct_a[k]=H*(2/pi*arccos((k/N)^s))^d with d=ln(min_dz/H)/ln(2/pi*arccos(((N-1)/N)^s)), uniform fallback when min_dz<=0.01, vct_b=exp(-vct_a/5000) — symcon delegates to icon4py get_vct_a_and_vct_b/VerticalGrid behind symcon.icon.grid.vertical.VerticalGrid (PLAN 'reuse, don't rewrite'); (c) reference_atmosphere.py decaying-isothermal reference: denom=t0sl_bg-del_t_bg, z_aux1=p0sl_bg*exp(-grav/rd*h_scal_bg/denom*log((exp(z/h_scal_bg)*denom+del_t_bg)/t0sl_bg)), z_temp=denom+del_t_bg*exp(-z/h_scal_bg), exner_ref=(z_aux1/p0ref)^(rd/cpd), rho_ref=z_aux1/(rd*z_temp), theta_ref=z_temp/exner_ref; (d) diagnose_temperature.py: tempv=theta_v*exner, temp=tempv/(1+vtmpc1*qv-(qc+qi+qr+qs+qg)) — the thermo relations symcon.icon.thermo implements; (e) datatest machinery: fixtures backend/process_props/download_ser_data/experiment/data_provider/grid_savepoint, IconGridSavepoint.vct_a()/vct_b(), TESTDATA_ROOT_URL=https://rgw.cscs.ch/c2sm:testdata, ICON4PY_TEST_DATA_PATH env var, GAUSS3D (exclaim_gauss3d, mpitask1_..._v04.tar.gz, 57 MB — smallest archive; APE/R04B09/JW are 4.2/6.3/7.1 GB) chosen for the S06 data-marked test; icon4py-testing 0.2.0 requires serialbox4py>=2.6.2 and imports icon4py diffusion/dycore/microphysics/standalone-driver at import time (hence the dev-group additions, all pinned 0.2.0 per constraints/cpu-ci.txt)."
+step = "S06"
+date = "2026-07-09"
+
+[[ref]]
+id = "icon-fortran"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public (gitlab.dwd.de unreachable from this host; DKRZ is the canonical public mirror per icon-model.org)
+paths = ["src/shared/mo_physical_constants.f90", "src/atm_dyn_iconam/mo_vertical_grid.f90", "src/atm_dyn_iconam/mo_nh_diagnose_pres_temp.f90", "src/atm_dyn_iconam/mo_nonhydro_types.f90", "src/atm_dyn_iconam/mo_nh_nest_utilities.f90", "src/atm_dyn_iconam/mo_nh_vert_extrap_utils.f90", "src/atm_phy_nwp/mo_nwp_phy_types.f90"]
+taken = "Scientific ground truth for S06. mo_physical_constants.f90: rd=287.04_wp, cpd=1004.64_wp, cvd=cpd-rd, rv=461.51_wp, cpv=1869.46_wp, cvv=cpv-rv, rhoh2o=1000._wp, alv=2.5008e6_wp, als=2.8345e6_wp, alf=als-alv, tmelt=273.15_wp, t3=273.16_wp, rdv=rd/rv, o_m_rdv=1-rd/rv, vtmpc1=rv/rd-1, vtmpc2=cpv/cpd-1, rcpl=3.1733_wp, clw=(rcpl+1)*cpd, rd_o_cpd=rd/cpd, cvd_o_rd=cvd/rd, grav=9.80665_wp, p0ref=100000._wp, p0sl_bg=101325._wp, dtdz_standardatm=-6.5e-3_wp, earth_radius=6.371229e6_wp, earth_angular_velocity=7.29212e-5_wp (byte-compare table committed in packages/symcon-icon/tests/test_constants_fortran.py). mo_vertical_grid.f90 (module-level PARAMETERs): h_scal_bg=10000._wp, t0sl_bg=288.15_wp, del_t_bg=75._wp; reference-state loops at lines ~1043-1059 match icon4py reference_atmosphere.py formulas. mo_nh_diagnose_pres_temp.f90 diag_temp: tempv=theta_v*exner, temp=tempv/(1+vtmpc1*qv-qsum); diag_pres: pres_sfc=p0ref*exp(cpd_o_rd*log(exner(nlev-2))+grav_o_rd*(...)), downward hydrostatic integration. Exner relations: exner=(p/p0ref)**rd_o_cpd (mo_nh_vert_extrap_utils.f90:731, cpd path) and exner=exp(rd_o_cvd*log(rd_o_p0ref*rho*theta_v)) (mo_nh_nest_utilities.f90:1657, cvd path) — both exposed and named unambiguously in symcon.icon.thermo per PLAN pitfall. Tendency-slot naming: t_nh_diag%ddt_exner_phy/ddt_vn_phy (mo_nonhydro_types.f90:156-158), prm_nwp_tend%ddt_temp_*/ddt_tracer_* (mo_nwp_phy_types.f90) -> registry rows icon:ddt_temp, icon:ddt_q[vcirsg], icon:ddt_exner_phy; pres_ifc/temp_ifc field names (mo_nonhydro_types.f90:67-69)."
+step = "S06"
+date = "2026-07-09"
+
+[[ref]]
+id = "icon4py-satad"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair, S01)
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/saturation_adjustment.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/saturation_adjustment_stencils.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/microphysical_processes.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/microphysics_constants.py", "model/common/src/icon4py/model/common/constants.py", "model/common/src/icon4py/model/common/model_options.py", "model/common/src/icon4py/model/common/utils/data_allocation.py", "model/common/src/icon4py/model/common/grid/base.py", "model/common/src/icon4py/model/common/grid/simple.py", "model/common/src/icon4py/model/common/grid/vertical.py"]
+taken = "The satad granule S07 wraps: SaturationAdjustment(config, grid, vertical_params, metric_state, backend) with SaturationAdjustmentConfig(max_iter=10, tolerance=1e-3 — 'in ICON, 10/1.e-3 are always used when satad_v_3D is called'). run(dtime, rho, temperature, qv, qc, temperature_tendency, qv_tendency, qc_tendency) mutates the three *_tendency fields in place on the domain [start_index(Cell NUDGING):end_index(Cell LOCAL)] x [vertical_params.kstart_moist:grid.num_levels]; outside that domain the tendency fields are NOT written (granule allocates them zeroed in its own test). Host-side while-loop over 3 pointwise gt4py programs + TimeStepPair swap; ConvergenceError raised past max_iter. Formulation is T-based (temperature/qv/qc/rho), NOT theta_v/exner — the granule is 'originally inspired from satad_v_3D of ICON' and uses cvd bookkeeping: lwdocvd = latent_heat_vaporization(T)/cvd (PLAN pitfall confirmed: no cpd conversion anywhere). Newton: f(T)=T-T0+lwdocvd*(qsat_rho(T,rho)-qv), f'(T)=1+lwdocvd*dqsatdT_rho; subsaturated shortcut T_test=T-lwdocvd*qc when qv+qc<=qsat_rho(T_test,rho); tendency egress ((T_new-T)/dt, (qsat-qv)/dt, (max(qv+qc-qsat, zqwmin=1e-20)-qc)/dt). Thermo closures (microphysical_processes.py): Tetens psat=610.78*exp(17.269*(T-273.15)/(T-35.86)); qsat_rho=psat/(rho*rv*T); dqsatdT_rho=qsat*((tmelt-bw)*aw/(T-bw)^2-1/T); latent_heat_vaporization L(T)=2.5008e6+(1850.0-cpl)*(T-tmelt)-rv*T (Kirchhoff; 1850.0 is a local cpv-like literal distinct from cpv=1869.46). PhysicsConstants.cvd=cpd-rd with cpd=1004.64, rd=287.04 == symcon.icon._constants.CVD bitwise; SPECIFIC_HEAT_CAPACITY_ICE=2108.0 (S06 flag) is NOT used by satad — no ice/cpi term anywhere in the granule, so the S06 ci disagreement does not touch S07. metric_state.ddqz_z_full is stored but never used by run() at v0.2.0 -> not a property-contract input of the symcon component (dummy zeros suffice). model_options.setup_program(backend=None) = embedded path (skips compile); grid contract consumed: num_levels, size dict, start_index/end_index callables (simple.py precedent: start=0/end=size zone-independent factory for non-halo zones, connectivities may be {} for these pointwise stencils). data_allocation.zero_field/import_array_ns for device-generic allocation."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-satad-test"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/tests/microphysics/integration_tests/test_saturation_adjustment.py", "model/testing/src/icon4py/model/testing/serialbox.py", "model/testing/src/icon4py/model/testing/definitions.py", "model/testing/src/icon4py/model/testing/datatest_utils.py"]
+taken = "L2 verification target + tolerances for SPEC S07 acceptance 1. icon4py's own satad integration test: experiment WEISMAN_KLEMP_TORUS (exclaim_nh_weisman_klemp, torus 50000x5000, archive mpitask1_exclaim_nh_weisman_klemp_v04.tar.gz ~1.6 GB at https://rgw.cscs.ch/c2sm:testdata/experiments/), savepoints satad-init/satad-exit via from_savepoint_satad_init/exit(location, date) at locations ['nwp-gscp-interface', 'interface-nwp'] and dates ['2008-09-01T01:59:48.000', '2008-09-01T01:59:52.000', '2008-09-01T01:59:56.000']; dtime from from_savepoint_weisman_klemp_graupel_entry(date).dtime(); vertical_params = v_grid.VerticalGrid(experiment.config.vertical_grid, grid_savepoint.vct_a(), vct_b()); ddqz_z_full from metrics_savepoint. Assert pattern: updated_x = x_init + x_tendency*dtime compared against satad-exit fields with test_utils.dallclose atol=1.0e-13 (rtol left at dallclose default 1e-12) for qv, qc, temperature — these are the tolerance contracts ported into symcon's test constants. GAUSS3D carries no satad savepoints, hence the S06 default experiment is overridden for this one test."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-muphys-satad"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/subgrid_scale_physics/muphys/src/icon4py/model/atmosphere/subgrid_scale_physics/muphys/core/saturation_adjustment.py", "model/atmosphere/subgrid_scale_physics/muphys/tests/muphys/stencil_tests/test_saturation_adjustment.py"]
+taken = "The variant NOT chosen (PLAN pitfall: formulation mismatch between granule variants). muphys satad is the ICON-C++ 'muphys' port: single fused field_operator, fixed 6 unrolled Newton-Raphson steps (no convergence mask/tolerance), full moist heat-capacity bookkeeping (cvc with clw/ci terms, internal-energy closure), validated against muphys netCDF sequences, not against ICON serialbox savepoints. The microphysics-package granule (see icon4py-satad) is the satad_v_3D-equivalent with serialized ICON reference data and is what S07 wraps; recorded here so the choice is auditable."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-fortran-satad"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_phy_schemes/mo_satad.f90"]
+taken = "Algorithm ground truth for the wrapped granule: satad_v_3D/satad_v_3D_gpu — Newton on T at constant total density with latent-heat closure lwdocvd=latent_heat_vaporization(te)/cvd (cvd, NOT cpd — PLAN pitfall check passes), zqwmin=1e-20, subsaturated shortcut Ttest=te-lwdocvd*qce with qw=qve+qce<=qsat_rho(Ttest,rhotot), Newton fT=twork-te+lwdocvd*(qwd-qve), dfT=1+lwdocvd*dqwd, egress qce=MAX(qw-qwa,zqwmin), qve=qw-qce; iteration triggered by tworkold=twork+10. Matches the icon4py granule structure 1:1 EXCEPT: (a) this ICON tag adds a supersaturation factor supsatfac driven by tune_supsat_limfac (namelist, default path supsatfac=1 when tune_supsat_limfac<=0) and takes w as input — absent from icon4py v0.2.0; with the default namelist both reduce to the same algorithm; icon4py's serialized data is the verification target per AGENTS.md, disagreement recorded in S07 STATUS.md; (b) ICON iterates while count<maxiter and raises nothing, icon4py raises ConvergenceError past max_iter. mo_satad at this tag also no longer exposes satad-internal thermo functions (moved to mo_thdyn_functions); Tetens/latent-heat closures cross-checked against icon4py microphysical_processes.py instead."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "gt4py-field-ctor"
+url = "https://github.com/GridTools/gt4py"
+commit = "v1.1.10"  # PyPI release consumed as installed package (site-packages inspection)
+paths = ["src/gt4py/next/constructors.py", "src/gt4py/next/common.py", "src/gt4py/next/embedded/nd_array_field.py"]
+taken = "Zero-copy ingress decision for symcon.core.ingress.gt4py: public gtx.as_field ALWAYS allocates ('Note: we do not support a copy argument as we want to avoid creating fields aliasing other data/fields' — constructors.py docstring), verified empirically (field.ndarray is buf == False). The zero-copy wrap the architecture's §2.3 ingress contract requires is the singledispatch common._field(ndarray, domain=domain) -> NumPyArrayField/CuPyArrayField, which aliases the buffer (verified: field.ndarray is buf == True, writes through). Private-API risk recorded in S07 STATUS.md follow-ups. Backend objects: gtx.gtfn_cpu/gtx.gtfn_gpu are gt4py.next.backend.Backend instances; embedded execution = backend None (icon4py convention throughout)."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-tutorial-2025"
+url = "https://www.dwd.de/EN/ourservices/nwv_icon_tutorial/nwv_icon_tutorial.html"
+commit = "2025 edition (local PDF references/icon-model-tutorial-2025.pdf; see references/README.md)"
+paths = ["§3.7.2 Fast and Slow Processes (pp. 92-93)"]
+taken = "Coupling-position ground truth for SaturationAdjustment.coupling_constraints (SPEC S07): fast processes are treated with time splitting ('also known as sequential-update split'), each sequentially updating the state — hence admissible_operators={'sequential_update_splitting'}. Calling sequence: surface transfer -> saturation adjustment -> land-surface -> turbulent diffusion -> microphysics -> saturation adjustment again, 'in order to ensure that vapor and liquid phase are in equilibrium before entering the slow physics parameterizations'; satad thus appears twice per step (architecture §4.3 NWP_FAST_ORDER). Exceptions (surface transfer + land at old time level) do not involve satad."
+step = "S07"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-graupel"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair, S01)
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/single_moment_six_class_gscp_graupel.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/graupel_stencils.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/microphysics_constants.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/microphysics_options.py", "model/common/src/icon4py/model/common/constants.py", "model/common/src/icon4py/model/common/model_options.py"]
+taken = "The graupel granule S08 wraps: SingleMomentSixClassIconGraupel(graupel_config, grid, metric_state, vertical_params, backend). run(dtime, rho, temperature, pressure, qv, qc, qr, qi, qs, qg, qnc, *7 tendency fields) mutates the tendency fields in place; three gt4py programs: icon_graupel (one forward K-scan over [kstart_moist:num_levels] x [start_cell_nudging:end_cell_local] carrying 28 carry slots incl. sedimentation state rhoq{r,s,g,i}v_old_kup/vnew_* — the level-loop/sedimentation structure the SPEC says to preserve; ground_level=num_levels-1 bound as constant arg), icon_graupel_flux_above_ground (K domain [0:ground_level]: flux = 0.5*(new+kup) with QMIN cutoff on new), icon_graupel_flux_at_ground (K domain [ground_level:num_levels]: flux = 0.5*((q+tend*dt)*rho*vnew + rhoq v_old_kup)); precipitation flux fields are granule-private CellK fields, surface rates = [:, ground_level]; total_precipitation_flux is zero unless do_latent_heat_nudging. No K-offsets/connectivities anywhere -> the S07 trivial pointwise column grid hosts it. SingleMomentSixClassIconGraupelConfig fields+defaults transcribed into symcon GraupelConfig: liquid_autoconversion_option=SEIFERT_BEHENG(1), snow_intercept_option=FIELD_GENERAL_MOMENT_ESTIMATION(2), do_latent_heat_nudging=False, use_constant_latent_heat=True (ithermo_water==0), ice_stickeff_min=0.075, power_law_coeff_for_ice_mean_fall_speed=1.25, exponent_for_density_factor_in_ice_sedimentation=0.33, power_law_coeff_for_snow_fall_speed=20.0, rain_mu=0.0, rain_n0=1.0, snow2graupel_riming_coeff=0.5 (lsedi_ice/lstickeff/lred_depgrow/lpres_pri/ldiag_*tend removed as always-True/default in ICON; l_cv hardcoded True). MetricStateIconGraupel.ddqz_z_full IS consumed (dz of the scan). qnc is a CellField [1/m3]. Precomputed coefficients derived in _initialize_configurable_parameters from MicrophysicsConstants + config (Ulbrich-83 n0r, gamma-function rain/snow/sed coefficients) — bound as constant args, not re-derived by symcon. QMIN=1e-15 (lowest detectable mixing ratio; the negativity-clipping scale). ci flag from S06: PhysicsConstants.cpi=SPECIFIC_HEAT_CAPACITY_ICE=2108.0 enters ONLY the temperature-dependent latent-heat-of-sublimation branch (graupel_stencils.py:233), which is dead code under use_constant_latent_heat=True — the configuration of all serialized reference data."
+step = "S08"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-graupel-test"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/tests/microphysics/integration_tests/test_single_moment_six_class_gscp_graupel.py", "model/testing/src/icon4py/model/testing/serialbox.py", "model/testing/src/icon4py/model/testing/definitions.py", "model/testing/src/icon4py/model/testing/datatest_utils.py", "model/testing/src/icon4py/model/testing/test_utils.py"]
+taken = "L2 verification target + tolerances for SPEC S08 acceptance 1. icon4py's own graupel integration test: experiment WEISMAN_KLEMP_TORUS, savepoints microphysics-init/microphysics-exit via from_savepoint_weisman_klemp_graupel_{entry,exit}(date) (IconGraupelSavepoint: temperature/pressure/rho CellK, tracers qv..qg, qnc Cell, dtime scalar; exit adds {rain,snow,graupel,ice}_flux = {rain,snow,graupel,ice}_gsp_rate Cell fields), dates [2008-09-01T01:59:48.000, ...52.000, ...56.000], dtime=4.0 s. graupel_config = experiment.config.graupel built from the archive's NAMELIST_ICON_output_atm.json — verified against the cached WK archive: ithermo_water=0, ldass_lhn=false, tune_zceff_min=0.075, tune_zvz0i=1.25, tune_icesedi_exp=0.33, tune_v0snow=20.0, mu_rain=0.0, rain_n0_factor=1.0, tune_zcsg=0.5 == icon4py defaults exactly (PLAN pitfall: exact flags pinned; inwp_gscp=2 confirms the data is the graupel scheme). ddqz_z_full from metrics_savepoint. Assert pattern x_exit == x_init + tend*dtime with test_utils.dallclose: temperature rtol=1e-12 (dallclose default, atol=0), all six tracers atol=1e-12, surface fluxes (precipitation_flux[:, -1] vs *_gsp_rate) atol=9e-11 — the tolerance contracts ported into symcon's test constants. metrics_savepoint fixture needed in addition to the S07 set."
+step = "S08"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-fortran-graupel"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/granules/microphysics_1mom_schemes/gscp_graupel.f90", "src/granules/microphysics_1mom_schemes/gscp_data.f90", "src/granules/microphysics_1mom_schemes/microphysics_1mom_schemes.f90", "src/atm_phy_nwp/mo_nwp_gscp_interface.f90", "src/atm_phy_schemes/mo_thdyn_functions.f90", "src/atm_phy_nwp/mo_nwp_phy_types.f90"]
+taken = "Algorithm ground truth for the wrapped granule (real path discovered: the 1-moment schemes moved to src/granules/microphysics_1mom_schemes/, not src/atm_phy_schemes/). gscp_graupel.f90 graupel_run: single top-down k loop fusing all processes with the implicit sedimentation carry (zpkr/zvzr etc.), l_cv input with z_heat_cap_r=cvdr (mo_nwp_gscp_interface passes l_cv=.TRUE. — isochoric, matching icon4py RCVD heating); ground precip rate prr_gsp(iv)=0.5*(qrg*rhog*zvzr+zpkr) (line ~1437) == icon4py icon_graupel_flux_at_ground 0.5*((q+tend*dt)*rho*vnew + rhoqv_old_kup); zlhv/zlhs constant (=alv/als) unless ithermo_water/=0, then latent_heat_vaporization/sublimation(tg). mo_thdyn_functions.f90:291 latent_heat_sublimation = als + (cp_v - ci)*(T-tmelt) - rv*T with ci=2106.0 (mo_physical_constants.f90:213) vs icon4py cpi=2108.0 — the S06 ci flag RESOLVED for S08: the disagreement lives only in the ithermo_water/=0 branch, dead under the WK data's ithermo_water=0; recorded in STATUS.md, icon4py remains the verification target. gscp_data.f90:92 cloud_num=200.00e+06 (default cloud droplet number concentration; mo_nwp_gscp_interface qnc_s=cloudnum_const via get_cloud_number when icpl_aero_gscp=0) — the qnc value symcon's test columns use. mo_nwp_phy_types.f90:277-280 rain/snow/ice/graupel_gsp_rate [kg/m2/s] -> registry rows icon:{rain,snow,ice,graupel}_gsp_rate. Config-flag provenance for removed options confirmed: lsedi_ice/lstickeff/lred_depgrow hardcoded .TRUE. paths in ICON."
+step = "S08"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-tutorial-2025"
+url = "https://www.dwd.de/EN/ourservices/nwv_icon_tutorial/nwv_icon_tutorial.html"
+commit = "2025 edition (local PDF references/icon-model-tutorial-2025.pdf; see references/README.md)"
+paths = ["§3.7.1 Time Stepping (pp. 90-92)", "§3.7.2 Fast and Slow Processes (pp. 92-94, Fig. 3.9)"]
+taken = "Ordering + cadence semantics for the S09 SCM composition. Fast physics: time splitting ('also known as sequential-update split'), calling sequence surface transfer -> saturation adjustment -> land-surface -> turbulent diffusion -> microphysics -> saturation adjustment again 'to ensure that vapor and liquid phase are in equilibrium before entering the slow physics parameterizations' — the SCM subset with only satad+microphysics present is therefore satad -> mphys -> satad, encoded as SCM_FAST_ORDER with machine-checkable constraints mphys.must_follow=('satad',), mphys.must_precede=('satad',). Slow physics: treated parallel-split, stepped independently from the state left by the latest fast process, tendencies (ddt vn/T/rho-qx) 'kept constant between two successive calls' and acting as forcing terms consumed inside dynamics/transport — the piecewise-constant bus semantics the S09 PrescribedCooling -> icon:ddt_temperature_slow -> ApplySlowTendencies chain exercises. Cadence rule §3.7.1: 'If the slow physics time step is not a multiple of the advective time step, it is automatically rounded up to the next advective time step' — NOTE: the frozen S03 CallingFrequency rounds to the NEAREST multiple (ties up), not always up; disagreement recorded in S09 STATUS.md (S03 interface is frozen; for the S09 preset dt_slow = 10·dt exactly, where both rules coincide)."
+step = "S09"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon-fortran-nwp-interface"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_phy_nwp/mo_nh_interface_nwp.f90", "src/atm_phy_nwp/mo_nwp_gscp_interface.f90"]
+taken = "Code-level confirmation of the tutorial §3.7.2 fast-physics order for the S09 SCM subset: mo_nh_interface_nwp calls satad_v_3D first (l.~648, under lcall_phy_jg(itsatad)), then nwp_surface (~828), nwp_turbdiff (~870), then nwp_microphysics (~1016, default lmicrophysicsFirst=.FALSE. path) with the comment 'after the microphysics the second call to SATAD is within the nwp_microphysics routine (first one is above)'; mo_nwp_gscp_interface.f90 (~1007-1016) carries that second satad call ('this is the second satad call — first satad in physics interface before microphysics') gated by the same lsatad flag. Hence satad appears exactly twice around microphysics and never elsewhere in the fast suite — the SCM_FAST_ORDER=('satad','mphys','satad') constraints (mphys must_follow satad, must_precede satad) are the machine-checkable form of the real interface, not an invention. Slow tendencies (prm_nwp_tend) are applied inside dynamics/tracer transport, not by the physics interface — S09's ApplySlowTendencies stands in for that consumer at column scale."
+step = "S09"
+date = "2026-07-10"
+
+[[ref]]
+id = "icon4py-graupel-stencils"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair, S01)
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/graupel_stencils.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/microphysical_processes.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/microphysics_constants.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/single_moment_six_class_gscp_graupel.py"]
+taken = "S10 line-by-line transcription source for the graupel JAX functional core (SPEC acceptance 1: JAX core vs gtfn kernel, rtol<=1e-10). _icon_graupel_scan: 28-slot forward K-scan carry (7 tendencies, 6 tracers-at-kup, rhoq{r,s,g,i}v, vnew_{r,s,g,i}, dist_cldtop, rho_kup, crho1o2_kup, crhofac_qi_kup, snow_sed0_kup, qvsw_kup, k_lev); section structure (1 coefficients, 2 sedimentation, 3 post-sedimentation implicitness coefficients, 4 transfer rates via the 9 microphysical_processes field operators, 5 negative-mass checks, 6 tendency updates with cim* implicit factors and maximum(-q/dt) clips); k_lev is RELATIVE to the vertical_start=kstart_moist while ground_level=num_levels-1 is ABSOLUTE (is_surface = k_lev==ground_level: coincide only when kstart_moist==0 - quirk replicated verbatim, see STATUS S10); flux programs: above-ground flux=0.5*(new+kup) with QMIN cutoff on new only, at-ground flux=0.5*((q+tend*dt)*rho*vnew + rhoqv_old_kup); gsp rate = flux[:, num_levels-1]. Full MicrophysicsConstants table (Tetens constants, COSMO doc eq refs, derived CCS*/CCD*/CCI* expressions incl. CCSVXP=_ccsvxp+1, CCSWXP_LN1O2=exp(CCSWXP*ln 0.5), NIMIX=5*exp(0.304*(tmelt-250.15)), PVSW0=TETENS_P0) transcribed into symcon graupel_constants.py with equality asserted against icon4py in tests. _initialize_configurable_parameters derivations (Ulbrich-83 _n0r=8e6*exp(3.2*mu)*0.01^-mu*rain_n0, _ar=pi*water_density/6*_n0r*gamma(mu+4), rain fall-speed exp=0.5/(mu+4)/coeff=130*gamma(mu+4.5)/gamma(mu+4)*_ar^-exp, evaporation alpha/beta coeff+exp, riming/agg/snow-sed coefficients with gamma functions of snow-fall-speed exponents) re-derived in-trace via jax gammaln for ParamTree differentiability."
+step = "S10"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-satad-stencils"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/stencils/saturation_adjustment_stencils.py", "model/atmosphere/subgrid_scale_physics/microphysics/src/icon4py/model/atmosphere/subgrid_scale_physics/microphysics/saturation_adjustment.py"]
+taken = "S10 satad functional core + IFT residual (PLAN item 4: 'read the exact residual once more'). Residual f(T*) = T* - T0 + lwdocvd*(qsat_rho(T*,rho) - qv) with lwdocvd = latent_heat_vaporization(T0)/cvd held constant over the iteration (computed from the INITIAL temperature - the IFT closure must carry d lwdocvd/dT0 = ((1850.0-cpl) - rv)/cvd through the chain rule); Newton update T_new = T - f/f', f' = 1 + lwdocvd*dqsatdT_rho(T, qsat_rho(T,rho)); subsaturated shortcut T_after = T - lwdocvd*qc with qv+qc <= qsat_rho(T_after,rho) bypassing the solve; iteration semantics replicated for T0<->F equivalence: init current=T-2*tol/next=T, per-point newton_iteration_mask = |current-next| > tolerance recomputed on all points each round, converged points frozen (copied through), global loop while any(mask), ConvergenceError past max_iter=10 (F-tier: bounded while_loop, no data-dependent raise under jit - deviation in STATUS); tendency egress (T*-T)/dt, (qsat_rho(T*,rho)-qv)/dt, (max(qv+qc-qsat_rho(T*,rho), zqwmin=1e-20)-qc)/dt; subsaturated egress ((T_after-T)/dt, qc/dt, -qc/dt). Verified identical closure formulas (Tetens TETENS_P0/AW/BW/DER, latent heat 1850.0-cpl literal) as mined in S07."
+step = "S10"
+date = "2026-07-11"
+
+[[ref]]
+id = "jax"
+url = "https://github.com/jax-ml/jax"
+commit = "jax==0.6.2 / jaxlib==0.6.2 (PyPI release consumed as wheel; pin appended to constraints/cpu-ci.txt)"
+paths = ["jax.lax.custom_root", "jax.lax.scan", "jax.lax.while_loop", "jax.checkpoint (jax.remat)", "jax.custom_jvp/custom_vjp", "jax.tree_util.register_dataclass", "jax.scipy.special.gammaln", "docstrings of the installed 0.6.2 wheel"]
+taken = "S10 differentiability substrate (jax>=0.6.0 is the [jax] extra lower bound set in S01; 0.6.2 is the resolved CPU pin, not a bump). Verified empirically on this pin before implementation: lax.custom_root(f, initial_guess, solve, tangent_solve) supports BOTH jvp and grad (reverse via jvp+transpose, tangent_solve linear) with a lax.while_loop inside solve (probe: elementwise Newton sqrt, both modes == analytic 0.5/sqrt(a)) - the architecture-8.6 'custom_root-style rule, not recorded Newton iterations' route for satad; while_loop reverse-mode prohibition sidestepped because solve is never differentiated. register_dataclass(cls, data_fields, meta_fields) makes generated frozen dataclasses PyTrees (the 8.5 StateTree mechanism); jax.checkpoint wraps the scan body for the remat='per_step' policy (approx one extra forward); scan xs/carry semantics for the K-level sedimentation scan and the window loop; gammaln for in-trace gamma-function coefficient derivations; fp64 via jax.config.update('jax_enable_x64', True) (PLAN item 6)."
+step = "S10"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-grid-stack"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair, S01)
+paths = ["model/common/src/icon4py/model/common/grid/gridfile.py", "model/common/src/icon4py/model/common/grid/grid_manager.py", "model/common/src/icon4py/model/common/grid/icon.py", "model/common/src/icon4py/model/common/grid/base.py", "model/common/src/icon4py/model/common/grid/geometry.py", "model/common/src/icon4py/model/common/grid/geometry_attributes.py", "model/common/src/icon4py/model/common/grid/grid_refinement.py"]
+taken = "Grid-file schema + reader semantics for S11 reader.py (transcribed, kept gt4py-free per PLAN pitfall) and the delegation surface for grid.py. NetCDF names: dims cell/edge/vertex; connectivities C2E=edge_of_cell, E2V=edge_vertices, E2C=adjacent_cell_of_edge, V2E=edges_of_vertex, V2C=cells_of_vertex, C2V=vertex_of_cell, C2E2C=neighbor_cell_index, V2E2V=vertices_of_vertex (all stored transposed (sparse, horizontal) -> transpose on read; 1-based Fortran -> ToZeroBasedIndexTransformation subtracts 1 EXCEPT entries == INVALID_INDEX=-1 which stay -1); refin_ctrl arrays refin_c_ctrl/refin_e_ctrl/refin_v_ctrl (ints, no offset, no transpose); geometry vars cell_area/dual_area/edge_length/dual_edge_length/edge_cell_distance(transposed)/edge_vert_distance(transposed)/edge_system_orientation/orientation_of_normal(transposed)/edge_orientation(transposed,int,no offset); coordinates clat/clon/elat/elon/vlat/vlon (radians) + cartesian *_cartesian_* for TORUS; attrs uuidOfHGrid, grid_root, grid_level, optional MPI-M grid_geometry (GeometryType 1=ICOSAHEDRON 2=TORUS, default icosahedron), sphere_radius, domain_length/domain_height. Derived connectivities NOT in the file, built in grid_manager: E2C2V (diamond vertices via _construct_diamond_vertices), E2C2E/E2C2EO (diamond edges, ICON edge order [[1,2],[2,0],[0,1]]), C2E2CO (self-prepended), C2E2C2E, C2E2C2E2C; limited_area = refinement.is_limited_area_grid(refin_c_ctrl); GridManager(grid_file, VerticalGridConfig(num_levels), ToZeroBasedIndexTransformation)(allocator, keep_skip_values) -> .grid (icon.IconGrid with .connectivities = gt4py offset-provider mapping incl. Koff->KDim, .refinement_control, uuid id), .coordinates, .geometry_fields, .decomposition_info. GridGeometry(grid, decomposition_info, backend, coordinates, extra_fields, metadata=geometry_attrs.attrs, exchange) .get(name) computes edge_length/inverse_of_edge_length/length_of_dual_edge/vertex_vertex_length/cell_area/dual_area/edge_area/coriolis_parameter (edge)/edge normals+tangents lazily; skip-value semantics: pentagon points only on global icosahedron (V2E/V2C/V2E2V), plus boundary offsets on LAM/distributed grids."
+step = "S11"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-metrics-interp-factories"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/src/icon4py/model/common/metrics/metrics_factory.py", "model/common/src/icon4py/model/common/metrics/metrics_attributes.py", "model/common/src/icon4py/model/common/interpolation/interpolation_factory.py", "model/common/src/icon4py/model/common/interpolation/interpolation_attributes.py", "model/common/src/icon4py/model/common/interpolation/rbf_interpolation.py", "model/common/src/icon4py/model/common/states/factory.py"]
+taken = "The two factories S11 delegates to (wrap-don't-rewrite, PLAN item 1). InterpolationFieldsFactory(grid, decomposition_info, geometry_source, backend, metadata=interpolation_attributes.attrs, config=InterpolationConfig, exchange) and MetricsFieldsFactory(grid, vertical_grid=icon4py VerticalGrid, decomposition_info, geometry_source, topography=CellField, interpolation_source, backend, metadata=metrics_attributes.attrs, config=MetricsConfig, exchange); .get(name, RetrievalType.FIELD) computes on first request. MetricsConfig namelist knobs: exner_expol=1/3, vwind_offctr=0.15, thslp_zdiffu=0.025, thhgtd_zdiffu=200.0, rayleigh_type=KLEMP, rayleigh_coeff=0.05, divdamp_trans_start=12500, divdamp_trans_end=17500, divdamp_type=3, igradp_method=3. InterpolationConfig: divavg_cntrwgt=0.5, max_nudging_coefficient (default 0.375 via _nudge_max_coeff scaling), nudge_efold_width=2.0, nudge_zone_width=10, rbf kernels per RBF dimension. Metrics factory additionally reads vertical_grid.config.SLEVE_decay_scale_1/SLEVE_decay_exponent/SLEVE_decay_scale_2 (+ private minimum-layer-thickness params) for compute_vertical_coordinate -> S06 SleveConfig gains the three public SLEVE decay knobs (additive, defaults = icon4py = ICON namelist defaults). Attribute-name tables (metrics_attributes/interpolation_attributes) map icon4py standard names <-> icon_var_name (ddqz_z_half, wgtfac_c, vwind_impl_wgt, rbf_vec_coeff_e, ...) - the mapping used by symcon registry rows; icon4py declares units='' for all coefficient fields. nflat_gradp is a SCALAR field (gtx.int32)."
+step = "S11"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-grid-metrics-tests"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/tests/common/metrics/unit_tests/test_metrics_factory.py", "model/common/tests/common/interpolation/unit_tests/test_interpolation_factory.py", "model/common/tests/common/interpolation/unit_tests/test_rbf_interpolation.py", "model/common/tests/common/grid/unit_tests/test_grid_manager.py", "model/testing/src/icon4py/model/testing/definitions.py", "model/testing/src/icon4py/model/testing/grid_utils.py", "model/testing/src/icon4py/model/testing/datatest_utils.py", "model/testing/src/icon4py/model/testing/fixtures/datatest.py"]
+taken = "L2 verification recipe + tolerance contracts for SPEC S11 acceptance 2/3. icon4py's own factory tests build the grid from the GRID FILE (grid_utils.get_grid_manager_from_identifier + GridGeometry), vertical grid from grid_savepoint.vct_a()/vct_b(), configs from the archive namelist json (datatest_utils.create_experiment_configuration), then compare factory.get(field) against metrics_savepoint/interpolation_savepoint with test_utils.dallclose (default rtol=1e-12). Per-field tolerances ported into symcon test tables: metrics z_mc rtol 1e-10, ddqz_z_full rtol 1e-7, inv_ddqz_z_full atol 1e-10, ddqz_z_full_e rtol 1e-8, ddqz_z_half rtol 1e-9, scalfac_dd3d/rayleigh_w/wgtfacq_c/wgtfacq_e/hmask_dd3d default, coeff1/2_dwdz atol 1e-11, theta_ref_mc atol 1e-9, exner_ref_mc atol 1e-10, d2dexdz2_fac1/2_mc atol 1e-12, ddxn_z_full atol 1e-8, ddxt_z_full rtol 1e-5 atol 1e-8, vwind_impl_wgt rtol 1e-9, vwind_expl_wgt rtol 1e-8, exner_exfac atol 1e-8, pg_exdist atol 1e-5, zdiff_gradp atol 1e-10 rtol 1e-9 + vertoffset_gradp exact (both from LATERAL_BOUNDARY_LEVEL_2 edge start only - Fortran leaves the boundary uninitialized), coeff_gradekin rtol 1e-8, wgtfac_c rtol 1e-9, zd_diffcoef atol 1e-10, zd_intcoef atol 1e-8, zd_vertoffset exact, z_ifc rtol 1e-9, nflat_gradp scalar equality; interpolation c_lin_e/geofac_div/geofac_rot(from vertex LB2)/geofac_n2s/c_intp/nudgecoeff_e/geofac_grdiv default, geofac_grg rtol 1e-11 atol 1.1e-16, c_bln_avg rtol 1e-11, e_flx_avg atol 1e-12, e_bln_c_s rtol 1e-11 (EXCLAIM_APE row), pos_on_tplane_e_x/y atol 1e-8 rtol 1e-9, RBF coeffs atol per RBF_TOLERANCES[EXCLAIM_APE] = cell 3.1e-9 / edge 8e-14 / vertex 3e-10 (from LB2 starts). Grid/experiment selection: Grids.R02B04_GLOBAL = icon_grid_0013_R02B04_R is the global grid shared by Experiments.JW (exclaim_nh35_tri_jws, the S13 driver target) and Experiments.EXCLAIM_APE (exclaim_ape_R02B04, icon4py's factory-parity experiment; archive v04) - S11 parity runs on EXCLAIM_APE, whose tolerances are published upstream; regional reader-coverage grid: Grids.MCH_CH_R04B09_DSL = mch_ch_R04B09_DOM01 (limited_area, refin_ctrl populated, grid file only, no serialized archive needed). Grid files download as <root>/grids/<name>.tar.gz via TESTDATA_ROOT_URL=https://rgw.cscs.ch/c2sm:testdata, experiments as ser_icondata/mpitask1_<experiment>_v04.tar.gz; refin_ctrl datatest cross-check needs refinement.convert_to_non_nested_refinement_values and connectivity cross-checks need _reset_invalid_index (ICON move_dummies_to_end_idxblk reverts)."
+step = "S11"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-dycore-diffusion-static-state"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/dycore/src/icon4py/model/atmosphere/dycore/dycore_states.py", "model/atmosphere/diffusion/src/icon4py/model/atmosphere/diffusion/diffusion_states.py"]
+taken = "The S12/S13 static-field consumption list (SPEC S11 acceptance 3 'list of fields = what S12/S13 consume'; S12 SPEC names S11 as the coordination point). solve_nonhydro MetricStateNonHydro: mask_prog_halo_c, rayleigh_w, wgtfac_c, wgtfacq_c, wgtfac_e, wgtfacq_e, exner_exfac, exner_ref_mc, rho_ref_mc, theta_ref_mc, rho_ref_me, theta_ref_me, theta_ref_ic, d_exner_dz_ref_ic, ddqz_z_half, d2dexdz2_fac1_mc, d2dexdz2_fac2_mc, ddxn_z_full, ddqz_z_full_e, ddxt_z_full, inv_ddqz_z_full, vertoffset_gradp, zdiff_gradp, nflat_gradp (scalar int), pg_exdist, vwind_expl_wgt, vwind_impl_wgt, hmask_dd3d, scalfac_dd3d, coeff1_dwdz, coeff2_dwdz, coeff_gradekin. InterpolationState (dycore): e_bln_c_s, rbf_vec_coeff_v1/v2 (rbf_coeff_1/2), geofac_div, geofac_n2s, geofac_grg_x/y, nudgecoeff_e, c_lin_e, geofac_grdiv, rbf_vec_coeff_e, c_intp, geofac_rot, pos_on_tplane_e_1/2 (x/y), e_flx_avg. DiffusionMetricState adds zd_vertoffset, zd_diffcoef, zd_intcoef (theta_ref_mc, wgtfac_c shared); DiffusionInterpolationState is a subset of the dycore list. symcon additionally exports z_mc/z_ifc/ddqz_z_full/inv_ddqz_z_full under the existing S06 registry rows."
+step = "S11"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-refatm-metric-field-tests"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/tests/common/metrics/unit_tests/test_reference_atmosphere.py", "model/common/tests/common/metrics/unit_tests/test_metric_fields.py"]
+taken = "Review round-1 correction to the S11 parity tolerance provenance: six fields in symcon's metrics parity table have NO upstream *factory* test (rho_ref_mc, theta_ref_ic, d_exner_dz_ref_ic, theta_ref_me, rho_ref_me, wgtfac_e); the icon4py-grid-metrics-tests entry therefore does not cover them. Their upstream verification lives here instead: test_reference_atmosphere.py asserts rho_ref_mc/theta_ref_mc/exner_ref_mc (l.91-93), theta_ref_ic (l.149), d_exner_dz_ref_ic (l.186), rho_ref_me rtol=1e-10 + theta_ref_me (l.232-233) and test_metric_fields.py asserts wgtfac_e (l.367) with stencil-level dallclose at the STRICT defaults rtol=1e-12, atol=0 (except rho_ref_me rtol=1e-10). symcon's parity rows for these six now use exactly these tolerances (empirically green on gtfn_cpu/EXCLAIM_APE; worst max_rel 3.6e-15 on rho_ref_me per review probe). The initially committed looser rows (atol=1e-9/1e-10, wgtfac_e rtol=1e-9) were an undeclared loosening misattributed to upstream - reverted."
+step = "S11"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-solve-nonhydro"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0 (pinned pair, S01)
+paths = ["model/atmosphere/dycore/src/icon4py/model/atmosphere/dycore/solve_nonhydro.py", "model/atmosphere/dycore/src/icon4py/model/atmosphere/dycore/dycore_states.py", "model/atmosphere/dycore/src/icon4py/model/atmosphere/dycore/velocity_advection.py"]
+taken = "The hosted granule surface for S12. SolveNonhydro ctor (keyword-only): grid, config=NonHydrostaticConfig, params=NonHydrostaticParams(config), metric_state_nonhydro, interpolation_state, vertical_params=icon4py VerticalGrid, edge_geometry=EdgeParams, cell_geometry=CellParams, owner_mask (cell bool), backend, exchange; builds VelocityAdvection internally and precomputes interpolated_fourth_order_divdamp_factor via en_smag_fac_for_zero_nshift at ctor time. Per-substep entry time_step(diagnostic_state_nh, prognostic_states=TimeStepPair, prep_adv, second_order_divdamp_factor, dtime, ndyn_substeps_var, at_initial_timestep, lprep_adv, at_first_substep, at_last_substep, is_iau_active=False, iau_wgt_dyn=0.0) = run_predictor_step + run_corrector_step (+ LAM-only exner-from-rhotheta boundary + halo theta/exner update); predictor invokes velocity_advection.run_predictor_step ONLY when at_first_substep, with skip_compute_predictor_vertical_advection = (itime_scheme==MOST_EFFICIENT and not (at_initial_timestep and at_first_substep)); corrector invokes velocity_advection.run_corrector_step every substep with wgt_nnow/nnew_vel averaging. NonHydrostaticConfig knobs + namelist origins in docstrings: itime_scheme(4)/iadv_rhotheta(2)/igradp_method(3)/rayleigh_type(KLEMP=2)/divdamp_order(24)/divdamp_type(3)/l_vert_nested/deepatmos_mode/iau_init/extra_diffu/rhotheta_offctr(-0.1)/veladv_offctr(0.25)/max_nudging_coefficient(mo_interpol_nml nudge_max_coeff)/fourth_order_divdamp_factor..factor4 (divdamp_fac..fac4)/fourth_order_divdamp_z..z4 (divdamp_z..z4); _validate() rejects everything but itime_scheme=4, iadv_rhotheta=2, igradp_method=3 TAYLOR_HYDRO, rayleigh KLEMP, divdamp_type!=2, extra_diffu=True. NonHydrostaticParams: wgt_nnow_vel=0.5-veladv_offctr, wgt_nnew_vel=0.5+veladv_offctr, wgt_nnew_rth=0.5+rhotheta_offctr, wgt_nnow_rth=1-wgt_nnew_rth. DiagnosticStateNonHydro carries the velocity-advection carry-over as PredictorCorrectorPair fields normal_wind_advective_tendency (ddt_vn_apc_pc) / vertical_wind_advective_tendency (ddt_w_adv_pc) plus vt, vn_ie(nlevp1), w_concorr_c(nlevp1), theta_v_ic(nlevp1), rho_ic(nlevp1), exner_pr, mass_fl_e, exner_dyn_incr, max_vertical_cfl (0-d), bus fields ddt_vn_phy (normal_wind_tendency_due_to_slow_physics_process, edge vpfloat) and ddt_exner_phy (exner_tendency_due_to_slow_physics, cell vpfloat), grf_tend_* (LAM nesting inputs) and *_iau_increment fields. PrepAdvection: vn_traj, mass_flx_me, mass_flx_ic(nlevp1), vol_flx_ic(nlevp1). IntermediateFields (z_gradh_exner, z_rho_e, z_theta_v_e, z_kin_hor_e, z_vt_ie, z_graddiv_vn, z_dwdz_dd) persist predictor->corrector and across substeps (z_vt_ie/z_kin_hor_e reused when velocity advection is skipped). _dtime_previous_substep caches the rayleigh-factor recompute; p_test_run=False default."
+step = "S12"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-solve-nonhydro-tests"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/dycore/tests/dycore/integration_tests/test_solve_nonhydro.py", "model/atmosphere/dycore/tests/dycore/utils.py", "model/testing/src/icon4py/model/testing/fixtures/datatest.py", "model/testing/src/icon4py/model/testing/serialbox.py", "model/testing/src/icon4py/model/testing/filters.py", "model/testing/src/icon4py/model/testing/definitions.py"]
+taken = "S12 acceptance-1 invocation pattern + tolerance contracts. Savepoint fixtures keyed (istep, date, substep): savepoint_nonhydro_init/exit (istep 1=predictor exit/2=corrector exit) and savepoint_nonhydro_step_final (date, substep only). States built FROM SAVEPOINTS (utils.construct_diagnostics/construct_metric_state/construct_interpolation_state/create_prognostic_states/create_vertical_params), grid from grid_savepoint.construct_icon_grid, geometry from grid_savepoint.construct_cell_geometry/construct_edge_geometry, owner_mask=grid_savepoint.c_owner_mask(); construct_diagnostics(swap_vertical_wind_advective_tendency=not linit) reverses the ddt_w_adv_pc pair; before each substep upstream swaps vertical_wind_advective_tendency unless (at_initial and first) and normal_wind_advective_tendency unless first (test loop == driver logic). ALL solve_nonhydro integration tests are @pytest.mark.embedded_remap_error -> filters.py XFAILS them on the embedded backend ('Embedded backend currently fails in remap function'): upstream verifies gtfn only. EXCLAIM_APE legs exist for predictor test (istep 1->1, date 2000-01-01T00:00:02.000), corrector test (2,1->2,1) and single-step test (1,1->2,1, at_initial=True); multi-step test (loop over ndyn_substeps time_step calls, istep 1,substep 1 -> istep 2,substep 2 + step_final substep 2) runs upstream for MCH_CH_R04B09 only ('# why is this not run for APE?') - symcon reuses its per-field tolerances on EXCLAIM_APE (STATUS deviation note). Tolerances (dallclose default rtol=1e-12, atol=0 unless stated): single-step exit vn rtol 1e-12 atol 1e-13, w atol 8e-14, rho/exner/theta_v default (theta_v/exner vs step_final), exner_dyn_incr atol 1e-14; multi-step exit rho_ic/theta_v_ic default (from cell LB3), mass_fl_e atol 5e-7 (from edge LB5), mass_flx_me atol 5e-7, vn_traj atol 1e-12, theta_v/exner (step_final) + rho default, w atol 1e-13, vn atol 5e-13, exner_dyn_incr atol 1e-14; predictor-step exit (APE leg) exner_pr default, z_exner_ex_pr default, z_exner_ic surface default + rtol 1e-9 above nflatlev, z_dexner_dz_c1 atol 5e-18, rho_ic default, z_th_ddz_exner_c rtol 2e-12, z_theta_v_pr_ic/theta_v_ic default, z_rth_pr 1/2 default, z_dexner_dz_c2 atol 1e-22, z_rho_e/z_theta_v_e default (edge LB7), z_gradh_exner atol 1e-20, vn_new atol 6e-15 (nudging lvl2), z_vn_avg atol 5e-14, z_graddiv_vn atol 5e-20, vt atol 5e-14, mass_fl_e atol 4e-12, z_theta_v_fl_e atol 1e-9, vn_ie/z_vt_ie atol 2e-14, z_kin_hor_e atol 1e-20, z_w_concorr_me atol 1e-15, w_concorr_c atol 1e-15, rho/exner/theta_v default, w atol 7e-14; corrector-step exit rho_ic default, theta_v_ic atol 1e-12, vn rtol 1e-9 (upstream comment: was 1e-10 local-experiment-only), exner/rho/theta_v default, w atol 8e-14, z_vn_avg rtol 5e-7, mass_fl_e rtol 5e-7, mass_flx_me/vn_traj rtol 5e-7, exner_dyn_incr atol 1e-14. time-step-flag metadata semantics: recompute==clean_mflx==(substep==1), linit==(initial timestep and substep==1). EXCLAIM_APE archive (mpitask1_exclaim_ape_R02B04_v04, cached): solve-nonhydro-init/exit at dates 2000-01-01T00:00:02.000 (linit=True) and 00:00:04.000 (mid-run), dyn_timestep (substep) 1..2, istep 1..2, solve-nonhydro-final per substep, dtime=1.0 s; namelist json nonhydrostatic_nml: ndyn_substeps=2, itime_scheme=4, igradp_method=3, divdamp_order=24, divdamp_type=3, rayleigh_type=2, rhotheta_offctr=-0.1, veladv_offctr=0.25, divdamp_fac 0.0025/0.004/0.004/0.004, divdamp_z 32500/40000/60000/80000, run_nml dtime=2.0 s."
+step = "S12"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-driver-dyn-substepping"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/driver/src/icon4py/model/driver/icon4py_driver.py", "model/standalone_driver/src/icon4py/model/standalone_driver/driver_utils.py"]
+taken = "Production orchestration S12 mirrors inside NonhydroSolver.array_call: _do_dyn_substepping loops dyn_substep in range(n_substeps): _update_time_levels_for_velocity_tendencies (swap vertical_wind_advective_tendency unless at_initial_timestep and at_first_substep; swap normal_wind_advective_tendency unless at_first_substep - the MOST_EFFICIENT reuse of corrector tendencies as next predictor values), then solve_nonhydro.time_step(dtime=substep_timestep=dtime/n_substeps, ndyn_substeps_var=n, at_initial/first/last flags), then prognostic_states.swap() unless last substep (the final swap happens after diffusion at full-step level - matches ICON perform_dyn_substepping 'final swap is postponed'). driver_utils.py: production recipe for building grid_states.CellParams (CELL_LAT/LON, CELL_AREA, MEAN_CELL_AREA scalar) and EdgeParams (TANGENT_ORIENTATION, inverse_of_EDGE_LENGTH/DUAL_EDGE_LENGTH/VERTEX_VERTEX_LENGTH, EDGE_NORMAL_VERTEX_U/V, EDGE_TANGENT_VERTEX_U/V, EDGE_NORMAL_CELL_U/V, EDGE_TANGENT_CELL_U/V, EDGE_AREA, CORIOLIS_PARAMETER, EDGE_LAT/LON, EDGE_NORMAL_U/V) from a GridGeometry field source - S12's production path from symcon IconGrid.icon4py_geometry."
+step = "S12"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon-fortran-solve-nonhydro-stepping"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_dyn_iconam/mo_nh_stepping.f90", "src/atm_dyn_iconam/mo_solve_nonhydro.f90"]
+taken = "Sequencing-semantics confirmation only (PLAN item 1; not reimplemented). perform_dyn_substepping (mo_nh_stepping.f90 l.2991-3130): dt_dyn=dt_phy/ndyn_substeps_var; SUBSTEPS loop nstep=1..ndyn_substeps_var calls solve_nh once per substep (predictor+corrector inside); lclean_mflx=l_recompute=(nstep==1); llast=(nstep==ndyn_substeps_var); linit_dyn true only for the very first model step, reset after the first solve_nh call; nnow/nnew SWAPPED between substeps but NOT after the last ('final swap is postponed till the end of the integration step'). Slow-tendency bus application points (PLAN item 4): ddt_vn_phy enters the vn update INSIDE EVERY SUBSTEP in both predictor (l.1410, istep=1 path: vn_new = vn_now + dtime*(ddt_vn_apc_pc(nnow) - cpd*theta_v_e*gradh_exner + ddt_vn_phy)) and corrector (l.1365, temporally averaged advection path, same +ddt_vn_phy term); ddt_exner_phy enters the explicit part of the vertically implicit solver each substep (l.2316/2340: z_exner_expl = exner_pr - beta*(...) + dtime*ddt_exner_phy) and the exner_dyn_incr finalization at the last substep subtracts ndyn_substeps_var*dtime*ddt_exner_phy (l.2574). Cold-start init: exner_pr initialized once before the time loop via compute_exner_pert(exner, exner_ref_mc, exner_pr) for non-restart runs (l.396-400). Tutorial provenance (ICON 2025 tutorial, references/, section 3.7.2 'Fast and Slow Processes'): slow tendencies ddt_vn/ddt_T 'are kept constant between two successive calls of the parameterization, and act as forcing terms in the prognostic equations for vn (3.4), pi (3.6)'; 'The update of vn and pi due to the slow physics tendencies takes place inside the dynamical core' - the S12 bus-port semantics."
+step = "S12"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-diffusion"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/diffusion/src/icon4py/model/atmosphere/diffusion/diffusion.py", "model/atmosphere/diffusion/src/icon4py/model/atmosphere/diffusion/diffusion_states.py", "model/atmosphere/diffusion/src/icon4py/model/atmosphere/diffusion/diffusion_utils.py"]
+taken = "The hosted granule (wrap-don't-rewrite): Diffusion(*, grid, config, params, vertical_grid, metric_state, interpolation_state, edge_params, cell_params, backend, exchange) with the single public entry run(diagnostic_state, prognostic_state, dtime, initial_run=False) - IN-PLACE mutation of prognostic vn/w/theta_v/exner and diagnostic div_ic/hdef_ic/dwdx/dwdy, returns None; the 'initial run' is the initial_run flag (fresh diff_multfac_vn/smag_limit via setup_fields_for_initial_step, smag_offset=0), not a separate method. DiffusionConfig fields + ICON namelist origins (diffusion_nml: hdiff_order->diffusion_type, lhdiff_w/vn/temp, lhdiff_smag_w, itype_vn_diffu, lsmag_3d, itype_t_diffu, hdiff_efdt_ratio=36, hdiff_w_efdt_ratio=15, hdiff_smag_fac..fac4, hdiff_smag_z..z4; nonhydrostatic_nml: ndyn_substeps->n_substeps, l_zdiffu_t->zdiffu_t; gridref_nml: denom_diffu_v=200/denom_diffu_t=135; interpol_nml: nudge_max_coeff; turbdiff_nml: itype_sher->shear_type, a_hshr, loutshs; run_nml: iforcing); _validate() slice = diffusion_type 5 (SMAGORINSKY_4TH_ORDER) + type_vn_diffu 1 (DIAMOND_VERTICES) + type_t_diffu 2 (HETEROGENEOUS), hdiff_smag_w/lsmag_3d/shear_type 3 rejected. DiffusionParams derived: K2=1/(efdt*8), K4=K2/8, K6=K2/64, K4W=1/(w_efdt*36), smagorinski factor/height 4-vectors. States: DiffusionMetricState{theta_ref_mc, wgtfac_c, zd_vertoffset(int32 cell x c2e2c x K), zd_diffcoef, zd_intcoef(cell x c2e2c x K)}; DiffusionInterpolationState{e_bln_c_s, rbf_coeff_1/2 (vertex x v2e), geofac_div, geofac_n2s, geofac_grg_x/y, nudgecoeff_e}; DiffusionDiagnosticState{hdef_ic, div_ic, dwdx, dwdy} all cell x K+1 vpfloat, zero-initialized by initialize_diffusion_diagnostic_state. Halo exchange via required constructor arg exchange (single_node_exchange serially); theta_v/exner/w cell exchanges skipped when not initial_run and iforcing in (NWP, AES). Vertex-dim V2E neighbor_sum in the RBF interpolation (mo_intp_rbf_rbf_vec_interpol_vertex) is the pentagon-relevant reduction; diamond E2C2V accesses have no skip values on triangular grids."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-diffusion-tests"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/atmosphere/diffusion/tests/diffusion/integration_tests/test_diffusion.py", "model/atmosphere/diffusion/tests/diffusion/utils.py", "model/atmosphere/diffusion/tests/diffusion/fixtures.py", "model/testing/src/icon4py/model/testing/fixtures/datatest.py", "model/testing/src/icon4py/model/testing/datatest_utils.py", "model/testing/src/icon4py/model/testing/grid_utils.py"]
+taken = "Parity-test recipe + tolerance contract. verify_diffusion_fields (utils.py:16-53): vn atol=1.0e-8 rtol=1.0e-9; w atol=1e-14; theta_v and exner at dallclose defaults (rtol=1e-12, atol=0); diagnostics compared ONLY when config.shear_type >= VERTICAL_HORIZONTAL_OF_HORIZONTAL_WIND: div_ic atol=1e-16, hdef_ic atol=1e-13, dwdx/dwdy atol=1e-18. test_run_diffusion_single_step runs (MCH_CH_R04B09 @ 2021-06-20T12:00:10.000, linit=False) and (EXCLAIM_APE @ 2000-01-01T00:00:02.000, linit=False); test_run_diffusion_initial_step runs MCH_CH_R04B09 only, linit=True, run(..., initial_run=True), same verify helper; both marked embedded_remap_error (xfail on embedded backend -> no embedded parity leg, S12 precedent). Grid for these tests is FILE-BUILT: get_grid_for_experiment caches grid_utils.get_grid_geometry(backend, experiment) which builds GridManager(grid file, keep_skip_values=True) - i.e. upstream diffusion parity runs with pentagon -1s retained in V2E/V2C and passes deterministically (guarded neighbor_sum reductions); geometry (CellParams/EdgeParams) from GridGeometry fields, not the grid savepoint. States from savepoints: DiffusionDiagnosticState from savepoint_diffusion_init hdef_ic/div_ic/dwdx/dwdy; prognostics via savepoint.construct_prognostics(); dtime from savepoint metadata; config = experiment.config.diffusion parsed from the archive's NAMELIST json (datatest_utils.py:274-305); vertical params via v_grid.get_vct_a_and_vct_b(vertical_config). Init checks: fac_bdydiff_v equality, _verify_init_values_against_savepoint (rtol=1e-7 for enh_smag_fac/diff_multfac_smag; defaults for smag_limit/diff_multfac_n2w/diff_multfac_vn)."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-driver-jw"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/driver/src/icon4py/model/driver/icon4py_driver.py", "model/driver/src/icon4py/model/driver/icon4py_configuration.py", "model/driver/src/icon4py/model/driver/initialization_utils.py", "model/driver/src/icon4py/model/driver/testcases/jablonowski_williamson.py", "model/driver/src/icon4py/model/driver/testcases/utils.py"]
+taken = "JW initializer donor + reference-driver recipe. model_initialization_jabw(*, grid, cell_param, edge_param, path, backend, rank=0): function-local constants p_sfc=1e5, jw_up=0.0 (perturbation OFF by default; 'set to a nonzero value' for the baroclinic wave), jw_u0=35.0, jw_temp0=288.0, eta_0=0.252, eta_t=0.2, gamma=0.005, dtemp=4.8e5, lon_c=pi/9, lat_c=2pi/9; per-level 100-iteration Newton solve of eta against the SERIALIZED geopot from the metrics savepoint (not fully analytic), eta_v=(eta-eta_0)*pi/2; exner=(eta*ps/p0ref)^(rd/cpd), theta_v=T/exner, rho from eos, w=0; vn = zonalwind_2_normalwind_ndarray (u=jw_u0*cos(eta_v_e)^1.5*sin(2 lat)^2 + optional Gaussian exp(-(10*arccos(...))^2) perturbation of amplitude jw_up, projected vn=u*primal_normal_x; jw_up is an ARGUMENT of this helper - symcon's perturbable initializer delegates here) after cell_2_edge_interpolation of eta_v via c_lin_e; hydrostatic_adjustment_ndarray fixes rho/exner/theta_v; perturbed_exner = exner - exner_ref_mc seeds the dycore diagnostic; returns second_order_divdamp_factor=0.0. Driver JW config (_jablonowski_williamson_config): dtime=300 s, end-start=5 min (1 step), n_substeps=5, apply_initial_stabilization=False, num_levels=35, rayleigh_damping_height=45000.0; _jabw_diffusion_config: SMAGORINSKY_4TH_ORDER, hdiff_w=True, hdiff_vn=True, hdiff_temp=FALSE, hdiff_efdt_ratio=10.0, smagorinski_scaling_factor=0.025, zdiffu_t=False, denom_diffu_v=200.0; _jabw_nonhydro_config: NonHydrostaticConfig(fourth_order_divdamp_factor=0.0025) rest defaults. TimeLoop order per step: _do_dyn_substepping (n_substeps x solve_nonhydro.time_step with _update_time_levels_for_velocity_tendencies swaps, prognostic swap between substeps) THEN diffusion.run(diagnostic, prognostic_states.next, dtime) THEN prognostic_states.swap(); optional initial diffusion.run(..., initial_run=True) before the loop when apply_initial_stabilization; diagnostics/IO are TODO stubs. read_icon_grid: serialized grid savepoint via construct_icon_grid (keep_skip_values default True; serialized tables arrive ICON-pre-padded)."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-driver-jw-tests"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/driver/tests/driver/integration_tests/test_jablonowski_williamson.py", "model/driver/tests/driver/integration_tests/test_icon4py.py", "model/testing/src/icon4py/model/testing/definitions.py", "model/testing/src/icon4py/model/testing/serialbox.py"]
+taken = "The JW verification targets + tolerance schedule (SPEC S13 acceptance 2/3 'adopt theirs verbatim and cite'). Experiments.JW = exclaim_nh35_tri_jws on Grids.R02B04_GLOBAL (icon_grid_0013_R02B04_R.nc, root 2 level 4, global, num_levels=35); archive mpitask1_exclaim_nh35_tri_jws_v04.tar.gz at TESTDATA_ROOT_URL. test_jabw_initial_condition: model_initialization_jabw output vs from_savepoint_jabw_exit() at dallclose DEFAULTS (rtol=1e-12, atol=0) for rho/exner/theta_v/vn/pressure/temperature; surface_pressure vs constant 1e5 at defaults; perturbed_exner vs from_savepoint_diagnostics_initial().exner_pr() atol=1e-14; w deliberately NOT verified (forced zero). test_run_timeloop_single_step (JW row): 1 timestep of 5 substeps, timeloop dates 2008-09-01T00:00:00 -> 00:05:00, linit False, restart_mode False; end-of-step tolerances vs savepoint_diffusion_exit: vn atol=6e-12, w atol=1e-13, theta_v atol=4e-12, exner defaults; rho vs savepoint_nonhydro_exit.rho_new() defaults; marked embedded_remap_error. NO upstream tolerance schedule exists beyond one timestep at this grid -> the S13 PLAN fallback (perturbed-IC reference pair, probtest idea at minimum viable scale) governs the 9-day L4 envelope. IconJabwExitSavepoint exposes exner/rho/vn/w/theta_v/pressure/temperature/pressure_sfc (serialbox.py:1777-1801)."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-diagnostics-stencils"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/src/icon4py/model/common/diagnostic_calculations/stencils/diagnose_surface_pressure.py", "model/common/src/icon4py/model/common/diagnostic_calculations/stencils/diagnose_pressure.py", "model/common/src/icon4py/model/common/diagnostic_calculations/stencils/diagnose_temperature.py", "model/common/src/icon4py/model/common/constants.py"]
+taken = "Surface-pressure/temperature diagnosis formulas for the L4 checkpoint fields (numpy re-implementation for trajectory comparison; the driver itself never calls these - diagnostics are TODO stubs there): pres_sfc = p0ref*exp(cpd_o_rd*log(exner[nlev-3]) + grav_o_rd*(ddqz_z_full[nlev-1]/tempv[nlev-1] + ddqz_z_full[nlev-2]/tempv[nlev-2] + 0.5*ddqz_z_full[nlev-3]/tempv[nlev-3])) with tempv=theta_v*exner (dry JW: no tracers); matches ICON mo_nh_diagnose_pres_temp.f90 diag_pres (REFERENCES.lock icon-fortran, S06). Constants: p0ref=1e5, rd=287.04, cpd=1004.64, grav=9.80665, earth_radius=6.371229e6, earth_angular_velocity=7.29212e-5."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-grid-skip-values"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/common/src/icon4py/model/common/grid/icon.py", "model/common/src/icon4py/model/common/grid/base.py", "model/testing/src/icon4py/model/testing/serialbox.py"]
+taken = "Pentagon-dossier ground truth (S12 STATUS section 5 follow-up). CONNECTIVITIES_ON_PENTAGONS=(V2EDim, V2CDim, V2E2VDim) (icon.py:44); _should_replace_skip_values (icon.py:144-172) returns False for pentagon dims on a global non-distributed grid REGARDLESS of keep_skip_values - i.e. GridManager(keep_skip_values=False) deliberately retains the 12 pentagon -1s in file-built V2E/V2C/V2E2V while still declaring skip_value=-1 on the connectivity (skip_value declaration depends only on _has_skip_values, icon.py:190). base._replace_skip_values (base.py:180-228) is the ICON-style padding donor: replace -1 with the row's max valid neighbor ('ICON (Fortran) does something similar: they replace INVALID indices with the last valid neighbor and set interpolation coefficients to 0'). The savepoint grid (IconGridSavepoint.construct_icon_grid, serialbox.py:541-605, with_repeated_index=True) carries ICON-pre-padded tables (no -1 anywhere) with the same skip_value=-1 declaration -> identical NeighborConnectivityType/compiled-program variants as the file grid; the two differ ONLY in table contents at the 12 pentagon rows. Hence padding file tables to the savepoint convention reproduces the configuration every S12 parity test passes on."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon-fortran-diffusion-jabw"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_dyn_iconam/mo_nh_diffusion.f90", "src/testcases/mo_nh_jabw_exp.f90", "src/testcases/mo_nh_testcases.f90"]
+taken = "Cross-check only (icon4py is the verification target). mo_nh_diffusion.f90: the Fortran original of the hosted granule (hdiff_order=5 Smagorinsky + 4th-order background path; diffusion called once per physics timestep after the dynamics substepping, matching the driver order). mo_nh_jabw_exp.f90 init_nh_state_prog_jabw(..., p_sfc, up, u0, temp0): module PARAMETERs eta_0=0.252, etat=0.2, gamma=0.005, dtemp=4.8e5, lonC=pi/9, latC=2*pi/9 and the same Newton-on-eta fit against geopotential with the etat tropopause branch (log(zeta/etat)+137/60 series, lines 229-238) - byte-for-byte the constants icon4py's model_initialization_jabw transcribes; up/u0/temp0 are namelist inputs in ICON (nh_test_nml jw_up etc.), confirming a perturbation-amplitude config knob (symcon cfg.perturbation_amplitude) is the faithful parameterization rather than an invention; 'jabw'/'jabw_s' testcase selection in mo_nh_testcases.f90:288."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-wgtfacq-domain"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/testing/src/icon4py/model/testing/serialbox.py", "model/common/src/icon4py/model/common/metrics/metrics_factory.py", "model/common/src/icon4py/model/common/metrics/compute_wgtfacq.py"]
+taken = "The S12-dossier root cause (S13 STATUS section 5). wgtfacq_c/wgtfacq_e are 3-level fields with a SHIFTED K-domain [nlev-3, nlev): serialbox.py:828-890 builds them via an embedded KDim shift by (nlev-3) + flip ('the Fortran array stores the surface levels in reversed order'), and the metrics factory's field carries the same domain (measured Domain(Cell=(0:20480), K=(57:60)) on EXCLAIM_APE; a scan over every consumed metrics/interpolation factory output shows these two are the ONLY fields with non-zero domain starts). The consuming solve_nonhydro surface-extrapolation stencils index K=nlev-3..nlev-1 through the field domain, so any re-import of the raw (N,3) array at K-domain [0,3) sends every read out of bounds -> gtfn reads unallocated memory (rebuild-dependent, unbounded garbage). symcon fix: dycore convert() anchors the rebuilt fields at the surface, K-domain [nlev-k_extent, nlev)."
+step = "S13"
+date = "2026-07-11"
+
+[[ref]]
+id = "icon4py-driver-substep-op-order"
+url = "https://github.com/C2SM/icon4py"
+commit = "28d32c45afb4dbea1da6b6e5170202f08b4adb88"  # tag v0.2.0
+paths = ["model/driver/src/icon4py/model/driver/icon4py_driver.py"]
+taken = "S14 re-consult (plan-compiler unroll order for the ICON substep-outer nesting; the S12 hosting refs mined the same lines for array_call): _integrate_one_time_step = _do_dyn_substepping THEN diffusion.run THEN prognostic_states.swap() (l.202-229) - the composed-model op order the JW plan must reproduce; _do_dyn_substepping (l.272-310): per substep FIRST _update_time_levels_for_velocity_tendencies (vertical pair swap unless (at_initial_timestep AND at_first_substep); normal pair swap unless at_first_substep - l.233-271), THEN solve_nonhydro.time_step(predictor->corrector), THEN prognostic_states.swap() unless last substep (the final swap is postponed past diffusion). The unrolled T1 op list emits exactly this sequence as component BoundCalls: the pair/time-level swaps are component-private ops (plan_substep_begin/plan_substep_end hooks), never vault Swaps - only the step-boundary prognostic ping-pong reaches the vault (PLAN S14 pitfall)."
+step = "S14"
+date = "2026-07-12"
+
+[[ref]]
+id = "icon-fortran-substep-op-order"
+url = "https://gitlab.dkrz.de/icon/icon-model"
+commit = "8597da45ef4b86323f3fb844caedc4ae5e1ffc01"  # tag icon-2026.04-public
+paths = ["src/atm_dyn_iconam/mo_nh_stepping.f90"]
+taken = "S14 cross-check of the substep-outer unroll order (icon4py remains the verification target): perform_dyn_substepping SUBSTEPS loop (l.3050-3130) calls solve_nh once per substep with dt_dyn = Δt/N and swaps nnow/nnew between substeps but NOT after the last ('This final swap is postponed till the end of the integration step', l.3104-3111); the integration step runs perform_dyn_substepping then CALL diffusion on nnew (l.2182-2191). Matches the icon4py driver order the T1 plan unrolls; linit_dyn(jg) is the at_initial_timestep flag consumed inside the first predictor only - component-private state at T1, not a plan-phase distinction."
+step = "S14"
+date = "2026-07-12"
+
+[[ref]]
+id = "cupy-graph-launch-count"
+url = "https://github.com/cupy/cupy"
+commit = "v13.0.0"  # PyPI floor of the icon4py cuda12 extra (cupy-cuda12x>=13.0)
+paths = ["cupy_backends/cuda/api/runtime.pyx", "cupy/cuda/graph.pyx", "docs cupy.cuda.Graph / Stream.begin_capture"]
+taken = "S14 benchmark gpu leg feasibility: cupy exposes stream capture (Stream.begin_capture/end_capture -> cupy.cuda.Graph with the raw cudaGraph_t as Graph.graph) but does NOT bind cudaGraphGetNodes or cudaGraphDebugDotPrint at v13.0.0 (runtime.pyx graph surface: graphDestroy/graphExecDestroy/graphLaunch/graphUpload only) - so a kernel-launch count needs a ctypes cudaGraphGetNodes call on Graph.graph after capturing one T1 step. Capture also fails across host seams (numpy work, cudaMalloc), which is itself the T2 segment observation the benchmark records. gtfn_gpu kernels launch inside compiled nanobind modules, so Python-level cupy call hooks cannot see them - capture-based counting is the only cupy-reachable mechanism."
+step = "S14"
+date = "2026-07-12"
+
+[[ref]]
+id = "icon-grid-generator"
+url = "https://github.com/ofuhrer/icon-grid-generator"
+commit = "2e8aa97a9833203ee2bda0ec2fbe235ed3ff2e80"  # v0.3.2, PyPI-published
+paths = ["src/grid_generator/_netcdf.py", "src/grid_generator/grid_generator.py", "tests/grid_assertions.py", "tests/test_grid_correctness_matrix.py", "docs/design.md"]
+taken = "Evaluation (no code dependency yet): pure-numpy ICON-style grid generator (BSD-3, Oliver Fuhrer/MeteoSwiss). Empirically verified against the symcon stack: a generated R2B2 file loads through symcon.icon.grid.reader + from_file (icon4py GridManager path), refin_ctrl/uuidOfHGrid present (deterministic uuid5 per spec), offset providers built, and all 38 metrics + 16 interpolation factory fields compute all-finite on gtfn_cpu. NetCDF writer emits real ICON conventions (1-based tables, refin_*_ctrl, start/end_idx, parent indices); spring optimization included; torus/channel/LAM specs supported. NOT numerically equivalent to official DWD gridgen output (own spring iterations; verification upstream is invariant-based, no DWD-reference comparison) - unusable for savepoint-parity work, suitable for synthetic-grid tests, convergence ladders, torus experiments, LAM/P2 fixtures."
+step = "evaluation (pre-adoption; see plan/prompts if a task is cut)"
+date = "2026-07-13"

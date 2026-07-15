@@ -3,7 +3,7 @@
 **Source:** https://github.com/mcgibbon/sympl (upstream) + fork
 https://github.com/stubbiali/sympl, branch `oop`
 **Pinned:** upstream `512809ef35d2daf898b8747a717271ed4d2b684d`; `oop` fork
-`5491978331ef7d6b7dc7995b9a5726713b5de7a7` — corpus pins, see `REFERENCES.lock`
+`5491978331ef7d6b7dc7995b9a5726713b5de7a7` — corpus pins, see `development/references/lock.toml`
 (not a package dependency; not in `constraints/`).
 **License:** not recorded
 
@@ -26,4 +26,4 @@ ScalingWrapper).
 
 ## Consultation ledger
 
-`grep -n 'id = "sympl' REFERENCES.lock` — covers both `sympl` and `sympl-oop` ids.
+`grep -n 'id = "sympl' development/references/lock.toml` — covers both `sympl` and `sympl-oop` ids.
