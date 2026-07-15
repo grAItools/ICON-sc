@@ -29,7 +29,7 @@ testdata/
 *.grb2
 *.zarr/
 # plan artifacts & agent-local files
-development/work/reports/*/artifacts/
+development/work/reports/report-0004-coupling-algebra/
 .claude/settings.local.json
 # local reference documents
 development/references/local/*

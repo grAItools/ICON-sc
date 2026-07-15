@@ -12,7 +12,7 @@ Implement work unit $ARGUMENTS ($ARGUMENTS = NNNN-<kebab>, e.g. 0025-cf-multista
    every consulted source to development/references/lock.toml with commit SHAs.
 4. Implement against the spec's Frozen interfaces exactly. Write the acceptance tests as
    you go — acceptance criteria are the definition of done, not an afterthought.
-5. Run the full gate (development/policies/verification_gates.md). Iterate until green.
-6. Write the report development/work/reports/report-$ARGUMENTS(.md|/) (template in
-   development/policies/document_kinds.md) and commit everything on the branch
+5. Run the full gate (development/policies/verification-gates.md). Iterate until green.
+6. Write the report development/work/reports/report-$ARGUMENTS.md, with artifacts (if any) in development/work/reports/report-$ARGUMENTS/, (template in
+   development/policies/document-kinds.md) and commit everything on the branch
    with clear messages. Do not push; report readiness for PR.
