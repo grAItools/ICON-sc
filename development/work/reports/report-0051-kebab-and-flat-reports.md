@@ -109,7 +109,7 @@ template restated for the flat shape; generated-artifact row on per-folder ignor
 and 4 reference cards updated to kebab (deviation 5); `review-protocol.md` H1 names no
 file; archive map H1 untouched (dead).
 
-C4 `bbeebb7` (12 files): AGENTS.md (3 policy paths + report-shape sentence); PR
+C4 `bbeebb7` (13 files; count corrected in review round 1): AGENTS.md (3 policy paths + report-shape sentence); PR
 template (report-shape line); `implement-plan`/`review-work` commands (.claude +
 .opencode twins): deliverable `report-$ARGUMENTS.md`, artifacts (if any) in
 `report-$ARGUMENTS/`, kebab policy paths; code path strings exactly per §5.3
