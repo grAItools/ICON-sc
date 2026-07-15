@@ -1,7 +1,7 @@
 """S05 acceptance 6: per-step dispatch cost, T0 vs T1, 20 toy components.
 
 Report-only (no hard threshold — SPEC S05); the numbers land in
-development/records/005_vault_plan_t1_record/STATUS.md. The composition is the 20-component
+development/work/reports/report-0005-vault-plan-t1/STATUS.md. The composition is the 20-component
 toy loop of the zero-traffic suite (9 x WindSpeed+Relaxation couplings under
 forward Euler + 2 bare Damping steppers) on the (1, 10) column state, so the
 kernels are negligible and the measured time is dispatch.

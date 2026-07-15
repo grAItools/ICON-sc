@@ -1,4 +1,4 @@
-**Status:** accepted-roadmap (graduates to development/specs/ via plan 030).
+**Status:** accepted-roadmap (graduates to development/work/specs/ via plan 0030).
 
 # P4 — Ingestion & real-data validation (outline)
 **After:** P2+P3 · **Architecture:** §7, ladder L5

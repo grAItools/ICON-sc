@@ -1,4 +1,4 @@
-**Status:** accepted-roadmap (graduates to development/specs/ via plan 030).
+**Status:** accepted-roadmap (graduates to development/work/specs/ via plan 0030).
 
 # P5 — Execution tiers T2/T3 (outline)
 **After:** S14 (+P2 for exchange-delimited segments) · **Architecture:** §8.3

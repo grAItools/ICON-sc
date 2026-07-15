@@ -1,4 +1,4 @@
-# REFERENCES.lock — provenance ledger (append-only; one [[ref]] per consulted source)
+# lock.toml — provenance ledger (append-only; one [[ref]] per consulted source; formerly REFERENCES.lock at the repo root, moved by work unit 0050)
 # Agents: append at mining time, not at PR time. Schema:
 #
 # [[ref]]
