@@ -72,7 +72,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0042 | p7-presets-docs-anemoi | proposal | accepted-roadmap |
 | 0049 | work-structure-iteration | report | executed (plan ad hoc, not committed) |
 | 0050 | work-tree-migration | plan + report | executed |
-| 0051 | kebab-and-flat-reports | plan + report | this work unit |
+| 0051 | kebab-and-flat-reports | plan + report | executed |
 
 Numbers 0000–0014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
@@ -279,5 +279,5 @@ folder survives in git as the artifacts folder holding the tracked sidecar.
 
 | ID | Date | Decision | Status | Source | Evidence |
 |---|---|---|---|---|---|
-| TD-51.1 | (merge) | Kebab-case for ALL filenames under `development/` — including `policies/`, `references/` cards, and `archive/` contents — never snake or mixed; exceptions: `README.md` (conventional) and `lock.toml` (fixed name); supersedes ADR-0006's kebab/snake-split clause | pending | ADR-0007 | — |
-| TD-51.2 | (merge) | Reports are flat files `report-<NNNN>-<kebab>.md`; artifacts (only when they exist) in a sibling folder `report-<NNNN>-<kebab>/` named like the report file minus `.md`; per-folder gitignore convention: a report folder holding ONLY untracked artifacts gets its own explicit `.gitignore` line, folders holding tracked sidecars are not ignored; supersedes ADR-0006's folder-report shape | pending | ADR-0007 | — |
+| TD-51.1 | 2026-07-15 | Kebab-case for ALL filenames under `development/` — including `policies/`, `references/` cards, and `archive/` contents — never snake or mixed; exceptions: `README.md` (conventional) and `lock.toml` (fixed name); supersedes ADR-0006's kebab/snake-split clause | signed-off | ADR-0007 | work-0051 merge `3af101c` |
+| TD-51.2 | 2026-07-15 | Reports are flat files `report-<NNNN>-<kebab>.md`; artifacts (only when they exist) in a sibling folder `report-<NNNN>-<kebab>/` named like the report file minus `.md`; per-folder gitignore convention: a report folder holding ONLY untracked artifacts gets its own explicit `.gitignore` line, folders holding tracked sidecars are not ignored; supersedes ADR-0006's folder-report shape | signed-off | ADR-0007 | work-0051 merge `3af101c` |
