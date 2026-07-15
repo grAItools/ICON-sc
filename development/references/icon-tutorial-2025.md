@@ -1,4 +1,4 @@
-# icon_tutorial_2025
+# icon-tutorial-2025
 
 **Source:** DWD/MPI-M ICON tutorial —
 https://www.dwd.de/EN/ourservices/nwv_icon_tutorial/nwv_icon_tutorial.html

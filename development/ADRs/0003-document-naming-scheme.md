@@ -8,7 +8,7 @@ After the `development/` reorganization (adr 043) the tree still carried four na
 series (S-series steps, P-series outlines, two-digit N-series tasks, four-digit kebab
 ADRs), plus `DECISIONS.md` sitting next to a folder of decision records. The owner
 asked for one convention; the evaluation is work unit 034
-(`development/work/reports/report-0034-naming-iteration/34_naming_iteration.md` §3, decision
+(`development/work/reports/report-0034-naming-iteration.md` §3, decision
 points 3 and 5 of §9, confirmed by the owner).
 
 ## Decision

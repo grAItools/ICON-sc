@@ -1,6 +1,6 @@
 # 0006 — The `work/` tree and kind-prefixed document names
 
-**Status:** accepted · **Date:** 2026-07-15 (owner confirmation 2026-07-14; evaluation: work unit 049)
+**Status:** accepted; kebab/snake split and folder-report shape superseded-by-0007 (all other clauses stand) · **Date:** 2026-07-15 (owner confirmation 2026-07-14; evaluation: work unit 049)
 
 ## Context
 

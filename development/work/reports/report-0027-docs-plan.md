@@ -388,7 +388,7 @@ The following is written in the `development/plans/` register (cf. `plan-0021-ci
 **Branch:** `task/28-docs-implementation` (from `main`; verify
 `git branch --show-current` before every commit). One commit per item A–F below
 (6 commits + report). **Prerequisite:** trunk sign-off on TD-1/TD-2/TD-3 of
-`development/work/reports/report-0027-docs-plan/27_docs_plan.md` (this task implements that
+`development/work/reports/report-0027-docs-plan.md` (this task implements that
 plan; do not re-litigate the stack choice).
 
 ## Hard rules (restated; full list in development/work/plans/README.md)

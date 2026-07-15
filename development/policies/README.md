@@ -5,11 +5,11 @@ or a `development/REGISTRY.md` row — never by silently editing during a work u
 
 | Policy | One line |
 |---|---|
-| `agent_workflow.md` | how a work unit runs: spec → plan → mine references → implement → gates → report → one PR; the implementer/reviewer loop |
-| `naming_conventions.md` | the `<kind>-<NNNN>-<kebab-slug>` scheme, the number-allocation rule, exemptions, the `TD-PENDING:` marker |
-| `document_kinds.md` | taxonomy of file kinds, what is frozen vs living, forward spec/plan/report templates |
-| `docs_boundary.md` | `docs/` is the published surface; `development/` is never a Sphinx source, never linked from the site |
-| `verification_gates.md` | the gate battery, baseline counts, output-reading rules, caches |
-| `reference_mining.md` | sources before code; `development/references/lock.toml` append-at-consultation; the pinned reference pair |
-| `review_protocol.md` | the reusable skeptical-reviewer protocol work units append their checklists to |
-| `repo_layout.md` | the repository layout, packaging boundaries, and layout conventions (formerly `docs/architecture/symcon_repo_layout.md`) |
+| `agent-workflow.md` | how a work unit runs: spec → plan → mine references → implement → gates → report → one PR; the implementer/reviewer loop |
+| `naming-conventions.md` | the `<kind>-<NNNN>-<kebab-slug>` scheme, the number-allocation rule, exemptions, the `TD-PENDING:` marker |
+| `document-kinds.md` | taxonomy of file kinds, what is frozen vs living, forward spec/plan/report templates |
+| `docs-boundary.md` | `docs/` is the published surface; `development/` is never a Sphinx source, never linked from the site |
+| `verification-gates.md` | the gate battery, baseline counts, output-reading rules, caches |
+| `reference-mining.md` | sources before code; `development/references/lock.toml` append-at-consultation; the pinned reference pair |
+| `review-protocol.md` | the reusable skeptical-reviewer protocol work units append their checklists to |
+| `repo-layout.md` | the repository layout, packaging boundaries, and layout conventions (formerly `docs/architecture/symcon_repo_layout.md`) |

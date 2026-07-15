@@ -4,7 +4,7 @@
 the same branch — one PR). First document born under the convention it implements.
 
 **Deliverable:** the migration executed per this plan + the record
-`development/work/reports/report-0035-naming-migration/REPORT.md`.
+`development/work/reports/report-0035-naming-migration.md`.
 
 This plan is frozen at assignment. It implements the owner-accepted evaluation
 `development/records/34_naming_iteration/34_naming_iteration.md` (all §9 recommendations
@@ -215,7 +215,7 @@ Verify purity (word-diff = path strings only), then commit C2.
 | C4 | living edits + tooling + code strings + docs/index (§6) | named files only |
 | C5 | record + review-round fixes | — |
 
-Gates (all must pass; baselines in `development/policies/verification_gates.md`, unchanged:
+Gates (all must pass; baselines in `development/policies/verification-gates.md`, unchanged:
 739/1 · 31 · 43 · 76/1 · ruff clean/173 files · mypy 50 · lint-imports 2 ·
 sphinx `-E -W --keep-going` exit 0). Long pytest runs: detached background with
 `EXIT:$?` sentinel logs under `/tmp/`, poll actively — never end a turn waiting for a
@@ -237,13 +237,13 @@ notification that will not come. Additional checks:
    → zero hits (kind vocabulary only). Frozen files excluded by construction.
 5. `git diff main -- docs/architecture/symcon_architecture.md REFERENCES.lock constraints/ uv.lock` empty.
 
-## 8. Record — `development/work/reports/report-0035-naming-migration/REPORT.md`
+## 8. Record — `development/work/reports/report-0035-naming-migration.md`
 
 Per the STATUS template: rename ledger (72 confirmed), retarget statistics + judgment
 calls, REGISTRY restructure summary, gate outputs verbatim and dated, deviations,
 follow-ups. Any §7.1 by-design hit gets one line each.
 
-## 9. Review checklist (fresh reviewer; protocol `development/policies/review_protocol.md`)
+## 9. Review checklist (fresh reviewer; protocol `development/policies/review-protocol.md`)
 
 1. C1 purity (72 R100) and C2 purity (word-diff spot-check ≥5 frozen files — wording
    change in frozen content is MAJOR; also verify ADR-000N → `adr 04N` citations changed

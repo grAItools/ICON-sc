@@ -9,10 +9,10 @@ in the work unit's report and stop if it blocks acceptance criteria.
 
 Read the spec fully, then the plan; mine references before writing code; implement with
 tests alongside; run the gates; record the outcome in the report
-`development/work/reports/report-NNNN-*{.md,/}`; one PR per work unit. The full sequence, branch
+`development/work/reports/report-NNNN-*.md` (artifacts, if any, in the sibling folder `report-NNNN-*/`); one PR per work unit. The full sequence, branch
 naming (`work/NNNN-<kebab>`), and the implementer/reviewer loop live in
-`development/policies/agent_workflow.md`; the gate battery and baselines in
-`development/policies/verification_gates.md`.
+`development/policies/agent-workflow.md`; the gate battery and baselines in
+`development/policies/verification-gates.md`.
 
 ## Hard rules
 
@@ -39,6 +39,6 @@ Pinned per `development/work/reports/report-0000-overview.md` §3: icon4py, gt4p
 open-source Fortran, sympl (upstream + stubbiali `oop` fork), tasmania, the ICON 2025
 tutorial and the Ubbiali thesis. Per-source cards: `development/references/` (local PDFs
 go in its gitignored `local/`); mining and `development/references/lock.toml` rules:
-`development/policies/reference_mining.md`. When ICON Fortran and icon4py disagree,
+`development/policies/reference-mining.md`. When ICON Fortran and icon4py disagree,
 icon4py's serialized data is the verification target and the disagreement goes in your
 report.

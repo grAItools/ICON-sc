@@ -13,7 +13,7 @@ supersedes it. The register handles this by its own convention — TD-29.1's `St
 only its *conclusion* ("move nothing") is on the table.
 
 **Where this document lives.** It was commissioned into
-`development/work/reports/report-0032-docs-development-structure/` per the current (task-29) convention.
+`development/work/reports/report-0032-docs-development-structure.md` per the current (task-29) convention.
 Under the refined structure of §2 it would be
 `docs/development/records/32_docs_development_structure/` — task deliverables are records.
 The irony is the same bootstrapping one task 29 recorded; it resolves the same way: the
@@ -61,11 +61,11 @@ Five verdicts up front:
 - `docs/` is a Sphinx source tree (task 28): `sphinx-build -b html docs …` runs in
   `lint.yml` (PR gate) and `docs.yml` (Pages deploy from `main`). The task-31 gate uses
   `-E -W --keep-going`; warnings are failures.
-- `plan/` ↔ `docs/` boundary policy (`development/archive/plan_tree_map.md` §4): plan is never a Sphinx source,
+- `plan/` ↔ `docs/` boundary policy (`development/archive/plan-tree-map.md` §4): plan is never a Sphinx source,
   never linked from site pages, never deployed. The proposal *relocates* the boundary
   (development memory moves inside `docs/`); it must not *erase* it — §4 restates it for the
   new geometry.
-- Frozen records are never retro-edited (AGENTS.md; `development/archive/plan_tree_map.md` §1 liveness column).
+- Frozen records are never retro-edited (AGENTS.md; `development/archive/plan-tree-map.md` §1 liveness column).
   Every structure decision below is priced against that rule.
 - `REFERENCES.lock` is the append-only provenance ledger (51 entries, 41 source ids,
   schema in header, appended at mining time, referenced by ~30 files). Nothing here may
@@ -137,7 +137,7 @@ invariant becomes: *published surface = `docs/` minus `docs/development/`*; `doc
 ### 2.3 `docs/development/policies/`
 
 **Strengths.** Today's living rules are scattered across `AGENTS.md` (hard rules),
-`development/archive/plan_tree_map.md` (taxonomy, naming, templates, boundary), and `development/work/plans/README.md`
+`development/archive/plan-tree-map.md` (taxonomy, naming, templates, boundary), and `development/work/plans/README.md`
 (invariants, verification-gate baselines, caches). One policy per file, updated as needed,
 is strictly better than three multi-purpose READMEs.
 
@@ -233,7 +233,7 @@ every *content* citation inside frozen records dangles, and fixing them is forbi
 either way.
 
 **Recommend: freeze in place.** `plan/` becomes a read-only archive: one banner paragraph
-prepended to `development/archive/plan_tree_map.md` ("archive as of task 3X; future work lives in
+prepended to `development/archive/plan-tree-map.md` ("archive as of task 3X; future work lives in
 `docs/development/`; paths cited inside are valid relative to this archive"), everything
 else byte-identical. Future steps (S15+) and tasks (33+) are born in the new tree. The two
 trees never overlap in IDs, so `grep -r S17` finds exactly one home. The one persistent
@@ -326,7 +326,7 @@ can survive with the dev-tree card folder linking to it — decision point 8. No
 4. **Every folder gets a `README.md` index** (existing pattern: prompts, reports).
 5. **Greppable markers unchanged:** `TD-PENDING:` (register contract), `GENERATED FILE`
    headers, `[[ref]]` schema. New under this proposal: ideas' `Status:` header line.
-6. **Liveness is declared, not implied:** the taxonomy table (today `development/archive/plan_tree_map.md` §1)
+6. **Liveness is declared, not implied:** the taxonomy table (today `development/archive/plan-tree-map.md` §1)
    moves to `policies/records_and_liveness.md` and gains rows for the new kinds
    (policy=living, adr=frozen-after-accepted+status-field, idea=living-until-graduated,
    spec/plan=frozen at acceptance/assignment, record=frozen at merge, card=living).
@@ -362,12 +362,12 @@ docs/
     ├── drafts/                external-facing: upstream/, prs/ (resolves TD-29.6)
     └── references/            per-source cards (~8) + local/ (gitignored; absorbs the
                                top-level references/ dir — §2.7)
-plan/                          FROZEN ARCHIVE — byte-identical except a banner in development/archive/plan_tree_map.md;
+plan/                          FROZEN ARCHIVE — byte-identical except a banner in development/archive/plan-tree-map.md;
                                all S01–S14 triads, outlines, prompts 10–31, reports stay put
 references/                    dissolved into development/references/local/ (decision point 8)
 ```
 
-## 4. docs/-publication policy (replaces `development/archive/plan_tree_map.md` §4 wording)
+## 4. docs/-publication policy (replaces `development/archive/plan-tree-map.md` §4 wording)
 
 1. The published surface is `docs/` **minus `docs/development/`** (conf.py
    `exclude_patterns`; the `-W` build gate applies only to published sources).

@@ -12,7 +12,7 @@ stated scope — scope discipline is the main anti-drift device.
 
 1. Give the implementer agent the **full text of one plan file** (not a summary).
 2. When it reports done, give a **fresh agent** (never the same one) the full text of
-   `development/policies/review_protocol.md` plus the plan file's "Review checklist"
+   `development/policies/review-protocol.md` plus the plan file's "Review checklist"
    section.
 3. Iterate implementer ↔ reviewer until the reviewer's verdict is `approve`.
 4. Merge only after approve. One branch and one PR per work unit.
@@ -36,9 +36,9 @@ Work units 0020–0024 are independent of each other except where noted inside t
 The document register (allocation at assignment, strictly monotonic, no reuse, no
 backfill) is `development/REGISTRY.md` §1; the old→new name remaps are §2 and §2b
 there. Full naming convention and file taxonomy:
-`development/policies/naming_conventions.md` and
-`development/policies/document_kinds.md`; the development/docs boundary policy is
-`development/policies/docs_boundary.md`; the living trunk-decision/sign-off register is
+`development/policies/naming-conventions.md` and
+`development/policies/document-kinds.md`; the development/docs boundary policy is
+`development/policies/docs-boundary.md`; the living trunk-decision/sign-off register is
 `development/REGISTRY.md` (it supersedes
 `development/work/reports/report-0036-implementation-report.md` §5/§6 going forward).
 
@@ -70,7 +70,7 @@ there. Full naming convention and file taxonomy:
 ## The verification gate
 
 The gate battery, baseline counts, output-reading rules, and cache notes live in
-**`development/policies/verification_gates.md`** (single living source; a merged work
+**`development/policies/verification-gates.md`** (single living source; a merged work
 unit that changes any count updates that file in the same commit).
 
 ## Background reading (skim before any work unit)

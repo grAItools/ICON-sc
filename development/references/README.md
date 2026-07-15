@@ -13,9 +13,9 @@ Non-redistributable local documents (PDFs) live in `local/` (gitignored).
 | `lock.toml` | the machine provenance ledger — append-only, one `[[ref]]` per consulted source, schema in its header (ex-`REFERENCES.lock` at the repo root, moved by work unit 0050, TD-50.3) |
 | `icon4py.md` | github.com/C2SM/icon4py — primary implementation donor |
 | `gt4py.md` | github.com/GridTools/gt4py — DSL substrate |
-| `icon_fortran.md` | ICON open-source Fortran — scientific ground truth |
+| `icon-fortran.md` | ICON open-source Fortran — scientific ground truth |
 | `sympl.md` | sympl upstream + stubbiali `oop` fork — component/property semantics |
 | `tasmania.md` | github.com/stubbiali/tasmania — federation/coupling reference implementations |
-| `icon_tutorial_2025.md` | DWD/MPI-M ICON tutorial 2025 — process ordering, idealized configuration |
-| `ubbiali_thesis.md` | Ubbiali ETH thesis — coupling scheme definitions and convergence orders |
-| `icon_grid_generator.md` | github.com/ofuhrer/icon-grid-generator — synthetic test grids |
+| `icon-tutorial-2025.md` | DWD/MPI-M ICON tutorial 2025 — process ordering, idealized configuration |
+| `ubbiali-thesis.md` | Ubbiali ETH thesis — coupling scheme definitions and convergence orders |
+| `icon-grid-generator.md` | github.com/ofuhrer/icon-grid-generator — synthetic test grids |

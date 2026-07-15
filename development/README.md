@@ -3,19 +3,22 @@
 This tree is the repo-internal process memory: policies, registers, the work-document
 lifecycle (proposals, specs, plans, reports), ADRs, and reference cards for the
 agent-driven implementation. It is not a Sphinx source and is never published — see
-`policies/docs_boundary.md`.
+`policies/docs-boundary.md`.
 
-## Naming convention (TD-50.1, ADR-0006)
+## Naming convention (TD-50.1/ADR-0006, TD-51.1–2/ADR-0007)
 
-Work documents are named `<kind>-<NNNN>-<kebab-slug>.md` — or `report-NNNN-<kebab>/`
-for multi-file deliverables (inner files keep their names). NNNN is a four-digit work
-id allocated in `REGISTRY.md` §1 at assignment; one number per work unit, shared
-across its proposal/spec/plan/report; kind prefix = singular of the `work/` subfolder.
-ADRs number independently: `ADRs/NNNN-<kebab-title>.md`, own sequence from 0000, cited
-`ADR-NNNN`. Exempt: `policies/*` (snake_case, unnumbered), all `README.md`,
-`REGISTRY.md`, `archive/*` contents. Historical names (`S08_…`, `26_…_REPORT`,
+Every filename in this tree is kebab-case (`README.md` and `lock.toml` excepted).
+Work documents are named `<kind>-<NNNN>-<kebab-slug>.md` — reports included: a
+report is always the flat file `report-NNNN-<kebab>.md`; only when it has extra
+artifacts do they live in a sibling folder `report-NNNN-<kebab>/` next to the file.
+NNNN is a four-digit work id allocated in `REGISTRY.md` §1 at assignment; one number
+per work unit, shared across its proposal/spec/plan/report; kind prefix = singular
+of the `work/` subfolder. ADRs number independently: `ADRs/NNNN-<kebab-title>.md`,
+own sequence from 0000, cited `ADR-NNNN`. Exempt from the `<kind>-<NNNN>` scheme
+(not from kebab-case): `policies/*` (unnumbered), all `README.md`, `REGISTRY.md`,
+`archive/*` contents. Historical names (`S08_…`, `26_…_REPORT`,
 `008_graupel_component_spec.md`) translate via the remap tables in `REGISTRY.md`
-§2/§2b.
+§2/§2b/§2c.
 
 ## Lifecycle
 
@@ -23,7 +26,7 @@ ADRs number independently: `ADRs/NNNN-<kebab-title>.md`, own sequence from 0000,
 the frozen contract: requirements, frozen interfaces, acceptance criteria) → **plan**
 (`work/plans/`, the frozen work instructions an agent executes) → **report**
 (`work/reports/`, the frozen account of what actually happened, written at merge).
-Liveness rules per kind: `policies/document_kinds.md`. Cross-cutting instruments:
+Liveness rules per kind: `policies/document-kinds.md`. Cross-cutting instruments:
 `policies/` (standing rules, living, trunk-gated), `ADRs/` (the reasoning behind
 structural decisions), `REGISTRY.md` (work ids + trunk decisions and sign-offs).
 `archive/` holds superseded or irrelevant documents of any kind, kept for historical
@@ -37,15 +40,15 @@ reference — dead, never authoritative.
 | `work/proposals/` | future proposals, `proposal-NNNN-<kebab>.md`; the migrated phase outlines P2–P7 (0037–0042) |
 | `work/specs/` | frozen work-unit contracts, `spec-NNNN-<kebab>.md` |
 | `work/plans/` | frozen work-unit plans, `plan-NNNN-<kebab>.md`; `README.md` = how plans are used |
-| `work/reports/` | outcome documents frozen at merge, `report-NNNN-<kebab>{.md,/}`: STATUS files, execution reports, `report-0000-overview.md`, `report-0036-implementation-report.md` |
+| `work/reports/` | outcome documents frozen at merge, `report-NNNN-<kebab>.md` (flat files; artifacts in sibling `report-NNNN-<kebab>/` folders): execution reports, design documents, `report-0000-overview.md`, `report-0036-implementation-report.md` |
 | `archive/` | dead documents of any kind; nothing here is authoritative |
 | `references/` | per-source reference cards + `lock.toml` (the machine provenance ledger, append-only) + gitignored `local/` for non-redistributable documents |
 
 Where to start:
 
 - **Implementing** a work unit: its spec in `work/specs/` and plan in `work/plans/`,
-  workflow in `policies/agent_workflow.md`.
-- **Reviewing**: `policies/review_protocol.md` plus the work unit's own review
+  workflow in `policies/agent-workflow.md`.
+- **Reviewing**: `policies/review-protocol.md` plus the work unit's own review
   checklist.
 - **Deciding** (trunk/human): `REGISTRY.md` for the pending rows; `ADRs/` for the
   reasoning behind structural decisions.

@@ -20,7 +20,7 @@ and "content unchanged" is verifiable by diff. Header-line **additions** above a
 frozen document's original text (never edits within it) may be sanctioned
 case-by-case by the migration plan that owns the commit (task 33 sanctioned two:
 the `Status:` header above each migrated outline, and the supersede note above
-`archive/plan_tree_map.md`).
+`archive/plan-tree-map.md`).
 
 ## Consequences
 

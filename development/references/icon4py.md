@@ -21,7 +21,7 @@ Fortran and icon4py disagree (working agreement, `AGENTS.md`).
   `icon4py-common[cuda12]` → `cupy-cuda12x>=13.0` + `gt4py[cuda12]`.
 - Datatest machinery: `TESTDATA_ROOT_URL=https://rgw.cscs.ch/c2sm:testdata`,
   `ICON4PY_TEST_DATA_PATH` env var; archive sizes range from GAUSS3D 57 MB to
-  JW/MCH multi-GB (see `development/policies/verification_gates.md` caches).
+  JW/MCH multi-GB (see `development/policies/verification-gates.md` caches).
 - `icon4py-testing` 0.2.0 requires `serialbox4py>=2.6.2` and imports the
   diffusion/dycore/microphysics/standalone-driver packages at import time.
 

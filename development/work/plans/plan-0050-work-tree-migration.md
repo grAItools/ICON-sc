@@ -201,11 +201,11 @@ living-file terminology grep for `_record`/`_idea`/kind-suffix leftovers.
 
 ## 8. Record — `development/work/reports/report-0050-work-tree-migration.md`
 
-Per the STATUS template (`policies/document_kinds.md` post-rename): rename ledger with
+Per the STATUS template (`policies/document-kinds.md` post-rename): rename ledger with
 the observed count and any explanation, retarget stats + judgment calls, content summary,
 verbatim dated gate lines, deviations, by-design residual hits one line each, follow-ups.
 
-## 9. Review checklist (fresh reviewer; protocol `development/policies/review_protocol.md`)
+## 9. Review checklist (fresh reviewer; protocol `development/policies/review-protocol.md`)
 
 1. C1 purity (expected 84 R100 — verify the observed count against the §3 bullets
    yourself; any non-rename line is a finding) and C2 purity (word-diff ≥5 frozen files

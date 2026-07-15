@@ -1,4 +1,4 @@
-# icon_fortran
+# icon-fortran
 
 **Source:** ICON open-source release — icon-model.org → gitlab.dwd.de/icon/icon-model;
 consulted via the canonical public mirror https://gitlab.dkrz.de/icon/icon-model

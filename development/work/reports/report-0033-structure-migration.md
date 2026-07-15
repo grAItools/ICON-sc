@@ -38,7 +38,7 @@ Rules applied beyond the deterministic table rows:
 - **Multi-kind generic `plan/steps/` mentions** (the table's "pick per what the
   sentence refers to" row): where a sentence refers to the SPEC/PLAN/STATUS triad as
   a whole, the path token was rewritten as `development/{specs,plans,records}/…`
-  (7 instances, in `archive/plan_tree_map.md` and the 29 report); the task-30
+  (7 instances, in `archive/plan-tree-map.md` and the 29 report); the task-30
   prompt's exemplar folders became `development/{specs,plans}/SXX_….md` (3) and its
   "no file outside" fence `development/{specs,plans}/<new files>` (1).
 - **Quoted config values** inside frozen reports (the settings.json deny glob, the
@@ -97,7 +97,7 @@ All commands run from the repo root on `task/33-structure-migration` after C5.
   exactly one hit at `docs/architecture/symcon_repo_layout.md:104`; that line is the
   `symcon.core.plan` source-package node (never-touch) and does not match the grep
   pattern — the layout doc contributes zero hits (see the note inside
-  `layout_doc_revision.diff`).
+  `layout-doc-revision.diff`).
 - **§7.1b `grep -rn "TRUNK_DECISIONS" . --exclude-dir=.git`** (2026-07-14 01:28
   CEST): hits only in `development/DECISIONS.md:12` (formerly-line), ADRs 0001/0003,
   the archived plan-tree map, the 33 plan, and record prose in the 29/31/32 reports —
@@ -109,7 +109,7 @@ All commands run from the repo root on `task/33-structure-migration` after C5.
   `grep -rn "TD-PENDING" development/` hit is convention prose naming the marker
   (policies, ADR-0003, the 29/31/32 records, the archived map, the 33 plan), not a
   flag; no hit lacks its register correspondence.
-- **§7.4 pytest battery** (baselines: `development/policies/verification_gates.md`):
+- **§7.4 pytest battery** (baselines: `development/policies/verification-gates.md`):
   - fast (`not gpu and not slow`), 2026-07-14: `739 passed, 1 skipped, 143 deselected, 51 warnings in 848.87s (0:14:08)` (01:43 CEST; the skip is the mpi opt-in; S04 order tests wrote `development/records/S04_coupling_algebra/artifacts/convergence_{ode,burgers}.png` at the new path)
   - slow-no-data, 2026-07-14: `31 passed, 852 deselected, 5 warnings in 772.42s (0:12:52)` (01:58 CEST)
   - data-not-slow, 2026-07-14: `43 passed, 840 deselected, 11 warnings in 611.21s (0:10:11)` (02:08 CEST)
@@ -146,7 +146,7 @@ rows 32/33 per plan §5.5; deliverable paths of all rows retargeted to `records/
 
 ## 6. Diff artifact and by-design gate hits
 
-`development/work/reports/report-0033-structure-migration/layout_doc_revision.diff` — verified with
+`development/work/reports/report-0033-structure-migration/layout-doc-revision.diff` — verified with
 `git apply --check` (applies cleanly). **Discrepancy vs plan §5.13** (recorded in the
 artifact header): the current layout doc has no `plan/` node in its §4 repo tree
 (line 104 is the `symcon.core.plan` package node) and no top-level `references/`
@@ -171,9 +171,9 @@ Deviations from the plan text, all mechanical-and-obvious per the plan's preambl
    `A` lines; no other modifications.
 7. Root README (§5.8): the stale top-level `references/` row was folded into the new
    `development/references/` row rather than kept pointing at a deleted directory.
-8. Post-gate polish folded into C6: `development/policies/review_protocol.md` step 1
+8. Post-gate polish folded into C6: `development/policies/review-protocol.md` step 1
    now names the step-PLAN home explicitly and step 2 points at
-   `development/policies/verification_gates.md` (the baselines moved out of
+   `development/policies/verification-gates.md` (the baselines moved out of
    plans/README.md in C4).
 9. §5.11 line re-wrap: the retargeted artifact path in `test_order_ode.py:101` /
    `test_order_burgers.py:87` exceeds the 100-column limit on one line; wrapped in
@@ -182,12 +182,12 @@ Deviations from the plan text, all mechanical-and-obvious per the plan's preambl
 
 Follow-ups:
 
-- Owner: apply or reject `layout_doc_revision.diff` (TD-33.4); sign off
+- Owner: apply or reject `layout-doc-revision.diff` (TD-33.4); sign off
   TD-33.1–TD-33.4 and fill their Date cells at merge, plus the ADR 0001–0003
   `Date:` fields.
 - The pending prompts 20–25/30 retain historical "Review checklist (appended to
   10_REVIEW_PROTOCOL.md …)" headings; the protocol now lives at
-  `development/policies/review_protocol.md` (register row 10 says so) — future
+  `development/policies/review-protocol.md` (register row 10 says so) — future
   prompt authors should cite the new path.
 - `development/references/local/prompts-backups.md` and `…-outlines.md` are untracked
   owner notes relocated as-is; the owner may want to consolidate them (the outlines
@@ -216,7 +216,7 @@ Reviewer verdict: request-changes (1 MAJOR, 2 MINOR, 4 INFO). Fixes applied:
    TD-29.3's pointer stay retargeted (their subjects survive under new names — the
    pointers remain true); TD-29.6's `plan/drafts/` was never retargeted (correct).
 4. INFO-4/5/6/7 — accepted as noted, no changes: the C6 review-protocol polish stands
-   as declared (deviation 8); `document_kinds.md`'s "frozen at step start"
+   as declared (deviation 8); `document-kinds.md`'s "frozen at step start"
    wording kept (equivalent in effect to §3.2's "at acceptance/assignment");
    the two by-design historical mentions (20_gpu_validation.md:50, archived map:55)
    left; the plan-internal defects list already covered by §7.

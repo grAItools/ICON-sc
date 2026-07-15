@@ -20,7 +20,7 @@ open issues yourself.
 
 ## Draft 1 — `graupel_cold_glaciation_budget_leak.md`
 
-Source material: `development/work/reports/report-0008-graupel-component/STATUS.md` (the leak dossier and
+Source material: `development/work/reports/report-0008-graupel-component.md` (the leak dossier and
 its Review-fixes round), and the committed wrapper-free reproduction
 `test_cold_leak_reproduces_in_bare_granule` in
 `packages/symcon-icon/tests/test_graupel_component.py` (read `_raw_granule_budget_defect`
@@ -35,8 +35,8 @@ and quote its pass line.
 
 ## Draft 2 — `wgtfacq_shifted_k_domain_footgun.md`
 
-Source material: `development/work/reports/report-0013-diffusion-jw-l4/STATUS.md` (the root-cause
-narrative), `development/work/reports/report-0012-nonhydro-hosting/STATUS.md` §5 (the original dossier +
+Source material: `development/work/reports/report-0013-diffusion-jw-l4.md` (the root-cause
+narrative), `development/work/reports/report-0012-nonhydro-hosting.md` §5 (the original dossier +
 reviewer refinements), development/references/lock.toml entry `icon4py-wgtfacq-domain`, and the fix
 commit `2c0b569`. Content: NOT a bug report — a documentation/API-hardening
 suggestion. The facts: `wgtfacq_c`/`wgtfacq_e` are 3-level fields registered on

@@ -1,4 +1,4 @@
-# icon_grid_generator
+# icon-grid-generator
 
 **Source:** https://github.com/ofuhrer/icon-grid-generator (Oliver Fuhrer/MeteoSwiss)
 **Pinned:** v0.3.2 (`2e8aa97a9833203ee2bda0ec2fbe235ed3ff2e80`, PyPI-published);
