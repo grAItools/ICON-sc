@@ -6,7 +6,7 @@ must be merged to `main` first (its report folder is in the move map §4), and t
 rebased/merged onto that `main` before execution starts.
 
 **Deliverable:** the migration executed per this plan + the execution report
-`development/work/reports/report-0033-structure-migration/REPORT.md` (born in the new tree).
+`development/work/reports/report-0033-structure-migration.md` (born in the new tree).
 
 This prompt is frozen at assignment. Do not "improve" it beyond its stated scope. Where it
 conflicts with reality (a file listed here does not exist, a path already changed), stop,
@@ -303,7 +303,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
     `.claude/commands/review-step.md` and the `.opencode` twin for planning paths (none
     found at plan-writing time; verify).
 13. **Layout-doc diff artifact** (do NOT edit the doc): produce
-    `development/work/reports/report-0033-structure-migration/layout_doc_revision.diff` — a unified diff
+    `development/work/reports/report-0033-structure-migration/layout-doc-revision.diff` — a unified diff
     against `docs/architecture/symcon_repo_layout.md` replacing the `plan/` node in the §4
     repo tree (line ~104) with the `development/` tree (one line per folder) and deleting
     the top-level `references/` node if present. The owner applies it (TD-33.4).
@@ -349,7 +349,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
    records must cite them with regeneration commands, not links; report any found).
 3. **TD-PENDING audit**: every `grep -rn "TD-PENDING" development/` hit corresponds to an
    open (`pending`) row in `development/DECISIONS.md`.
-4. **Full gate battery** (baselines from `development/policies/verification_gates.md`,
+4. **Full gate battery** (baselines from `development/policies/verification-gates.md`,
    identical to the pre-move table: fast 739 passed/1 skipped; slow-no-data 31;
    data-not-slow 43; data-slow 76/1 skipped; ruff `All checks passed!` + `173 files already
    formatted`; mypy 50 files; lint-imports 2 kept — **no count may change**: this task adds
@@ -373,16 +373,16 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
 6. **Tree checks**: `git ls-files plan/ references/` outputs nothing; `[ ! -d plan ]`;
    `ls development/` shows exactly the §1 folders + `README.md` + `DECISIONS.md`.
 
-## 8. Report — `development/work/reports/report-0033-structure-migration/REPORT.md`
+## 8. Report — `development/work/reports/report-0033-structure-migration.md`
 
-Header (branch/date/state per the STATUS template in `policies/document_kinds.md`),
+Header (branch/date/state per the STATUS template in `policies/document-kinds.md`),
 then: (1) move ledger — confirm §4 executed, list every deviation; (2) retarget statistics —
 hits rewritten per §5.1 row, ambiguous matches left + why; (3) untracked files relocated;
 (4) gate outputs — the summary line of each §7 command verbatim, dated; (5) register rows
 added and statuses flipped; (6) the §5.13 diff artifact pointer and any hits from §7.1/7.2
 left by design; (7) follow-ups.
 
-## 9. Review checklist (fresh reviewer agent; protocol at `development/policies/review_protocol.md` after C1)
+## 9. Review checklist (fresh reviewer agent; protocol at `development/policies/review-protocol.md` after C1)
 
 Scope first: the diff touches only §4–§5 files. Then verify, with evidence per finding:
 
@@ -390,13 +390,13 @@ Scope first: the diff touches only §4–§5 files. Then verify, with evidence p
    and C2 purity (word-diff on 5 randomly chosen frozen files: path strings only — any
    wording change in a frozen document is MAJOR).
 2. Re-run §7.1, §7.2, §7.3, §7.6 yourself; re-run the full §7.4 battery and §7.5 build;
-   compare counts to `policies/verification_gates.md` (must be identical to pre-move).
+   compare counts to `policies/verification-gates.md` (must be identical to pre-move).
 3. `git diff main -- docs/architecture REFERENCES.lock constraints/ uv.lock` is empty.
 4. ADRs 0001–0003 state the §1 decisions faithfully; DECISIONS.md rows TD-33.1–4 exist,
    TD-29.1/29.6/29.7 statuses flipped exactly as §3.3, no other row cells changed.
 5. Policies contain the load-bearing content (spot-check: gate baselines table present
-   verbatim in `verification_gates.md`; allocation rule in `naming_conventions.md`;
-   templates in `document_kinds.md`); AGENTS.md lost no hard rule (diff it).
+   verbatim in `verification-gates.md`; allocation rule in `naming-conventions.md`;
+   templates in `document-kinds.md`); AGENTS.md lost no hard rule (diff it).
 6. Reference cards: every `**Pinned:**` value matches `constraints/cpu-ci.txt` /
    `development/references/lock.toml` — a card fact with no source is MAJOR.
 7. Report honesty: gate outputs dated and verbatim; deviations declared.

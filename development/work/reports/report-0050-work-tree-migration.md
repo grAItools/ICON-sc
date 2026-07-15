@@ -213,6 +213,6 @@ positive.
 
 ## 7. Artifacts
 
-`development/work/reports/report-0004-coupling-algebra/artifacts/convergence_{ode,burgers}.png`
+`development/work/reports/report-0004-coupling-algebra/convergence_{ode,burgers}.png`
 (untracked, gitignored) — regenerate with
 `uv run pytest packages/symcon-core/tests/test_order_ode.py packages/symcon-core/tests/test_order_burgers.py -m "slow" -q`.

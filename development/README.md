@@ -3,7 +3,7 @@
 This tree is the repo-internal process memory: policies, registers, the work-document
 lifecycle (proposals, specs, plans, reports), ADRs, and reference cards for the
 agent-driven implementation. It is not a Sphinx source and is never published — see
-`policies/docs_boundary.md`.
+`policies/docs-boundary.md`.
 
 ## Naming convention (TD-50.1, ADR-0006)
 
@@ -23,7 +23,7 @@ ADRs number independently: `ADRs/NNNN-<kebab-title>.md`, own sequence from 0000,
 the frozen contract: requirements, frozen interfaces, acceptance criteria) → **plan**
 (`work/plans/`, the frozen work instructions an agent executes) → **report**
 (`work/reports/`, the frozen account of what actually happened, written at merge).
-Liveness rules per kind: `policies/document_kinds.md`. Cross-cutting instruments:
+Liveness rules per kind: `policies/document-kinds.md`. Cross-cutting instruments:
 `policies/` (standing rules, living, trunk-gated), `ADRs/` (the reasoning behind
 structural decisions), `REGISTRY.md` (work ids + trunk decisions and sign-offs).
 `archive/` holds superseded or irrelevant documents of any kind, kept for historical
@@ -44,8 +44,8 @@ reference — dead, never authoritative.
 Where to start:
 
 - **Implementing** a work unit: its spec in `work/specs/` and plan in `work/plans/`,
-  workflow in `policies/agent_workflow.md`.
-- **Reviewing**: `policies/review_protocol.md` plus the work unit's own review
+  workflow in `policies/agent-workflow.md`.
+- **Reviewing**: `policies/review-protocol.md` plus the work unit's own review
   checklist.
 - **Deciding** (trunk/human): `REGISTRY.md` for the pending rows; `ADRs/` for the
   reasoning behind structural decisions.

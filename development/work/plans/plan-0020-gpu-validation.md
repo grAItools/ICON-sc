@@ -28,10 +28,10 @@ in the S07/S08/S12/S14 STATUS files.
 ## Procedure
 
 1. Read `development/work/plans/README.md` in full. Read the gpu-relevant STATUS notes:
-   `development/work/reports/report-0007-satad-component/STATUS.md` (Review fixes section),
-   `development/work/reports/report-0008-graupel-component/STATUS.md`,
-   `development/work/reports/report-0012-nonhydro-hosting/STATUS.md`,
-   `development/work/reports/report-0014-plan-through-dycore/STATUS.md` (Review fixes: the gpu PR note).
+   `development/work/reports/report-0007-satad-component.md` (Review fixes section),
+   `development/work/reports/report-0008-graupel-component.md`,
+   `development/work/reports/report-0012-nonhydro-hosting.md`,
+   `development/work/reports/report-0014-plan-through-dycore.md` (Review fixes: the gpu PR note).
 2. Install the GPU stack into the workspace env WITHOUT touching any pinned file:
    `uv pip install --prerelease=allow -c constraints/gpu-cuda12.txt "cupy-cuda12x==13.6.0" "gt4py[cuda12]==1.1.10"`
    Then verify: `uv run python -c "import cupy; print(cupy.cuda.runtime.getDeviceCount())"` → ≥1.

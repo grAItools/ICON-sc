@@ -32,7 +32,7 @@ records).
 ## Consequences
 
 - `docs/` is untouched except two one-line path edits (`index.md` prose, `conf.py`
-  comment); the site never links into `development/` (see `policies/docs_boundary.md`).
+  comment); the site never links into `development/` (see `policies/docs-boundary.md`).
 - ~90 inbound path references (living docs, test code, tooling globs) are retargeted;
   frozen records receive mechanical path retargeting only (ADR-0002).
 - Future IDs continue the S-series/N-series; spec, plan, and record of one work unit

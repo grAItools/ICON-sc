@@ -11,4 +11,4 @@ the folder form `report-NNNN-<kebab>/` (inner files keep their names). Related i
 share NNNN across subfolders: `spec-0005-vault-plan-t1.md` / `plan-0005-…` /
 `report-0005-…/`. The work-id sequence is independent of everything outside `work/`
 (ADRs number separately in `../ADRs/`). Branches: `work/NNNN-<kebab>`. Liveness rules:
-`../policies/document_kinds.md`; historical names: `../REGISTRY.md` §2/§2b.
+`../policies/document-kinds.md`; historical names: `../REGISTRY.md` §2/§2b.

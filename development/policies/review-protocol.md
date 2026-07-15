@@ -29,7 +29,7 @@ is part of your instructions.
    `constraints/*.txt` version changes, `uv.lock` version bumps, any test tolerance
    value, any deleted/weakened assertion, any marker change on an existing test.
 2. **Run the full gate battery yourself** (commands and baselines in
-   `development/policies/verification_gates.md`). Compare counts against the
+   `development/policies/verification-gates.md`). Compare counts against the
    baseline PLUS the tests the diff adds. Investigate every discrepancy: a missing
    test, a new skip, a count that moved without a diff explanation. If a run exceeds
    your shell time limit, split it by file/marker — never skip a partition, never

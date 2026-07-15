@@ -4,7 +4,7 @@
 
 This directory is the repo-internal process memory: plans, contracts, records, and
 registers for the agent-driven implementation. Rationale and full analysis:
-`development/work/reports/report-0029-plan-structure/29_plan_structure.md` (task 29). This file states
+`development/work/reports/report-0029-plan-structure.md` (task 29). This file states
 the rules; it does not restate the analysis.
 
 ## 1. Taxonomy — what each file kind is and how it may change
@@ -20,7 +20,7 @@ the rules; it does not restate the analysis.
 | Step how-to (PLAN) | frozen at step start | `development/plans/SXX_*.md` |
 | Step record (STATUS) | frozen at merge — never retro-edited | `development/records/SXX_*/STATUS.md` |
 | Phase outline | frozen until specced into steps | `development/ideas/PN_*.md` |
-| Review protocol | living (task checklists append) | `development/policies/review_protocol.md` |
+| Review protocol | living (task checklists append) | `development/policies/review-protocol.md` |
 | Task prompt | frozen at assignment | `development/plans/NN_*.md` |
 | Task execution report | frozen at task merge | `development/records/NN_*_REPORT.md` |
 | Design document / proposal | frozen; decisions extracted to the register | `development/records/NN_<name>/NN_<name>.md` |
