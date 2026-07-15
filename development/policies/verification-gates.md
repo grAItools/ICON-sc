@@ -1,4 +1,4 @@
-# verification_gates — the gate battery, baselines, and output-reading rules
+# verification-gates — the gate battery, baselines, and output-reading rules
 
 Scope: the verification gate every work unit must leave green, its baseline counts, and
 the rules for reading gate output. Keep-current rule: a merged work unit that changes

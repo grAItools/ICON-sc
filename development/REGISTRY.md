@@ -72,7 +72,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0042 | p7-presets-docs-anemoi | proposal | accepted-roadmap |
 | 0049 | work-structure-iteration | report | executed (plan ad hoc, not committed) |
 | 0050 | work-tree-migration | plan + report | executed |
-| 0051 | kebab-and-flat-reports | plan + report | pending (plan `development/work/plans/plan-0051-kebab-and-flat-reports.md`) |
+| 0051 | kebab-and-flat-reports | plan + report | this work unit |
 
 Numbers 0000–0014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
@@ -179,6 +179,38 @@ are unchanged.
 | `REFERENCES.lock` (repo root) | `development/references/lock.toml` |
 | `policies/records_and_liveness.md` | `policies/document_kinds.md` |
 
+## 2c. Remap table (work 0051 — kebab-case everywhere + flat reports)
+
+Old→new for every file renamed by work unit 0051 (commit C1; TD-51.1/51.2, ADR-0007).
+Paths are relative to `development/` unless prefixed. The 0004 report folder survives
+on disk as the (untracked) artifacts folder beside the flat report file; the 0033
+folder survives in git as the artifacts folder holding the tracked sidecar.
+
+| Old (0050 scheme) | New (work 0051) |
+|---|---|
+| `policies/agent_workflow.md` | `policies/agent-workflow.md` |
+| `policies/docs_boundary.md` | `policies/docs-boundary.md` |
+| `policies/document_kinds.md` | `policies/document-kinds.md` |
+| `policies/naming_conventions.md` | `policies/naming-conventions.md` |
+| `policies/reference_mining.md` | `policies/reference-mining.md` |
+| `policies/repo_layout.md` | `policies/repo-layout.md` |
+| `policies/review_protocol.md` | `policies/review-protocol.md` |
+| `policies/verification_gates.md` | `policies/verification-gates.md` |
+| `references/icon_fortran.md` | `references/icon-fortran.md` |
+| `references/icon_grid_generator.md` | `references/icon-grid-generator.md` |
+| `references/icon_tutorial_2025.md` | `references/icon-tutorial-2025.md` |
+| `references/ubbiali_thesis.md` | `references/ubbiali-thesis.md` |
+| `archive/plan_tree_map.md` | `archive/plan-tree-map.md` |
+| `work/reports/report-<NNNN>-<kebab>/STATUS.md` (0001…0014) | `work/reports/report-<NNNN>-<kebab>.md` |
+| `work/reports/report-0027-docs-plan/27_docs_plan.md` | `work/reports/report-0027-docs-plan.md` |
+| `work/reports/report-0029-plan-structure/29_plan_structure.md` | `work/reports/report-0029-plan-structure.md` |
+| `work/reports/report-0032-docs-development-structure/32_docs_development_structure.md` | `work/reports/report-0032-docs-development-structure.md` |
+| `work/reports/report-0033-structure-migration/REPORT.md` | `work/reports/report-0033-structure-migration.md` |
+| `work/reports/report-0034-naming-iteration/34_naming_iteration.md` | `work/reports/report-0034-naming-iteration.md` |
+| `work/reports/report-0035-naming-migration/REPORT.md` | `work/reports/report-0035-naming-migration.md` |
+| `work/reports/report-0033-structure-migration/layout_doc_revision.diff` | `work/reports/report-0033-structure-migration/layout-doc-revision.diff` |
+| `work/reports/report-0004-coupling-algebra/artifacts/*.png` (untracked) | `work/reports/report-0004-coupling-algebra/*.png` (untracked, plain `mv`) |
+
 ## 3. Decision register
 
 ### Sign-off items from the 001–014 slice (mirrors IMPLEMENTATION_REPORT §5, verbatim)
@@ -242,3 +274,10 @@ are unchanged.
 | TD-50.1 | 2026-07-15 | `development/work/` tree with kind-prefixed names: lifecycle folders `work/{proposals,specs,plans,reports}` (ex-`ideas`, ex-`records`); files `<kind>-<NNNN>-<kebab-slug>`, four digits, **numeric values preserved** from the three-digit ids (never compact-renumbered — the remap is §2b); lifecycle vocabulary proposal → spec → plan → report | signed-off | ADR-0006 | work-0050 merge `fcdb527` |
 | TD-50.2 | 2026-07-15 | `ADRs/` independence: own Nygard sequence from 0000 (043–048 → 0000–0005 in order), the deliberate uppercase exception (the repo's only non-lowercase folder), citation form `ADR-NNNN`; supersedes ADR-0003's sequence/suffix clauses | signed-off | ADR-0006 | work-0050 merge `fcdb527` |
 | TD-50.3 | 2026-07-15 | `REFERENCES.lock` → `development/references/lock.toml`; the header-title edit sanctioned (append-only binds the `[[ref]]` entries, not the schema comment); entries and their historical `step` ids untouched | signed-off | ADR-0006; 049 evaluation §3 | work-0050 merge `fcdb527` |
+
+### Decisions from work unit 0051 (kebab-case everywhere + flat reports)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-51.1 | (merge) | Kebab-case for ALL filenames under `development/` — including `policies/`, `references/` cards, and `archive/` contents — never snake or mixed; exceptions: `README.md` (conventional) and `lock.toml` (fixed name); supersedes ADR-0006's kebab/snake-split clause | pending | ADR-0007 | — |
+| TD-51.2 | (merge) | Reports are flat files `report-<NNNN>-<kebab>.md`; artifacts (only when they exist) in a sibling folder `report-<NNNN>-<kebab>/` named like the report file minus `.md`; per-folder gitignore convention: a report folder holding ONLY untracked artifacts gets its own explicit `.gitignore` line, folders holding tracked sidecars are not ignored; supersedes ADR-0006's folder-report shape | pending | ADR-0007 | — |

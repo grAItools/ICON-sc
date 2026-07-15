@@ -1,4 +1,4 @@
-# repo_layout — the repository layout, packaging boundaries, and layout conventions
+# repo-layout — the repository layout, packaging boundaries, and layout conventions
 
 Scope: the monorepo tree, the three-distribution packaging and import-boundary
 structure, and the layout conventions that carry architectural weight. Section
@@ -290,7 +290,7 @@ development/                             # repo-internal process memory — neve
 │   ├── proposals/                       # future proposals; phase outlines P2–P7 (proposal-NNNN-<kebab>.md)
 │   ├── specs/                           # frozen work-unit contracts (spec-NNNN-<kebab>.md)
 │   ├── plans/                           # frozen work-unit plans (plan-NNNN-<kebab>.md)
-│   └── reports/                         # outcome documents frozen at merge (report-NNNN-<kebab>{.md,/})
+│   └── reports/                         # outcome documents frozen at merge (report-NNNN-<kebab>.md + sibling artifacts folders)
 ├── archive/                             # dead documents of any kind
 └── references/                          # per-source reference cards + lock.toml (machine ledger) + local/ (gitignored)
 

@@ -1,4 +1,4 @@
-# ubbiali_thesis
+# ubbiali-thesis
 
 **Source:** https://doi.org/10.3929/ethz-b-000546695 (S. Ubbiali, ETH diss. no. 28022)
 **Pinned:** the published dissertation — corpus pin, see

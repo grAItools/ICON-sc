@@ -1,4 +1,4 @@
-# agent_workflow — how a work unit is executed
+# agent-workflow — how a work unit is executed
 
 Scope: the working sequence for implementing a work unit, and the
 implementer/reviewer loop.

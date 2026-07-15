@@ -1,7 +1,7 @@
 # ADRs/ — architecture decision records
 
 Nygard-format records, `NNNN-<kebab-title>.md`, **own sequence from 0000** (independent
-of the work ids in `development/REGISTRY.md` §1; next free: **0007**): Context ·
+of the work ids in `development/REGISTRY.md` §1; next free: **0008**): Context ·
 Decision · Consequences · Alternatives considered. Frozen once accepted; only the
 `Status:` field may change afterwards (e.g. `superseded-by-NNNN`). Cite ADRs as
 `ADR-NNNN`. The former `NNN_<slug>_adr.md` files 043–048 were remapped **in order** to
@@ -18,7 +18,8 @@ files keep their historical numbers (frozen content); this index is the living m
 | 0003 | The `NNN_<slug>_<kind>` document naming scheme | accepted; sequence/suffix clauses superseded-by-0006 (number-sharing and exemption clauses stand) |
 | 0004 | Documentation stack: Sphinx + MyST + Napoleon + furo (retroactive) | accepted |
 | 0005 | icon-grid-generator as archive-independent fixture source (retroactive) | accepted |
-| 0006 | The `work/` tree and kind-prefixed document names | accepted |
+| 0006 | The `work/` tree and kind-prefixed document names | accepted; kebab/snake split and folder-report shape superseded-by-0007 (all other clauses stand) |
+| 0007 | Kebab-case everywhere; flat reports with sibling artifact folders | accepted |
 
 **When to write an ADR vs only a register row** (rule of thumb from ADR-0002): if the
 decision shapes structure — of the code, the repo, or the process — and someone will

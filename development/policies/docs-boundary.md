@@ -1,4 +1,4 @@
-# docs_boundary — the development/ ↔ docs/ boundary
+# docs-boundary — the development/ ↔ docs/ boundary
 
 Scope: what may cross between the published documentation site and the repo-internal
 process memory.

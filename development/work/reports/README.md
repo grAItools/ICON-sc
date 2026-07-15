@@ -1,12 +1,15 @@
 # reports/ — outcome documents, frozen at merge
 
 Every outcome document of a merged work unit lives here (liveness rules and templates:
-`development/policies/document-kinds.md`). Shapes:
+`development/policies/document-kinds.md`; shape rule: TD-51.2, ADR-0007). Shape:
 
-- **Single-file reports:** `report-NNNN-<kebab>.md` (execution reports).
-- **Multi-file reports:** `report-NNNN-<kebab>/` — inner files keep their names
-  (`STATUS.md`, `REPORT.md`, a design document, sidecars), plus an optional untracked
-  `artifacts/` (gitignored; every artifact is cited in its report *with its
+- **Every report is a flat file** `report-NNNN-<kebab>.md` — execution reports,
+  STATUS-style reports, and design documents alike.
+- **Artifacts** (only when a report has them) live in a sibling folder
+  `report-NNNN-<kebab>/` named like the report file minus `.md` — tracked sidecars
+  (e.g. `report-0033-structure-migration/layout-doc-revision.diff`) or untracked
+  generated files (e.g. the `report-0004-coupling-algebra/` PNGs, per-folder
+  `.gitignore` line; every untracked artifact is cited in its report *with its
   regeneration command*, never as a bare path).
 - **Slice-level reports:** `report-0000-overview.md` (the S01–S14 implementation plan:
   agent contract, dependency DAG, lanes) and `report-0036-implementation-report.md`

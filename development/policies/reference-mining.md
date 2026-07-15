@@ -1,4 +1,4 @@
-# reference_mining — sources before code, and the provenance ledger
+# reference-mining — sources before code, and the provenance ledger
 
 Scope: how external references are mined and recorded; the pinned reference pair.
 
