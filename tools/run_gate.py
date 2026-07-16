@@ -41,27 +41,46 @@ _MiB = 1024 * 1024
 
 @dataclasses.dataclass(frozen=True)
 class Partition:
-    """One gate partition. `marker`/`dist`/`workers` transcribe spec-0052's table."""
+    """One gate partition. `marker`/`dist`/`workers` transcribe spec-0052's table.
+
+    `workers == 0` means "no xdist at all" and `dist` is then None: the partition runs in a
+    single process even in the parallel gate. That is a scheduling choice like any other —
+    for a partition xdist cannot speed up, it is the fastest *and* lowest-RAM option.
+    """
 
     name: str
     marker: str
-    dist: str
+    dist: str | None
     workers: int
     ram_heavy: bool
     expected: str
 
+    def __post_init__(self) -> None:
+        if (self.dist is None) != (self.workers == 0):
+            raise SystemExit(f"{self.name}: dist and workers disagree on whether xdist is used")
 
-#: spec-0052 "Per-partition policy (the single authoritative table)". The two data caps are
+
+#: spec-0052 "Per-partition policy (the single authoritative table)". The data caps are
 #: calibration outputs (0052 Item D) — change them only with per-wave RSS evidence.
 PARTITIONS: dict[str, Partition] = {
     "fast": Partition("fast", "not gpu and not slow and not data", "load", 10, False, "696p/1s"),
-    "slow-nodata": Partition(
-        "slow-nodata", "slow and not gpu and not data", "load", 6, False, "31p"
-    ),
+    # Serial by calibration (0052 Item D): 7:39 serial vs 8:16 at -n 6, measured alone. The
+    # spec's -n 6 was a "starting target"; this lowers it on evidence. Second benefit: wave 2
+    # drops from 9 worker processes to 4, and wave contention — not xdist — is what actually
+    # costs this battery time (data-noslow: 6:38 alone, 14:02 when paired with -n 6 here).
+    "slow-nodata": Partition("slow-nodata", "slow and not gpu and not data", None, 0, False, "31p"),
+    # Keeps -n 3: the one partition xdist genuinely helps (6:38 at -n 3 vs 8:12 serial, alone).
     "data-noslow": Partition(
         "data-noslow", "data and not slow and not gpu", "loadscope", 3, True, "43p"
     ),
-    "data-slow": Partition("data-slow", "data and slow and not gpu", "load", 2, True, "76p/1s"),
+    # Serial by measurement, not by omission (spec-0052 Amendment 2, TD-52.2). This partition
+    # does not scale: one test, test_jw_t0_t1_bitwise_24h[gtfn_cpu], is 1519s of its 2012s
+    # (75%), and no -n splits a single test. The spec's original premise — 55 static-fields
+    # tests each re-running the gt4py factories — is false; _get_static is memoized per
+    # process, so those 55 cost ~12s total and xdist only duplicates that cost per worker.
+    # Measured: serial 33:04/5.0GiB, -n 2 33:08/6.4GiB, -n 4 35:13/9.0GiB. Serial wins twice.
+    # It stays in wave 1 so it still overlaps `fast`; that overlap is its whole parallelism.
+    "data-slow": Partition("data-slow", "data and slow and not gpu", None, 0, True, "76p/1s"),
 }
 
 #: One RAM-heavy partition per wave (asserted by `_check_waves`).
@@ -97,7 +116,9 @@ def _pytest_cmd(part: Partition, parallel: bool, workers: int | None = None) -> 
     n = part.workers if workers is None else workers
     cmd = ["uv", "run", "pytest", "packages", "-m", part.marker, "-q"]
     if parallel and n > 0:
-        cmd += ["-n", str(n), "--dist", part.dist]
+        # A calibration override can ask for workers on a partition the table runs serially
+        # (dist is None there); `load` is the sweep default that measured it.
+        cmd += ["-n", str(n), "--dist", part.dist or "load"]
     _assert_no_selection_flags(cmd)
     return cmd
 

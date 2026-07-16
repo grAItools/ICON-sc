@@ -73,7 +73,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0049 | work-structure-iteration | report | executed (plan ad hoc, not committed) |
 | 0050 | work-tree-migration | plan + report | executed |
 | 0051 | kebab-and-flat-reports | plan + report | executed |
-| 0052 | parallel-verification-gates | proposal + spec + plan | pending |
+| 0052 | parallel-verification-gates | proposal + spec + plan + report | pending |
 
 Numbers 0000–0014 are the remapped S-series work units. The old N-series number 10
 (the review protocol) is superseded by this remap: the protocol is a policy
@@ -282,3 +282,10 @@ folder survives in git as the artifacts folder holding the tracked sidecar.
 |---|---|---|---|---|---|
 | TD-51.1 | 2026-07-15 | Kebab-case for ALL filenames under `development/` — including `policies/`, `references/` cards, and `archive/` contents — never snake or mixed; exceptions: `README.md` (conventional) and `lock.toml` (fixed name); supersedes ADR-0006's kebab/snake-split clause | signed-off | ADR-0007 | work-0051 merge `3af101c` |
 | TD-51.2 | 2026-07-15 | Reports are flat files `report-<NNNN>-<kebab>.md`; artifacts (only when they exist) in a sibling folder `report-<NNNN>-<kebab>/` named like the report file minus `.md`; per-folder gitignore convention: a report folder holding ONLY untracked artifacts gets its own explicit `.gitignore` line, folders holding tracked sidecars are not ignored; supersedes ADR-0006's folder-report shape | signed-off | ADR-0007 | work-0051 merge `3af101c` |
+
+### Decisions from work unit 0052 (parallel verification gates)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-52.1 | 2026-07-16 | `pytest-xdist>=3.6` added to `[dependency-groups].dev` as a lower-bound declaration (`execnet` transitive); `uv.lock` regenerated, no other pin moved. `constraints/cpu-ci.txt` deliberately **not** touched — it pins no pytest plugin at all, so xdist does not belong there, now or in the CI follow-up. Not a gt4py/icon4py pin bump | pending | `report-0052-parallel-verification-gates.md` §4; plan-0052 Item A | — |
+| TD-52.2 | 2026-07-16 | **Sanctioned amendment of the frozen `spec-0052`** (owner-instructed 2026-07-16; same class as TD-35.5). Item D measured two spec claims false: (a) the ≈ 18–22 min target is unreachable — one test, `test_jw_t0_t1_bitwise_24h[gtfn_cpu]`, is 1519 s (25.3 min), 75 % of the `data+slow` partition, and no worker count splits a single test; the target is withdrawn in favour of "materially reduced against the measured serial baseline, figure reported", with retrofitting a target to the achieved figure expressly forbidden. (b) the `data+slow` rationale ("55 static-fields tests each re-running the gt4py factories") is false — `_get_static` is memoized per process, those 55 tests cost ~12 s combined; `data+slow` therefore runs **serially**, measured fastest *and* lowest-RAM (serial 33:04/5.0 GiB vs `-n 2` 33:08/6.4 GiB vs `-n 4` 35:13/9.0 GiB). Amendments marked inline in the spec; the rest of the spec measured sound and unchanged | pending | `report-0052-parallel-verification-gates.md` §3 D1; spec-0052 amendment banner | — |
