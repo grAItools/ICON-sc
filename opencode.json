@@ -2,7 +2,11 @@
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["AGENTS.md"],
   "permission": {
-    "edit": "allow",
+    "edit": {
+      "*": "allow",
+      "docs/architecture/**": "deny",
+      "LICENSE": "deny"
+    },
     "bash": {
       "uv *": "allow",
       "pytest *": "allow",

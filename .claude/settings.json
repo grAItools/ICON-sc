@@ -26,8 +26,20 @@
       "Bash(rm -rf:*)",
       "Bash(sudo:*)",
       "Edit(docs/architecture/**)",
-      "Edit(development/work/specs/spec-*.md)",
       "Edit(LICENSE)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tools/spec_freeze_guard.py\""
+          }
+        ]
+      }
     ]
   }
 }
