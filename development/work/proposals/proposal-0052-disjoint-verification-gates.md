@@ -1,4 +1,4 @@
-**Status:** graduated → spec 0052 (`development/work/specs/spec-0052-parallel-verification-gates.md` + `development/work/plans/plan-0052-parallel-verification-gates.md`); CI half is a follow-up taking the next free number when assigned. **On any detail, the spec governs** — review corrected this proposal's partition analysis and worker counts before graduation; the corrections are folded in below rather than left as a misleading account.
+**Status:** graduated → spec 0052 (`development/work/specs/spec-0052-disjoint-verification-gates.md` + `development/work/plans/plan-0052-disjoint-verification-gates.md`); CI half is a follow-up taking the next free number when assigned. **On any detail, the spec governs** — review corrected this proposal's partition analysis and worker counts before graduation; the corrections are folded in below rather than left as a misleading account.
 
 # 0052 — Parallel verification gates (bounded two-layer test parallelism)
 **After:** 0051 · **Architecture:** n/a (tooling; no `symcon.*` source change) · **Policies:** `policies/verification-gates.md`, `policies/agent-workflow.md`

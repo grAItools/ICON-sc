@@ -1,11 +1,11 @@
-# Work unit 0052 — Parallel verification gates (bounded two-layer test parallelism)
+# Work unit 0052 — Disjoint verification gates (renamed from "parallel")
 
-**Branch:** `work/0052-parallel-verification-gates` (from `main`; verify
+**Branch:** `work/0052-disjoint-verification-gates` (from `main`; verify
 `git branch --show-current` before every commit). One PR. **Deliverable:** the partition fix
 + driver + dependency + docs, and
-`development/work/reports/report-0052-parallel-verification-gates.md`.
+`development/work/reports/report-0052-disjoint-verification-gates.md`.
 
-Authority: `docs/architecture/symcon_architecture.md` > `spec-0052-parallel-verification-gates.md`
+Authority: `docs/architecture/symcon_architecture.md` > `spec-0052-disjoint-verification-gates.md`
 > this plan. **The spec's per-partition table is the single source of truth for every
 `--dist`/`-n` value** — this plan deliberately restates none of them; read them there and
 encode exactly those. The spec's *Frozen interfaces* bind. Parallelism changes **scheduling
@@ -14,7 +14,7 @@ only**; the partition-boundary change (Item A) changes *which partition* runs a 
 
 ## Hard rules (restated; full list in `development/work/plans/README.md`)
 
-- `git branch --show-current` = `work/0052-parallel-verification-gates` before every commit;
+- `git branch --show-current` = `work/0052-disjoint-verification-gates` before every commit;
   never commit to main; never push; `Co-Authored-By:` trailer.
 - **No tolerance changes, no reduction-order changes, no `pytest.mark` edits on any test.**
   The driver never injects `-x`, `-k`, or `--ignore`; `-n`/`--dist` are the *only* flags it
@@ -180,7 +180,7 @@ verification-gates.md match the report's dated gate lines exactly.
    `tools/run_gate.py`, `development/policies/verification-gates.md`,
    `development/REGISTRY.md`, the report — plus `packages/**/tests/*.py` **only** under Item
    E's written-up exception. Anything else is a finding.
-8. Report `development/work/reports/report-0052-parallel-verification-gates.md` committed per
+8. Report `development/work/reports/report-0052-disjoint-verification-gates.md` committed per
    the `document-kinds.md` template.
 
 ## Verification gates (run before the report; the driver runs them for you)
