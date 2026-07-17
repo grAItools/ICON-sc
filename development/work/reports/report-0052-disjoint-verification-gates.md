@@ -1,6 +1,6 @@
-# Work unit 0052 — Parallel verification gates
+# Work unit 0052 — Disjoint verification gates
 
-**Branch:** `work/0052-parallel-verification-gates` · **Date:** 2026-07-17 · **State:** ready for review
+**Branch:** `work/0052-disjoint-verification-gates` · **Date:** 2026-07-17 · **State:** ready for review
 
 > **Headline: this work unit delivers no parallelism, because the battery does not
 > parallelize.** A single pytest process uses ~1.1 of 16 cores with the host 90 % idle and
@@ -178,6 +178,16 @@ The reusable rule now lives in `policies/verification-gates.md`: do not re-add x
 benchmark that beats the noise floor — multiple samples per configuration, controlled page
 cache, one variable at a time.
 
+**D7 — the work unit was renamed `parallel-verification-gates` → `disjoint-verification-gates`**
+(owner-instructed 2026-07-17; TD-52.3). D5 and D6 removed every parallel mechanism from this
+work unit, leaving Item A — disjoint partitions — as what it delivers. The old slug named
+machinery that no longer exists, and this report had already flagged the title as a misnomer.
+Its proposal, spec, and plan were merged to main under the old slug, so the rename touches
+frozen documents: it is confined to one isolated commit per ADR-0001's content-frozen rule
+(path/name strings, plus the titles, which are the rename's whole point), and `REGISTRY.md` §1
+carries the old→new bridge so pre-2026-07-17 history stays resolvable. The **number is
+unchanged** — never reused, never renumbered. The branch is renamed to match.
+
 **D6 — concurrency withdrawn too: the gate ships sequential** (owner-instructed 2026-07-17;
 spec Amendment 5). With xdist gone, the lane schedule was the remaining idea, and it rested on
 a structural argument I believed needed no statistics: `data-slow` holds one core for ~33 min,
@@ -224,6 +234,9 @@ not edited.
 `pyproject.toml`/`uv.lock` end byte-identical to main and `constraints/cpu-ci.txt` was never a
 question. Its `REGISTRY.md` §3 row is `rejected` and carries the evidence, so the negative
 result stays visible to whoever next reaches for xdist here.
+
+`TD-PENDING: TD-52.3` — the work-unit rename (D7). Owner-instructed 2026-07-17. Registered:
+`REGISTRY.md` §3, with the old→new bridge in §1.
 
 `TD-PENDING: TD-52.2` — the sanctioned `spec-0052` amendment, **Amendments 1–5** (D1, D5, D6).
 Owner-instructed 2026-07-16 (Amendments 1–2) and 2026-07-17 (Amendments 3–5, the withdrawal of

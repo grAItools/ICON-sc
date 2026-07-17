@@ -1,6 +1,6 @@
-# 0052 — Parallel verification gates (bounded two-layer test parallelism)
+# 0052 — Disjoint verification gates (renamed from "parallel"; see the amendment banner)
 
-**Depends on:** 0051 · **Graduated from:** `proposal-0052-parallel-verification-gates.md` · **Policies:** `policies/verification-gates.md`, `policies/agent-workflow.md`
+**Depends on:** 0051 · **Graduated from:** `proposal-0052-disjoint-verification-gates.md` · **Policies:** `policies/verification-gates.md`, `policies/agent-workflow.md`
 
 > **Amended 2026-07-16 during execution — owner-instructed, sanctioned; TD-52.2.**
 > Item D's calibration measured two of this spec's claims to be false. Per AGENTS.md
@@ -64,7 +64,7 @@
 > timing-based claim here. ~62 min → ~50 min, and the title of this work unit is now a
 > misnomer: it delivers *disjoint* verification gates, not parallel ones.
 >
-> Evidence and the full measurement table: `report-0052-parallel-verification-gates.md`.
+> Evidence and the full measurement table: `report-0052-disjoint-verification-gates.md`.
 > The disjointness fix, the driver, and the RSS criterion were measured sound and stand.
 
 ## Goal
