@@ -148,8 +148,9 @@ Two independent reviewers verified findings; all applied in one commit.
    `test_jw_plan_equivalence.py` (docstring + `HOURS_ENV`/`STATE_ENV`); import alias
    `VerticalGrid as SymconVerticalGrid` → `IconScVerticalGrid` in `test_nonhydro_datatest.py`;
    module constant `_SYMCON_PROGNOSTICS` → `_ICON_SC_PROGNOSTICS` in `validation/L4_idealized/make_reference.py`.
-   Repo-wide case-insensitive sweep of live surfaces now empty. (The remaining `SYMCON_*` mentions
-   live only in frozen history — `plan-0021`, `report-0014` — kept verbatim.)
+   Repo-wide case-insensitive sweep of live surfaces now empty. (The only genuine `SYMCON_*`
+   frozen-history residual is in `report-0014` — a frozen report, exempt — kept verbatim. `plan-0021`
+   is a PENDING plan and its tokens are fully renamed; see R2 fix below.)
 2. **FIX 2 (major) — dead env var in docs.** `validation/L4_idealized/README.md` told users to set
    `SYMCON_L4_CACHE`; the code reads `ICON_SC_L4_CACHE`. Corrected.
 3. **FIX 3 (major) — frozen-plan history restored.** The historical filename `symcon_repo_layout.md`
@@ -163,3 +164,14 @@ Two independent reviewers verified findings; all applied in one commit.
    **Case-sensitivity bug in the acceptance criterion:** the spec-0053 AC5 residual grep and the §3
    live-surface grep are now case-insensitive (`grep -rIniE 'symcon'` / `git grep -i`). The original
    case-sensitive grep is what let the FIX-1 tokens slip through.
+
+## 8b. Review fixes (round 2)
+
+1. **R2 FIX 1 (major) — plan-0021 leftover brand/case tokens.** `plan-0021-ci-hardening.md` is a
+   PENDING plan that was de-branded by this unit; two current-system identifiers were mis-rendered.
+   The uppercase env var `SYMCON_L4_CACHE` (a case-sensitivity slip) → `ICON_SC_L4_CACHE` in the
+   Item-C verify command and its prose, and the CLI value `--run ICON-sc` (wrongly rendered as the
+   brand) → `--run icon_sc`, both now matching the authoritative code in
+   `validation/L4_idealized/make_reference.py` (env var `ICON_SC_L4_CACHE`, `--run` choice `icon_sc`).
+   The brand prose "the ICON-sc leg" in Item C is unchanged (correct trajectory-leg wording, not a
+   code value). Plan-0021 now has zero `symcon` tokens; the round-1 note above is corrected accordingly.

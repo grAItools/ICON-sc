@@ -66,7 +66,7 @@ and you must say so explicitly.
 
 **Problem** (S13 STATUS follow-up): `validation/L4_idealized/make_reference.py`
 `--run all` generates reference + twin + manifest but NOT the ICON-sc leg (which
-needs a separate `--run ICON-sc`). This cost the orchestrator a full cycle during
+needs a separate `--run icon_sc`). This cost the orchestrator a full cycle during
 S13.
 
 **Change**: in `main()` of that file, make `run == "all"` also call
@@ -77,11 +77,11 @@ generation to test this (it costs ~7 h and must not touch
 
 **Verify** without touching the real cache:
 ```
-SYMCON_L4_CACHE=/tmp/task21-l4 uv run python validation/L4_idealized/make_reference.py --days 0.25 --force --run all
+ICON_SC_L4_CACHE=/tmp/task21-l4 uv run python validation/L4_idealized/make_reference.py --days 0.25 --force --run all
 ls /tmp/task21-l4/   # must contain jw_l4_reference.npz, jw_l4_twin.npz, jw_l4_icon_sc.npz, manifest.json
 uv run pytest validation/L4_idealized/test_jw.py -q   # against the REAL (untouched) cache: 3 passed
 ```
-(The script reads `SYMCON_L4_CACHE` for its cache dir — confirm that env hook at
+(The script reads `ICON_SC_L4_CACHE` for its cache dir — confirm that env hook at
 the top of the file; if it does not exist, adding it as an env-var override with
 the current default is in scope for this item.)
 
