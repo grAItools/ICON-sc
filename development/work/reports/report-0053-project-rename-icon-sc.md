@@ -31,7 +31,9 @@ runtime/external artifacts, each renamed per the `spec-0053` Frozen-interfaces m
 | `1a9127d` | C4b — frozen specs + plans (owner-extended scope; migration-plan history preserved) |
 | `71e1d2a` | C5 — this report |
 | `585a692` | C6 — layout doc `repo-layout.md` → `repository-layout.md`; `symcon_repo_layout` de-branded in living files only (TD-53.4); report finalized with full-battery gate results |
-| _(this commit)_ | R1 review fixes — case-insensitive brand residuals (FIX 1), dead env var in L4 README (FIX 2), frozen-plan history restored in plans 0033/0035 (FIX 3), meta-docs corrected + AC5 grep made case-insensitive (FIX 4) |
+| `e96b5c9` | R1 review fixes — case-insensitive brand residuals (FIX 1), dead env var in L4 README (FIX 2), frozen-plan history restored in plans 0033/0035 (FIX 3), meta-docs corrected + AC5 grep made case-insensitive (FIX 4) |
+| `6bf6d08` | R2 review fix — plan-0021 env var → `ICON_SC_L4_CACHE` + CLI value → `--run icon_sc`; report §8 note corrected |
+| _(this commit)_ | R3 review — resolve §1 commit hashes; gate-timing note (§5) |
 
 ## 2. Acceptance criteria → tests
 
@@ -119,6 +121,7 @@ No tolerance, reduction-order, `pytest.mark`, or test-assertion changes. Sign-of
   - `data-noslow` (`data and not slow and not gpu`) → **43 passed** (baseline 43) — 7:32
   - `data-slow` (`data and slow and not gpu`, incl. the 1519 s bitwise T0≡T1 test) → **76 passed, 1 skipped** (baseline 76/1) — 36:38
   - **Full battery: 848 tests, all baseline-matching; the bitwise T0≡T1 equivalence test passed (no numerical perturbation).**
+  - _Note: the 848-test battery was run at C6 (`585a692`); the later R1/R2 review fixes are behavior-neutral pure identifier renames (every reference site updated, no dangling old names — independently confirmed by the round-3 reviewers), so the counts are unaffected._
 - `git diff main -- constraints/ development/references/lock.toml` → empty
 
 ## 6. Follow-ups (owner-manual)
