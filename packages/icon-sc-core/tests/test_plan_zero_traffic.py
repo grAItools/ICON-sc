@@ -4,7 +4,7 @@ Three instruments over the toy plan (the 20-component composition of the
 benchmark shape plus the acceptance composites):
 
 - ``sys.settrace``: no Python frame entered during ``run_step`` belongs to
-  xarray/pint or to the symcon negotiation layer (contracts, state wrapping,
+  xarray/pint or to the ICON-sc negotiation layer (contracts, state wrapping,
   the T0 ``Component`` call path) — only the interpreter and component kernels
   run. ``dict.__getitem__`` is a C function invisible to any tracer, so the
   state-name-lookup half of the assertion is proven by instrumentation instead:
@@ -32,7 +32,7 @@ from _plan_toys import (
     toy_state,
 )
 
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema, StateVault
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema, StateVault
 
 pytestmark = pytest.mark.slow
 
@@ -40,11 +40,11 @@ pytestmark = pytest.mark.slow
 _FORBIDDEN = (
     "xarray",
     "pint",
-    "symcon/core/contracts",
-    "symcon/core/state/dataarray",
-    "symcon/core/state/facade",
-    "symcon/core/components/base",
-    "symcon/core/coupling",
+    "icon_sc/core/contracts",
+    "icon_sc/core/state/dataarray",
+    "icon_sc/core/state/facade",
+    "icon_sc/core/components/base",
+    "icon_sc/core/coupling",
 )
 
 
@@ -127,7 +127,7 @@ import numpy as np
 
 sys.path.insert(0, {tests_dir!r})
 import _plan_toys
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema, StateVault
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema, StateVault
 
 ctx = ComputeContext("embedded", tier="plan", timestep=_plan_toys.COLUMN_DT)
 state = _plan_toys.toy_state()
@@ -177,7 +177,7 @@ def test_zero_retained_allocations_per_step(builder: str) -> None:
     Measured in fresh subprocesses with the cycle collector held off (the plan
     creates no cycles — census-asserted — and gc's full passes clear CPython
     freelists mid-run, which then refill through fresh traced allocations).
-    Two claims, calibrated against symcon-free controls (a bare ufunc loop is
+    Two claims, calibrated against ICON-sc-free controls (a bare ufunc loop is
     deterministically clean; the same match/BoundCall/ufunc pattern with
     hand-built ops churns identically to the plan):
 
@@ -188,7 +188,7 @@ def test_zero_retained_allocations_per_step(builder: str) -> None:
       bytes and total drift stays bounded. Whether a given interpreter launch
       sits in the clean steady state is decided by allocator/address-space
       layout (C-internal ~63-byte block churn under CPython's call machinery,
-      reproduced without symcon), so the criterion is existential over
+      reproduced without ICON-sc), so the criterion is existential over
       launches. A genuine per-step leak — one retained int per step, say —
       would leave *zero* allocation-free steps and fail every launch.
 

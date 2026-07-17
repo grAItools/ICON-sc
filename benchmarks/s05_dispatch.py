@@ -16,11 +16,11 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "packages/symcon-core/tests"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "packages/icon-sc-core/tests"))
 
 from _plan_toys import COLUMN_DT, make_twenty_component_loop, toy_state
 
-from symcon.core import (
+from icon_sc.core import (
     ComputeContext,
     ExecutionPlan,
     StateSchema,

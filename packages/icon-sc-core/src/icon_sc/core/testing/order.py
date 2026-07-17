@@ -7,7 +7,7 @@ thesis §2.4 expectations. With ``exact=None`` the errors are self-convergence
 differences between consecutive ladder solutions (for problems without a closed
 form, thesis §2.5.2 spirit); the fit then uses the coarser Δt of each pair.
 
-numpy-only by design (importable wherever :mod:`symcon.core.testing` is).
+numpy-only by design (importable wherever :mod:`icon_sc.core.testing` is).
 """
 
 from __future__ import annotations

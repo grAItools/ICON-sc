@@ -1,6 +1,6 @@
 """Boundary DataArray construction (architecture §2.2).
 
-State values are ``xarray.DataArray`` s over :class:`~symcon.core.typing.FieldBuffer`
+State values are ``xarray.DataArray`` s over :class:`~icon_sc.core.typing.FieldBuffer`
 buffers; construction here is the only sanctioned way to stamp the attrs schema
 (``units`` / ``location`` / ``halo`` / ``grid_uuid``). The buffer is wrapped, never
 copied and never coerced (no ``.values`` anywhere on core paths — the duck-array
@@ -14,7 +14,7 @@ from typing import Any
 
 import xarray as xr
 
-from symcon.core.typing import HORIZONTAL_DIMS, FieldBuffer, HaloState, Location
+from icon_sc.core.typing import HORIZONTAL_DIMS, FieldBuffer, HaloState, Location
 
 __all__ = ["make_dataarray"]
 

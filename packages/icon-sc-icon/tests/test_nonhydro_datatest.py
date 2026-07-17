@@ -1,6 +1,6 @@
 """S12 acceptance 1/3/4 (marker ``data``): ``NonhydroSolver`` savepoint parity.
 
-icon4py's solve_nonhydro integration tests rerun through the symcon component:
+icon4py's solve_nonhydro integration tests rerun through the ICON-sc component:
 experiment EXCLAIM_APE (``exclaim_ape_R02B04``, the archive already used by S11 —
 solve-nonhydro savepoints at the first timestep 2000-01-01T00:00:02.000, ``linit``,
 and the mid-run timestep 00:00:04.000, at substeps 1..2 of the archive's
@@ -23,8 +23,8 @@ at v0.2.0 (dallclose defaults ``rtol=1e-12, atol=0`` unless stated). Deviations
   gtfn_gpu, which skips cleanly without a CUDA device).
 
 First run compiles the dycore gt4py programs (persistent cache under
-``~/.cache/symcon/gt4py``); the EXCLAIM_APE archive is the S11 one (~4.0 GB
-compressed, cached under ``~/.cache/symcon/icon4py-testdata`` — no new downloads).
+``~/.cache/icon-sc/gt4py``); the EXCLAIM_APE archive is the S11 one (~4.0 GB
+compressed, cached under ``~/.cache/icon-sc/icon4py-testdata`` — no new downloads).
 """
 
 from __future__ import annotations
@@ -35,12 +35,12 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import ComputeContext
-from symcon.core.ingress.gt4py import make_backend
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.icon.components import NonhydroConfig, NonhydroSolver
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core import ComputeContext
+from icon_sc.core.ingress.gt4py import make_backend
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.components import NonhydroConfig, NonhydroSolver
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
     from icon4py.model.testing import definitions as icon4py_definitions
@@ -53,7 +53,7 @@ if DATATEST_AVAILABLE:
         metrics_savepoint,
     )
 
-    from symcon.icon.testing import (  # noqa: F401
+    from icon_sc.icon.testing import (  # noqa: F401
         backend,
         data_provider,
         download_ser_data,
@@ -74,7 +74,7 @@ pytestmark = [
     pytest.mark.slow,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -166,7 +166,7 @@ def _make_solver(
     interpolation_savepoint: Any,
     icon_grid: Any,
     sp_init: Any,
-    symcon_backend: str,
+    icon_sc_backend: str,
     config_overrides: dict[str, Any] | None = None,
 ) -> NonhydroSolver:
     """Component construction mirroring icon4py's own solve_nonhydro test setup."""
@@ -190,7 +190,7 @@ def _make_solver(
         vct_a=grid_savepoint.vct_a(),
         vct_b=grid_savepoint.vct_b(),
     )
-    ctx = ComputeContext(backend=make_backend(symcon_backend))
+    ctx = ComputeContext(backend=make_backend(icon_sc_backend))
     return NonhydroSolver(
         icon_grid,
         vertical_params,
@@ -326,12 +326,12 @@ def test_time_step_flags_and_provenance(data_provider: Any, experiment: Any) -> 
 # -- acceptance 1: savepoint parity -----------------------------------------------------------
 
 
-@pytest.mark.parametrize("symcon_backend", BACKENDS)
+@pytest.mark.parametrize("icon_sc_backend", BACKENDS)
 @pytest.mark.parametrize(
     "step_date, at_initial", [(DATE_FIRST, True), (DATE_MID, False)], ids=["first", "mid-run"]
 )
 def test_full_timestep_multi_substep_parity(
-    symcon_backend: str,
+    icon_sc_backend: str,
     step_date: str,
     at_initial: bool,
     data_provider: Any,
@@ -345,7 +345,7 @@ def test_full_timestep_multi_substep_parity(
     savepoints — upstream ``test_run_solve_nonhydro_multi_step`` through the
     component boundary (tolerances cited per field below; upstream runs this test
     for MCH_CH_R04B09 — the tolerances are reused on EXCLAIM_APE, see STATUS)."""
-    if symcon_backend == "gtfn_gpu":
+    if icon_sc_backend == "gtfn_gpu":
         pytest.importorskip("cupy")
     sp_init = data_provider.from_savepoint_nonhydro_init(istep=1, date=step_date, substep=1)
     sp_exit = data_provider.from_savepoint_nonhydro_exit(istep=2, date=step_date, substep=2)
@@ -360,7 +360,7 @@ def test_full_timestep_multi_substep_parity(
         interpolation_savepoint=interpolation_savepoint,
         icon_grid=icon_grid,
         sp_init=sp_init,
-        symcon_backend=symcon_backend,
+        icon_sc_backend=icon_sc_backend,
     )
     _load_carry(solver, sp_init, at_initial=at_initial, swap_w_pair=not at_initial)
     velocity_advection_calls = _record_velocity_advection(solver)
@@ -405,7 +405,7 @@ def test_full_timestep_multi_substep_parity(
             reference.asnumpy(),
             rtol=tols.get("rtol", 1e-12),
             atol=tols.get("atol", 0.0),
-            names=(f"symcon {name}", "icon4py solve-nonhydro exit"),
+            names=(f"ICON-sc {name}", "icon4py solve-nonhydro exit"),
             equal_nan=False,
         )
 
@@ -428,14 +428,14 @@ def test_full_timestep_multi_substep_parity(
             reference.asnumpy(),
             rtol=tols.get("rtol", 1e-12),
             atol=tols.get("atol", 0.0),
-            names=(f"symcon {key}", "icon4py solve-nonhydro exit"),
+            names=(f"ICON-sc {key}", "icon4py solve-nonhydro exit"),
             equal_nan=False,
         )
 
 
-@pytest.mark.parametrize("symcon_backend", BACKENDS)
+@pytest.mark.parametrize("icon_sc_backend", BACKENDS)
 def test_single_substep_parity(
-    symcon_backend: str,
+    icon_sc_backend: str,
     data_provider: Any,
     experiment: Any,
     grid_savepoint: Any,
@@ -446,7 +446,7 @@ def test_single_substep_parity(
     """One substep (predictor+corrector) vs the substep-1 exit savepoints — upstream
     ``test_run_solve_nonhydro_single_step`` (EXCLAIM_APE leg: istep 1→2, substep 1,
     at_initial) driven through the frozen substep hooks with ndyn_substeps_var=2."""
-    if symcon_backend == "gtfn_gpu":
+    if icon_sc_backend == "gtfn_gpu":
         pytest.importorskip("cupy")
     sp_init = data_provider.from_savepoint_nonhydro_init(istep=1, date=DATE_FIRST, substep=1)
     sp_exit = data_provider.from_savepoint_nonhydro_exit(istep=2, date=DATE_FIRST, substep=1)
@@ -460,7 +460,7 @@ def test_single_substep_parity(
         interpolation_savepoint=interpolation_savepoint,
         icon_grid=icon_grid,
         sp_init=sp_init,
-        symcon_backend=symcon_backend,
+        icon_sc_backend=icon_sc_backend,
     )
     _load_carry(solver, sp_init, at_initial=True, swap_w_pair=False)
     solver._load_bus(
@@ -496,7 +496,7 @@ def test_single_substep_parity(
             reference.asnumpy(),
             rtol=tols.get("rtol", 1e-12),
             atol=tols.get("atol", 0.0),
-            names=(f"symcon {key}", "icon4py solve-nonhydro exit"),
+            names=(f"ICON-sc {key}", "icon4py solve-nonhydro exit"),
             equal_nan=False,
         )
 
@@ -537,7 +537,7 @@ def test_substep_boundary_matches_icon(
         interpolation_savepoint=interpolation_savepoint,
         icon_grid=icon_grid,
         sp_init=sp_init,
-        symcon_backend="gtfn_cpu",
+        icon_sc_backend="gtfn_cpu",
     )
     _load_carry(solver, sp_init, at_initial=at_initial, swap_w_pair=not at_initial)
     solver._load_bus(
@@ -573,7 +573,7 @@ def test_substep_boundary_matches_icon(
             reference.asnumpy(),
             rtol=tols.get("rtol", 1e-12),
             atol=tols.get("atol", 0.0),
-            names=(f"symcon {key} after substep 1", "icon4py substep-2 init"),
+            names=(f"ICON-sc {key} after substep 1", "icon4py substep-2 init"),
             equal_nan=False,
         )
 
@@ -589,7 +589,7 @@ def test_predictor_stage_parity(
     """The predictor stage hook vs the istep=1 exit savepoint — upstream
     ``test_nonhydro_predictor_step`` (EXCLAIM_APE leg), on the fields the component
     exposes at its boundary/restart surface (gtfn_cpu; internal z_* locals of the
-    granule that symcon does not persist are covered upstream)."""
+    granule that ICON-sc does not persist are covered upstream)."""
     sp_init = data_provider.from_savepoint_nonhydro_init(istep=1, date=DATE_FIRST, substep=1)
     sp_exit = data_provider.from_savepoint_nonhydro_exit(istep=1, date=DATE_FIRST, substep=1)
 
@@ -600,7 +600,7 @@ def test_predictor_stage_parity(
         interpolation_savepoint=interpolation_savepoint,
         icon_grid=icon_grid,
         sp_init=sp_init,
-        symcon_backend="gtfn_cpu",
+        icon_sc_backend="gtfn_cpu",
     )
     _load_carry(solver, sp_init, at_initial=True, swap_w_pair=False)
     solver._load_bus(
@@ -642,7 +642,7 @@ def test_predictor_stage_parity(
             reference.asnumpy(),
             rtol=tols.get("rtol", 1e-12),
             atol=tols.get("atol", 0.0),
-            names=(f"symcon {key}", "icon4py predictor exit"),
+            names=(f"ICON-sc {key}", "icon4py predictor exit"),
             equal_nan=False,
         )
 
@@ -668,7 +668,7 @@ def test_corrector_stage_parity(
         interpolation_savepoint=interpolation_savepoint,
         icon_grid=icon_grid,
         sp_init=sp_init,
-        symcon_backend="gtfn_cpu",
+        icon_sc_backend="gtfn_cpu",
     )
     _load_carry(solver, sp_init, at_initial=True, swap_w_pair=False)
     solver._load_bus(
@@ -704,7 +704,7 @@ def test_corrector_stage_parity(
             reference.asnumpy(),
             rtol=tols.get("rtol", 1e-12),
             atol=tols.get("atol", 0.0),
-            names=(f"symcon {key}", "icon4py corrector exit"),
+            names=(f"ICON-sc {key}", "icon4py corrector exit"),
             equal_nan=False,
         )
 
@@ -733,7 +733,7 @@ def test_restart_bitwise_reproducibility(
             interpolation_savepoint=interpolation_savepoint,
             icon_grid=icon_grid,
             sp_init=sp_init,
-            symcon_backend="gtfn_cpu",
+            icon_sc_backend="gtfn_cpu",
         )
         _load_carry(solver, sp_init, at_initial=True, swap_w_pair=False)
         return solver
@@ -805,7 +805,7 @@ def test_bus_constant_vn_tendency_linear_response(
             interpolation_savepoint=interpolation_savepoint,
             icon_grid=icon_grid,
             sp_init=sp_init,
-            symcon_backend="gtfn_cpu",
+            icon_sc_backend="gtfn_cpu",
             config_overrides=no_divdamp,
         )
         _load_carry(solver, sp_init, at_initial=True, swap_w_pair=False)
@@ -840,7 +840,7 @@ def test_bus_constant_vn_tendency_linear_response(
 
 def _sleve_config(vertical_config: Any) -> Any:
     """icon4py VerticalGridConfig -> S06 SleveConfig (as in the S11 parity tests)."""
-    from symcon.icon.grid import SleveConfig
+    from icon_sc.icon.grid import SleveConfig
 
     return SleveConfig(
         num_levels=vertical_config.num_levels,
@@ -866,7 +866,7 @@ def test_production_path_from_s11_grid_and_factories(
     grid_savepoint: Any,
     topography_savepoint: Any,
 ) -> None:
-    """The §5.1 production construction: symcon ``IconGrid`` from the grid *file*
+    """The §5.1 production construction: ICON-sc ``IconGrid`` from the grid *file*
     (geometry + owner mask derived inside the component) and the static state from
     the S11 ``metrics()``/``interpolation()`` factories — cold start (no savepoint
     carry), one full Δt (review round 1, MINOR 2).
@@ -891,9 +891,9 @@ def test_production_path_from_s11_grid_and_factories(
     the 2nd-order divergence damping. The 1e-4 bound is a regression guard on
     that characterization (not an upstream tolerance; S13 STATUS §5).
     """
-    from symcon.icon.grid import VerticalGrid as SymconVerticalGrid
-    from symcon.icon.grid import from_file, interpolation, metrics
-    from symcon.icon.testing import download_grid_file
+    from icon_sc.icon.grid import VerticalGrid as SymconVerticalGrid
+    from icon_sc.icon.grid import from_file, interpolation, metrics
+    from icon_sc.icon.testing import download_grid_file
 
     sp_init = data_provider.from_savepoint_nonhydro_init(istep=1, date=DATE_FIRST, substep=1)
     dt_substep = float(sp_init.get_metadata("dtime").get("dtime"))
@@ -935,7 +935,7 @@ def test_production_path_from_s11_grid_and_factories(
     solver = NonhydroSolver(grid, vgrid, static, config, ctx)
 
     # -- strict: derived geometry == serialized geometry (measured <= 1.6e-14) -------
-    from symcon.icon.components.dycore import _geometry_from_grid, _owner_mask_from_grid
+    from icon_sc.icon.components.dycore import _geometry_from_grid, _owner_mask_from_grid
 
     cell_params, edge_params = _geometry_from_grid(grid)
     ref_edge = grid_savepoint.construct_edge_geometry()

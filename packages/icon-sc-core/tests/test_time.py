@@ -9,7 +9,7 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from symcon.core.time import datetime, is_due, phase, timedelta, timedelta_lcm
+from icon_sc.core.time import datetime, is_due, phase, timedelta, timedelta_lcm
 
 microseconds = st.integers(min_value=1, max_value=60)
 

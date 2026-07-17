@@ -1,7 +1,7 @@
-"""symcon example 02 — the Jablonowski-Williamson baroclinic wave (dry, S13).
+"""ICON-sc example 02 — the Jablonowski-Williamson baroclinic wave (dry, S13).
 
 The architecture-§5.1 loop shape for the dry dynamical slice: the icon4py
-nonhydrostatic solver hosted as a symcon ``DynamicalCore`` (S12) followed by the
+nonhydrostatic solver hosted as a ICON-sc ``DynamicalCore`` (S12) followed by the
 horizontal-diffusion ``Stepper`` (S13), no physics — the slow-tendency bus slots
 default to zero inside the dycore. Grid/static/config come from the pinned icon4py
 JW datatest experiment (global R02B04, 35 levels, Δt = 300 s, 5 dynamics substeps);
@@ -11,8 +11,8 @@ Run (CI smoke: 6 h; the baroclinic wave needs ~9 days)::
 
     uv run python examples/02_jw_baroclinic.py --hours 6 --output jw_baroclinic.nc
 
-Requires the ``symcon-icon[datatest]`` extra (the JW archive, ~14 GB unpacked,
-downloads once into ``~/.cache/symcon/icon4py-testdata``).
+Requires the ``icon-sc-icon[datatest]`` extra (the JW archive, ~14 GB unpacked,
+downloads once into ``~/.cache/icon-sc/icon4py-testdata``).
 """
 
 from __future__ import annotations
@@ -30,13 +30,13 @@ from typing import Any
 # without it, gt4py recompiles the ~70 dycore+diffusion programs on every run.
 os.environ.setdefault("GT4PY_BUILD_CACHE_LIFETIME", "persistent")
 os.environ.setdefault(
-    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "symcon" / "gt4py")
+    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "icon-sc" / "gt4py")
 )
 
 import numpy as np
 
-from symcon.core import Monitor, NetCDFMonitor, timeloop
-from symcon.core.state import canonical_units, make_dataarray
+from icon_sc.core import Monitor, NetCDFMonitor, timeloop
+from icon_sc.core.state import canonical_units, make_dataarray
 
 #: What the monitor writes: the prognostics the composed model steps, plus the
 #: diagnosed surface pressure (the JW verification field).
@@ -72,7 +72,7 @@ def build_model(perturbation: float = 1.0, backend: str = "gtfn_cpu") -> Any:
     composition this script runs and assert it hashes identically to the
     preset builder's (the layout-doc drift test — SPEC S14 acceptance 3).
     """
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     return build_jw(JWConfig(perturbation_amplitude=perturbation, backend=backend))
 

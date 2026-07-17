@@ -24,8 +24,8 @@ import dataclasses
 from collections.abc import Sequence
 from typing import Any
 
-from symcon.core.components.wrappers import ComponentWrapper
-from symcon.core.coupling.concurrent import name_of
+from icon_sc.core.components.wrappers import ComponentWrapper
+from icon_sc.core.coupling.concurrent import name_of
 
 __all__ = [
     "CouplingConstraintError",

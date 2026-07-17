@@ -7,8 +7,8 @@ import pathlib
 import subprocess
 import sys
 
-from symcon.core.state import canonical_units, lookup_quantity, units_identical
-from symcon.icon.names import QUANTITIES
+from icon_sc.core.state import canonical_units, lookup_quantity, units_identical
+from icon_sc.icon.names import QUANTITIES
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 

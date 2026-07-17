@@ -23,13 +23,13 @@ from typing import Any
 
 import pytest
 
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -47,13 +47,13 @@ def _load_example() -> Any:
 
 @pytest.fixture(scope="module")
 def builder_model() -> Any:
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     return build_jw(JWConfig())
 
 
 def _bind(model: Any, *, timestep: timedelta | None = None, strict: bool = True) -> Any:
-    from symcon.core import ExecutionPlan, StateSchema
+    from icon_sc.core import ExecutionPlan, StateSchema
 
     ctx = dataclasses.replace(
         model.dycore.ctx,
@@ -108,11 +108,11 @@ def test_plan_hash_changes_with_jw_config_knob(builder_model: Any, knob: str) ->
 _FORBIDDEN = (
     "xarray",
     "pint",
-    "symcon/core/contracts",
-    "symcon/core/state/dataarray",
-    "symcon/core/state/facade",
-    "symcon/core/components/base",
-    "symcon/core/coupling",
+    "icon_sc/core/contracts",
+    "icon_sc/core/state/dataarray",
+    "icon_sc/core/state/facade",
+    "icon_sc/core/components/base",
+    "icon_sc/core/coupling",
 )
 
 
@@ -134,7 +134,7 @@ class _CountingNames(dict):  # type: ignore[type-arg]
 def test_zero_traffic_on_the_jw_plan(builder_model: Any) -> None:
     """SPEC S14 acceptance 2: the S05 settrace + name-lookup instruments hold
     on the composed JW plan (dycore unrolled substep-outer + diffusion)."""
-    from symcon.core import StateVault
+    from icon_sc.core import StateVault
 
     plan = _bind(builder_model)
     vault = StateVault.from_state(dict(builder_model.state))

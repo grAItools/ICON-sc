@@ -16,8 +16,8 @@ from typing import Any
 
 from _plan_toys import COLUMN_DT, make_toy_loop, toy_state
 
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema
-from symcon.core.state.dataarray import make_dataarray
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema
+from icon_sc.core.state.dataarray import make_dataarray
 
 _TESTS_DIR = str(Path(__file__).parent)
 
@@ -25,7 +25,7 @@ _HASH_SCRIPT = """
 import sys
 sys.path.insert(0, {tests_dir!r})
 from _plan_toys import COLUMN_DT, make_toy_loop, toy_state
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema
 
 ctx = ComputeContext("embedded", tier="plan", timestep=COLUMN_DT)
 plan = ExecutionPlan.bind(make_toy_loop(), StateSchema.from_state(toy_state()), ctx)
@@ -78,8 +78,8 @@ def test_plan_hash_changes_with_config() -> None:
 def test_plan_hash_changes_with_component_order() -> None:
     from _plan_toys import TAU_DAMP, TAU_RELAX
 
-    from symcon.core import ConcurrentCoupling, SequentialUpdateSplitting
-    from symcon.core.testing.toys import Damping, Relaxation, WindSpeed
+    from icon_sc.core import ConcurrentCoupling, SequentialUpdateSplitting
+    from icon_sc.core.testing.toys import Damping, Relaxation, WindSpeed
 
     reordered = SequentialUpdateSplitting(
         [
@@ -93,8 +93,8 @@ def test_plan_hash_changes_with_component_order() -> None:
 def test_plan_hash_changes_with_member_order() -> None:
     from _plan_toys import TAU_DAMP, TAU_RELAX
 
-    from symcon.core import ConcurrentCoupling, SequentialUpdateSplitting
-    from symcon.core.testing.toys import Damping, Relaxation, WindSpeed
+    from icon_sc.core import ConcurrentCoupling, SequentialUpdateSplitting
+    from icon_sc.core.testing.toys import Damping, Relaxation, WindSpeed
 
     reordered = SequentialUpdateSplitting(
         [

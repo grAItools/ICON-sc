@@ -22,19 +22,19 @@ import pytest
 from hypothesis import HealthCheck, example, given, settings
 from hypothesis import strategies as st
 
-from symcon.core import (
+from icon_sc.core import (
     ComputeContext,
     CouplingConstraintError,
     SequentialUpdateSplitting,
     make_backend,
     validate_composition,
 )
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.icon.components import Graupel, GraupelConfig, Microphysics
-from symcon.icon.components.fast.graupel_constants import CLOUD_NUM, GRAUPEL_QMIN
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid
-from symcon.icon.testing import moist_test_column
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.components import Graupel, GraupelConfig, Microphysics
+from icon_sc.icon.components.fast.graupel_constants import CLOUD_NUM, GRAUPEL_QMIN
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.testing import moist_test_column
 
 #: SPEC S08 acceptance-2 tolerance contracts:
 #: |Δ(Σq·rho·dz) + total_ground_flux·Δt| ≤ rtol · Σq·rho·dz.
@@ -55,7 +55,7 @@ from symcon.icon.testing import moist_test_column
 #: qv_scale x qc down to qc=5e-15; see STATUS.md "Review fixes"). The
 #: documented any-admissible-column bound is that worst case with ~2.3x
 #: margin. Reproduced wrapper-free in the bare granule (raw probe test
-#: below); symcon only adds x + dx/dt·Δt.
+#: below); ICON-sc only adds x + dx/dt·Δt.
 CONSERVATION_RTOL = 1e-13
 CONSERVATION_RTOL_COLD = 1e-3
 #: Coldest temperature at which the strict (round-off) contract applies [K].
@@ -245,7 +245,7 @@ def test_total_water_conservation_cold_documented_bound(
     """SPEC acceptance 2, any-column bound: condensate everywhere (including
     supercooled cloud water in the glaciation corner near the moist-domain
     top) leaks ≤ the *documented* CONSERVATION_RTOL_COLD (see constant note +
-    STATUS.md — a granule property, not symcon arithmetic; the pinned
+    STATUS.md — a granule property, not ICON-sc arithmetic; the pinned
     ``@example`` corners are the reviewer-found violations of the previous
     bound plus the measured worst case)."""
     _budget_check(graupel, qv_scale, condensate, tmin=0.0, rtol=CONSERVATION_RTOL_COLD)
@@ -352,7 +352,7 @@ def test_scheme_constants_match_icon4py() -> None:
 
 
 def _raw_granule_budget_defect(qv_scale: float, qc0: float) -> tuple[float, float]:
-    """Water-budget defect of the BARE icon4py granule — no symcon component in
+    """Water-budget defect of the BARE icon4py granule — no ICON-sc component in
     the loop: fields via public ``gtx.as_field``/``data_alloc.zero_field``,
     ``granule.run(...)`` invoked directly, tendencies applied with icon4py's own
     verification arithmetic ``x_new = x + dx/dt·dtime``. Returns
@@ -364,7 +364,7 @@ def _raw_granule_budget_defect(qv_scale: float, qc0: float) -> tuple[float, floa
     from icon4py.model.common import dimension as i4_dims
     from icon4py.model.common.utils import data_allocation as data_alloc
 
-    from symcon.icon.components.fast._column_grid import column_icon4py_grid
+    from icon_sc.icon.components.fast._column_grid import column_icon4py_grid
 
     dims = (i4_dims.CellDim, i4_dims.KDim)
     dtime = DT.total_seconds()
@@ -424,7 +424,7 @@ def test_cold_leak_reproduces_in_bare_granule() -> None:
     """Review round 1 (m1): the cold-glaciation water-budget leak exists at the
     same magnitude in the bare icon4py granule — committed evidence that the
     CONSERVATION_RTOL / CONSERVATION_RTOL_COLD split documents *scheme*
-    behavior, not a symcon wrapping defect. Measured wrapper-free at
+    behavior, not a ICON-sc wrapping defect. Measured wrapper-free at
     (qv_scale=1, qc=1.953125e-3): defect +1.59e-4 kg/m², 3.64e-6 of the water
     path. If this test starts failing after an icon4py bump, re-derive the
     documented bound; if the granule ever closes exactly, collapse the split."""

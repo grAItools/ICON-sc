@@ -22,7 +22,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core import (
+from icon_sc.core import (
     BusError,
     ComputeContext,
     CouplingConstraintError,
@@ -30,12 +30,12 @@ from symcon.core import (
     make_backend,
     timeloop,
 )
-from symcon.core.state import canonical_units
-from symcon.core.time import datetime
-from symcon.icon.components import ApplySlowTendencies, PrescribedCooling
-from symcon.icon.components.idealized import SLOW_TEMPERATURE_SLOT
-from symcon.icon.grid.vertical import reference_temperature
-from symcon.icon.presets import SCM_FAST_ORDER, SCMConfig, build_scm
+from icon_sc.core.state import canonical_units
+from icon_sc.core.time import datetime
+from icon_sc.icon.components import ApplySlowTendencies, PrescribedCooling
+from icon_sc.icon.components.idealized import SLOW_TEMPERATURE_SLOT
+from icon_sc.icon.grid.vertical import reference_temperature
+from icon_sc.icon.presets import SCM_FAST_ORDER, SCMConfig, build_scm
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE_PATH = REPO_ROOT / "examples" / "01_scm_column.py"

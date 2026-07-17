@@ -11,9 +11,9 @@ from datetime import timedelta
 import numpy as np
 import pytest
 
-from symcon.core import StateVault
-from symcon.core.plan.interpreter import run_ops
-from symcon.core.plan.ops import (
+from icon_sc.core import StateVault
+from icon_sc.core.plan.interpreter import run_ops
+from icon_sc.core.plan.ops import (
     Axpy,
     BoundCall,
     CadenceMask,
@@ -21,7 +21,7 @@ from symcon.core.plan.ops import (
     SegmentMarker,
     Swap,
 )
-from symcon.core.testing.toys import column_state
+from icon_sc.core.testing.toys import column_state
 
 _RNG = np.random.default_rng(20260709)
 

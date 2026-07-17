@@ -3,7 +3,7 @@
 ``interpolation(grid) -> Mapping[str, DataArray]`` (frozen interface) computes the
 horizontal interpolation coefficients the dycore and diffusion consume — RBF vector
 coefficients, cell/edge/vertex weights, geometric factors, nudging coefficients — as
-read-only static-state DataArrays under their registry names (:mod:`symcon.icon.names`).
+read-only static-state DataArrays under their registry names (:mod:`icon_sc.icon.names`).
 
 Delegates to pinned icon4py's ``InterpolationFieldsFactory`` (wrap-don't-rewrite,
 PLAN S11 item 1; REFERENCES.lock id ``icon4py-metrics-interp-factories``). The field
@@ -21,21 +21,21 @@ from typing import TYPE_CHECKING, Any, Final
 
 import numpy as np
 
-from symcon.core.state import canonical_units, make_dataarray
+from icon_sc.core.state import canonical_units, make_dataarray
 
 if TYPE_CHECKING:
     import xarray as xr
 
-    from symcon.icon.grid.grid import IconGrid
+    from icon_sc.icon.grid.grid import IconGrid
 
 __all__ = ["INTERPOLATION_FIELDS", "interpolation"]
 
 
 @dataclasses.dataclass(frozen=True)
 class FieldSpec:
-    """One static-state field: registry name, donor name, symcon dims/location."""
+    """One static-state field: registry name, donor name, ICON-sc dims/location."""
 
-    name: str  #: registry name (icon: namespace, symcon.icon.names)
+    name: str  #: registry name (icon: namespace, icon_sc.icon.names)
     i4_name: str  #: icon4py attribute standard name (the factory key)
     dims: tuple[str, ...]
     location: str

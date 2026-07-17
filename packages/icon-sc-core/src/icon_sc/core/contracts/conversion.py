@@ -1,9 +1,9 @@
 """ConversionPlan executor: allocating non-strict ingress (SPEC S03, §2.4).
 
 Strict mode turns any ingress that would allocate into an error; with
-``strict=False`` the :class:`~symcon.core.contracts.checkers.DynamicChecker`
+``strict=False`` the :class:`~icon_sc.core.contracts.checkers.DynamicChecker`
 collects the needed conversions into a
-:class:`~symcon.core.contracts.operators.ConversionPlan` instead, and this module
+:class:`~icon_sc.core.contracts.operators.ConversionPlan` instead, and this module
 executes that plan — the debugging/education path of T0 (never the production
 path, never the step path).
 
@@ -18,9 +18,9 @@ from typing import Any
 
 import xarray as xr
 
-from symcon.core.contracts.operators import ConversionPlan, ConversionStep
-from symcon.core.state.units import convert_array
-from symcon.core.typing import HaloState, Location
+from icon_sc.core.contracts.operators import ConversionPlan, ConversionStep
+from icon_sc.core.state.units import convert_array
+from icon_sc.core.typing import HaloState, Location
 
 __all__ = ["ConversionError", "apply_conversion_plan"]
 

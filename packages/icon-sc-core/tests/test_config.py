@@ -6,7 +6,7 @@ import dataclasses
 
 import pytest
 
-from symcon.core.config import Config, provenance_stamp
+from icon_sc.core.config import Config, provenance_stamp
 
 
 @dataclasses.dataclass(frozen=True)
@@ -52,7 +52,7 @@ def test_provenance_stamp_contents() -> None:
     assert stamp["config"] == {"order": 4, "coefficient": 0.1}
     assert stamp["config_class"] == "DiffusionConfig"
     assert len(stamp["config_sha256"]) == 64
-    assert stamp["packages"]["symcon-core"] != "<not installed>"
+    assert stamp["packages"]["icon-sc-core"] != "<not installed>"
     assert stamp["packages"]["numpy"]
     assert stamp["grid_uuid"] == "abc-123"
     assert "T" in stamp["created_at"]  # ISO timestamp

@@ -5,13 +5,13 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core.contracts.properties import (
+from icon_sc.core.contracts.properties import (
     Differentiable,
     HaloPolicy,
     PropertyDictError,
     parse_properties,
 )
-from symcon.core.typing import Location
+from icon_sc.core.typing import Location
 
 GOOD = {
     "air_temperature": {
@@ -32,7 +32,7 @@ GOOD = {
 }
 
 
-def test_parse_normalizes_the_symcon_schema() -> None:
+def test_parse_normalizes_the_icon_sc_schema() -> None:
     specs = parse_properties(GOOD)
     assert tuple(specs) == tuple(GOOD)  # insertion order kept: it is argument order
     temp = specs["air_temperature"]

@@ -1,4 +1,4 @@
-"""Graupel scheme constants consumed on the symcon side (S08/S10; architecture §8.6).
+"""Graupel scheme constants consumed on the ICON-sc side (S08/S10; architecture §8.6).
 
 One scheme-constants module per scheme (single source of numerical truth for the
 imperative kernel *and* the S10 functional core). The imperative kernel is
@@ -22,7 +22,7 @@ from __future__ import annotations
 import math
 from typing import Final
 
-from symcon.icon._constants import ALS, CVD, RHOH2O, RV, TMELT
+from icon_sc.icon._constants import ALS, CVD, RHOH2O, RV, TMELT
 
 __all__ = [
     "AIR_KINEMATIC_VISCOSITY",

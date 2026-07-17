@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from symcon.core.testing.plugin import BACKEND_PARAMS
+from icon_sc.core.testing.plugin import BACKEND_PARAMS
 
 
 def test_backend_is_a_known_string(backend: str) -> None:

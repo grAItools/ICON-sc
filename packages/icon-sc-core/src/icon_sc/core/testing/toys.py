@@ -28,16 +28,16 @@ from typing import Any, ClassVar, cast
 import numpy as np
 import numpy.typing as npt
 
-from symcon.core.components.base import (
+from icon_sc.core.components.base import (
     DiagnosticComponent,
     ImplicitTendencyComponent,
     Stepper,
     TendencyComponent,
 )
-from symcon.core.context import ComputeContext
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.time import datetime
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.time import datetime
+from icon_sc.core.typing import FieldBuffer
 
 __all__ = ["Damping", "ImplicitDamping", "Relaxation", "WindSpeed", "column_state"]
 

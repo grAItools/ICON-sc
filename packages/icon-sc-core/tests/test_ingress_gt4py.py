@@ -10,10 +10,10 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core import Backend, ComputeContext, make_backend
-from symcon.core.ingress.gt4py import BACKEND_NAMES, resolve_backend
+from icon_sc.core import Backend, ComputeContext, make_backend
+from icon_sc.core.ingress.gt4py import BACKEND_NAMES, resolve_backend
 
-pytest.importorskip("gt4py", reason="symcon-core[gt4py] extra not installed")
+pytest.importorskip("gt4py", reason="icon-sc-core[gt4py] extra not installed")
 
 
 def test_make_backend_names() -> None:

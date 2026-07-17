@@ -3,7 +3,7 @@
 A dense, slotted container: a flat ``list`` of raw buffers plus an interned
 ``name → index`` map that is consulted only at bind time. The public
 dict-of-DataArrays view survives as a lazily materialized façade
-(:mod:`symcon.core.state.facade`), so monitors, interactive inspection and the
+(:mod:`icon_sc.core.state.facade`), so monitors, interactive inspection and the
 interpreted tier keep unmodified sympl semantics while nothing xarray-shaped
 executes on the step path.
 
@@ -11,9 +11,9 @@ Two counters govern coherence:
 
 - ``epoch`` — bumped by any **out-of-band** state mutation through the façade
   (rebinding or deleting a field). A plan materialized against the vault records
-  the epoch and raises :class:`~symcon.core.plan.guards.StalePlanError` on the
+  the epoch and raises :class:`~icon_sc.core.plan.guards.StalePlanError` on the
   next ``run_step`` after a bump (§8.2 staleness guard).
-- ``generation`` — bumped by plan-internal buffer swaps (:class:`~symcon.core.plan.ops.Swap`).
+- ``generation`` — bumped by plan-internal buffer swaps (:class:`~icon_sc.core.plan.ops.Swap`).
   It invalidates the façade's cached DataArray wrappers only; the plan stays
   valid (swaps are its own doing).
 """
@@ -28,10 +28,10 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 import xarray as xr
 
-from symcon.core.typing import FieldBuffer, Location
+from icon_sc.core.typing import FieldBuffer, Location
 
 if TYPE_CHECKING:
-    from symcon.core.state.facade import VaultFacade
+    from icon_sc.core.state.facade import VaultFacade
 
 __all__ = ["SlotMeta", "StateVault"]
 
@@ -190,7 +190,7 @@ class StateVault:
         façade object is returned on every call. Rebinding or deleting a field
         *through the façade* bumps ``epoch`` and stales any bound plan.
         """
-        from symcon.core.state.facade import VaultFacade
+        from icon_sc.core.state.facade import VaultFacade
 
         if self._facade is None:
             self._facade = VaultFacade(self)

@@ -17,7 +17,7 @@ from _plan_toys import (
     toy_state,
 )
 
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema, StateVault
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema, StateVault
 
 
 def test_odd_step_count_matches_t0_bitwise() -> None:

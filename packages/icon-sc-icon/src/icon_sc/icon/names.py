@@ -2,7 +2,7 @@
 
 One literal table maps each canonical name to canonical units, CF standard name (where
 CF has one), ICON Fortran short name, and (later, for ingestion only) the GRIB2
-triplet. Naming follows §2.5 as enforced by :mod:`symcon.core.state.names`: CF
+triplet. Naming follows §2.5 as enforced by :mod:`icon_sc.core.state.names`: CF
 standard names are canonical and unprefixed; solver-internal quantities live in the
 ``icon:`` namespace.
 
@@ -10,7 +10,7 @@ Provenance (REFERENCES.lock, S06):
 
 - prognostics/tracers/diagnostics: icon4py v0.2.0 ``states/data.py`` short names
   (``rho``/``w``/``theta_v``/``exner``/``vn``/…) — the first 18 rows were seeded by
-  S02 in :mod:`symcon.core.state.names` and are re-asserted (not re-registered) here;
+  S02 in :mod:`icon_sc.core.state.names` and are re-asserted (not re-registered) here;
 - interface-level fields ``pres_ifc``/``temp_ifc`` and the tendency-bus slots
   ``ddt_exner_phy`` (ICON ``t_nh_diag``, ``mo_nonhydro_types.f90``) and the
   ``ddt_temp*``/``ddt_q*`` family (ICON ``prm_nwp_tend`` naming,
@@ -23,7 +23,7 @@ Unit-string discipline: Exner is ``"1"`` (PLAN pitfall — never "dimensionless"
 tracer mass fractions are ``"1"``, their tendencies ``"s-1"``.
 
 Importing this module seeds the registry (idempotently: rows already registered by
-symcon.core are verified for consistency instead). ``QUANTITIES`` (frozen interface)
+icon_sc.core are verified for consistency instead). ``QUANTITIES`` (frozen interface)
 is the full table, insertion-ordered.
 """
 
@@ -33,7 +33,7 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Final
 
-from symcon.core.state.names import (
+from icon_sc.core.state.names import (
     NamesRegistryError,
     QuantityDef,
     known_quantities,
@@ -94,7 +94,7 @@ _ROWS: Final[tuple[tuple[str, str, str | None, str | None], ...]] = (
     # normal_wind_tendency_due_to_slow_physics_process — REFERENCES.lock
     # icon4py-solve-nonhydro).
     ("icon:ddt_vn_phy", "m s-2", None, "ddt_vn_phy"),
-    # slow-forcing temperature slot consumed by the S09 SCM bus demo (symcon-only
+    # slow-forcing temperature slot consumed by the S09 SCM bus demo (ICON-sc-only
     # slot: no ICON Fortran symbol, hence no short name).
     ("icon:ddt_temperature_slow", "K s-1", None, None),
     # --- microphysics (S08; gscp granule + ICON prm_nwp_diag naming) -----------------
@@ -111,7 +111,7 @@ _ROWS: Final[tuple[tuple[str, str, str | None, str | None], ...]] = (
     # --- S11 static state: metrics factory outputs (ICON t_nh_metrics; icon4py --------
     # metrics_attributes.py — REFERENCES.lock icon4py-metrics-interp-factories).
     # Unit policy: icon4py/ICON declare no units for these solver-internal
-    # coefficients; symcon records "1" for weight/mask-like fields, "m"/"m-1"/"m-2"
+    # coefficients; ICON-sc records "1" for weight/mask-like fields, "m"/"m-1"/"m-2"
     # where the defining formula fixes a length dimension (documented per row).
     ("icon:inv_ddqz_z_full", "m-1", None, "inv_ddqz_z_full"),  # 1/ddqz_z_full [m]
     ("icon:ddqz_z_full_e", "m", None, "ddqz_z_full_e"),  # layer thickness at edges
@@ -193,5 +193,5 @@ def _seed() -> dict[str, QuantityDef]:
 
 
 #: The ICON registry-seed table (frozen interface, SPEC S06): canonical name →
-#: :class:`~symcon.core.state.names.QuantityDef`, in table order.
+#: :class:`~icon_sc.core.state.names.QuantityDef`, in table order.
 QUANTITIES: Final[Mapping[str, QuantityDef]] = MappingProxyType(_seed())

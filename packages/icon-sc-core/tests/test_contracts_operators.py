@@ -5,10 +5,10 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core.contracts.checkers import ContractViolationError, StateSchema
-from symcon.core.contracts.operators import EgressPlan, IngressPlan
-from symcon.core.contracts.properties import parse_properties
-from symcon.core.state.dataarray import make_dataarray
+from icon_sc.core.contracts.checkers import ContractViolationError, StateSchema
+from icon_sc.core.contracts.operators import EgressPlan, IngressPlan
+from icon_sc.core.contracts.properties import parse_properties
+from icon_sc.core.state.dataarray import make_dataarray
 
 SPEC = parse_properties(
     {
@@ -106,7 +106,7 @@ def test_egress_plan_resolves_output_buffers() -> None:
 
 def test_egress_build_enforces_device_expectation() -> None:
     """Regression (review round 1, m2): EgressPlan.build honours the device kwarg."""
-    from symcon.core.contracts.checkers import FieldSchema
+    from icon_sc.core.contracts.checkers import FieldSchema
 
     cpu, cuda = (1, 0), (2, 0)
     spec = parse_properties({"air_temperature": {"dims": ["cell", "height"], "units": "K"}})

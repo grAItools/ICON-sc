@@ -12,7 +12,7 @@ from _plan_toys import (
     toy_state,
 )
 
-from symcon.core import ComputeContext, MemoryMonitor, PlanCompileError
+from icon_sc.core import ComputeContext, MemoryMonitor, PlanCompileError
 
 
 def test_tier_is_validated() -> None:
@@ -56,7 +56,7 @@ def test_timeloop_until_equals_n_steps() -> None:
 
 
 def test_plan_tier_requires_stepper_shaped_composition() -> None:
-    from symcon.core.testing.toys import WindSpeed
+    from icon_sc.core.testing.toys import WindSpeed
 
     ctx = ComputeContext("embedded", tier="plan")
     with pytest.raises(PlanCompileError, match="Stepper-shaped"):
@@ -65,8 +65,8 @@ def test_plan_tier_requires_stepper_shaped_composition() -> None:
 
 def test_unknown_wrapper_refuses_plan_compilation() -> None:
     """ComponentWrapper.visit must never silently delegate to the inner component."""
-    from symcon.core import ComponentWrapper
-    from symcon.core.testing.toys import Damping
+    from icon_sc.core import ComponentWrapper
+    from icon_sc.core.testing.toys import Damping
 
     class Mystery(ComponentWrapper):
         def __call__(self, state, timestep, *, out=None):  # type: ignore[no-untyped-def]
@@ -87,7 +87,7 @@ def test_run_step_yields_to_the_host_callback_at_segment_markers() -> None:
     SegmentMarker — the point where T2 will stop graph replay and return
     control to Python; ``ctx.timeloop`` hangs monitors and time advancement
     off exactly this callback."""
-    from symcon.core import ExecutionPlan, StateSchema, StateVault
+    from icon_sc.core import ExecutionPlan, StateSchema, StateVault
 
     ctx = ComputeContext("embedded", tier="plan", timestep=COLUMN_DT)
     state = toy_state()

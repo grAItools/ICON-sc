@@ -1,8 +1,8 @@
-# symcon docs — Sphinx configuration (task 28; stack decided in
+# ICON-sc docs — Sphinx configuration (task 28; stack decided in
 # development/work/reports/report-0027-docs-plan.md §3, TD-1/TD-2).
 # Autodoc imports the *installed* workspace packages — no sys.path manipulation.
 
-project = "symcon"
+project = "ICON-sc"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",

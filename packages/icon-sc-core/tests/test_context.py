@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import Allocator, ComputeContext, FieldBuffer
+from icon_sc.core import Allocator, ComputeContext, FieldBuffer
 
 
 def test_default_is_strict_numpy_on_host() -> None:

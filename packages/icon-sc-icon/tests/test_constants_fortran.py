@@ -1,4 +1,4 @@
-"""S06 acceptance 2: byte-compare symcon.icon._constants against pinned ICON Fortran.
+"""S06 acceptance 2: byte-compare icon_sc.icon._constants against pinned ICON Fortran.
 
 The comparison table below is *extracted from* the pinned ICON sources (REFERENCES.lock
 id ``icon-fortran``, https://gitlab.dkrz.de/icon/icon-model, commit
@@ -13,9 +13,9 @@ from __future__ import annotations
 
 import pytest
 
-from symcon.icon import _constants as c
+from icon_sc.icon import _constants as c
 
-# (symcon constant, expected value, provenance) — mo_physical_constants.f90 unless
+# (ICON-sc constant, expected value, provenance) — mo_physical_constants.f90 unless
 # noted. Expected values are the Fortran literals / derivation expressions verbatim.
 _MO_PHYSICAL_CONSTANTS_TABLE = [
     (c.RD, 287.04, "rd = 287.04_wp (L109)"),

@@ -1,6 +1,6 @@
 """Numpy-level dict arithmetic for the coupling algebra (SPEC S04, PLAN item 3).
 
-The T0 recombinations — :class:`~symcon.core.coupling.federations.ParallelSplitting`'s
+The T0 recombinations — :class:`~icon_sc.core.coupling.federations.ParallelSplitting`'s
 ``ψⁿ⁺¹ = Σψₗ - L·ψⁿ`` and the stage updates of the tendency steppers — reduce to a
 handful of axpy-shaped operations over ``name -> DataArray`` dicts. They are kept
 deliberately dumb (numpy expressions on ``.data`` buffers); the S05 plan compiler

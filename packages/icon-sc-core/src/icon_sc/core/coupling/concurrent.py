@@ -1,8 +1,8 @@
 """``ConcurrentCoupling`` — tasmania's heterogeneous composite (architecture §4.2).
 
-``ConcurrentCoupling(comps)`` bundles :class:`~symcon.core.components.base.TendencyComponent`,
-:class:`~symcon.core.components.base.ImplicitTendencyComponent` and
-:class:`~symcon.core.components.base.DiagnosticComponent` instances (wrappers and
+``ConcurrentCoupling(comps)`` bundles :class:`~icon_sc.core.components.base.TendencyComponent`,
+:class:`~icon_sc.core.components.base.ImplicitTendencyComponent` and
+:class:`~icon_sc.core.components.base.DiagnosticComponent` instances (wrappers and
 nested couplings included) into one tendency provider: tendency contributions are
 **summed**, diagnostics are **unioned in declared order** and — tasmania's ``serial``
 execution policy, the only one ported — each member sees the diagnostics computed by
@@ -25,11 +25,11 @@ from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import xarray as xr
 
-from symcon.core.components.base import DataArrayDict
-from symcon.core.contracts.properties import PropertyDictError, PropertySpec
+from icon_sc.core.components.base import DataArrayDict
+from icon_sc.core.contracts.properties import PropertyDictError, PropertySpec
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
 __all__ = ["ConcurrentCoupling"]
 
@@ -44,7 +44,7 @@ def output_dict_names_of(component: object) -> tuple[str, ...]:
     names = getattr(component, "output_dict_names", None)
     if names is None:
         raise TypeError(
-            f"{component!r} exposes no output_dict_names; it is not a symcon component."
+            f"{component!r} exposes no output_dict_names; it is not a ICON-sc component."
         )
     return tuple(names)
 

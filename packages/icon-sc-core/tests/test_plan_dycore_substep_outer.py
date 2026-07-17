@@ -30,10 +30,10 @@ import numpy as np
 import pytest
 from _plan_toys import assert_states_bitwise_equal, ode_state, run_tier
 
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema
-from symcon.core.components.dycore import DynamicalCore
-from symcon.core.plan.guards import PlanCompileError
-from symcon.core.state.dataarray import make_dataarray
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema
+from icon_sc.core.components.dycore import DynamicalCore
+from icon_sc.core.plan.guards import PlanCompileError
+from icon_sc.core.state.dataarray import make_dataarray
 
 DT = timedelta(seconds=60)
 _DIMS = ["cell", "height"]
@@ -313,7 +313,7 @@ def test_unknown_nesting_is_rejected() -> None:
 
 def test_monitor_in_composition_is_rejected_loudly() -> None:
     """Monitors are excluded from the plan (S14): they belong to the host step."""
-    from symcon.core import MemoryMonitor
+    from icon_sc.core import MemoryMonitor
 
     ctx = ComputeContext("embedded", tier="plan", timestep=DT)
     with pytest.raises(PlanCompileError, match="host step"):

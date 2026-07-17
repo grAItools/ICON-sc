@@ -4,11 +4,11 @@
 metric terms and reference-state fields of ICON's ``t_nh_metrics`` — heights, functional
 determinants, interpolation weight factors, reference atmosphere, pressure-gradient and
 Rayleigh/divergence-damping coefficients — as read-only static-state DataArrays under
-their registry names (:mod:`symcon.icon.names`).
+their registry names (:mod:`icon_sc.icon.names`).
 
 Delegates to pinned icon4py's ``MetricsFieldsFactory`` (wrap-don't-rewrite, PLAN S11
 item 1; REFERENCES.lock id ``icon4py-metrics-interp-factories``); the vertical grid
-enters through the S06 :class:`~symcon.icon.grid.vertical.VerticalGrid` via its
+enters through the S06 :class:`~icon_sc.icon.grid.vertical.VerticalGrid` via its
 ``icon4py_grid`` accessor. The field list is exactly the S12/S13 consumption set:
 icon4py ``dycore_states.MetricStateNonHydro`` plus the ``DiffusionMetricState`` extras
 (``zd_*``) and the S06 height/thickness registry rows — REFERENCES.lock id
@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any, Final
 import numpy as np
 import numpy.typing as npt
 
-from symcon.icon.grid.interpolation import (
+from icon_sc.icon.grid.interpolation import (
     FieldSpec,
     build_interpolation_factory,
     select_specs,
@@ -34,8 +34,8 @@ from symcon.icon.grid.interpolation import (
 if TYPE_CHECKING:
     import xarray as xr
 
-    from symcon.icon.grid.grid import IconGrid
-    from symcon.icon.grid.vertical import VerticalGrid
+    from icon_sc.icon.grid.grid import IconGrid
+    from icon_sc.icon.grid.vertical import VerticalGrid
 
 __all__ = ["METRICS_FIELDS", "metrics"]
 

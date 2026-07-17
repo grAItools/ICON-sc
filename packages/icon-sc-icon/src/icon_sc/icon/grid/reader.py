@@ -9,7 +9,7 @@ icon4py's grid object is asserted in ``tests/test_icon_grid_datatest.py``.
 
 Kept free of gt4py imports on purpose (PLAN S11 pitfall): the reader stays reusable in
 P4 tooling and keeps the dependency surface of pure ingestion minimal. The gt4py-facing
-``IconGrid`` wrapper lives in :mod:`symcon.icon.grid.grid`.
+``IconGrid`` wrapper lives in :mod:`icon_sc.icon.grid.grid`.
 
 Normalization (identical to icon4py's ``ToZeroBasedIndexTransformation``):
 

@@ -5,7 +5,7 @@ first-order Taylor-remainder decay of ``jax.jvp`` (correct tangents ⇒ slope 2 
 ``h``), ``dot_product_test`` measures adjoint consistency
 ``|⟨Jv,w⟩-⟨v,Jᵀw⟩| / (|⟨Jv,w⟩|+ε)`` between ``jax.jvp`` and ``jax.vjp``.
 
-Lives outside :mod:`symcon.core.testing`'s ``__init__`` on purpose: importing
+Lives outside :mod:`icon_sc.core.testing`'s ``__init__`` on purpose: importing
 the package stays numpy-only; this module imports jax (fp64 expected — enable
 ``jax_enable_x64`` before use, PLAN item 6).
 """

@@ -1,12 +1,12 @@
-"""``SaturationAdjustment(Stepper)`` — the icon4py satad granule on symcon state (S07).
+"""``SaturationAdjustment(Stepper)`` — the icon4py satad granule on ICON-sc state (S07).
 
 The scientific kernel is icon4py's saturation-adjustment granule (microphysics
 package, REFERENCES.lock id ``icon4py-satad``): Newton iteration on T at
 constant total density with the latent-heat closure ``lwdocvd = L_v(T)/cvd``
 (cvd bookkeeping — satad's ICON path implies cvd, never cpd; ``mo_satad.f90``,
-REFERENCES.lock id ``icon-fortran-satad``). symcon does not re-plumb the
+REFERENCES.lock id ``icon-fortran-satad``). ICON-sc does not re-plumb the
 granule's internals: ``array_call`` builds zero-copy gt4py views of the
-boundary buffers (:mod:`symcon.core.ingress.gt4py`) and invokes
+boundary buffers (:mod:`icon_sc.core.ingress.gt4py`) and invokes
 ``granule.run(...)`` exactly as icon4py's own integration test does, then
 applies the returned tendencies over the timestep — ``x_new = x + dx/dt·Δt`` is
 icon4py's own verification arithmetic against the satad-exit savepoints.
@@ -26,7 +26,7 @@ the granule is paired with a functional core co-located in this module
 fixed point ``f(T*) = T* - T + (L(T)/cvd)·(qsat_rho(T*, rho) - qv) = 0`` is solved
 by the granule's own masked Newton iteration (same per-point freeze/convergence
 semantics, bounded ``while_loop``) wrapped in the
-:func:`symcon.core.functional.rules.implicit_fixed_point` ``lax.custom_root``
+:func:`icon_sc.core.functional.rules.implicit_fixed_point` ``lax.custom_root``
 rule, so both AD modes differentiate through the *implicit function* — the
 adjoint of the Newton solve via the IFT, never through recorded iterations
 (which also sidesteps ``while_loop``'s reverse-mode prohibition). Closures and
@@ -43,16 +43,16 @@ from typing import Any, ClassVar, Final, cast
 
 import numpy as np
 
-from symcon.core.components.base import Stepper
-from symcon.core.context import ComputeContext
-from symcon.core.coupling.constraints import CouplingConstraints
-from symcon.core.ingress.gt4py import Backend, resolve_backend
-from symcon.core.typing import FieldBuffer
-from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
-from symcon.icon._constants import ALV, CLW, CVD, RV, TMELT
-from symcon.icon.components.fast import satad_constants as sconst
-from symcon.icon.components.fast._column_grid import column_icon4py_grid
-from symcon.icon.grid.vertical import VerticalGrid
+from icon_sc.core.components.base import Stepper
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.coupling.constraints import CouplingConstraints
+from icon_sc.core.ingress.gt4py import Backend, resolve_backend
+from icon_sc.core.typing import FieldBuffer
+from icon_sc.icon import names as _names  # noqa: F401  (registry seed side effect)
+from icon_sc.icon._constants import ALV, CLW, CVD, RV, TMELT
+from icon_sc.icon.components.fast import satad_constants as sconst
+from icon_sc.icon.components.fast._column_grid import column_icon4py_grid
+from icon_sc.icon.grid.vertical import VerticalGrid
 
 __all__ = ["SaturationAdjustment", "SaturationAdjustmentConfig"]
 
@@ -80,7 +80,7 @@ class SaturationAdjustment(Stepper):
     ``SaturationAdjustment(grid_or_column, cfg, ctx)`` — ``grid_or_column`` is
     either
 
-    - a :class:`symcon.icon.grid.vertical.VerticalGrid` (**column path**): the
+    - a :class:`icon_sc.icon.grid.vertical.VerticalGrid` (**column path**): the
       horizontal extent is discovered from the state at the first call and a
       trivial pointwise icon4py grid is built around it; or
     - an ``(icon4py_grid, icon4py_vertical_grid)`` pair (**host-grid path**):
@@ -134,7 +134,7 @@ class SaturationAdjustment(Stepper):
         if isinstance(grid_or_column, VerticalGrid):
             self._vertical = grid_or_column
             # icon4py vertical-params adapter of the S06 grid (friend access within
-            # symcon.icon; public exposure proposed in S07 STATUS.md).
+            # icon_sc.icon; public exposure proposed in S07 STATUS.md).
             self._i4_vertical = grid_or_column._i4_grid
             self._i4_grid: Any | None = None  # built per horizontal extent, lazily
             self._nlev = grid_or_column.nlev
@@ -290,7 +290,7 @@ def _satad_functional(
     """One satad step on (cell, height) arrays — pure, traced, fp64."""
     import jax.numpy as jnp
 
-    from symcon.core.functional.rules import implicit_fixed_point, masked_newton_solve
+    from icon_sc.core.functional.rules import implicit_fixed_point, masked_newton_solve
 
     C = sconst
 

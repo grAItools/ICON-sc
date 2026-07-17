@@ -6,10 +6,10 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core.coupling import dict_axpy, dict_fma
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.core.time import datetime
+from icon_sc.core.coupling import dict_axpy, dict_fma
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.time import datetime
 
 _DIMS = ["cell", "height"]
 

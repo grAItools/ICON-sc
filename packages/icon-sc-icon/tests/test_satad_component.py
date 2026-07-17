@@ -18,18 +18,18 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import (
+from icon_sc.core import (
     ComputeContext,
     CouplingConstraintError,
     SequentialUpdateSplitting,
     make_backend,
     validate_composition,
 )
-from symcon.core.testing import assert_allclose
-from symcon.icon._constants import ALV, CLW, CVD, RV, TMELT
-from symcon.icon.components import SaturationAdjustment, SaturationAdjustmentConfig
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid
-from symcon.icon.testing import moist_test_column
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon._constants import ALV, CLW, CVD, RV, TMELT
+from icon_sc.icon.components import SaturationAdjustment, SaturationAdjustmentConfig
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.testing import moist_test_column
 
 #: SPEC S07 acceptance-3 tolerance contract (idempotence on adjusted states).
 IDEMPOTENCE_ATOL = 1e-12

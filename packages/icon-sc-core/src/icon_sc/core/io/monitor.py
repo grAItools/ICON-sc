@@ -14,7 +14,7 @@ from typing import Any
 
 import xarray as xr
 
-from symcon.core.components.base import Monitor
+from icon_sc.core.components.base import Monitor
 
 __all__ = ["MemoryMonitor", "snapshot_state"]
 

@@ -1,19 +1,19 @@
-"""``NonhydroSolver(DynamicalCore)`` — icon4py ``solve_nonhydro`` hosted on symcon (S12).
+"""``NonhydroSolver(DynamicalCore)`` — icon4py ``solve_nonhydro`` hosted on ICON-sc (S12).
 
-The icon4py nonhydrostatic solver + velocity advection as **one** symcon component
+The icon4py nonhydrostatic solver + velocity advection as **one** ICON-sc component
 (architecture §4.3): the predictor-corrector is the stage structure, ``ndyn_substeps``
 is the super-fast tier, slow physics enters through the tendency-bus port, and the
 two prognostic time levels plus the velocity-advection carry-over are component-private
 state behind the restart/functional-state protocols.
 
 Hosting policy (wrap-don't-rewrite, §4.4): the ~50 predictor/corrector stencil programs
-stay icon4py granule internals (REFERENCES.lock ``icon4py-solve-nonhydro``); symcon
+stay icon4py granule internals (REFERENCES.lock ``icon4py-solve-nonhydro``); ICON-sc
 invokes ``run_predictor_step``/``run_corrector_step`` exactly the way icon4py's own
 integration tests and driver do (REFERENCES.lock ``icon4py-solve-nonhydro-tests``,
 ``icon4py-driver-dyn-substepping``).
 
 **Tier nesting (declared deviation from the S04 default orchestration).** The base
-:class:`~symcon.core.components.dycore.DynamicalCore` unrolls Fig. 3.10 stage-outer
+:class:`~icon_sc.core.components.dycore.DynamicalCore` unrolls Fig. 3.10 stage-outer
 (each stage runs its own substep block). ICON nests the other way round: each of the
 ``ndyn_substeps`` substeps runs the full predictor→corrector stage pair
 (``mo_nh_stepping.f90::perform_dyn_substepping``, REFERENCES.lock
@@ -45,19 +45,19 @@ from typing import TYPE_CHECKING, Any, ClassVar, Final
 import numpy as np
 import xarray as xr
 
-from symcon.core.components.base import DataArrayDict
-from symcon.core.components.dycore import DynamicalCore
-from symcon.core.context import ComputeContext
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.coupling.concurrent import ConcurrentCoupling
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.typing import FieldBuffer, Location
-from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
-from symcon.icon.grid.grid import IconGrid
-from symcon.icon.grid.vertical import VerticalGrid
+from icon_sc.core.components.base import DataArrayDict
+from icon_sc.core.components.dycore import DynamicalCore
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.coupling.concurrent import ConcurrentCoupling
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.typing import FieldBuffer, Location
+from icon_sc.icon import names as _names  # noqa: F401  (registry seed side effect)
+from icon_sc.icon.grid.grid import IconGrid
+from icon_sc.icon.grid.vertical import VerticalGrid
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
 __all__ = ["NonhydroConfig", "NonhydroSolver", "icon_namelist_origins"]
 
@@ -223,9 +223,9 @@ def icon_namelist_origins(config: Any) -> dict[str, str]:
 # Static-state consumption lists — the S11 coordination point (SPEC S12 "enumerate").
 # --------------------------------------------------------------------------------------
 
-#: icon4py ``MetricStateNonHydro`` field -> symcon registry name of the static input
+#: icon4py ``MetricStateNonHydro`` field -> ICON-sc registry name of the static input
 #: (REFERENCES.lock ``icon4py-dycore-diffusion-static-state``; produced by
-#: :func:`symcon.icon.grid.metrics`).
+#: :func:`icon_sc.icon.grid.metrics`).
 STATIC_METRIC_FIELDS: Final[Mapping[str, str]] = MappingProxyType(
     {
         "mask_prog_halo_c": "icon:mask_prog_halo_c",
@@ -263,8 +263,8 @@ STATIC_METRIC_FIELDS: Final[Mapping[str, str]] = MappingProxyType(
     }
 )
 
-#: icon4py ``InterpolationState`` field -> symcon registry name (produced by
-#: :func:`symcon.icon.grid.interpolation`).
+#: icon4py ``InterpolationState`` field -> ICON-sc registry name (produced by
+#: :func:`icon_sc.icon.grid.interpolation`).
 STATIC_INTERPOLATION_FIELDS: Final[Mapping[str, str]] = MappingProxyType(
     {
         "e_bln_c_s": "icon:e_bln_c_s",
@@ -293,7 +293,7 @@ STATIC_FIELDS: Final[tuple[str, ...]] = tuple(
 
 
 def _dim_map() -> dict[str, Any]:
-    """symcon dim name -> icon4py gt4py dimension (vertical + sparse included)."""
+    """ICON-sc dim name -> icon4py gt4py dimension (vertical + sparse included)."""
     from icon4py.model.common import dimension as i4_dims
 
     return {
@@ -372,15 +372,15 @@ _RESTART_SCHEMA: Final[tuple[tuple[str, tuple[str, ...], str], ...]] = (
 
 
 class NonhydroSolver(DynamicalCore):
-    """The ICON nonhydrostatic solver as a symcon ``DynamicalCore`` (SPEC S12).
+    """The ICON nonhydrostatic solver as a ICON-sc ``DynamicalCore`` (SPEC S12).
 
     ``NonhydroSolver(grid, vgrid, static, cfg, ctx, *, substeps=..., ...)`` —
 
-    - ``grid``: a :class:`symcon.icon.grid.IconGrid` (production path: geometry and
+    - ``grid``: a :class:`icon_sc.icon.grid.IconGrid` (production path: geometry and
       owner mask derived from it) **or** a raw icon4py ``IconGrid`` (host-grid path,
       as icon4py's own tests build it — then ``edge_geometry``/``cell_geometry``/
       ``owner_mask`` must be passed explicitly);
-    - ``vgrid``: a :class:`symcon.icon.grid.VerticalGrid` or a raw icon4py
+    - ``vgrid``: a :class:`icon_sc.icon.grid.VerticalGrid` or a raw icon4py
       ``VerticalGrid``;
     - ``static``: mapping of the :data:`STATIC_FIELDS` registry names to S11
       static-state DataArrays (``metrics(grid, vgrid) | interpolation(grid)``) or to
@@ -460,7 +460,7 @@ class NonhydroSolver(DynamicalCore):
             name=name,
         )
 
-        from symcon.core.ingress.gt4py import resolve_backend
+        from icon_sc.core.ingress.gt4py import resolve_backend
 
         self._backend = resolve_backend(self.ctx.backend)
 

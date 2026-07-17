@@ -1,11 +1,11 @@
 """Registry-based tendency-stepper family (architecture §4.2, SPEC S04).
 
-Two :class:`~symcon.core.registry.Factory` roots, each with the same four
+Two :class:`~icon_sc.core.registry.Factory` roots, each with the same four
 registered schemes (``forward_euler``, ``rk2`` (Heun), ``rk3ws`` (Wicker-Skamarock),
 ``ssprk3`` (Shu-Osher)):
 
 - :class:`TendencyStepper` — steps a state from the tendencies of a wrapped
-  :class:`~symcon.core.coupling.concurrent.ConcurrentCoupling` (or bare tendency
+  :class:`~icon_sc.core.coupling.concurrent.ConcurrentCoupling` (or bare tendency
   component): ``ψⁿ⁺¹ = E(ψⁿ, Δt; P)``. Resolved by name through
   ``TendencyStepper.factory(name, coupling)`` so user-defined steppers are
   first-class citizens of every federation.
@@ -39,18 +39,18 @@ from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import xarray as xr
 
-from symcon.core.components.base import DataArrayDict
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.coupling.concurrent import (
+from icon_sc.core.components.base import DataArrayDict
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.coupling.concurrent import (
     is_tendency_kind,
     name_of,
     output_dict_names_of,
     parsed_properties_of,
 )
-from symcon.core.registry import Factory
+from icon_sc.core.registry import Factory
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
 __all__ = ["SequentialTendencyStepper", "TendencyStepper"]
 

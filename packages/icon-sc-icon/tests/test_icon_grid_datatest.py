@@ -12,7 +12,7 @@
   test_grid_reader.py).
 
 Grid files download through icon4py's datatest machinery (~15 MB each, cached under
-``~/.cache/symcon/icon4py-testdata/grids``); no serialized experiment archive needed.
+``~/.cache/icon-sc/icon4py-testdata/grids``); no serialized experiment archive needed.
 """
 
 from __future__ import annotations
@@ -23,16 +23,16 @@ import pytest
 from gt4py.next import neighbor_sum
 from icon4py.model.common.dimension import C2E, C2EDim, CellDim, EdgeDim
 
-from symcon.core.context import ComputeContext
-from symcon.core.ingress.gt4py import make_backend
-from symcon.icon.grid import from_file, read_grid_file
-from symcon.icon.testing import DATATEST_AVAILABLE, download_grid_file
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.ingress.gt4py import make_backend
+from icon_sc.icon.grid import from_file, read_grid_file
+from icon_sc.icon.testing import DATATEST_AVAILABLE, download_grid_file
 
 pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 

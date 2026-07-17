@@ -1,4 +1,4 @@
-"""Saturation-adjustment scheme constants consumed on the symcon side (S10; §8.6).
+"""Saturation-adjustment scheme constants consumed on the ICON-sc side (S10; §8.6).
 
 One scheme-constants module per scheme (single source of numerical truth for the
 imperative kernel *and* the S10 functional core). The imperative kernel is
@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Final
 
-from symcon.icon._constants import TMELT
+from icon_sc.icon._constants import TMELT
 
 __all__ = [
     "CP_V",

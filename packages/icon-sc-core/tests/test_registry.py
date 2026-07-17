@@ -6,7 +6,7 @@ from collections.abc import Iterator
 
 import pytest
 
-from symcon.core.registry import Factory, RegistrationError
+from icon_sc.core.registry import Factory, RegistrationError
 
 
 class Stepper(Factory):

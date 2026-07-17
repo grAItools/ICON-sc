@@ -12,7 +12,7 @@ frozen ``VerticalGrid(vct_a, vct_b, nlev)`` interface, whose surface speaks nump
 gt4py fields. The reference atmosphere is the decaying-isothermal profile of
 ``mo_vertical_grid.f90`` (identical formulas in icon4py
 ``metrics/reference_atmosphere.py``); the helpers here are array-namespace generic like
-:mod:`symcon.icon.thermo`.
+:mod:`icon_sc.icon.thermo`.
 
 Coordinate convention (ICON): index 0 is the model top; ``vct_a`` is decreasing and has
 ``nlev + 1`` entries (interfaces / half levels).
@@ -27,7 +27,7 @@ import array_api_compat
 import numpy as np
 import numpy.typing as npt
 
-from symcon.icon._constants import (
+from icon_sc.icon._constants import (
     DEL_T_BG,
     GRAV,
     H_SCAL_BG,
@@ -275,7 +275,7 @@ class VerticalGrid:
 
         S07 flagged the ``_i4_grid`` friend access; the S11 metrics factory is the
         first out-of-module consumer, so the accessor becomes part of the surface.
-        Lane-B wrappers hand this object to pinned icon4py machinery; symcon-side
+        Lane-B wrappers hand this object to pinned icon4py machinery; ICON-sc-side
         code should keep using the numpy-speaking properties above.
         """
         return self._i4_grid

@@ -17,8 +17,8 @@ from typing import Any
 
 import xarray as xr
 
-from symcon.core.components.base import Monitor
-from symcon.core.config import provenance_stamp
+from icon_sc.core.components.base import Monitor
+from icon_sc.core.config import provenance_stamp
 
 __all__ = ["NetCDFMonitor"]
 
@@ -35,7 +35,7 @@ class NetCDFMonitor(Monitor):
 
     ``variables`` restricts the stored set (default: every DataArray in the
     state). The provenance stamp (§5.3) is written into the global attributes as
-    JSON under ``symcon_provenance``.
+    JSON under ``icon_sc_provenance``.
     """
 
     def __init__(
@@ -78,5 +78,5 @@ class NetCDFMonitor(Monitor):
         dataset = (
             xr.concat(self._records, dim="time") if len(self._records) > 1 else self._records[0]
         )
-        dataset.attrs["symcon_provenance"] = self._provenance
+        dataset.attrs["icon_sc_provenance"] = self._provenance
         dataset.to_netcdf(self._path, mode="w")

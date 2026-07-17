@@ -21,11 +21,11 @@ import numpy as np
 import xarray as xr
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
-from symcon.core.components.base import Component, DataArrayDict, Stepper
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.typing import Location
+from icon_sc.core.components.base import Component, DataArrayDict, Stepper
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.typing import Location
 
 __all__ = ["CallingFrequency", "ComponentWrapper", "ScalingWrapper", "Subcycle"]
 
@@ -83,7 +83,7 @@ class ComponentWrapper:
         walk to the wrapped component (which would dissolve the wrapper's
         semantics); the three known wrappers override with their real hooks.
         """
-        from symcon.core.plan.guards import PlanCompileError
+        from icon_sc.core.plan.guards import PlanCompileError
 
         del plan_builder
         raise PlanCompileError(

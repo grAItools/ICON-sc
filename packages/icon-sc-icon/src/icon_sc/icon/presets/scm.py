@@ -1,6 +1,6 @@
 """The single-column (SCM) preset: SUS fast physics + slow-tendency bus (SPEC S09).
 
-The first scientifically meaningful symcon composition — the architecture-§5.1
+The first scientifically meaningful ICON-sc composition — the architecture-§5.1
 loop shape at column scale, running under T0:
 
 - **fast suite**: ``SequentialUpdateSplitting`` over ``SCM_FAST_ORDER =
@@ -10,24 +10,24 @@ loop shape at column scale, running under T0:
   before, and again after, microphysics "to ensure that vapor and liquid phase
   are in equilibrium before entering the slow physics parameterizations");
 - **slow suite**: a ``CallingFrequency``-wrapped
-  :class:`~symcon.icon.components.idealized.PrescribedCooling` inside a
+  :class:`~icon_sc.icon.components.idealized.PrescribedCooling` inside a
   ``ConcurrentCoupling``, publishing a piecewise-constant tendency to the
   ``icon:ddt_temperature_slow`` bus slot at cadence ``slow_timestep``
   (tutorial §3.7.2: slow tendencies are "kept constant between two successive
   calls");
-- **consumer**: :class:`~symcon.icon.components.idealized.ApplySlowTendencies`
+- **consumer**: :class:`~icon_sc.icon.components.idealized.ApplySlowTendencies`
   standing in for the dycore's slow-tendency port; the
-  :class:`~symcon.core.coupling.bus.SlowTendencyBus` single-consumer check runs
+  :class:`~icon_sc.core.coupling.bus.SlowTendencyBus` single-consumer check runs
   at build time, so a preset without the consumer refuses to build.
 
 The tutorial's ordering prose is carried as *machine-checkable constraints*
 (:data:`SCM_COUPLING_CONSTRAINTS`, applied to the built instances): swapping
 sections against them raises
-:class:`~symcon.core.coupling.constraints.CouplingConstraintError` at
+:class:`~icon_sc.core.coupling.constraints.CouplingConstraintError` at
 composition time (acceptance 4).
 
 Initial column (PLAN item 3, provenance): the S06
-:func:`~symcon.icon.testing.moist_test_column` ``"reference_moist"`` profile —
+:func:`~icon_sc.icon.testing.moist_test_column` ``"reference_moist"`` profile —
 T/p from the ICON decaying-isothermal reference atmosphere
 (``mo_vertical_grid.f90``) with an exponentially decaying water-vapor profile —
 made convectively/condensationally unstable by scaling the humidity
@@ -47,7 +47,7 @@ from typing import Any, Final
 
 import numpy as np
 
-from symcon.core import (
+from icon_sc.core import (
     CallingFrequency,
     ComputeContext,
     ConcurrentCoupling,
@@ -57,22 +57,22 @@ from symcon.core import (
     TendencySlot,
     constraints_of,
 )
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.time import datetime
-from symcon.icon.components.fast.graupel_constants import CLOUD_NUM
-from symcon.icon.components.fast.microphysics import GraupelConfig, Microphysics
-from symcon.icon.components.fast.satad import (
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.time import datetime
+from icon_sc.icon.components.fast.graupel_constants import CLOUD_NUM
+from icon_sc.icon.components.fast.microphysics import GraupelConfig, Microphysics
+from icon_sc.icon.components.fast.satad import (
     SaturationAdjustment,
     SaturationAdjustmentConfig,
 )
-from symcon.icon.components.idealized import (
+from icon_sc.icon.components.idealized import (
     SLOW_TEMPERATURE_SLOT,
     ApplySlowTendencies,
     PrescribedCooling,
     PrescribedCoolingConfig,
 )
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid
-from symcon.icon.testing import moist_test_column
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.testing import moist_test_column
 
 __all__ = [
     "SCM_COUPLING_CONSTRAINTS",
@@ -143,7 +143,7 @@ class SCMComposition:
     ``step`` is the loop body of the canonical run script at column scale
     (architecture §5.1): slow-tendency publication into the bus slots, the
     consumer (dycore stand-in), then the fast SUS suite. It matches the
-    :func:`symcon.core.driver.timeloop` ``StepFn`` shape.
+    :func:`icon_sc.core.driver.timeloop` ``StepFn`` shape.
     """
 
     #: The slow suite: ConcurrentCoupling of CallingFrequency-wrapped processes.

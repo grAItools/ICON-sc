@@ -14,12 +14,12 @@ from typing import Any, ClassVar
 import numpy as np
 import pytest
 
-from symcon.core.components.base import TendencyComponent
-from symcon.core.components.dycore import DynamicalCore
-from symcon.core.coupling import ConcurrentCoupling
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.core.time import datetime
+from icon_sc.core.components.base import TendencyComponent
+from icon_sc.core.components.dycore import DynamicalCore
+from icon_sc.core.coupling import ConcurrentCoupling
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.time import datetime
 
 _DIMS = ["cell", "height"]
 DT = timedelta(seconds=6)

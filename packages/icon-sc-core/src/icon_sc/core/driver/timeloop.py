@@ -12,7 +12,7 @@ from collections.abc import Callable, Iterable, Mapping
 from datetime import timedelta
 from typing import Any
 
-from symcon.core.components.base import Monitor
+from icon_sc.core.components.base import Monitor
 
 __all__ = ["timeloop"]
 

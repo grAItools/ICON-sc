@@ -18,8 +18,8 @@ from typing import Any
 
 import pytest
 
-from symcon.core import ComputeContext, ExecutionPlan, StateSchema
-from symcon.icon.presets import SCMConfig, build_scm
+from icon_sc.core import ComputeContext, ExecutionPlan, StateSchema
+from icon_sc.icon.presets import SCMConfig, build_scm
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE_PATH = REPO_ROOT / "examples" / "01_scm_column.py"

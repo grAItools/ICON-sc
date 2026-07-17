@@ -31,19 +31,19 @@ jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp  # noqa: E402
 from _functional_columns import PROGNOSTICS, RATES  # noqa: E402
 
-from symcon.core import SequentialUpdateSplitting  # noqa: E402
-from symcon.core.functional import (  # noqa: E402
+from icon_sc.core import SequentialUpdateSplitting  # noqa: E402
+from icon_sc.core.functional import (  # noqa: E402
     FunctionalCompileError,
     functional_compile,
     scan_window,
 )
-from symcon.core.functional.pytree import mapping_of, tree_of  # noqa: E402
-from symcon.core.testing import assert_allclose  # noqa: E402
-from symcon.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
-from symcon.icon.components.fast.graupel_constants import GRAUPEL_QMIN  # noqa: E402
-from symcon.icon.components.fast.satad import SaturationAdjustment  # noqa: E402
-from symcon.icon.components.idealized import SLOW_TEMPERATURE_SLOT  # noqa: E402
-from symcon.icon.presets import SCMConfig, build_scm  # noqa: E402
+from icon_sc.core.functional.pytree import mapping_of, tree_of  # noqa: E402
+from icon_sc.core.testing import assert_allclose  # noqa: E402
+from icon_sc.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
+from icon_sc.icon.components.fast.graupel_constants import GRAUPEL_QMIN  # noqa: E402
+from icon_sc.icon.components.fast.satad import SaturationAdjustment  # noqa: E402
+from icon_sc.icon.components.idealized import SLOW_TEMPERATURE_SLOT  # noqa: E402
+from icon_sc.icon.presets import SCMConfig, build_scm  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE_PATH = REPO_ROOT / "examples" / "07_gradient_scm.py"
@@ -193,7 +193,7 @@ class _OpaqueSatad(SaturationAdjustment):
 
 
 def _opaque_fast(cfg: Any) -> tuple[Any, dict[str, Any]]:
-    from symcon.icon.grid.vertical import SleveConfig, VerticalGrid
+    from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
 
     composition, state, _ = build_scm(cfg)
     grid = VerticalGrid.from_config(SleveConfig(num_levels=cfg.nlev))

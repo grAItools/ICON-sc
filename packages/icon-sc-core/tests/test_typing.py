@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from symcon.core.typing import FieldBuffer, HaloState, Location
+from icon_sc.core.typing import FieldBuffer, HaloState, Location
 
 
 def test_numpy_ndarray_is_a_fieldbuffer() -> None:

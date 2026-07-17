@@ -1,8 +1,8 @@
-"""symcon example 01 — a single-column model (SCM), the architecture-§5.1 shape.
+"""ICON-sc example 01 — a single-column model (SCM), the architecture-§5.1 shape.
 
 One legible script (the sympl-paper promise): which schemes, what order, what
 cadences, where output happens — all on one screen. The composition is the S09
-validated preset (``symcon.icon.presets.scm``): ICON's fast-physics subset
+validated preset (``icon_sc.icon.presets.scm``): ICON's fast-physics subset
 satad → graupel microphysics → satad coupled by sequential-update splitting
 (tutorial §3.7.2), plus a ``CallingFrequency``-wrapped prescribed cooling
 publishing a piecewise-constant tendency to the ``icon:ddt_temperature_slow``
@@ -23,8 +23,8 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core import NetCDFMonitor, timeloop
-from symcon.icon.presets import SCMConfig, build_scm
+from icon_sc.core import NetCDFMonitor, timeloop
+from icon_sc.icon.presets import SCMConfig, build_scm
 
 #: What the monitor writes: prognostics the suite steps, the grid-scale surface
 #: precipitation rates it diagnoses, and the slow-tendency bus slot.

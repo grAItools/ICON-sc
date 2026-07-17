@@ -7,12 +7,12 @@ plan-hash regression enforcing that). S09 ships the single-column (SCM) preset;
 the full NWP preset arrives with the dycore lane.
 """
 
-from symcon.icon.presets.jw import (
+from icon_sc.icon.presets.jw import (
     JWConfig,
     JWModel,
     build_jw,
 )
-from symcon.icon.presets.scm import (
+from icon_sc.icon.presets.scm import (
     SCM_FAST_ORDER,
     SCMComposition,
     SCMConfig,

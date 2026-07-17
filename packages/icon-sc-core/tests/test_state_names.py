@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from symcon.core.state import names
-from symcon.core.state.names import (
+from icon_sc.core.state import names
+from icon_sc.core.state.names import (
     NO_CF,
     NamesRegistryError,
     base_name,

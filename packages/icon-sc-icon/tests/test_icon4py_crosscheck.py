@@ -1,9 +1,9 @@
-"""S06 acceptance 3: cross-check symcon thermo/constants against pinned icon4py.
+"""S06 acceptance 3: cross-check ICON-sc thermo/constants against pinned icon4py.
 
 icon4py v0.2.0 exposes the same constants (``model/common/constants.py``) and, as
 embedded-executable gt4py field operators, the θv/T diagnosis
 (``diagnose_temperature.py``) and the reference atmosphere
-(``metrics/reference_atmosphere.py``). Where exposed, symcon must agree to 1e-12
+(``metrics/reference_atmosphere.py``). Where exposed, ICON-sc must agree to 1e-12
 (constants: byte compare). The pressure↔Exner pair has no standalone icon4py helper —
 it appears only fused inside larger stencils (e.g. ``diagnose_surface_pressure``,
 ``mo_nh_vert_extrap_utils``) — so it is covered by the Fortran-formula tests in
@@ -15,10 +15,10 @@ from __future__ import annotations
 import numpy as np
 from icon4py.model.common import constants as i4_constants
 
-from symcon.core.testing import assert_allclose
-from symcon.icon import _constants as c
-from symcon.icon import thermo
-from symcon.icon.grid import vertical as vgrid
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon import _constants as c
+from icon_sc.icon import thermo
+from icon_sc.icon.grid import vertical as vgrid
 
 RTOL = 1e-12
 
@@ -68,7 +68,7 @@ def _cell_k_fields(*arrays: np.ndarray) -> tuple:
 
 
 def test_thetav_temperature_diagnosis_matches_icon4py_field_operator() -> None:
-    """symcon thermo vs icon4py ``_diagnose_virtual_temperature_and_temperature``
+    """ICON-sc thermo vs icon4py ``_diagnose_virtual_temperature_and_temperature``
     (embedded execution) on a realistic (θv, exner, q…) sample — 1e-12."""
     from icon4py.model.common.diagnostic_calculations.stencils.diagnose_temperature import (
         _diagnose_virtual_temperature_and_temperature,
@@ -88,8 +88,8 @@ def test_thetav_temperature_diagnosis_matches_icon4py_field_operator() -> None:
     )
 
     qsum = qc + qi + qr + qs + qg
-    temp_symcon = thermo.temperature_from_thetav_exner(theta_v, exner, qv, qsum)
-    assert_allclose(temp_symcon, temp_out.asnumpy(), rtol=RTOL, atol=0.0, names="air_temperature")
+    temp_icon_sc = thermo.temperature_from_thetav_exner(theta_v, exner, qv, qsum)
+    assert_allclose(temp_icon_sc, temp_out.asnumpy(), rtol=RTOL, atol=0.0, names="air_temperature")
     # and the inverse direction reproduces theta_v from the icon4py-diagnosed temp
     theta_back = thermo.virtual_potential_temperature(temp_out.asnumpy(), exner, qv, qsum)
     assert_allclose(
@@ -98,7 +98,7 @@ def test_thetav_temperature_diagnosis_matches_icon4py_field_operator() -> None:
 
 
 def test_reference_atmosphere_matches_icon4py_field_operator() -> None:
-    """symcon reference-state helpers vs icon4py
+    """ICON-sc reference-state helpers vs icon4py
     ``_compute_reference_atmosphere_cell_fields`` (embedded) — 1e-12."""
     from icon4py.model.common.metrics.reference_atmosphere import (
         _compute_reference_atmosphere_cell_fields,

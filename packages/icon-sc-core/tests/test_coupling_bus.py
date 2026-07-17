@@ -7,8 +7,8 @@ from typing import Any, ClassVar
 
 import pytest
 
-from symcon.core.components.base import DiagnosticComponent, Stepper
-from symcon.core.coupling import BusError, SlowTendencyBus, TendencySlot
+from icon_sc.core.components.base import DiagnosticComponent, Stepper
+from icon_sc.core.coupling import BusError, SlowTendencyBus, TendencySlot
 
 _DIMS = ["cell", "height"]
 SLOT = TendencySlot(name="icon:ddt_air_temperature", units="K s-1", dims=("cell", "height"))

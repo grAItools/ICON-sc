@@ -15,9 +15,9 @@ object-oriented ABI adopted from stubbiali/sympl ``oop`` (see REFERENCES.lock):
   explicit-carry schema ``functional_state()`` (§4.5, §8.5).
 
 All checking routes through S02's contracts machinery: ``__init_subclass__``
-runs the :class:`~symcon.core.contracts.checkers.StaticChecker` at class
+runs the :class:`~icon_sc.core.contracts.checkers.StaticChecker` at class
 creation; ``__call__`` runs the
-:class:`~symcon.core.contracts.checkers.DynamicChecker` + ``Ingress``/
+:class:`~icon_sc.core.contracts.checkers.DynamicChecker` + ``Ingress``/
 ``EgressPlan`` per call — T0's fully dynamic reference semantics — with one
 negotiation cached per (instance, state-schema) so an unchanged schema does not
 renegotiate (PLAN item 2; *not* the S05 plan compiler: dicts and DataArrays stay
@@ -36,21 +36,21 @@ import numpy as np
 import xarray as xr
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
-from symcon.core.context import ComputeContext
-from symcon.core.contracts.checkers import (
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.contracts.checkers import (
     PROPERTY_DICT_NAMES,
     DynamicChecker,
     FieldSchema,
     StateSchema,
     StaticChecker,
 )
-from symcon.core.contracts.conversion import apply_conversion_plan
-from symcon.core.contracts.operators import ConversionPlan, EgressPlan, IngressPlan
-from symcon.core.contracts.properties import PropertyDictError, PropertySpec
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.contracts.conversion import apply_conversion_plan
+from icon_sc.core.contracts.operators import ConversionPlan, EgressPlan, IngressPlan
+from icon_sc.core.contracts.properties import PropertyDictError, PropertySpec
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.typing import FieldBuffer
 
 __all__ = [
     "Component",
@@ -101,7 +101,7 @@ class Component(abc.ABC):
     """Shared machinery of the four callable component kinds (frozen ABI, SPEC S03).
 
     Subclasses declare property dicts as **class attributes**; they are validated
-    by the :class:`~symcon.core.contracts.checkers.StaticChecker` at class
+    by the :class:`~icon_sc.core.contracts.checkers.StaticChecker` at class
     creation (``__init_subclass__``), so a component declaring, e.g.,
     non-canonical units never constructs. Concrete subclasses implement
     :meth:`array_call` only — the base owns negotiation, allocation and egress.

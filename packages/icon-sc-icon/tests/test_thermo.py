@@ -5,9 +5,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core.testing import assert_allclose
-from symcon.icon import thermo
-from symcon.icon._constants import P0REF, RD, RD_O_CVD, RD_O_P0REF, VTMPC1
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon import thermo
+from icon_sc.icon._constants import P0REF, RD, RD_O_CVD, RD_O_P0REF, VTMPC1
 
 #: SPEC S06 tolerance contract: identity to 1e-12 (fp64).
 RTOL = 1e-12

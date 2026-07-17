@@ -1,1 +1,1 @@
-pytest_plugins = ("symcon.core.testing.plugin",)
+pytest_plugins = ("icon_sc.core.testing.plugin",)

@@ -10,7 +10,7 @@ jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
 
-from symcon.core.functional.pytree import (  # noqa: E402
+from icon_sc.core.functional.pytree import (  # noqa: E402
     build_param_tree,
     build_state_tree,
     make_pytree_type,
@@ -18,8 +18,8 @@ from symcon.core.functional.pytree import (  # noqa: E402
     sanitize_leaf_name,
     tree_of,
 )
-from symcon.core.state.dataarray import make_dataarray  # noqa: E402
-from symcon.core.time import datetime  # noqa: E402
+from icon_sc.core.state.dataarray import make_dataarray  # noqa: E402
+from icon_sc.core.time import datetime  # noqa: E402
 
 
 def test_sanitize_leaf_name() -> None:
@@ -32,8 +32,8 @@ def test_sanitize_leaf_name() -> None:
 def test_make_pytree_type_sorted_deterministic() -> None:
     cls_a = make_pytree_type("T", ["b", "a", "icon:x"])
     cls_b = make_pytree_type("T", ["icon:x", "a", "b"])
-    assert cls_a.__symcon_leaves__ == cls_b.__symcon_leaves__
-    assert [name for name, _ in cls_a.__symcon_leaves__] == ["a", "b", "icon:x"]
+    assert cls_a.__icon_sc_leaves__ == cls_b.__icon_sc_leaves__
+    assert [name for name, _ in cls_a.__icon_sc_leaves__] == ["a", "b", "icon:x"]
 
 
 def test_pytree_registration_roundtrip() -> None:
@@ -88,4 +88,4 @@ def test_build_param_tree_float64() -> None:
     cls, tree = build_param_tree({"graupel/kcau": 9.44e9})
     (value,) = jax.tree_util.tree_leaves(tree)
     assert value.dtype == jnp.float64
-    assert cls.__symcon_leaves__[0][0] == "graupel/kcau"
+    assert cls.__icon_sc_leaves__[0][0] == "graupel/kcau"

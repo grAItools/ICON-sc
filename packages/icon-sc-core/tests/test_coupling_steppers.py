@@ -15,14 +15,14 @@ from typing import Any, ClassVar
 import numpy as np
 import pytest
 
-from symcon.core.components.base import TendencyComponent
-from symcon.core.coupling import (
+from icon_sc.core.components.base import TendencyComponent
+from icon_sc.core.coupling import (
     ConcurrentCoupling,
     SequentialTendencyStepper,
     TendencyStepper,
 )
-from symcon.core.testing import assert_allclose, measure_order
-from symcon.core.testing.toys import Relaxation, WindSpeed, column_state
+from icon_sc.core.testing import assert_allclose, measure_order
+from icon_sc.core.testing.toys import Relaxation, WindSpeed, column_state
 
 _DIMS = ["cell", "height"]
 T_FINAL = 1.024

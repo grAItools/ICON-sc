@@ -1,6 +1,6 @@
 """Trivial pointwise icon4py host grid for column physics (S07 → shared in S08).
 
-The fast-physics granules symcon hosts on columns (satad, graupel) consume no
+The fast-physics granules ICON-sc hosts on columns (satad, graupel) consume no
 horizontal connectivities — satad's stencils are pointwise on (Cell, K) and the
 graupel scheme is one forward K-scan per column — so the horizontal grid
 degenerates to sizes plus the zone index functions (the ``simple_grid``
@@ -38,7 +38,7 @@ def column_icon4py_grid(n_cell: int, num_levels: int) -> Any:
         limited_area=False,
     )
     return i4_base.Grid(
-        id="symcon_column",
+        id="icon_sc_column",
         config=config,
         connectivities={},
         start_index=start_index,

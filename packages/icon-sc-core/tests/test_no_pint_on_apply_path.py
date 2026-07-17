@@ -1,6 +1,6 @@
 """Acceptance SPEC S02 §5: no runtime Pint import on the ``IngressPlan.apply`` path.
 
-Two guards: (a) importing symcon.core and running build+apply on a canonical state
+Two guards: (a) importing icon_sc.core and running build+apply on a canonical state
 never imports pint at all (subprocess, clean interpreter); (b) with pint made
 unimportable via an import-time monkeypatch, apply still works in-process.
 """
@@ -28,7 +28,7 @@ class _PintBlocker:
 sys.meta_path.insert(0, _PintBlocker())
 
 import numpy as np
-from symcon.core import IngressPlan, StateSchema, make_dataarray, parse_properties
+from icon_sc.core import IngressPlan, StateSchema, make_dataarray, parse_properties
 
 spec = parse_properties({"air_temperature": {"dims": ["cell", "height"], "units": "K"}})
 state = {
@@ -58,8 +58,8 @@ def test_import_build_apply_never_touch_pint_in_clean_interpreter() -> None:
 
 
 def test_apply_with_pint_unimportable(monkeypatch: pytest.MonkeyPatch) -> None:
-    from symcon.core import IngressPlan, make_dataarray, parse_properties
-    from symcon.core.state import units
+    from icon_sc.core import IngressPlan, make_dataarray, parse_properties
+    from icon_sc.core.state import units
 
     # Fresh identity caches so no earlier test pre-paid a pint parse for us ...
     units._registry.cache_clear()

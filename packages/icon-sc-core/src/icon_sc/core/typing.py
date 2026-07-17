@@ -6,7 +6,7 @@
   fields that live on no mesh location).
 - :class:`HaloState` — halo validity of a *state* field (``attrs["halo"]``); not to be
   confused with the contract-side halo policy of a *property dict*
-  (:class:`symcon.core.contracts.properties.HaloPolicy`).
+  (:class:`icon_sc.core.contracts.properties.HaloPolicy`).
 """
 
 from __future__ import annotations

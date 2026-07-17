@@ -8,9 +8,9 @@ from typing import Any
 
 import pytest
 
-from symcon.core import Monitor, timeloop
-from symcon.core.testing.toys import column_state
-from symcon.core.time import datetime
+from icon_sc.core import Monitor, timeloop
+from icon_sc.core.testing.toys import column_state
+from icon_sc.core.time import datetime
 
 DT = timedelta(minutes=5)
 

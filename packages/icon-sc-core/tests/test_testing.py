@@ -1,11 +1,11 @@
-"""Unit tests for the frozen symcon.core.testing interface (SPEC S01)."""
+"""Unit tests for the frozen icon_sc.core.testing interface (SPEC S01)."""
 
 from __future__ import annotations
 
 import numpy as np
 import pytest
 
-from symcon.core.testing import MARKERS, assert_allclose
+from icon_sc.core.testing import MARKERS, assert_allclose
 
 
 def test_passes_on_close_arrays() -> None:

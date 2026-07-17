@@ -1,4 +1,4 @@
-"""Test support shared by all symcon packages (frozen interface, SPEC S01).
+"""Test support shared by all ICON-sc packages (frozen interface, SPEC S01).
 
 Exports:
 - :func:`assert_allclose` — numpy.testing wrapper with worst-offender reporting.
@@ -8,7 +8,7 @@ Exports:
   ``slow``, ``data``).
 - :func:`register_markers` — hook helper used by the pytest plugin.
 
-The pytest-dependent pieces (fixtures, hooks) live in :mod:`symcon.core.testing.plugin`
+The pytest-dependent pieces (fixtures, hooks) live in :mod:`icon_sc.core.testing.plugin`
 so that importing this module needs numpy only.
 """
 
@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import numpy.typing as npt
 
-from symcon.core.testing.order import OrderFit, measure_order
+from icon_sc.core.testing.order import OrderFit, measure_order
 
 if TYPE_CHECKING:
     import pytest
@@ -36,7 +36,7 @@ MARKERS: dict[str, str] = {
 
 
 def register_markers(config: pytest.Config) -> None:
-    """Register the canonical symcon markers on a pytest config."""
+    """Register the canonical ICON-sc markers on a pytest config."""
     for name, description in MARKERS.items():
         config.addinivalue_line("markers", f"{name}: {description}")
 

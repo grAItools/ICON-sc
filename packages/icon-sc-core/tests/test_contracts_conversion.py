@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core import (
+from icon_sc.core import (
     ConversionError,
     ConversionPlan,
     ConversionStep,
@@ -15,7 +15,7 @@ from symcon.core import (
     make_dataarray,
     parse_properties,
 )
-from symcon.core.testing import assert_allclose
+from icon_sc.core.testing import assert_allclose
 
 
 def _state_with(units: str, dims: tuple[str, str] = ("cell", "height")) -> dict[str, object]:
@@ -102,7 +102,7 @@ def test_convert_array_identity_is_a_noop() -> None:
 
 
 def test_convert_array_incompatible_units_raise() -> None:
-    from symcon.core import UnitsError
+    from icon_sc.core import UnitsError
 
     with pytest.raises(UnitsError, match="cannot convert"):
         convert_array(np.ones(3), "K", "m")

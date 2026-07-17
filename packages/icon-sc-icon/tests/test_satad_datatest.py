@@ -2,12 +2,12 @@
 against icon4py's own satad verification data.
 
 This is icon4py's integration test (REFERENCES.lock ``icon4py-satad-test``)
-rerun through the symcon component: experiment WEISMAN_KLEMP_TORUS — the only
+rerun through the ICON-sc component: experiment WEISMAN_KLEMP_TORUS — the only
 serialized archive carrying satad-init/satad-exit savepoints (GAUSS3D, the S06
 default, has none; the ~1.6 GB archive downloads once into the shared cache) —
 savepoints at two fast-physics call sites per step ("nwp-gscp-interface" before
 graupel, "interface-nwp" — the tutorial-§3.7.2 double appearance), three dates.
-The symcon state is built from the init savepoint, the component hosts the
+The ICON-sc state is built from the init savepoint, the component hosts the
 granule on the savepoint's icon grid, and the adjusted state is compared to the
 exit savepoint at **icon4py's own tolerances**.
 
@@ -24,11 +24,11 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import ComputeContext, make_backend
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.core.time import datetime
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core import ComputeContext, make_backend
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.time import datetime
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
     # Re-exported icon4py fixtures (fixture *names* are what pytest resolves; the
@@ -36,7 +36,7 @@ if DATATEST_AVAILABLE:
     from icon4py.model.testing import definitions as icon4py_definitions
     from icon4py.model.testing.fixtures import icon_grid  # noqa: F401
 
-    from symcon.icon.testing import (  # noqa: F401
+    from icon_sc.icon.testing import (  # noqa: F401
         backend,
         data_provider,
         download_ser_data,
@@ -57,7 +57,7 @@ pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -71,12 +71,12 @@ ICON4PY_ATOL = 1.0e-13
 DATES = ["2008-09-01T01:59:48.000", "2008-09-01T01:59:52.000", "2008-09-01T01:59:56.000"]
 LOCATIONS = ["nwp-gscp-interface", "interface-nwp"]
 
-#: Cell-column dims of the symcon state built from the savepoints.
+#: Cell-column dims of the ICON-sc state built from the savepoints.
 _DIMS = ("cell", "height")
 
 
 def _state_from_savepoint(satad_init: Any, ctx: ComputeContext) -> dict[str, Any]:
-    """A symcon state (canonical names/units, S06 registry) from satad-init.
+    """A ICON-sc state (canonical names/units, S06 registry) from satad-init.
 
     Buffers are allocated through the context so the state lives on the
     backend's device (strict mode rejects host buffers under a cupy context);
@@ -107,11 +107,11 @@ def _host(buffer: Any) -> np.ndarray:
 @pytest.mark.parametrize("date", DATES)
 @pytest.mark.parametrize("location", LOCATIONS)
 @pytest.mark.parametrize(
-    "symcon_backend",
+    "icon_sc_backend",
     ["embedded", "gtfn_cpu", pytest.param("gtfn_gpu", marks=pytest.mark.gpu)],
 )
 def test_satad_l2_parity_against_icon4py_savepoints(
-    symcon_backend: str,
+    icon_sc_backend: str,
     location: str,
     date: str,
     *,
@@ -122,7 +122,7 @@ def test_satad_l2_parity_against_icon4py_savepoints(
 ) -> None:
     from icon4py.model.common.grid import vertical as v_grid
 
-    from symcon.icon.components import SaturationAdjustment, SaturationAdjustmentConfig
+    from icon_sc.icon.components import SaturationAdjustment, SaturationAdjustmentConfig
 
     satad_init = data_provider.from_savepoint_satad_init(location=location, date=date)
     satad_exit = data_provider.from_savepoint_satad_exit(location=location, date=date)
@@ -136,7 +136,7 @@ def test_satad_l2_parity_against_icon4py_savepoints(
         vct_b=grid_savepoint.vct_b(),
     )
 
-    ctx = ComputeContext(backend=make_backend(symcon_backend))
+    ctx = ComputeContext(backend=make_backend(icon_sc_backend))
     satad = SaturationAdjustment(
         (icon_grid, vertical_params),
         SaturationAdjustmentConfig(),
@@ -153,19 +153,19 @@ def test_satad_l2_parity_against_icon4py_savepoints(
         satad_exit.qv().asnumpy(),
         rtol=ICON4PY_RTOL,
         atol=ICON4PY_ATOL,
-        names=("symcon qv", "icon4py satad-exit qv"),
+        names=("ICON-sc qv", "icon4py satad-exit qv"),
     )
     assert_allclose(
         _host(new_state["specific_cloud_content"].data),
         satad_exit.qc().asnumpy(),
         rtol=ICON4PY_RTOL,
         atol=ICON4PY_ATOL,
-        names=("symcon qc", "icon4py satad-exit qc"),
+        names=("ICON-sc qc", "icon4py satad-exit qc"),
     )
     assert_allclose(
         _host(new_state["air_temperature"].data),
         satad_exit.temperature().asnumpy(),
         rtol=ICON4PY_RTOL,
         atol=ICON4PY_ATOL,
-        names=("symcon temperature", "icon4py satad-exit temperature"),
+        names=("ICON-sc temperature", "icon4py satad-exit temperature"),
     )

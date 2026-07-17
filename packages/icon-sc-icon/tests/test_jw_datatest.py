@@ -7,11 +7,11 @@ archive (REFERENCES.lock ``icon4py-driver-jw-tests``):
   at dallclose defaults (rtol=1e-12) for rho/exner/theta_v/vn/pressure/temperature,
   perturbed exner vs ``diagnostics_initial.exner_pr`` at atol=1e-14; w deliberately
   not verified (forced zero upstream and here);
-- delegation parity (SPEC acceptance 2): the symcon initializer with
+- delegation parity (SPEC acceptance 2): the ICON-sc initializer with
   ``perturbation_amplitude=0`` vs the *donor* ``model_initialization_jabw`` output
   at 1e-12 (the donor hard-wires ``jw_up=0``);
 - ``test_run_timeloop_single_step`` (JW row) — one composed Δt (5 dynamics substeps
-  then diffusion, driver order) through the symcon ``build_jw`` preset vs the
+  then diffusion, driver order) through the ICON-sc ``build_jw`` preset vs the
   diffusion/nonhydro exit savepoints at the upstream tolerances: vn atol=6e-12,
   w atol=1e-13, theta_v atol=4e-12, exner and rho at defaults.
 
@@ -27,9 +27,9 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core.testing import assert_allclose
-from symcon.icon.ingest.idealized import JablonowskiWilliamsonConfig, jablonowski_williamson
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.ingest.idealized import JablonowskiWilliamsonConfig, jablonowski_williamson
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
     from icon4py.model.testing import datatest_utils as dtu
@@ -40,7 +40,7 @@ if DATATEST_AVAILABLE:
         metrics_savepoint,
     )
 
-    from symcon.icon.testing import (  # noqa: F401  (re-exported icon4py fixtures)
+    from icon_sc.icon.testing import (  # noqa: F401  (re-exported icon4py fixtures)
         backend,
         data_provider,
         download_ser_data,
@@ -59,7 +59,7 @@ pytestmark = [
     pytest.mark.slow,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -140,7 +140,7 @@ def test_jw_initial_state_matches_jabw_exit_savepoint(
             reference.asnumpy(),
             rtol=1e-12,
             atol=0.0,
-            names=(f"symcon JW {name}", "icon4py jabw_exit savepoint"),
+            names=(f"ICON-sc JW {name}", "icon4py jabw_exit savepoint"),
             equal_nan=False,
         )
     np.testing.assert_array_equal(
@@ -156,7 +156,7 @@ def test_jw_initial_state_matches_jabw_exit_savepoint(
         data_provider.from_savepoint_diagnostics_initial().exner_pr().asnumpy(),
         rtol=1e-12,
         atol=1e-14,
-        names=("symcon JW exner - exner_ref", "icon4py diagnostics_initial exner_pr"),
+        names=("ICON-sc JW exner - exner_ref", "icon4py diagnostics_initial exner_pr"),
         equal_nan=False,
     )
 
@@ -173,7 +173,7 @@ def test_jw_initializer_delegation_parity(
     metrics_savepoint: Any,
     interpolation_savepoint: Any,
 ) -> None:
-    """symcon initializer (perturbation 0) == donor ``model_initialization_jabw``
+    """ICON-sc initializer (perturbation 0) == donor ``model_initialization_jabw``
     to 1e-12 (SPEC acceptance 2: delegation is possible — the donor is importable)."""
     del data_provider  # gates on the downloaded archive
     from icon4py.model.driver.testcases import jablonowski_williamson as donor
@@ -214,7 +214,7 @@ def test_jw_initializer_delegation_parity(
             reference.asnumpy(),
             rtol=1e-12,
             atol=0.0,
-            names=(f"symcon JW {name}", "icon4py model_initialization_jabw"),
+            names=(f"ICON-sc JW {name}", "icon4py model_initialization_jabw"),
             equal_nan=False,
         )
 
@@ -223,7 +223,7 @@ def test_jw_initializer_delegation_parity(
 
 
 def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> None:
-    """Upstream ``test_run_timeloop_single_step`` (JW row) through the symcon
+    """Upstream ``test_run_timeloop_single_step`` (JW row) through the ICON-sc
     ``build_jw`` preset: one Δt = 5 solve_nonhydro substeps then diffusion.
 
     State/carry staged from the archived savepoints exactly as upstream stages its
@@ -235,8 +235,8 @@ def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> 
     """
     from datetime import timedelta
 
-    from symcon.core.state import canonical_units, make_dataarray
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.core.state import canonical_units, make_dataarray
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     model = build_jw(JWConfig(perturbation_amplitude=0.0, backend="gtfn_cpu"))
     n_substeps = int(model.provenance["ndyn_substeps"])
@@ -345,7 +345,7 @@ def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> 
         sp_diffusion_exit.vn().asnumpy(),
         rtol=1e-12,
         atol=6e-12,
-        names=("symcon composed vn", "icon4py diffusion exit"),
+        names=("ICON-sc composed vn", "icon4py diffusion exit"),
         equal_nan=False,
     )
     # l.347-351: w atol=1e-13
@@ -354,7 +354,7 @@ def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> 
         sp_diffusion_exit.w().asnumpy(),
         rtol=1e-12,
         atol=1e-13,
-        names=("symcon composed w", "icon4py diffusion exit"),
+        names=("ICON-sc composed w", "icon4py diffusion exit"),
         equal_nan=False,
     )
     # l.353-356: exner at defaults
@@ -363,7 +363,7 @@ def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> 
         sp_diffusion_exit.exner().asnumpy(),
         rtol=1e-12,
         atol=0.0,
-        names=("symcon composed exner", "icon4py diffusion exit"),
+        names=("ICON-sc composed exner", "icon4py diffusion exit"),
         equal_nan=False,
     )
     # l.358-362: theta_v atol=4e-12
@@ -372,7 +372,7 @@ def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> 
         sp_diffusion_exit.theta_v().asnumpy(),
         rtol=1e-12,
         atol=4e-12,
-        names=("symcon composed theta_v", "icon4py diffusion exit"),
+        names=("ICON-sc composed theta_v", "icon4py diffusion exit"),
         equal_nan=False,
     )
     # l.364-367: rho vs nonhydro exit at defaults
@@ -381,6 +381,6 @@ def test_jw_composed_single_step_parity(data_provider: Any, experiment: Any) -> 
         sp_nonhydro_exit.rho_new().asnumpy(),
         rtol=1e-12,
         atol=0.0,
-        names=("symcon composed rho", "icon4py nonhydro exit"),
+        names=("ICON-sc composed rho", "icon4py nonhydro exit"),
         equal_nan=False,
     )

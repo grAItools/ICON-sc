@@ -18,10 +18,10 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import ComputeContext, make_backend, timeloop
-from symcon.core.testing import assert_allclose
-from symcon.icon.components.fast.graupel_constants import GRAUPEL_QMIN
-from symcon.icon.presets import build_scm
+from icon_sc.core import ComputeContext, make_backend, timeloop
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.components.fast.graupel_constants import GRAUPEL_QMIN
+from icon_sc.icon.presets import build_scm
 
 pytestmark = pytest.mark.slow
 

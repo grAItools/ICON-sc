@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 from _coupling_toys import PlaneDamping, PlaneRelaxation, Rotation, plane_state
 
-from symcon.core import (
+from icon_sc.core import (
     SSUS,
     CallingFrequency,
     ComputeContext,
@@ -26,7 +26,7 @@ from symcon.core import (
     Subcycle,
     TendencyStepper,
 )
-from symcon.core.testing.toys import Damping, Relaxation, WindSpeed, column_state
+from icon_sc.core.testing.toys import Damping, Relaxation, WindSpeed, column_state
 
 __all__ = [
     "COLUMN_DT",

@@ -4,7 +4,7 @@ S07 extends the ``ComputeContext`` backend from an opaque string to a small
 **backend object**: :class:`Backend` bundles the gt4py program processor, the
 buffer allocator, the zero-copy ``as_field`` ingress and the offset-provider
 hook. ``make_backend(name) -> Backend`` (frozen interface) is used by every
-later gt4py component; :class:`~symcon.core.context.ComputeContext` accepts
+later gt4py component; :class:`~icon_sc.core.context.ComputeContext` accepts
 either the S03 opaque string or a :class:`Backend` directly.
 
 Zero-copy note (REFERENCES.lock id ``gt4py-field-ctor``): public
@@ -12,7 +12,7 @@ Zero-copy note (REFERENCES.lock id ``gt4py-field-ctor``): public
 wraps buffers through the ``gt4py.next.common._field`` constructor, which
 aliases the buffer (``field.ndarray is buffer``) — the §2.3 ingress contract.
 
-gt4py is an *optional* dependency of symcon-core (``symcon-core[gt4py]``); it
+gt4py is an *optional* dependency of icon-sc-core (``icon-sc-core[gt4py]``); it
 is imported lazily so the core package keeps working without it, and every
 import failure names the missing extra.
 """
@@ -24,13 +24,13 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Final
 
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.typing import FieldBuffer
 
 if TYPE_CHECKING:
-    # Typing-only: gt4py stays behind the symcon-core[gt4py] extra at runtime.
+    # Typing-only: gt4py stays behind the icon-sc-core[gt4py] extra at runtime.
     from gt4py.next import Dimension as GtxDimension
 
-    from symcon.core.context import Allocator
+    from icon_sc.core.context import Allocator
 
 __all__ = ["Backend", "make_backend"]
 
@@ -47,8 +47,8 @@ def _import_gt4py() -> Any:
         import gt4py.next as gtx
     except ImportError as exc:  # pragma: no cover - environment-dependent
         raise ImportError(
-            "symcon.core.ingress.gt4py requires gt4py; install the "
-            "symcon-core[gt4py] extra (pinned pair in constraints/)."
+            "icon_sc.core.ingress.gt4py requires gt4py; install the "
+            "icon-sc-core[gt4py] extra (pinned pair in constraints/)."
         ) from exc
     return gtx
 
@@ -62,7 +62,7 @@ class Backend:
       (``gt4py.next.backend.Backend``), or ``None`` for embedded execution
       (the gt4py/icon4py convention: ``program.with_backend(None)`` runs the
       field-operator reference semantics);
-    - ``allocator`` — the :class:`~symcon.core.context.Allocator` for buffers
+    - ``allocator`` — the :class:`~icon_sc.core.context.Allocator` for buffers
       on this backend's device;
     - ``offset_provider`` — the offset-provider hook. Defaults to the empty
       mapping: correct for column components; horizontal grids override it.
@@ -112,7 +112,7 @@ def make_backend(name: str) -> Backend:
     buffers; ``gtfn_cpu`` → ``gtx.gtfn_cpu`` + numpy; ``gtfn_gpu`` →
     ``gtx.gtfn_gpu`` + cupy (constructing it requires cupy).
     """
-    from symcon.core.context import _CupyAllocator, _NumpyAllocator
+    from icon_sc.core.context import _CupyAllocator, _NumpyAllocator
 
     gtx = _import_gt4py()
     if name == "embedded":

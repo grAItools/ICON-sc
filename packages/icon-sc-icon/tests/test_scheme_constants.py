@@ -1,7 +1,7 @@
 """S10: scheme-constants modules vs a live icon4py import — bitwise (§11.8).
 
 The functional cores and the gt4py granules must draw on one source of
-numerical truth; these tables pin the symcon transcriptions to icon4py v0.2.0's
+numerical truth; these tables pin the ICON-sc transcriptions to icon4py v0.2.0's
 ``MicrophysicsConstants``/``PhysicsConstants`` so the pair cannot drift.
 """
 
@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import pytest
 
-from symcon.icon._constants import ALV, CLW, CVD, RHOH2O, RV, TMELT
-from symcon.icon.components.fast import graupel_constants as g
-from symcon.icon.components.fast import satad_constants as s
+from icon_sc.icon._constants import ALV, CLW, CVD, RHOH2O, RV, TMELT
+from icon_sc.icon.components.fast import graupel_constants as g
+from icon_sc.icon.components.fast import satad_constants as s
 
 icon4py_mp = pytest.importorskip(
     "icon4py.model.atmosphere.subgrid_scale_physics.microphysics.microphysics_constants"
@@ -21,7 +21,7 @@ icon4py_common = pytest.importorskip("icon4py.model.common.constants")
 M = icon4py_mp.MicrophysicsConstants
 P = icon4py_common.PhysicsConstants
 
-#: symcon graupel_constants name -> icon4py MicrophysicsConstants member.
+#: ICON-sc graupel_constants name -> icon4py MicrophysicsConstants member.
 GRAUPEL_TABLE = {
     "GRAUPEL_QMIN": "QMIN",
     "TETENS_P0": "TETENS_P0",
@@ -104,10 +104,10 @@ GRAUPEL_TABLE = {
 }
 
 
-@pytest.mark.parametrize("symcon_name", sorted(GRAUPEL_TABLE))
-def test_graupel_constant_bitwise(symcon_name: str) -> None:
-    icon4py_value = float(getattr(M, GRAUPEL_TABLE[symcon_name]).value)
-    assert getattr(g, symcon_name) == icon4py_value, symcon_name
+@pytest.mark.parametrize("icon_sc_name", sorted(GRAUPEL_TABLE))
+def test_graupel_constant_bitwise(icon_sc_name: str) -> None:
+    icon4py_value = float(getattr(M, GRAUPEL_TABLE[icon_sc_name]).value)
+    assert getattr(g, icon_sc_name) == icon4py_value, icon_sc_name
 
 
 @pytest.mark.parametrize("index", range(10))
@@ -126,7 +126,7 @@ def test_graupel_physics_constants_bitwise() -> None:
 
 
 @pytest.mark.parametrize(
-    ("symcon_value", "icon4py_member"),
+    ("icon_sc_value", "icon4py_member"),
     [
         (s.TETENS_P0, "TETENS_P0"),
         (s.TETENS_AW, "TETENS_AW"),
@@ -135,8 +135,8 @@ def test_graupel_physics_constants_bitwise() -> None:
         (s.CP_V, "CP_V"),
     ],
 )
-def test_satad_constants_bitwise(symcon_value: float, icon4py_member: str) -> None:
-    assert symcon_value == float(getattr(M, icon4py_member).value)
+def test_satad_constants_bitwise(icon_sc_value: float, icon4py_member: str) -> None:
+    assert icon_sc_value == float(getattr(M, icon4py_member).value)
 
 
 def test_satad_closure_constants_match_physics_constants() -> None:

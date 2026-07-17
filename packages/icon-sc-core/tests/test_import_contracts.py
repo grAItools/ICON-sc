@@ -27,7 +27,7 @@ def test_real_contracts_pass() -> None:
 
 @pytest.fixture
 def violating_tree(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """A package mimicking the symcon layout where core deliberately imports icon."""
+    """A package mimicking the ICON-sc layout where core deliberately imports icon."""
     root = tmp_path / "src" / "fakesym"
     for sub in ("core", "icon"):
         (root / sub).mkdir(parents=True)
@@ -65,22 +65,22 @@ def test_forbidden_contract_detects_core_to_icon_import(
     assert "fakesym.core -> fakesym.icon" in capsys.readouterr().out
 
 
-def test_symcon_packages_importable_without_each_other() -> None:
+def test_icon_sc_packages_importable_without_each_other() -> None:
     # core must be importable with icon/bridges absent (acceptance 3 in miniature):
     # its module graph may not even reference them.
     #
     # The original module objects are restored afterwards: leaving freshly
-    # re-imported symcon modules in sys.modules gives later tests *duplicate
+    # re-imported ICON-sc modules in sys.modules gives later tests *duplicate
     # class identities* (isinstance checks across old/new classes fail — the
     # S05 plan compiler's scheme dispatch tripped over exactly this).
-    saved = {name: sys.modules[name] for name in list(sys.modules) if name.startswith("symcon")}
+    saved = {name: sys.modules[name] for name in list(sys.modules) if name.startswith("icon_sc")}
     for name in saved:
         sys.modules.pop(name)
     try:
-        import symcon.core  # noqa: F401
+        import icon_sc.core  # noqa: F401
 
-        assert not any(m.startswith(("symcon.icon", "symcon.bridges")) for m in sys.modules)
+        assert not any(m.startswith(("icon_sc.icon", "icon_sc.bridges")) for m in sys.modules)
     finally:
-        for name in [m for m in sys.modules if m.startswith("symcon")]:
+        for name in [m for m in sys.modules if m.startswith("icon_sc")]:
             sys.modules.pop(name)
         sys.modules.update(saved)

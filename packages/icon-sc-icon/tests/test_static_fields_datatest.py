@@ -1,6 +1,6 @@
 """S11 acceptance 3 (marker ``data``): metrics/interpolation parity.
 
-Every static field produced by ``symcon.icon.grid.metrics``/``.interpolation`` matches
+Every static field produced by ``icon_sc.icon.grid.metrics``/``.interpolation`` matches
 the corresponding icon4py serialized savepoint at icon4py's own test tolerances
 (tolerance contracts, SPEC S11). Provenance (REFERENCES.lock ids
 ``icon4py-grid-metrics-tests`` + ``icon4py-refatm-metric-field-tests``): most
@@ -20,8 +20,8 @@ MetricStateNonHydro + InterpolationState, diffusion states).
 The factories run on gtfn_cpu: icon4py marks several fields (wgtfac_c, pg_exdist,
 zdiff_gradp, zd_*) ``embedded_remap_error`` — the embedded backend cannot produce
 them. First run compiles the gt4py programs (persistent cache under
-``~/.cache/symcon/gt4py``); the serialized archive is ~4.0 GB compressed / 8.7 GB
-extracted (download cached under ``~/.cache/symcon/icon4py-testdata``).
+``~/.cache/icon-sc/gt4py``); the serialized archive is ~4.0 GB compressed / 8.7 GB
+extracted (download cached under ``~/.cache/icon-sc/icon4py-testdata``).
 """
 
 from __future__ import annotations
@@ -31,16 +31,16 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core.testing import assert_allclose
-from symcon.icon.testing import DATATEST_AVAILABLE, download_grid_file
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.testing import DATATEST_AVAILABLE, download_grid_file
 
 if DATATEST_AVAILABLE:
     from icon4py.model.testing import definitions as icon4py_definitions
 
     # Re-exported icon4py fixtures (fixture *names* are what pytest resolves; the
-    # icon4py `backend` fixture intentionally shadows symcon's string-valued one in
+    # icon4py `backend` fixture intentionally shadows ICON-sc's string-valued one in
     # this module — it only steers savepoint ingestion, not the factories).
-    from symcon.icon.testing import (  # noqa: F401
+    from icon_sc.icon.testing import (  # noqa: F401
         backend,
         data_provider,
         download_ser_data,
@@ -63,7 +63,7 @@ pytestmark = [
     pytest.mark.slow,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -149,7 +149,7 @@ _static_cache: dict[str, dict[str, Any]] = {}
 
 
 def _sleve_config(vertical_config: Any) -> Any:
-    from symcon.icon.grid import SleveConfig
+    from icon_sc.icon.grid import SleveConfig
 
     return SleveConfig(
         num_levels=vertical_config.num_levels,
@@ -179,9 +179,9 @@ def _get_static(experiment: Any, grid_savepoint: Any, topography_savepoint: Any)
     if experiment.name in _static_cache:
         return _static_cache[experiment.name]
 
-    from symcon.core.context import ComputeContext
-    from symcon.core.ingress.gt4py import make_backend
-    from symcon.icon.grid import VerticalGrid, from_file, interpolation, metrics
+    from icon_sc.core.context import ComputeContext
+    from icon_sc.core.ingress.gt4py import make_backend
+    from icon_sc.icon.grid import VerticalGrid, from_file, interpolation, metrics
 
     vertical_config = experiment.config.vertical_grid
     grid_file = download_grid_file(experiment.grid)
@@ -226,7 +226,7 @@ def _check(name: str, produced: Any, reference: Any, grid: Any, case: dict[str, 
     if desired.size == 1 and actual.size > 1:
         # ICON serializes a (1,1) dummy when a field was never allocated (the zd_*
         # terrain-diffusion fields on the flat aquaplanet). icon4py's dallclose
-        # broadcasts silently; symcon broadcasts *explicitly* — the parity statement
+        # broadcasts silently; ICON-sc broadcasts *explicitly* — the parity statement
         # becomes "the factory reproduces the constant the dummy stands for" (zeros).
         desired = np.broadcast_to(desired.reshape(()), actual.shape)
     start = _start_index(grid, case.get("start"))
@@ -292,7 +292,7 @@ def test_field_lists_cover_the_s12_s13_consumption_set(
 ) -> None:
     """The parity tables cover every field metrics()/interpolation() produce, and the
     produced mappings are read-only DataArrays with registry metadata."""
-    from symcon.icon.grid import INTERPOLATION_FIELDS, METRICS_FIELDS
+    from icon_sc.icon.grid import INTERPOLATION_FIELDS, METRICS_FIELDS
 
     assert set(METRICS_CASES) | {"icon:nflat_gradp"} == set(METRICS_FIELDS)
     assert set(INTERPOLATION_CASES) == set(INTERPOLATION_FIELDS)

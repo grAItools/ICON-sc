@@ -19,15 +19,15 @@ import numpy as np
 import pytest
 from _plan_toys import assert_states_bitwise_equal, run_tier
 
-from symcon.core import (
+from icon_sc.core import (
     CallingFrequency,
     ComputeContext,
     ConcurrentCoupling,
     MemoryMonitor,
 )
-from symcon.core.components.base import Stepper, TendencyComponent
-from symcon.core.testing.toys import Damping, column_state
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.components.base import Stepper, TendencyComponent
+from icon_sc.core.testing.toys import Damping, column_state
+from icon_sc.core.typing import FieldBuffer
 
 DT = timedelta(minutes=1)
 _DIMS = ["cell", "height"]
@@ -187,7 +187,7 @@ def test_publishing_coupling_cannot_enter_a_federation_section() -> None:
     """A bare coupling is not a federation section: the publication pattern is
     kept out of redirected (PS/STS) sections by the S04 constructor itself; the
     compiler's redirected-path guard is defense in depth behind it."""
-    from symcon.core import ParallelSplitting
+    from icon_sc.core import ParallelSplitting
 
     with pytest.raises(TypeError, match="neither"):
         ParallelSplitting([ConcurrentCoupling([_SlowForcing(scale=1e-5)])])
@@ -195,7 +195,7 @@ def test_publishing_coupling_cannot_enter_a_federation_section() -> None:
 
 def test_publication_plan_hash_is_stable_and_cadence_sensitive() -> None:
     """The published composition hashes stably and sees the cadence knob."""
-    from symcon.core import ExecutionPlan, StateSchema
+    from icon_sc.core import ExecutionPlan, StateSchema
 
     ctx = ComputeContext("embedded", tier="plan", timestep=DT)
     schema = StateSchema.from_state(column_state())

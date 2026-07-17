@@ -6,9 +6,9 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core import StateVault
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.testing.toys import column_state
+from icon_sc.core import StateVault
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.testing.toys import column_state
 
 
 def test_from_state_adopts_buffers_zero_copy() -> None:

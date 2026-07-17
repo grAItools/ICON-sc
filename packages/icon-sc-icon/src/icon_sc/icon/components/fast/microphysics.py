@@ -1,22 +1,22 @@
-"""``Microphysics(Stepper)`` — the icon4py graupel granule on symcon state (S08).
+"""``Microphysics(Stepper)`` — the icon4py graupel granule on ICON-sc state (S08).
 
 The scientific kernel is icon4py's single-moment six-class graupel granule
 (``single_moment_six_class_gscp_graupel.py``, REFERENCES.lock id
 ``icon4py-graupel``), the gt4py port of ICON's ``gscp_graupel.f90`` (now at
 ``src/granules/microphysics_1mom_schemes/``, REFERENCES.lock id
-``icon-fortran-graupel``). symcon does not re-plumb the granule's internals —
+``icon-fortran-graupel``). ICON-sc does not re-plumb the granule's internals —
 in particular the sedimentation/level-loop structure (one forward K-scan
 carrying the ``rhoq{r,s,g,i}v_old_kup``/``vnew_*`` sedimentation state, plus
 the two flux programs) stays exactly as the granule has it (SPEC S08 in-scope
 clause): ``array_call`` builds zero-copy gt4py views of the boundary buffers
-(:mod:`symcon.core.ingress.gt4py`) and invokes ``granule.run(...)`` exactly as
+(:mod:`icon_sc.core.ingress.gt4py`) and invokes ``granule.run(...)`` exactly as
 icon4py's own integration test does, then applies the returned tendencies over
 the timestep — ``x_new = x + dx/dt·Δt`` is icon4py's own verification
 arithmetic against the microphysics-exit savepoints.
 
 Scheme selection (SPEC: "scheme selectable by registry name"): concrete schemes
 subclass :class:`Microphysics` and register under their ``name`` class attribute
-via the S02 :class:`~symcon.core.registry.Factory` machinery;
+via the S02 :class:`~icon_sc.core.registry.Factory` machinery;
 ``Microphysics(grid, cfg, ctx, scheme="graupel")`` (the architecture-§4.3 usage)
 and ``Microphysics.factory("graupel", ...)`` both resolve through that registry.
 ``"graupel"`` is the only registered scheme for now.
@@ -52,16 +52,16 @@ from typing import Any, ClassVar, Final, cast
 
 import numpy as np
 
-from symcon.core.components.base import Stepper
-from symcon.core.context import ComputeContext
-from symcon.core.coupling.constraints import CouplingConstraints
-from symcon.core.ingress.gt4py import Backend, resolve_backend
-from symcon.core.registry import Factory
-from symcon.core.typing import FieldBuffer
-from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
-from symcon.icon.components.fast import graupel_constants as gconst
-from symcon.icon.components.fast._column_grid import column_icon4py_grid
-from symcon.icon.grid.vertical import VerticalGrid
+from icon_sc.core.components.base import Stepper
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.coupling.constraints import CouplingConstraints
+from icon_sc.core.ingress.gt4py import Backend, resolve_backend
+from icon_sc.core.registry import Factory
+from icon_sc.core.typing import FieldBuffer
+from icon_sc.icon import names as _names  # noqa: F401  (registry seed side effect)
+from icon_sc.icon.components.fast import graupel_constants as gconst
+from icon_sc.icon.components.fast._column_grid import column_icon4py_grid
+from icon_sc.icon.grid.vertical import VerticalGrid
 
 __all__ = ["Graupel", "GraupelConfig", "Microphysics"]
 
@@ -112,7 +112,7 @@ class GraupelConfig:
         """Transcribe an icon4py ``SingleMomentSixClassIconGraupelConfig``.
 
         Used by the L2 datatest to consume ``experiment.config.graupel`` (the
-        namelist the serialized data was produced with) through the symcon
+        namelist the serialized data was produced with) through the ICON-sc
         component — the PLAN-pitfall path that pins the exact configuration.
         """
         # The option members are gtx.int32-based enums; a deep-copied config (the
@@ -179,7 +179,7 @@ class Microphysics(Stepper, Factory):
 
     ``Microphysics(grid_or_column, cfg, ctx)`` — ``grid_or_column`` is either
 
-    - a :class:`symcon.icon.grid.vertical.VerticalGrid` (**column path**): the
+    - a :class:`icon_sc.icon.grid.vertical.VerticalGrid` (**column path**): the
       horizontal extent is discovered from the state at the first call and a
       trivial pointwise icon4py grid is built around it; or
     - an ``(icon4py_grid, icon4py_vertical_grid)`` pair (**host-grid path**):
@@ -292,7 +292,7 @@ class Graupel(Microphysics):
         if isinstance(grid_or_column, VerticalGrid):
             self._vertical = grid_or_column
             # icon4py vertical-params adapter of the S06 grid (friend access within
-            # symcon.icon; public exposure proposed in S07 STATUS.md).
+            # icon_sc.icon; public exposure proposed in S07 STATUS.md).
             self._i4_vertical = grid_or_column._i4_grid
             self._i4_grid: Any | None = None  # built per horizontal extent, lazily
             self._nlev = grid_or_column.nlev
@@ -513,7 +513,7 @@ class Graupel(Microphysics):
 # --------------------------------------------------------------------------------------
 # The JAX functional core (S10) — a line-by-line port of icon4py's graupel scan and
 # flux programs (REFERENCES.lock ``icon4py-graupel-stencils``), drawing every number
-# from graupel_constants.py / symcon.icon._constants (§11.8: shared scheme constants).
+# from graupel_constants.py / icon_sc.icon._constants (§11.8: shared scheme constants).
 #
 # Port discipline:
 # - gt4py's per-element ``if``s become ``jnp.where``; every ``log``/division whose
@@ -559,7 +559,7 @@ def _graupel_functional(
     import jax.numpy as jnp
     from jax.scipy.special import gammaln
 
-    from symcon.icon._constants import ALS, ALV, CLW, RV, TMELT
+    from icon_sc.icon._constants import ALS, ALV, CLW, RV, TMELT
 
     C = gconst
     qmin = C.GRAUPEL_QMIN

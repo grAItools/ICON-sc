@@ -20,11 +20,11 @@ from __future__ import annotations
 import hashlib
 from typing import TYPE_CHECKING, Any
 
-from symcon.core.contracts.checkers import StateSchema
+from icon_sc.core.contracts.checkers import StateSchema
 
 if TYPE_CHECKING:
-    from symcon.core.context import ComputeContext
-    from symcon.core.plan.bind import ExecutionPlan
+    from icon_sc.core.context import ComputeContext
+    from icon_sc.core.plan.bind import ExecutionPlan
 
 __all__ = [
     "PlanCompileError",
@@ -71,7 +71,7 @@ def renegotiate_and_diff(
     :class:`PlanDriftError` naming the first divergence; returns silently when
     the plans agree.
     """
-    from symcon.core.plan.bind import ExecutionPlan
+    from icon_sc.core.plan.bind import ExecutionPlan
 
     fresh = ExecutionPlan.bind(composition, plan.schema, ctx)
     if fresh.plan_hash == plan.plan_hash:

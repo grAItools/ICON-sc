@@ -37,8 +37,8 @@ from typing import Any
 import jax
 import numpy as np
 
-from symcon.core.contracts.properties import Differentiable, PropertySpec
-from symcon.core.functional.pytree import build_param_tree, build_state_tree, mapping_of, tree_of
+from icon_sc.core.contracts.properties import Differentiable, PropertySpec
+from icon_sc.core.functional.pytree import build_param_tree, build_state_tree, mapping_of, tree_of
 
 __all__ = [
     "FunctionalCompileError",

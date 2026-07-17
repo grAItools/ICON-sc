@@ -1,9 +1,9 @@
-"""``HorizontalDiffusion(Stepper)`` — icon4py ``Diffusion`` hosted on symcon (S13).
+"""``HorizontalDiffusion(Stepper)`` — icon4py ``Diffusion`` hosted on ICON-sc (S13).
 
 The ICON horizontal diffusion granule (Smagorinsky + 4th-order background,
-``mo_nh_diffusion.f90`` / ``hdiff_order=5``) as one symcon component, following the
+``mo_nh_diffusion.f90`` / ``hdiff_order=5``) as one ICON-sc component, following the
 S12 hosting policy (wrap-don't-rewrite, architecture §4.4): the ~16 stencil programs
-stay icon4py granule internals (REFERENCES.lock ``icon4py-diffusion``); symcon invokes
+stay icon4py granule internals (REFERENCES.lock ``icon4py-diffusion``); ICON-sc invokes
 the granule's single public entry ``run(diagnostic_state, prognostic_state, dtime,
 initial_run)`` exactly the way icon4py's own integration tests and driver do
 (REFERENCES.lock ``icon4py-diffusion-tests``, ``icon4py-driver-jw``).
@@ -39,18 +39,18 @@ from typing import Any, ClassVar, Final
 import numpy as np
 import xarray as xr
 
-from symcon.core.components.base import DataArrayDict, Stepper
-from symcon.core.context import ComputeContext
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.typing import FieldBuffer, Location
-from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
-from symcon.icon.components.dycore import (
+from icon_sc.core.components.base import DataArrayDict, Stepper
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.typing import FieldBuffer, Location
+from icon_sc.icon import names as _names  # noqa: F401  (registry seed side effect)
+from icon_sc.icon.components.dycore import (
     _geometry_from_grid,
     icon_namelist_origins,
 )
-from symcon.icon.grid.grid import IconGrid
-from symcon.icon.grid.vertical import VerticalGrid
+from icon_sc.icon.grid.grid import IconGrid
+from icon_sc.icon.grid.vertical import VerticalGrid
 
 __all__ = ["DiffusionConfig", "HorizontalDiffusion", "icon_namelist_origins"]
 
@@ -189,8 +189,8 @@ class DiffusionConfig:
 # Static-state consumption lists — the S11 coordination point (S12 pattern).
 # ------------------------------------------------------------------------------------------
 
-#: icon4py ``DiffusionMetricState`` field -> symcon registry name (produced by
-#: :func:`symcon.icon.grid.metrics`; REFERENCES.lock ``icon4py-diffusion``).
+#: icon4py ``DiffusionMetricState`` field -> ICON-sc registry name (produced by
+#: :func:`icon_sc.icon.grid.metrics`; REFERENCES.lock ``icon4py-diffusion``).
 STATIC_METRIC_FIELDS: Final[Mapping[str, str]] = MappingProxyType(
     {
         "theta_ref_mc": "icon:theta_ref_mc",
@@ -201,8 +201,8 @@ STATIC_METRIC_FIELDS: Final[Mapping[str, str]] = MappingProxyType(
     }
 )
 
-#: icon4py ``DiffusionInterpolationState`` field -> symcon registry name (produced by
-#: :func:`symcon.icon.grid.interpolation`).
+#: icon4py ``DiffusionInterpolationState`` field -> ICON-sc registry name (produced by
+#: :func:`icon_sc.icon.grid.interpolation`).
 STATIC_INTERPOLATION_FIELDS: Final[Mapping[str, str]] = MappingProxyType(
     {
         "e_bln_c_s": "icon:e_bln_c_s",
@@ -223,7 +223,7 @@ STATIC_FIELDS: Final[tuple[str, ...]] = tuple(
 
 
 def _dim_map() -> dict[str, Any]:
-    """symcon dim name -> icon4py gt4py dimension (incl. the diffusion sparse dims)."""
+    """ICON-sc dim name -> icon4py gt4py dimension (incl. the diffusion sparse dims)."""
     from icon4py.model.common import dimension as i4_dims
 
     return {
@@ -261,7 +261,7 @@ _RESTART_SCHEMA: Final[tuple[tuple[str, tuple[str, ...], str], ...]] = (
 
 
 class HorizontalDiffusion(Stepper):
-    """The ICON horizontal diffusion as a symcon ``Stepper`` (SPEC S13).
+    """The ICON horizontal diffusion as a ICON-sc ``Stepper`` (SPEC S13).
 
     ``HorizontalDiffusion(grid, vgrid, static, cfg, ctx, *, ...)`` — constructor
     mirrors the S12 ``NonhydroSolver`` shape (architecture §5.1 sketches
@@ -269,10 +269,10 @@ class HorizontalDiffusion(Stepper):
     additionally requires the vertical grid for its Smagorinsky enhancement profile,
     so ``vgrid`` sits in the S12 position):
 
-    - ``grid``: a :class:`symcon.icon.grid.IconGrid` (production path — geometry
+    - ``grid``: a :class:`icon_sc.icon.grid.IconGrid` (production path — geometry
       derived from it) **or** a raw icon4py ``IconGrid`` (host-grid path, geometry
       passed explicitly — how the parity tests mirror upstream);
-    - ``vgrid``: a :class:`symcon.icon.grid.VerticalGrid` or a raw icon4py
+    - ``vgrid``: a :class:`icon_sc.icon.grid.VerticalGrid` or a raw icon4py
       ``VerticalGrid``;
     - ``static``: mapping of the :data:`STATIC_FIELDS` registry names to S11
       static-state DataArrays (``metrics(...) | interpolation(...)``) or ready
@@ -281,7 +281,7 @@ class HorizontalDiffusion(Stepper):
 
     One ``__call__`` advances one full Δt (diffusion runs once per physics timestep,
     after the dynamics substepping — icon4py driver order). The granule mutates its
-    state in place; symcon ingests/egresses the boundary buffers around it
+    state in place; ICON-sc ingests/egresses the boundary buffers around it
     (``communicates_internally=True``: halo exchanges happen inside the granule).
     """
 
@@ -317,7 +317,7 @@ class HorizontalDiffusion(Stepper):
         self.config = cfg if cfg is not None else DiffusionConfig()
         super().__init__(ctx=ctx, name=name)
 
-        from symcon.core.ingress.gt4py import resolve_backend
+        from icon_sc.core.ingress.gt4py import resolve_backend
 
         self._backend = resolve_backend(self.ctx.backend)
 

@@ -8,9 +8,9 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core import MemoryMonitor, timeloop
-from symcon.core.testing import assert_allclose
-from symcon.core.testing.toys import Damping, ImplicitDamping, Relaxation, WindSpeed, column_state
+from icon_sc.core import MemoryMonitor, timeloop
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.testing.toys import Damping, ImplicitDamping, Relaxation, WindSpeed, column_state
 
 DT = timedelta(minutes=1)
 TAU_RELAX = timedelta(minutes=30)

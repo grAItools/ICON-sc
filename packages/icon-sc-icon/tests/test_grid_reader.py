@@ -9,7 +9,7 @@ import pathlib
 import numpy as np
 import pytest
 
-from symcon.icon.grid.reader import GridFileData, GridFileError, read_grid_file
+from icon_sc.icon.grid.reader import GridFileData, GridFileError, read_grid_file
 
 netCDF4 = pytest.importorskip("netCDF4")
 
@@ -210,14 +210,14 @@ def test_bad_variable_shape_is_actionable(tmp_path: pathlib.Path) -> None:
 
 
 def test_from_file_missing_file(tmp_path: pathlib.Path) -> None:
-    from symcon.icon.grid import from_file
+    from icon_sc.icon.grid import from_file
 
     with pytest.raises(FileNotFoundError, match=r"nowhere\.nc"):
         from_file(tmp_path / "nowhere.nc", None)
 
 
 def test_from_file_rejects_bad_num_levels(tmp_path: pathlib.Path) -> None:
-    from symcon.icon.grid import from_file
+    from icon_sc.icon.grid import from_file
 
     path = _write_grid_file(tmp_path / "grid.nc")
     with pytest.raises(ValueError, match="num_levels"):

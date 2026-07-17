@@ -2,9 +2,9 @@
 """Generate the variable-registry docs table from the registry seed (S06, PLAN item 4).
 
 Emits ``docs/names_registry.md`` — canonical name ↔ units ↔ CF standard name ↔ ICON
-short name ↔ GRIB2 — from :data:`symcon.icon.names.QUANTITIES`. The committed page is
-generated output; edit the seed tables (``symcon.core.state.names`` /
-``symcon.icon.names``), rerun ``uv run python tools/names_audit.py``, and commit both.
+short name ↔ GRIB2 — from :data:`icon_sc.icon.names.QUANTITIES`. The committed page is
+generated output; edit the seed tables (``icon_sc.core.state.names`` /
+``icon_sc.icon.names``), rerun ``uv run python tools/names_audit.py``, and commit both.
 ``--check`` exits non-zero when the committed page is stale (used by the S06
 acceptance test).
 """
@@ -22,7 +22,7 @@ _HEADER = """\
 # Variable registry
 
 <!-- GENERATED FILE — do not edit. Regenerate with `uv run python tools/names_audit.py`
-     after changing the seed tables in symcon.core.state.names / symcon.icon.names. -->
+     after changing the seed tables in icon_sc.core.state.names / icon_sc.icon.names. -->
 
 Canonical quantity names (architecture §2.5): CF standard names are canonical and
 unprefixed; solver-internal quantities live in the `icon:` namespace. The GRIB2
@@ -36,7 +36,7 @@ quantity's canonical units.
 
 
 def render() -> str:
-    from symcon.icon.names import QUANTITIES
+    from icon_sc.icon.names import QUANTITIES
 
     rows = []
     for q in QUANTITIES.values():

@@ -2,10 +2,10 @@
 (graupel scheme) against icon4py's own graupel verification data.
 
 This is icon4py's integration test (REFERENCES.lock ``icon4py-graupel-test``)
-rerun through the symcon component: experiment WEISMAN_KLEMP_TORUS — the only
+rerun through the ICON-sc component: experiment WEISMAN_KLEMP_TORUS — the only
 serialized archive carrying microphysics-init/microphysics-exit savepoints
 (GAUSS3D, the S06 default, has none; the ~1.6 GB archive downloads once into
-the shared cache) — three dates, one call site per step. The symcon state is
+the shared cache) — three dates, one call site per step. The ICON-sc state is
 built from the entry savepoint (dz from the metrics savepoint — the SPEC's
 static-state input), the component hosts the granule on the savepoint's icon
 grid with the *archive's own namelist configuration*
@@ -26,11 +26,11 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import ComputeContext, make_backend
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.core.time import datetime
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core import ComputeContext, make_backend
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.time import datetime
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
     # Re-exported icon4py fixtures (fixture *names* are what pytest resolves; the
@@ -38,7 +38,7 @@ if DATATEST_AVAILABLE:
     from icon4py.model.testing import definitions as icon4py_definitions
     from icon4py.model.testing.fixtures import icon_grid, metrics_savepoint  # noqa: F401
 
-    from symcon.icon.testing import (  # noqa: F401
+    from icon_sc.icon.testing import (  # noqa: F401
         backend,
         data_provider,
         download_ser_data,
@@ -59,7 +59,7 @@ pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -77,7 +77,7 @@ ICON4PY_FLUX_ATOL = 9.0e-11
 #: icon4py's parametrization, verbatim.
 DATES = ["2008-09-01T01:59:48.000", "2008-09-01T01:59:52.000", "2008-09-01T01:59:56.000"]
 
-#: Cell-column dims of the symcon state built from the savepoints.
+#: Cell-column dims of the ICON-sc state built from the savepoints.
 _DIMS = ("cell", "height")
 
 #: (canonical name, savepoint accessor) for every stepped output field.
@@ -111,7 +111,7 @@ def _upload(ctx: ComputeContext, name: str, host: np.ndarray, dims: tuple[str, .
 def _state_from_savepoint(
     graupel_entry: Any, metrics_savepoint: Any, ctx: ComputeContext
 ) -> dict[str, Any]:
-    """A symcon state (canonical names/units, S06/S08 registry) from the entry
+    """A ICON-sc state (canonical names/units, S06/S08 registry) from the entry
     savepoint + the metrics savepoint (``icon:ddqz_z_full`` — dz).
 
     Buffers are allocated through the context so the state lives on the
@@ -140,11 +140,11 @@ def _host(buffer: Any) -> np.ndarray:
 
 @pytest.mark.parametrize("date", DATES)
 @pytest.mark.parametrize(
-    "symcon_backend",
+    "icon_sc_backend",
     ["embedded", "gtfn_cpu", pytest.param("gtfn_gpu", marks=pytest.mark.gpu)],
 )
 def test_graupel_l2_parity_against_icon4py_savepoints(
-    symcon_backend: str,
+    icon_sc_backend: str,
     date: str,
     *,
     data_provider: Any,
@@ -155,7 +155,7 @@ def test_graupel_l2_parity_against_icon4py_savepoints(
 ) -> None:
     from icon4py.model.common.grid import vertical as v_grid
 
-    from symcon.icon.components import GraupelConfig, Microphysics
+    from icon_sc.icon.components import GraupelConfig, Microphysics
 
     entry_savepoint = data_provider.from_savepoint_weisman_klemp_graupel_entry(date=date)
     exit_savepoint = data_provider.from_savepoint_weisman_klemp_graupel_exit(date=date)
@@ -168,7 +168,7 @@ def test_graupel_l2_parity_against_icon4py_savepoints(
         vct_b=grid_savepoint.vct_b(),
     )
 
-    ctx = ComputeContext(backend=make_backend(symcon_backend))
+    ctx = ComputeContext(backend=make_backend(icon_sc_backend))
     graupel = Microphysics(
         (icon_grid, vertical_params),
         GraupelConfig.from_icon4py(experiment.config.graupel),
@@ -187,7 +187,7 @@ def test_graupel_l2_parity_against_icon4py_savepoints(
             getattr(exit_savepoint, accessor)().asnumpy(),
             rtol=ICON4PY_RTOL,
             atol=ICON4PY_TEMPERATURE_ATOL if name == "air_temperature" else ICON4PY_TRACER_ATOL,
-            names=(f"symcon {name}", f"icon4py microphysics-exit {accessor}"),
+            names=(f"ICON-sc {name}", f"icon4py microphysics-exit {accessor}"),
         )
     for name, accessor in _RATES:
         assert_allclose(
@@ -195,5 +195,5 @@ def test_graupel_l2_parity_against_icon4py_savepoints(
             getattr(exit_savepoint, accessor)().asnumpy(),
             rtol=ICON4PY_RTOL,
             atol=ICON4PY_FLUX_ATOL,
-            names=(f"symcon {name}", f"icon4py microphysics-exit {accessor}"),
+            names=(f"ICON-sc {name}", f"icon4py microphysics-exit {accessor}"),
         )

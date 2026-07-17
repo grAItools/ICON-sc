@@ -18,7 +18,7 @@ import functools
 import re
 from typing import TYPE_CHECKING, Any
 
-from symcon.core.state.names import lookup_quantity
+from icon_sc.core.state.names import lookup_quantity
 
 if TYPE_CHECKING:
     import pint
@@ -79,7 +79,7 @@ def convert_array(values: Any, source: str, target: str) -> Any:
     """Convert an array from ``source`` to ``target`` units via Pint (allocating).
 
     **Negotiation-time only** (non-strict ingress executing a
-    :class:`~symcon.core.contracts.operators.ConversionPlan`, S03); strict mode
+    :class:`~icon_sc.core.contracts.operators.ConversionPlan`, S03); strict mode
     forbids the call sites, and nothing on the apply path may reach this. Raises
     :class:`UnitsError` when Pint cannot convert (undefined/incompatible units).
     """

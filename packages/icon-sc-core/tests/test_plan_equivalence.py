@@ -31,10 +31,10 @@ from _plan_toys import (
     toy_state,
 )
 
-from symcon.core import ComputeContext
-from symcon.core.components.dycore import DynamicalCore
-from symcon.core.plan.guards import PlanCompileError
-from symcon.core.state.dataarray import make_dataarray
+from icon_sc.core import ComputeContext
+from icon_sc.core.components.dycore import DynamicalCore
+from icon_sc.core.plan.guards import PlanCompileError
+from icon_sc.core.state.dataarray import make_dataarray
 
 N_STEPS = 100
 
@@ -165,7 +165,7 @@ def test_dynamical_core_unrolls_bitwise(substeps: int) -> None:
 
 def test_plan_signatures_reflect_cadence() -> None:
     """The CF composite compiles to one op-list variant per step signature."""
-    from symcon.core import ExecutionPlan, StateSchema
+    from icon_sc.core import ExecutionPlan, StateSchema
 
     ctx = ComputeContext("embedded", tier="plan", timestep=COLUMN_DT)
     plan = ExecutionPlan.bind(

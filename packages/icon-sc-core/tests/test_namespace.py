@@ -4,17 +4,17 @@ from __future__ import annotations
 
 
 def test_namespace_spans_all_three_distributions() -> None:
-    import symcon
-    import symcon.bridges
-    import symcon.core
-    import symcon.icon
+    import icon_sc
+    import icon_sc.bridges
+    import icon_sc.core
+    import icon_sc.icon
 
-    roots = {p.rsplit("/", 3)[-3] for p in symcon.__path__}
-    assert roots == {"symcon-core", "symcon-icon", "symcon-bridges"}
-    assert not hasattr(symcon, "__file__") or symcon.__file__ is None  # no __init__.py
+    roots = {p.rsplit("/", 3)[-3] for p in icon_sc.__path__}
+    assert roots == {"icon-sc-core", "icon-sc-icon", "icon-sc-bridges"}
+    assert not hasattr(icon_sc, "__file__") or icon_sc.__file__ is None  # no __init__.py
 
 
 def test_core_is_typed() -> None:
     from importlib import resources
 
-    assert resources.files("symcon.core").joinpath("py.typed").is_file()
+    assert resources.files("icon_sc.core").joinpath("py.typed").is_file()

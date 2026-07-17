@@ -24,7 +24,7 @@ from _coupling_toys import (
     make_scheme_steps,
 )
 
-from symcon.core.testing import OrderFit, measure_order
+from icon_sc.core.testing import OrderFit, measure_order
 
 pytestmark = pytest.mark.slow
 

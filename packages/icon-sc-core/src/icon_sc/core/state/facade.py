@@ -1,4 +1,4 @@
-"""Lazy DataArray façade over a :class:`~symcon.core.state.vault.StateVault` (§8.2).
+"""Lazy DataArray façade over a :class:`~icon_sc.core.state.vault.StateVault` (§8.2).
 
 The public dict-of-DataArrays state view of the execution tier: DataArray
 wrappers are materialized on access, cached per slot, and invalidated by the
@@ -18,9 +18,9 @@ from typing import Any
 
 import xarray as xr
 
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.state.vault import StateVault, _meta_of
-from symcon.core.typing import FieldBuffer, Location
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.state.vault import StateVault, _meta_of
+from icon_sc.core.typing import FieldBuffer, Location
 
 __all__ = ["VaultFacade"]
 

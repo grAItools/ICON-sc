@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core.testing import measure_order
+from icon_sc.core.testing import measure_order
 
 
 def test_exact_power_law_recovers_the_order() -> None:

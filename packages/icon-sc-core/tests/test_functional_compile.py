@@ -15,24 +15,24 @@ jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
 
-from symcon.core import (  # noqa: E402
+from icon_sc.core import (  # noqa: E402
     CallingFrequency,
     ConcurrentCoupling,
     SequentialUpdateSplitting,
     Subcycle,
 )
-from symcon.core.components.base import Stepper, TendencyComponent  # noqa: E402
-from symcon.core.functional.compile import (  # noqa: E402
+from icon_sc.core.components.base import Stepper, TendencyComponent  # noqa: E402
+from icon_sc.core.functional.compile import (  # noqa: E402
     FunctionalCompileError,
     StaticArgs,
     functional_compile,
     scan_window,
 )
-from symcon.core.functional.pytree import mapping_of  # noqa: E402
-from symcon.core.state.dataarray import make_dataarray  # noqa: E402
-from symcon.core.testing import assert_allclose  # noqa: E402
-from symcon.core.time import datetime  # noqa: E402
-from symcon.core.typing import FieldBuffer  # noqa: E402
+from icon_sc.core.functional.pytree import mapping_of  # noqa: E402
+from icon_sc.core.state.dataarray import make_dataarray  # noqa: E402
+from icon_sc.core.testing import assert_allclose  # noqa: E402
+from icon_sc.core.time import datetime  # noqa: E402
+from icon_sc.core.typing import FieldBuffer  # noqa: E402
 
 _DIMS = ("cell", "height")
 _SLOT = "tendency_of_eastward_wind"

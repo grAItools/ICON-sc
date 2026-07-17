@@ -18,7 +18,7 @@ from _plan_toys import (
     toy_state,
 )
 
-from symcon.core import (
+from icon_sc.core import (
     ComputeContext,
     ExecutionPlan,
     PlanCompileError,
@@ -27,8 +27,8 @@ from symcon.core import (
     StateVault,
     renegotiate_and_diff,
 )
-from symcon.core.plan.guards import StalePlanError
-from symcon.core.state.dataarray import make_dataarray
+from icon_sc.core.plan.guards import StalePlanError
+from icon_sc.core.state.dataarray import make_dataarray
 
 
 def _bound_plan() -> tuple[ExecutionPlan, StateVault]:
@@ -101,8 +101,8 @@ def test_debug_renegotiation_passes_on_the_toys() -> None:
 
 
 def test_debug_renegotiation_detects_drift() -> None:
-    from symcon.core import Subcycle
-    from symcon.core.testing.toys import Damping
+    from icon_sc.core import Subcycle
+    from icon_sc.core.testing.toys import Damping
 
     ctx = ComputeContext("embedded", tier="plan", timestep=COLUMN_DT)
     schema = StateSchema.from_state(toy_state())

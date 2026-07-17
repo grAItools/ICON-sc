@@ -19,12 +19,12 @@ jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
 
-from symcon.core import ComputeContext  # noqa: E402
-from symcon.core.testing import assert_allclose  # noqa: E402
-from symcon.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
-from symcon.icon.components.fast.satad import SaturationAdjustment  # noqa: E402
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid  # noqa: E402
-from symcon.icon.testing import moist_test_column  # noqa: E402
+from icon_sc.core import ComputeContext  # noqa: E402
+from icon_sc.core.testing import assert_allclose  # noqa: E402
+from icon_sc.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
+from icon_sc.icon.components.fast.satad import SaturationAdjustment  # noqa: E402
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid  # noqa: E402
+from icon_sc.icon.testing import moist_test_column  # noqa: E402
 
 _DT = timedelta(seconds=30)
 _NLEV = 65

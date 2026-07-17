@@ -3,7 +3,7 @@ core against the **gtfn kernel** on the S08 reference data (L2 restated).
 
 Same state construction as the S08 datatest (WEISMAN_KLEMP_TORUS entry
 savepoints + metrics dz, the archive's own namelist configuration); the
-reference here is the granule run through the symcon component on the
+reference here is the granule run through the ICON-sc component on the
 ``gtfn_cpu`` backend, the candidate the JAX core on the identical inputs.
 Contract: fp64, rtol ≤ 1e-10 (identical constants module makes this
 achievable); mixing-ratio-valued fields carry an absolute floor at the
@@ -19,10 +19,10 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import ComputeContext, make_backend
-from symcon.core.testing import assert_allclose
-from symcon.icon.components.fast.graupel_constants import GRAUPEL_QMIN
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core import ComputeContext, make_backend
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.components.fast.graupel_constants import GRAUPEL_QMIN
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 try:  # jax + datatest stack must both be present
     import jax
@@ -33,7 +33,7 @@ if DATATEST_AVAILABLE:
     from icon4py.model.testing import definitions as icon4py_definitions
     from icon4py.model.testing.fixtures import icon_grid, metrics_savepoint  # noqa: F401
 
-    from symcon.icon.testing import (  # noqa: F401
+    from icon_sc.icon.testing import (  # noqa: F401
         backend,
         data_provider,
         download_ser_data,
@@ -54,9 +54,9 @@ pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
-    pytest.mark.skipif(jax is None, reason="jax not installed (symcon-core[jax])"),
+    pytest.mark.skipif(jax is None, reason="jax not installed (icon-sc-core[jax])"),
 ]
 
 #: SPEC S10 acceptance-1 tolerance contract.
@@ -97,7 +97,7 @@ def test_graupel_jax_core_vs_gtfn_kernel_on_wk_savepoints(
     from icon4py.model.common.grid import vertical as v_grid
     from test_graupel_datatest import _state_from_savepoint  # S08 builder, reused
 
-    from symcon.icon.components import GraupelConfig, Microphysics
+    from icon_sc.icon.components import GraupelConfig, Microphysics
 
     jax.config.update("jax_enable_x64", True)
 

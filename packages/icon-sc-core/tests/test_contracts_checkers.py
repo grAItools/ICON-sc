@@ -7,16 +7,16 @@ from typing import Any, ClassVar
 import numpy as np
 import pytest
 
-from symcon.core.contracts.checkers import (
+from icon_sc.core.contracts.checkers import (
     ContractViolationError,
     DynamicChecker,
     FieldSchema,
     StateSchema,
     StaticChecker,
 )
-from symcon.core.contracts.properties import PropertyDictError, parse_properties
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.typing import Location
+from icon_sc.core.contracts.properties import PropertyDictError, parse_properties
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.typing import Location
 
 CPU = (1, 0)  # kDLCPU per the DLPack device enum
 CUDA = (2, 0)  # kDLCUDA

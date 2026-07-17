@@ -20,7 +20,7 @@ __all__ = ["Geometry"]
 
 _F64 = npt.NDArray[np.float64]
 
-#: symcon name -> icon4py geometry_attributes standard name.
+#: ICON-sc name -> icon4py geometry_attributes standard name.
 _NAMES: Final[dict[str, str]] = {
     "cell_area": "cell_area",
     "dual_area": "dual_area",

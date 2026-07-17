@@ -6,12 +6,12 @@ Fig. 3.8-3.10), whose tier terminology Tasmania itself borrowed from ICON:
 - **slow tier** — tendencies computed *outside* the core and consumed inside at
   the point the numerics dictate: the slow-tendency input port. Port slots are
   ordinary ``input_properties`` entries (state fields, ``icon:ddt_*`` convention;
-  the :class:`~symcon.core.coupling.bus.SlowTendencyBus` is their checker); the
+  the :class:`~icon_sc.core.coupling.bus.SlowTendencyBus` is their checker); the
   ``tendency_port`` class attribute maps each prognostic to its slot. Slow
   tendencies are **held constant across the step** — the port buffers are never
   written.
 - **fast tier** — an optional per-stage ``fast_tendency_component``
-  (:class:`~symcon.core.coupling.concurrent.ConcurrentCoupling`) evaluated once
+  (:class:`~icon_sc.core.coupling.concurrent.ConcurrentCoupling`) evaluated once
   per stage on the latest provisional state (FC *within* the core); its
   tendencies are summed onto the slow port values into per-stage scratch
   buffers. Empty in the ICON preset; the natural experiment port.
@@ -19,7 +19,7 @@ Fig. 3.8-3.10), whose tier terminology Tasmania itself borrowed from ICON:
   ``max(1, round(substep_fraction[s] · N))`` substeps of ``Δt/N`` each, where
   ``N`` comes from ``substeps`` (static) or ``ratio_provider`` (adaptive,
   CFL-style; called once per step with the state — the semantics shared with
-  :class:`~symcon.core.components.wrappers.Subcycle`). Fig. 3.10's example is a
+  :class:`~icon_sc.core.components.wrappers.Subcycle`). Fig. 3.10's example is a
   3-stage Wicker-Skamarock core with ``N = 6`` and fractions (⅓, ½, 1) → 2, 3, 6
   substeps.
 
@@ -44,14 +44,14 @@ from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import numpy as np
 
-from symcon.core.components.base import Component, DataArrayDict
-from symcon.core.context import ComputeContext
-from symcon.core.coupling.concurrent import ConcurrentCoupling
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.components.base import Component, DataArrayDict
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.coupling.concurrent import ConcurrentCoupling
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.typing import FieldBuffer
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
 __all__ = ["DynamicalCore"]
 

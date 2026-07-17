@@ -10,7 +10,7 @@ jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
 
-from symcon.core.testing.gradients import (  # noqa: E402
+from icon_sc.core.testing.gradients import (  # noqa: E402
     dot_product_test,
     taylor_test,
     tree_axpy,

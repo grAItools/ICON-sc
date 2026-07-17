@@ -3,7 +3,7 @@
 One immutable object per horizontal domain, constructed from an ICON grid NetCDF file
 and keyed by ``uuidOfHGrid``. Connectivities are exposed in two forms from one storage:
 raw numpy index arrays (JAX segment-sum patterns, numpy reference components) and the
-gt4py offset-provider mapping consumed by :mod:`symcon.core.ingress.gt4py` programs and
+gt4py offset-provider mapping consumed by :mod:`icon_sc.core.ingress.gt4py` programs and
 icon4py granules. The grid — not the state — owns topology; components receive it at
 construction time.
 
@@ -11,7 +11,7 @@ Implementation policy (PLAN S11 item 1): construction *delegates* to pinned icon
 ``GridManager`` (file parsing, 0-based normalization, derived diamond/butterfly
 connectivities, start/end domain indices, single-node decomposition) and
 ``GridGeometry`` (geometry fields) — REFERENCES.lock id ``icon4py-grid-stack``. The
-pure-numpy reader in :mod:`symcon.icon.grid.reader` is the independent ingestion path;
+pure-numpy reader in :mod:`icon_sc.icon.grid.reader` is the independent ingestion path;
 their equivalence is a datatest (SPEC acceptance 2).
 """
 
@@ -25,9 +25,9 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from symcon.core.context import ComputeContext
-from symcon.core.ingress.gt4py import Backend
-from symcon.icon.grid.geometry import Geometry
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.ingress.gt4py import Backend
+from icon_sc.icon.grid.geometry import Geometry
 
 __all__ = ["IconGrid", "from_file"]
 
@@ -40,7 +40,7 @@ def _gt4py_backend(ctx: ComputeContext | None) -> Any | None:
         return None
     if isinstance(ctx.backend, Backend):
         return ctx.backend.gt4py_backend
-    from symcon.core.ingress.gt4py import make_backend
+    from icon_sc.core.ingress.gt4py import make_backend
 
     return make_backend(ctx.backend).gt4py_backend
 
@@ -220,7 +220,7 @@ def from_file(
     geometry fields (``None`` → embedded/CPU). ``num_levels`` sizes the vertical axis
     the wrapped icon4py grid carries (icon4py bundles it with the horizontal topology;
     a grid *file* knows nothing vertical — pass the model's level count when the grid
-    hosts K-dependent factories, cf. :func:`symcon.icon.grid.metrics.metrics`).
+    hosts K-dependent factories, cf. :func:`icon_sc.icon.grid.metrics.metrics`).
     ``keep_skip_values=True`` preserves ``-1`` invalid neighbors in the raw index
     arrays (icon4py's geometry/factory convention).
 
@@ -239,7 +239,7 @@ def from_file(
     from icon4py.model.common.grid import gridfile
     from icon4py.model.common.grid import vertical as i4_vertical
 
-    from symcon.icon.grid.reader import GridFileError
+    from icon_sc.icon.grid.reader import GridFileError
 
     gt4py_backend = _gt4py_backend(ctx)
     allocator = model_backends.get_allocator(gt4py_backend)

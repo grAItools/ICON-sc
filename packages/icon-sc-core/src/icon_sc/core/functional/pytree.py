@@ -11,7 +11,7 @@ Leaf ordering is deterministic: leaves are sorted by canonical name at type
 generation (PLAN pitfall — carry ordering must not depend on dict insertion
 order). Canonical names (``icon:qnc``, ``fcarry/0/...``) are not identifiers;
 they are sanitized into attribute names with the canonical → attribute map kept
-on the generated class (``__symcon_leaves__``).
+on the generated class (``__icon_sc_leaves__``).
 """
 
 from __future__ import annotations
@@ -49,7 +49,7 @@ def make_pytree_type(type_name: str, leaf_names: Sequence[str]) -> type:
 
     Leaves are sorted by canonical name; the generated class is registered with
     ``jax.tree_util.register_dataclass`` (all fields are data fields) and carries
-    ``__symcon_leaves__``: the ``(canonical_name, attribute_name)`` pairs in
+    ``__icon_sc_leaves__``: the ``(canonical_name, attribute_name)`` pairs in
     field order.
     """
     ordered = sorted(leaf_names)
@@ -67,7 +67,7 @@ def make_pytree_type(type_name: str, leaf_names: Sequence[str]) -> type:
         type_name,
         [(attr, Any) for attr in attrs],
         frozen=True,
-        namespace={"__symcon_leaves__": pairs},
+        namespace={"__icon_sc_leaves__": pairs},
     )
     jax.tree_util.register_dataclass(cls, data_fields=attrs, meta_fields=[])
     return cls
@@ -75,7 +75,7 @@ def make_pytree_type(type_name: str, leaf_names: Sequence[str]) -> type:
 
 def tree_of(cls: type, values: Mapping[str, Any]) -> Any:
     """Instantiate a generated PyTree type from a canonical-name → leaf mapping."""
-    pairs: tuple[tuple[str, str], ...] = cls.__symcon_leaves__  # type: ignore[attr-defined]
+    pairs: tuple[tuple[str, str], ...] = cls.__icon_sc_leaves__  # type: ignore[attr-defined]
     missing = [name for name, _ in pairs if name not in values]
     if missing:
         raise KeyError(f"{cls.__name__}: missing leaves {missing!r}.")
@@ -87,7 +87,7 @@ def tree_of(cls: type, values: Mapping[str, Any]) -> Any:
 
 def mapping_of(tree: Any) -> dict[str, Any]:
     """The canonical-name → leaf mapping of a generated PyTree instance."""
-    pairs: tuple[tuple[str, str], ...] = type(tree).__symcon_leaves__
+    pairs: tuple[tuple[str, str], ...] = type(tree).__icon_sc_leaves__
     return {name: getattr(tree, attr) for name, attr in pairs}
 
 

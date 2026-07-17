@@ -9,9 +9,9 @@ from typing import Any, ClassVar
 import numpy as np
 import pytest
 
-from symcon.core.components.base import Stepper
-from symcon.core.components.wrappers import CallingFrequency
-from symcon.core.coupling import (
+from icon_sc.core.components.base import Stepper
+from icon_sc.core.components.wrappers import CallingFrequency
+from icon_sc.core.coupling import (
     SSUS,
     CouplingConstraintError,
     CouplingConstraints,
@@ -19,8 +19,8 @@ from symcon.core.coupling import (
     SequentialTendencySplitting,
     SequentialUpdateSplitting,
 )
-from symcon.core.testing import assert_allclose
-from symcon.core.testing.toys import Damping, Relaxation, WindSpeed, column_state
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.testing.toys import Damping, Relaxation, WindSpeed, column_state
 
 DT = timedelta(seconds=10)
 _DIMS = ["cell", "height"]

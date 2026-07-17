@@ -9,11 +9,11 @@ and pure-control-flow wrappers dissolve (§8.2):
 
 - ``SequentialUpdateSplitting`` flattens into the op list;
 - ``ParallelSplitting``'s recombination ψⁿ⁺¹ = Σψₗ - L·ψⁿ becomes one k-ary
-  :class:`~symcon.core.plan.ops.Axpy` per field, term order replayed from the
+  :class:`~icon_sc.core.plan.ops.Axpy` per field, term order replayed from the
   T0 implementation (seed ψ_l1, then per further section +ψ_l, -ψⁿ) so T0≡T1
   stays bitwise;
 - ``SequentialTendencySplitting`` gets provisional slots plus one
-  :class:`~symcon.core.plan.ops.DiffScale` per stepped field per section;
+  :class:`~icon_sc.core.plan.ops.DiffScale` per stepped field per section;
 - ``SSUS`` doubles into the reversed λ·Δt pre-list, the core, and the forward
   (1-λ)·Δt post-list;
 - ``CallingFrequency`` becomes per-signature cadence masks with its cached
@@ -40,28 +40,28 @@ from typing import Any, Protocol
 
 import numpy as np
 
-from symcon.core.components.base import Component, OutputSchema
-from symcon.core.components.base import Monitor as BaseMonitor
-from symcon.core.context import ComputeContext
-from symcon.core.contracts.checkers import FieldSchema, StateSchema
-from symcon.core.contracts.operators import IngressPlan
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.coupling.concurrent import (
+from icon_sc.core.components.base import Component, OutputSchema
+from icon_sc.core.components.base import Monitor as BaseMonitor
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.contracts.checkers import FieldSchema, StateSchema
+from icon_sc.core.contracts.operators import IngressPlan
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.coupling.concurrent import (
     is_diagnostic_kind,
     is_tendency_kind,
     name_of,
     parsed_properties_of,
 )
-from symcon.core.coupling.steppers import (
+from icon_sc.core.coupling.steppers import (
     _ForwardEulerScheme,
     _HeunScheme,
     _RK3WSScheme,
     _SSPRK3Scheme,
     _StepperBase,
 )
-from symcon.core.plan.guards import PlanCompileError, StalePlanError, schema_fingerprint
-from symcon.core.plan.interpreter import run_ops
-from symcon.core.plan.ops import (
+from icon_sc.core.plan.guards import PlanCompileError, StalePlanError, schema_fingerprint
+from icon_sc.core.plan.interpreter import run_ops
+from icon_sc.core.plan.ops import (
     Axpy,
     BoundCall,
     CadenceMask,
@@ -69,8 +69,8 @@ from symcon.core.plan.ops import (
     SegmentMarker,
     Swap,
 )
-from symcon.core.state.vault import SlotMeta, StateVault
-from symcon.core.typing import FieldBuffer, Location
+from icon_sc.core.state.vault import SlotMeta, StateVault
+from icon_sc.core.typing import FieldBuffer, Location
 
 __all__ = ["ExecutionPlan", "PlanBuilder"]
 
@@ -1140,7 +1140,7 @@ class _Compiler:
         """One TendencyStepper/SequentialTendencyStepper: stages as evaluate + Axpy.
 
         Reproduces the T0 ``_integrate`` arithmetic of the four S04 schemes as the
-        exact ufunc sequences of :class:`~symcon.core.plan.ops.Axpy` (bitwise
+        exact ufunc sequences of :class:`~icon_sc.core.plan.ops.Axpy` (bitwise
         contract; coefficients are the same Python floats T0 computes).
         """
         scheme = _classify_scheme(stepper)
@@ -1695,13 +1695,13 @@ class ExecutionPlan:
         ``step_index`` must advance sequentially from 0 (modulo the signature
         period): the ping-pong swap state of the vault is phase-dependent.
         Materializes against ``vault`` on first use; raises
-        :class:`~symcon.core.plan.guards.StalePlanError` after any out-of-band
+        :class:`~icon_sc.core.plan.guards.StalePlanError` after any out-of-band
         façade mutation.
 
         ``on_segment`` (S14, additive keyword with default) is the host-step
         seam: a callback invoked with every
-        :class:`~symcon.core.plan.ops.SegmentMarker` the interpreter reaches
-        (see :mod:`symcon.core.plan.interpreter`); monitors and time
+        :class:`~icon_sc.core.plan.ops.SegmentMarker` the interpreter reaches
+        (see :mod:`icon_sc.core.plan.interpreter`); monitors and time
         advancement live there, outside the plan.
         """
         bound = self._bound

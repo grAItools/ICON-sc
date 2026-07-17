@@ -10,8 +10,8 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core import MemoryMonitor, NetCDFMonitor
-from symcon.core.testing.toys import column_state
+from icon_sc.core import MemoryMonitor, NetCDFMonitor
+from icon_sc.core.testing.toys import column_state
 
 
 class TestMemoryMonitor:
@@ -57,9 +57,9 @@ class TestNetCDFMonitor:
         monitor = NetCDFMonitor(path)
         monitor.store(column_state())
         with xr.open_dataset(path) as dataset:
-            stamp = json.loads(dataset.attrs["symcon_provenance"])
+            stamp = json.loads(dataset.attrs["icon_sc_provenance"])
         assert "packages" in stamp
-        assert "symcon-core" in stamp["packages"]
+        assert "icon-sc-core" in stamp["packages"]
 
     def test_missing_time_and_empty_selection_raise(self, tmp_path: Path) -> None:
         state = column_state()

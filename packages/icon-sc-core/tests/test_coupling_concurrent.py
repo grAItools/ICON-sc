@@ -8,12 +8,12 @@ from typing import Any, ClassVar
 import numpy as np
 import pytest
 
-from symcon.core.components.base import TendencyComponent
-from symcon.core.components.wrappers import CallingFrequency
-from symcon.core.contracts.properties import PropertyDictError
-from symcon.core.coupling import ConcurrentCoupling
-from symcon.core.testing import assert_allclose
-from symcon.core.testing.toys import Damping, ImplicitDamping, Relaxation, WindSpeed, column_state
+from icon_sc.core.components.base import TendencyComponent
+from icon_sc.core.components.wrappers import CallingFrequency
+from icon_sc.core.contracts.properties import PropertyDictError
+from icon_sc.core.coupling import ConcurrentCoupling
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.testing.toys import Damping, ImplicitDamping, Relaxation, WindSpeed, column_state
 
 DT = timedelta(seconds=30)
 _DIMS = ["cell", "height"]

@@ -14,8 +14,8 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.icon.testing import moist_test_column
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.icon.testing import moist_test_column
 
 TRACERS = (
     "specific_humidity",

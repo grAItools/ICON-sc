@@ -2,7 +2,7 @@
 
 The one object threaded through component construction. It carries the
 **backend** — an opaque name string, or (since S07, the first real gt4py
-component) a :class:`~symcon.core.ingress.gt4py.Backend` object bundling the
+component) a :class:`~icon_sc.core.ingress.gt4py.Backend` object bundling the
 gt4py program processor and allocator — the **strict-mode flag** (§2.4), an
 **allocator** choosing numpy or cupy, and — since S05 — the **execution tier**
 (``"interpret"`` = T0 reference dispatch, ``"plan"`` = the §8.2 bind + T1
@@ -15,7 +15,7 @@ step; under ``tier="plan"`` it performs the bind (negotiation happens exactly
 once) and interprets the frozen plan — nothing sympl-shaped executes per step.
 
 Components allocate their private and output fields through the context; nothing
-else in symcon touches devices directly (§5.2).
+else in ICON-sc touches devices directly (§5.2).
 """
 
 from __future__ import annotations
@@ -27,16 +27,16 @@ from typing import TYPE_CHECKING, Any, Protocol, cast, runtime_checkable
 
 import numpy as np
 
-from symcon.core.ingress.gt4py import Backend
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.ingress.gt4py import Backend
+from icon_sc.core.typing import FieldBuffer
 
 if TYPE_CHECKING:
-    from symcon.core.components.base import Monitor
+    from icon_sc.core.components.base import Monitor
 
 __all__ = ["Allocator", "ComputeContext"]
 
 #: Backend-name substrings that select the cupy allocator on the opaque-string
-#: path (a :class:`~symcon.core.ingress.gt4py.Backend` object carries its own
+#: path (a :class:`~icon_sc.core.ingress.gt4py.Backend` object carries its own
 #: allocator instead, S07).
 _GPU_MARKERS: tuple[str, ...] = ("gpu", "cuda")
 
@@ -94,7 +94,7 @@ class ComputeContext:
 
     ``ComputeContext(backend, strict=True, allocator=..., tier=..., timestep=...)``
     — ``backend`` is an opaque string (``embedded``/``gtfn_cpu``/``gtfn_gpu``)
-    or, since S07, a :class:`~symcon.core.ingress.gt4py.Backend` object; when
+    or, since S07, a :class:`~icon_sc.core.ingress.gt4py.Backend` object; when
     ``allocator`` is not given it is derived from the backend (a ``Backend``
     contributes its own allocator; a name string selects cupy for GPU-flavoured
     backends, numpy otherwise). ``strict`` is the §2.4 strict-mode flag consumed
@@ -107,7 +107,7 @@ class ComputeContext:
 
     ``device`` is the DLPack device tuple of the allocator's buffers, probed once
     at construction; it is the device expectation handed to the
-    :class:`~symcon.core.contracts.checkers.DynamicChecker`.
+    :class:`~icon_sc.core.contracts.checkers.DynamicChecker`.
     """
 
     backend: str | Backend
@@ -167,7 +167,7 @@ class ComputeContext:
         entry — the loop body is ``plan.run_step(vault, i)`` on the frozen plan
         — and ``debug_renegotiate_every=N`` re-runs the negotiation every N
         steps, diffing against the bound plan (raises
-        :class:`~symcon.core.plan.guards.PlanDriftError` on drift). Under
+        :class:`~icon_sc.core.plan.guards.PlanDriftError` on drift). Under
         ``tier="interpret"`` the same composition runs with full T0 per-call
         semantics (the reference the SPEC's T0≡T1 equivalence is stated
         against).
@@ -189,10 +189,10 @@ class ComputeContext:
                     monitor.store(current)
             return current
 
-        from symcon.core.contracts.checkers import StateSchema
-        from symcon.core.plan.bind import ExecutionPlan
-        from symcon.core.plan.guards import renegotiate_and_diff
-        from symcon.core.state.vault import StateVault
+        from icon_sc.core.contracts.checkers import StateSchema
+        from icon_sc.core.plan.bind import ExecutionPlan
+        from icon_sc.core.plan.guards import renegotiate_and_diff
+        from icon_sc.core.state.vault import StateVault
 
         bind_ctx = dataclasses.replace(self, timestep=timestep)
         vault = StateVault.from_state(state)

@@ -80,7 +80,7 @@ def register_quantity(
     """Register a canonical quantity (frozen interface, SPEC S02).
 
     ``units`` is the canonical unit string for the quantity; component contracts are
-    verified against it by :func:`symcon.core.state.units.verify_noop`.
+    verified against it by :func:`icon_sc.core.state.units.verify_noop`.
     """
     namespace, _, local = name.rpartition(":")
     if namespace and namespace != _ICON_NAMESPACE:
@@ -156,7 +156,7 @@ def _register_seed_table() -> None:
     """Seed rows mined from icon4py v0.2.0 states/data.py (REFERENCES.lock S02).
 
     icon4py files exner/theta_v/vn under CF-style standard names; per architecture
-    §2.5 these are solver-internal in symcon and live in the icon: namespace.
+    §2.5 these are solver-internal in ICON-sc and live in the icon: namespace.
     """
     # prognostics
     register_quantity("air_density", "kg m-3", icon_name="rho")

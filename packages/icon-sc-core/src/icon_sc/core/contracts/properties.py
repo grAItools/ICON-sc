@@ -1,7 +1,7 @@
 """Typed property-dict schema (architecture §2.4, §8.6).
 
 Components keep sympl's ``input_properties`` / ``tendency_properties`` /
-``diagnostic_properties`` / ``output_properties`` dicts; symcon's schema extends the
+``diagnostic_properties`` / ``output_properties`` dicts; ICON-sc's schema extends the
 sympl entries (``dims``, ``units``, ``alias``) with ``location``, ``halo``,
 ``differentiable`` (§8.6) and ``params`` (§8.6), and drops sympl's wildcard/dims-like
 machinery — canonical names + canonical units make target dims explicit.
@@ -20,7 +20,7 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core.typing import HORIZONTAL_DIMS, Location
+from icon_sc.core.typing import HORIZONTAL_DIMS, Location
 
 __all__ = [
     "Differentiable",
@@ -125,7 +125,7 @@ def _parse_entry(name: str, raw: Any) -> PropertySpec:
         raise PropertyDictError(f"{name!r}: repeated dims in {dims!r}.")
     if any(d == "*" for d in dims):
         raise PropertyDictError(
-            f"{name!r}: wildcard dims are not part of the symcon schema "
+            f"{name!r}: wildcard dims are not part of the ICON-sc schema "
             f"(canonical names make target dims explicit)."
         )
     location = _infer_location(name, dims, raw)

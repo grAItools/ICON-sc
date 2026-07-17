@@ -13,7 +13,7 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from symcon.core.state.units import UnitsError, canonical_units, units_identical, verify_noop
+from icon_sc.core.state.units import UnitsError, canonical_units, units_identical, verify_noop
 
 UNIT_POOL = [
     "K",
@@ -48,7 +48,7 @@ def _oracle_registry() -> object:
 
 
 def _cf_to_pint(units: str) -> str:
-    # symcon's spelled-out convention: canonical strings use CF/UDUNITS exponent
+    # ICON-sc's spelled-out convention: canonical strings use CF/UDUNITS exponent
     # syntax ("m s-1"); pint wants "m s**-1". Same normalization as the module.
     return re.sub(r"(?<=[A-Za-z])\^?(-?\d+)", r"**\1", units.replace("%", "percent"))
 

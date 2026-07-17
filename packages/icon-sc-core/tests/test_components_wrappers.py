@@ -10,9 +10,9 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import CallingFrequency, ScalingWrapper, Subcycle, make_dataarray
-from symcon.core.testing.toys import Damping, ImplicitDamping, Relaxation, column_state
-from symcon.core.time import datetime
+from icon_sc.core import CallingFrequency, ScalingWrapper, Subcycle, make_dataarray
+from icon_sc.core.testing.toys import Damping, ImplicitDamping, Relaxation, column_state
+from icon_sc.core.time import datetime
 
 DT = timedelta(minutes=1)
 TAU = timedelta(minutes=30)

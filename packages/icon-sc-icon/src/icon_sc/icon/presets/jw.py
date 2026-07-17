@@ -1,8 +1,8 @@
 """The Jablonowski-Williamson dry-model preset: dycore + diffusion (SPEC S13).
 
 ``build_jw(JWConfig(...))`` assembles the composed dry model of architecture §5.1
-minus physics/transport — the S12 :class:`~symcon.icon.components.NonhydroSolver`
-followed by the S13 :class:`~symcon.icon.components.HorizontalDiffusion`, exactly the
+minus physics/transport — the S12 :class:`~icon_sc.icon.components.NonhydroSolver`
+followed by the S13 :class:`~icon_sc.icon.components.HorizontalDiffusion`, exactly the
 per-step order of the icon4py driver (``_do_dyn_substepping`` then ``diffusion.run``
 then swap; REFERENCES.lock ``icon4py-driver-jw``) — on the icon4py JW datatest
 experiment (``exclaim_nh35_tri_jws``, global R02B04, 35 levels).
@@ -14,11 +14,11 @@ state, zero conversion), and the archive's own ICON namelist for *all* config va
 (the PLAN "config congruence" pitfall: the same provenance feeds the reference
 trajectory generator in ``validation/L4_idealized/make_reference.py``, and the L4
 test asserts config equality before comparing trajectories). Requires the
-``symcon-icon[datatest]`` extra; the archive (~14 GB unpacked) downloads once into
+``icon-sc-icon[datatest]`` extra; the archive (~14 GB unpacked) downloads once into
 the shared cache.
 
 The preset also carries the *checkpoint diagnostics* both the reference run and the
-symcon run must compute identically (numpy, deterministic): surface pressure
+ICON-sc run must compute identically (numpy, deterministic): surface pressure
 (icon4py ``diagnose_surface_pressure`` formula — REFERENCES.lock
 ``icon4py-diagnostics-stencils``), vn norms, and the 850 hPa relative-vorticity
 proxy (vertex curl via ``geofac_rot``, the level fixed at build time from the
@@ -35,16 +35,16 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core import ComputeContext, SequentialUpdateSplitting
-from symcon.core.ingress.gt4py import make_backend
-from symcon.core.state import make_dataarray
-from symcon.icon.components import (
+from icon_sc.core import ComputeContext, SequentialUpdateSplitting
+from icon_sc.core.ingress.gt4py import make_backend
+from icon_sc.core.state import make_dataarray
+from icon_sc.icon.components import (
     DiffusionConfig,
     HorizontalDiffusion,
     NonhydroConfig,
     NonhydroSolver,
 )
-from symcon.icon.ingest.idealized import JablonowskiWilliamsonConfig, jablonowski_williamson
+from icon_sc.icon.ingest.idealized import JablonowskiWilliamsonConfig, jablonowski_williamson
 
 __all__ = ["JWConfig", "JWModel", "build_jw"]
 
@@ -263,7 +263,7 @@ def build_jw(cfg: JWConfig | None = None) -> JWModel:
             buffer, name=slot, dims=dims, units=str(spec["units"]), location=dims[0]
         )
 
-    # -- checkpoint diagnostics (numpy; shared verbatim by reference + symcon runs) ----
+    # -- checkpoint diagnostics (numpy; shared verbatim by reference + ICON-sc runs) ----
     ddqz_z_full = 1.0 / _host(metrics_savepoint.inv_ddqz_z_full())
     geofac_rot = _host(interpolation_savepoint.geofac_rot())
     v2e = np.asarray(icon_grid.get_connectivity("V2E").asnumpy())

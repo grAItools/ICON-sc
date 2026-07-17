@@ -4,15 +4,15 @@ Each federation realizes one of the thesis's coupling strategies over a list of
 *sections*. A section is either a bare Stepper-shaped component (adjustment-type
 processes enter directly; wrappers and dynamical cores qualify by duck kind) or a
 ``(TendencyComponent, stepper_name)`` pair resolved through the S02 registries of
-:mod:`symcon.core.coupling.steppers`.
+:mod:`icon_sc.core.coupling.steppers`.
 
 - :class:`ParallelSplitting` — thesis eq. (2.10): every section integrates
   independently from ψⁿ; the recombination ``ψⁿ⁺¹ = Σₗ ψₗⁿ⁺¹ - L·ψⁿ`` (2.10d) is a
-  per-field axpy accumulation (:func:`~symcon.core.coupling.dictops.dict_axpy`
+  per-field axpy accumulation (:func:`~icon_sc.core.coupling.dictops.dict_axpy`
   shape; a fused multi-axpy vault op at T1).
 - :class:`SequentialTendencySplitting` — eq. (2.11): the first section (the
   dynamics) is stepped plainly from ψⁿ; every later section is a
-  :class:`~symcon.core.coupling.steppers.SequentialTendencyStepper` integrating
+  :class:`~icon_sc.core.coupling.steppers.SequentialTendencyStepper` integrating
   **from the step-initial ψⁿ** with the accumulated provisional state as forcing.
   Diagnostics land on the ψⁿ-level state (visible to later sections), provisional
   outputs accumulate separately (tasmania's two-dict discipline).
@@ -26,7 +26,7 @@ processes enter directly; wrappers and dynamical cores qualify by duck kind) or 
 
 Every federation is itself a component (Stepper-shaped: ``(state, timestep, *,
 out=None) -> (diagnostics, new_state)``), so federations compose. Declared
-coupling constraints (:mod:`symcon.core.coupling.constraints`) are validated at
+coupling constraints (:mod:`icon_sc.core.coupling.constraints`) are validated at
 construction.
 """
 
@@ -39,21 +39,21 @@ from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import xarray as xr
 
-from symcon.core.components.base import DataArrayDict
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.coupling.concurrent import (
+from icon_sc.core.components.base import DataArrayDict
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.coupling.concurrent import (
     is_tendency_kind,
     name_of,
     output_dict_names_of,
     parsed_properties_of,
 )
-from symcon.core.coupling.constraints import validate_composition
-from symcon.core.coupling.dictops import dict_axpy
-from symcon.core.coupling.steppers import SequentialTendencyStepper, TendencyStepper
-from symcon.core.registry import Factory
+from icon_sc.core.coupling.constraints import validate_composition
+from icon_sc.core.coupling.dictops import dict_axpy
+from icon_sc.core.coupling.steppers import SequentialTendencyStepper, TendencyStepper
+from icon_sc.core.registry import Factory
 
 if TYPE_CHECKING:
-    from symcon.core.plan.bind import PlanBuilder
+    from icon_sc.core.plan.bind import PlanBuilder
 
 __all__ = [
     "SSUS",
@@ -367,7 +367,7 @@ class SequentialTendencySplitting(_FederationBase):
 
     The first section (the dynamics, eq. 2.11a) is stepped plainly from ψⁿ; every
     later section must be a ``(TendencyComponent, stepper_name)`` pair resolved to
-    a :class:`~symcon.core.coupling.steppers.SequentialTendencyStepper` — it
+    a :class:`~icon_sc.core.coupling.steppers.SequentialTendencyStepper` — it
     integrates **from the step-initial ψⁿ** (eq. 2.11b), with the accumulated
     provisional state entering as the constant forcing ``(ψ_prov - ψⁿ)/Δt``.
     Bare Steppers cannot express that signature and are rejected past position 0

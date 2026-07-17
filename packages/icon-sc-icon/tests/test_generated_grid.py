@@ -1,11 +1,11 @@
-"""Task 26: generated synthetic grids through the symcon grid stack.
+"""Task 26: generated synthetic grids through the ICON-sc grid stack.
 
 The compatibility contract with the optional ``icon-grid-generator`` package
-(``symcon-icon[gridgen]``, pinned in constraints/cpu-ci.txt): a generated
+(``icon-sc-icon[gridgen]``, pinned in constraints/cpu-ci.txt): a generated
 ICON-style file must load through the S11 reader and ``from_file`` (icon4py
 ``GridManager``), build offset providers, and feed the metrics/interpolation
 factories to all-finite fields. If either side drifts — a generator release
-changing its NetCDF payload, or a symcon/icon4py reader change — these tests
+changing its NetCDF payload, or a icon_sc/icon4py reader change — these tests
 localize the break.
 
 Boundary (do not blur it): generated grids are NOT numerically equivalent to
@@ -21,12 +21,12 @@ import pytest
 
 pytest.importorskip("grid_generator")
 
-import symcon.icon.names  # noqa: F401  (registry seed side effect)
-from symcon.core import ComputeContext
-from symcon.icon.grid import interpolation, metrics
-from symcon.icon.grid.reader import read_grid_file
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid
-from symcon.icon.testing import generated_grid, generated_grid_file
+import icon_sc.icon.names  # noqa: F401  (registry seed side effect)
+from icon_sc.core import ComputeContext
+from icon_sc.icon.grid import interpolation, metrics
+from icon_sc.icon.grid.reader import read_grid_file
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.testing import generated_grid, generated_grid_file
 
 #: Smallest spec exercising real global topology (12 pentagon points included).
 SPEC = "R2B2"

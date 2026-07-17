@@ -22,12 +22,12 @@ jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp  # noqa: E402
 from _functional_columns import PROGNOSTICS, RATES, hydrometeor_column  # noqa: E402
 
-from symcon.core import ComputeContext  # noqa: E402
-from symcon.core.testing import assert_allclose  # noqa: E402
-from symcon.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
-from symcon.icon.components.fast.graupel_constants import GRAUPEL_QMIN  # noqa: E402
-from symcon.icon.components.fast.microphysics import Graupel, Microphysics  # noqa: E402
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid  # noqa: E402
+from icon_sc.core import ComputeContext  # noqa: E402
+from icon_sc.core.testing import assert_allclose  # noqa: E402
+from icon_sc.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
+from icon_sc.icon.components.fast.graupel_constants import GRAUPEL_QMIN  # noqa: E402
+from icon_sc.icon.components.fast.microphysics import Graupel, Microphysics  # noqa: E402
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid  # noqa: E402
 
 _DT = timedelta(seconds=30)
 _NLEV = 65

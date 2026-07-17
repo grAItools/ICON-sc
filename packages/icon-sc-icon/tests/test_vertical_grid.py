@@ -11,9 +11,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core.testing import assert_allclose
-from symcon.icon._constants import GRAV
-from symcon.icon.grid.vertical import (
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon._constants import GRAV
+from icon_sc.icon.grid.vertical import (
     SleveConfig,
     VerticalGrid,
     compute_vct_a_and_vct_b,

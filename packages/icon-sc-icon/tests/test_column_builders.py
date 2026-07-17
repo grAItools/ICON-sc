@@ -1,4 +1,4 @@
-"""S06 column-state builders: valid symcon states, thermodynamically consistent."""
+"""S06 column-state builders: valid ICON-sc states, thermodynamically consistent."""
 
 from __future__ import annotations
 
@@ -6,18 +6,18 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core.state import canonical_units
-from symcon.core.testing import assert_allclose
-from symcon.core.typing import FieldBuffer, HaloState, Location
-from symcon.icon import thermo
-from symcon.icon._constants import GRAV, P0SL_BG, RD
-from symcon.icon.testing import MOIST_PROFILE_IDS, isothermal_column, moist_test_column
+from icon_sc.core.state import canonical_units
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.typing import FieldBuffer, HaloState, Location
+from icon_sc.icon import thermo
+from icon_sc.icon._constants import GRAV, P0SL_BG, RD
+from icon_sc.icon.testing import MOIST_PROFILE_IDS, isothermal_column, moist_test_column
 
 RTOL = 1e-12
 
 
 def _assert_valid_state(state: dict) -> None:
-    """A valid symcon state: time key + boundary DataArrays with the attrs schema
+    """A valid ICON-sc state: time key + boundary DataArrays with the attrs schema
     (make_dataarray output), canonical units, coherent dims/shapes."""
     assert "time" in state
     fields = {k: v for k, v in state.items() if k != "time"}

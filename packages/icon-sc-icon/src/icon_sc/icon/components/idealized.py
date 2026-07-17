@@ -4,7 +4,7 @@ The S09 SCM composition exercises the slow-tendency bus end-to-end before a real
 dynamical core exists to consume it (architecture §4.2 "the bus, reframed"; SPEC
 S09 in-scope): a :class:`PrescribedCooling` slow process publishes a
 piecewise-constant temperature tendency into the ``icon:ddt_temperature_slow``
-slot (seeded for exactly this purpose in :mod:`symcon.icon.names`, S06), and a
+slot (seeded for exactly this purpose in :mod:`icon_sc.icon.names`, S06), and a
 trivial :class:`ApplySlowTendencies` stepper stands in for the consumer the
 tutorial describes (§3.7.2, REFERENCES.lock ``icon-tutorial-2025``: slow-physics
 tendencies are "kept constant between two successive calls" and act as forcing
@@ -17,7 +17,7 @@ temperature toward an offset ICON reference-atmosphere profile,
     dT/dt = (T_eq(z) - T) / tau,   T_eq(z) = T_ref(z) - offset,
 
 with ``T_ref`` the decaying-isothermal reference temperature mined in S06
-(``mo_vertical_grid.f90``; :func:`symcon.icon.grid.vertical.reference_temperature`).
+(``mo_vertical_grid.f90``; :func:`icon_sc.icon.grid.vertical.reference_temperature`).
 The *shape* is the standard idealized radiative-cooling stand-in (relaxation-type
 forcing); the default timescale/offset are test-fixture magnitudes chosen at
 typical tropospheric cooling rates (~1-5 K/day), not mined scientific constants
@@ -34,17 +34,17 @@ from collections.abc import Mapping
 from datetime import timedelta
 from typing import Any, ClassVar, Final, cast
 
-from symcon.core.components.base import Stepper, TendencyComponent
-from symcon.core.context import ComputeContext
-from symcon.core.typing import FieldBuffer
-from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
-from symcon.icon.grid.vertical import reference_temperature
+from icon_sc.core.components.base import Stepper, TendencyComponent
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.typing import FieldBuffer
+from icon_sc.icon import names as _names  # noqa: F401  (registry seed side effect)
+from icon_sc.icon.grid.vertical import reference_temperature
 
 __all__ = ["ApplySlowTendencies", "PrescribedCooling", "PrescribedCoolingConfig"]
 
 _COLUMN_DIMS: Final[tuple[str, str]] = ("cell", "height")
 
-#: The S06-seeded bus slot this pair publishes/consumes (symcon-only slot).
+#: The S06-seeded bus slot this pair publishes/consumes (ICON-sc-only slot).
 SLOW_TEMPERATURE_SLOT: Final[str] = "icon:ddt_temperature_slow"
 
 
@@ -72,7 +72,7 @@ class PrescribedCooling(TendencyComponent):
     ``icon:ddt_temperature_slow`` (canonical units ``K s-1``), *not* as a plain
     ``air_temperature`` tendency: slow-process output rides the §4.2 bus and is
     consumed by exactly one consumer, checked at composition time by
-    :class:`~symcon.core.coupling.bus.SlowTendencyBus`.
+    :class:`~icon_sc.core.coupling.bus.SlowTendencyBus`.
     """
 
     input_properties: ClassVar[Mapping[str, Any]] = {

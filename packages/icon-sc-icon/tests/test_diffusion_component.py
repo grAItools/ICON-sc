@@ -3,7 +3,7 @@
 The component is constructed **for real** (icon4py ``Diffusion`` on the icon4py
 ``SimpleGrid`` with a zero static state — construction wires programs and the
 ctor-time Smagorinsky profile but computes nothing else); the granule's ``run`` body
-is then monkeypatched with a recorder, so these tests exercise exactly the symcon
+is then monkeypatched with a recorder, so these tests exercise exactly the ICON-sc
 hosting layer: config/namelist contracts, static-state consumption lists, boundary
 ingest/egress around the in-place granule, the explicit initial-stabilization entry,
 restart/functional-state plumbing, and T1 bindability. Running the *real* granule
@@ -20,25 +20,25 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core.context import ComputeContext
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.icon.components import DiffusionConfig, HorizontalDiffusion, icon_namelist_origins
-from symcon.icon.components.diffusion import (
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.icon.components import DiffusionConfig, HorizontalDiffusion, icon_namelist_origins
+from icon_sc.icon.components.diffusion import (
     _RESTART_SCHEMA,
     STATIC_FIELDS,
     STATIC_INTERPOLATION_FIELDS,
     STATIC_METRIC_FIELDS,
 )
-from symcon.icon.grid import SleveConfig, VerticalGrid
-from symcon.icon.grid.interpolation import INTERPOLATION_FIELDS
-from symcon.icon.grid.metrics import METRICS_FIELDS
+from icon_sc.icon.grid import SleveConfig, VerticalGrid
+from icon_sc.icon.grid.interpolation import INTERPOLATION_FIELDS
+from icon_sc.icon.grid.metrics import METRICS_FIELDS
 
 pytest.importorskip("icon4py.model.atmosphere.diffusion", reason="icon4py diffusion not installed")
 
 NLEV = 10
 DT = timedelta(seconds=300.0)
 
-#: symcon dims of every consumed static field (SimpleGrid sparse sizes below).
+#: ICON-sc dims of every consumed static field (SimpleGrid sparse sizes below).
 _STATIC_TABLE: dict[str, tuple[tuple[str, ...], Any]] = {
     "icon:theta_ref_mc": (("cell", "height"), float),
     "icon:wgtfac_c": (("cell", "height_interface"), float),
@@ -396,10 +396,10 @@ def test_plan_tier_binds_and_runs_the_component() -> None:
     """The S05 plan compiler accepts HorizontalDiffusion as an opaque Stepper op."""
     import dataclasses as _dataclasses
 
-    from symcon.core.contracts.checkers import StateSchema
-    from symcon.core.plan.bind import ExecutionPlan
-    from symcon.core.state.vault import StateVault
-    from symcon.core.time import datetime
+    from icon_sc.core.contracts.checkers import StateSchema
+    from icon_sc.core.plan.bind import ExecutionPlan
+    from icon_sc.core.state.vault import StateVault
+    from icon_sc.core.time import datetime
 
     component = _make_diffusion()
     _stub_run(component)

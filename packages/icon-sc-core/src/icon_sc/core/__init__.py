@@ -1,12 +1,12 @@
-"""symcon.core — model-agnostic composition framework.
+"""icon_sc.core — model-agnostic composition framework.
 
 Curated public API re-exports (S02: state layer + contracts; S03: component
 taxonomy + wrappers + context + T0 driver/monitors). Keeping the namespace-level
-``symcon`` package implicit (PEP 420) is what lets ``symcon-icon`` and
-``symcon-bridges`` install into the same import root.
+``ICON-sc`` package implicit (PEP 420) is what lets ``icon-sc-icon`` and
+``icon-sc-bridges`` install into the same import root.
 """
 
-from symcon.core.components import (
+from icon_sc.core.components import (
     CallingFrequency,
     Component,
     ComponentWrapper,
@@ -20,9 +20,9 @@ from symcon.core.components import (
     Subcycle,
     TendencyComponent,
 )
-from symcon.core.config import Config, provenance_stamp
-from symcon.core.context import Allocator, ComputeContext
-from symcon.core.contracts import (
+from icon_sc.core.config import Config, provenance_stamp
+from icon_sc.core.context import Allocator, ComputeContext
+from icon_sc.core.contracts import (
     ContractViolation,
     ContractViolationError,
     ConversionError,
@@ -41,7 +41,7 @@ from symcon.core.contracts import (
     apply_conversion_plan,
     parse_properties,
 )
-from symcon.core.coupling import (
+from icon_sc.core.coupling import (
     SSUS,
     BusError,
     ConcurrentCoupling,
@@ -59,10 +59,10 @@ from symcon.core.coupling import (
     dict_fma,
     validate_composition,
 )
-from symcon.core.driver import timeloop
-from symcon.core.ingress import Backend, make_backend
-from symcon.core.io import MemoryMonitor, NetCDFMonitor
-from symcon.core.plan import (
+from icon_sc.core.driver import timeloop
+from icon_sc.core.ingress import Backend, make_backend
+from icon_sc.core.io import MemoryMonitor, NetCDFMonitor
+from icon_sc.core.plan import (
     ExecutionPlan,
     PlanBuilder,
     PlanCompileError,
@@ -70,9 +70,9 @@ from symcon.core.plan import (
     StalePlanError,
     renegotiate_and_diff,
 )
-from symcon.core.profiling import Timer
-from symcon.core.registry import Factory, MetaFactory, RegistrationError
-from symcon.core.state import (
+from icon_sc.core.profiling import Timer
+from icon_sc.core.registry import Factory, MetaFactory, RegistrationError
+from icon_sc.core.state import (
     NamesRegistryError,
     QuantityDef,
     StateVault,
@@ -84,7 +84,7 @@ from symcon.core.state import (
     units_identical,
     verify_noop,
 )
-from symcon.core.typing import FieldBuffer, HaloState, Location
+from icon_sc.core.typing import FieldBuffer, HaloState, Location
 
 __version__ = "0.1.0"
 

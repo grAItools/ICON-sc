@@ -1,17 +1,17 @@
 """Column-state builders and the icon4py datatest bridge (S06).
 
-Builders return *valid symcon states* — ``time`` plus boundary DataArrays built via
-:func:`symcon.core.state.make_dataarray` with canonical units from the registry seed
-(:mod:`symcon.icon.names`) — shaped ``(cell, height)`` / ``(cell, height_interface)``
+Builders return *valid ICON-sc states* — ``time`` plus boundary DataArrays built via
+:func:`icon_sc.core.state.make_dataarray` with canonical units from the registry seed
+(:mod:`icon_sc.icon.names`) — shaped ``(cell, height)`` / ``(cell, height_interface)``
 on nominal (flat-terrain) ICON levels.
 
-Datatest bridge: symcon depends on icon4py's own serialbox datatest machinery for
+Datatest bridge: ICON-sc depends on icon4py's own serialbox datatest machinery for
 reference data (pooch-style download + cache handled by icon4py — never re-hosted,
 never in git). ``icon4py-testing`` is an *optional* dependency
-(``symcon-icon[datatest]``); when it is missing every re-exported fixture degrades to
+(``icon-sc-icon[datatest]``); when it is missing every re-exported fixture degrades to
 an informative skip via :func:`require_datatest`. Data-marked tests import the
 fixtures from here so that the cache location default
-(``~/.cache/symcon/icon4py-testdata``, override with ``ICON4PY_TEST_DATA_PATH``) is
+(``~/.cache/icon-sc/icon4py-testdata``, override with ``ICON4PY_TEST_DATA_PATH``) is
 applied before ``icon4py.model.testing`` reads the environment.
 """
 
@@ -25,12 +25,12 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.time import datetime
-from symcon.icon import names as _names  # noqa: F401  (imported for its seeding side effect)
-from symcon.icon import thermo
-from symcon.icon._constants import GRAV, P0SL_BG, RD
-from symcon.icon.grid.vertical import (
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.time import datetime
+from icon_sc.icon import names as _names  # noqa: F401  (imported for its seeding side effect)
+from icon_sc.icon import thermo
+from icon_sc.icon._constants import GRAV, P0SL_BG, RD
+from icon_sc.icon.grid.vertical import (
     SleveConfig,
     VerticalGrid,
     reference_pressure,
@@ -74,7 +74,7 @@ def _column_state(
 ) -> dict[str, Any]:
     """Assemble a thermodynamically consistent column state from (T, p, qv).
 
-    Derived fields use :mod:`symcon.icon.thermo` exactly, so builder states satisfy
+    Derived fields use :mod:`icon_sc.icon.thermo` exactly, so builder states satisfy
     the S06 round-trip identities by construction: ``exner = exner_from_pressure(p)``,
     ``theta_v = virtual_potential_temperature(T, exner, qv)``, ``rho = p/(rd·tempv)``
     (ideal gas). Condensate loading starts at zero — satad/graupel create it.
@@ -178,7 +178,7 @@ def moist_test_column(
 
 # --- synthetic generated grids (task 26) ----------------------------------------------
 
-#: True when the optional ``icon-grid-generator`` package (``symcon-icon[gridgen]``
+#: True when the optional ``icon-grid-generator`` package (``icon-sc-icon[gridgen]``
 #: extra; exact pin in constraints/cpu-ci.txt) is importable.
 GRIDGEN_AVAILABLE = importlib.util.find_spec("grid_generator") is not None
 
@@ -192,17 +192,17 @@ def generated_grid_file(
 
     The single quarantine point for the optional ``icon-grid-generator``
     dependency. Generated grids are ICON-*convention* files — they load through
-    :func:`symcon.icon.grid.from_file` (icon4py ``GridManager``) and the S11
+    :func:`icon_sc.icon.grid.from_file` (icon4py ``GridManager``) and the S11
     metrics/interpolation factories run all-finite on them — but they are **not
     numerically equivalent to official DWD gridgen output** (own spring
     optimization, own uuid): never use them where serialized-savepoint parity is
     the oracle. Generation is fully deterministic (uuid5 per spec; topology and
     coordinates bitwise-stable across runs), so the cache key is just
-    ``<package version>-<spec>`` under ``~/.cache/symcon/generated-grids``.
+    ``<package version>-<spec>`` under ``~/.cache/icon-sc/generated-grids``.
     """
     if not GRIDGEN_AVAILABLE:
         raise ModuleNotFoundError(
-            "icon-grid-generator is not installed; install the symcon-icon[gridgen] "
+            "icon-grid-generator is not installed; install the icon-sc-icon[gridgen] "
             "extra (pinned in constraints/cpu-ci.txt) to use generated test grids."
         )
     import importlib.metadata
@@ -213,7 +213,7 @@ def generated_grid_file(
     root = (
         pathlib.Path(cache_dir)
         if cache_dir is not None
-        else pathlib.Path.home() / ".cache" / "symcon" / "generated-grids"
+        else pathlib.Path.home() / ".cache" / "icon-sc" / "generated-grids"
     )
     root.mkdir(parents=True, exist_ok=True)
     path = root / f"igg-{version}-{spec.replace('/', '_')}.nc"
@@ -233,18 +233,18 @@ def generated_grid(
     num_levels: int = 35,
     cache_dir: str | pathlib.Path | None = None,
 ) -> Any:
-    """A symcon ``IconGrid`` built from a generated grid file.
+    """A ICON-sc ``IconGrid`` built from a generated grid file.
 
     Same boundary as :func:`generated_grid_file`: generated grids are test
     fixtures, **never** substitutes for the official archive grids in
     savepoint-parity work.
 
-    Convenience over :func:`generated_grid_file` + :func:`symcon.icon.grid.from_file`;
+    Convenience over :func:`generated_grid_file` + :func:`icon_sc.icon.grid.from_file`;
     ``ctx`` defaults to the embedded backend (pass a gtfn context for factory work —
     the icon4py factories do not support the embedded backend upstream).
     """
-    from symcon.core import ComputeContext
-    from symcon.icon.grid import from_file
+    from icon_sc.core import ComputeContext
+    from icon_sc.icon.grid import from_file
 
     context = ctx if ctx is not None else ComputeContext("embedded")
     path = generated_grid_file(spec, cache_dir=cache_dir)
@@ -256,11 +256,11 @@ def generated_grid(
 # Default download/cache location for icon4py serialized test data; must be set
 # before ``icon4py.model.testing.config`` is imported (it reads the env once).
 # Guarded so that importing this module for the column builders alone (no
-# ``symcon-icon[datatest]`` extra installed) mutates no process env.
+# ``icon-sc-icon[datatest]`` extra installed) mutates no process env.
 if importlib.util.find_spec("icon4py.model.testing") is not None:
     os.environ.setdefault(
         "ICON4PY_TEST_DATA_PATH",
-        str(pathlib.Path.home() / ".cache" / "symcon" / "icon4py-testdata"),
+        str(pathlib.Path.home() / ".cache" / "icon-sc" / "icon4py-testdata"),
     )
 
 try:
@@ -284,7 +284,7 @@ try:
 
     @_pytest.fixture(params=[icon4py_definitions.Experiments.GAUSS3D], ids=lambda e: e.name)
     def experiment_description(request: Any) -> Any:
-        """Default experiment for symcon datatests: GAUSS3D.
+        """Default experiment for ICON-sc datatests: GAUSS3D.
 
         Overrides icon4py's three-experiment default — ``exclaim_gauss3d`` is the
         smallest serialized archive (~57 MB vs 4-7 GB); parametrize explicitly in a
@@ -292,7 +292,7 @@ try:
         """
         return request.param
 
-except ImportError:  # icon4py-testing not installed (symcon-icon[datatest] extra)
+except ImportError:  # icon4py-testing not installed (icon-sc-icon[datatest] extra)
     DATATEST_AVAILABLE = False
     icon4py_definitions = None  # type: ignore[assignment]
 
@@ -303,7 +303,7 @@ def require_datatest() -> None:
 
     if not DATATEST_AVAILABLE:
         pytest.skip(
-            "icon4py datatest stack not installed — install symcon-icon[datatest] "
+            "icon4py datatest stack not installed — install icon-sc-icon[datatest] "
             "(icon4py-testing + serialbox4py) to run data-marked tests."
         )
 
@@ -314,7 +314,7 @@ def download_grid_file(grid_description: Any) -> pathlib.Path:
     S11 helper: grid *files* download independently of the serialized experiment
     archives (``<root>/grids/<name>.tar.gz``, a few MB) into the shared datatest
     cache. Wraps icon4py's ``grid_utils._download_grid_file`` (private there — the
-    public entry points bundle GridManager construction, which symcon does itself).
+    public entry points bundle GridManager construction, which ICON-sc does itself).
     """
     from icon4py.model.testing import grid_utils
 

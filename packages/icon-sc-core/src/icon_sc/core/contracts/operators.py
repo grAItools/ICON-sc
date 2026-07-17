@@ -1,7 +1,7 @@
 """Dynamic operators: ingress/egress plans and conversion plans (§2.3, §4.2, §8.2).
 
 An :class:`IngressPlan` is built **once** at bind time from a property dict and a
-:class:`~symcon.core.contracts.checkers.StateSchema` (S05 pre-resolves it into bound
+:class:`~icon_sc.core.contracts.checkers.StateSchema` (S05 pre-resolves it into bound
 argument packs) and applied per step by S03's interpreted tier. The plan holds field
 *names only* — schema in, raw buffers out; no xarray objects, no Pint, no per-step
 negotiation. ``apply`` is a plain tuple comprehension over ``state[name].data``:
@@ -18,9 +18,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from symcon.core.contracts.checkers import DynamicChecker, StateSchema
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.typing import FieldBuffer
+from icon_sc.core.contracts.checkers import DynamicChecker, StateSchema
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.typing import FieldBuffer
 
 __all__ = ["ConversionPlan", "ConversionStep", "EgressPlan", "IngressPlan"]
 
@@ -70,7 +70,7 @@ class IngressPlan:
 
         Runs the strict dynamic checker: a state that would need any allocating
         conversion cannot be pre-resolved (run the
-        :class:`~symcon.core.contracts.checkers.DynamicChecker` with
+        :class:`~icon_sc.core.contracts.checkers.DynamicChecker` with
         ``strict=False`` and execute its plan first). ``device`` is the DLPack
         device expectation forwarded to the checker; ``None`` falls back to the
         checker's first-field baseline (see its docstring).

@@ -7,8 +7,8 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.typing import HaloState, Location
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.typing import HaloState, Location
 
 _UNITS = ["K", "Pa", "m s-1", "kg m-3", "1"]
 _VERTICAL = [(), ("height",), ("height_interface",)]

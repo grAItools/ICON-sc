@@ -1,7 +1,7 @@
 """Jablonowski-Williamson baroclinic-wave initial state (SPEC S13; architecture §7.3).
 
 ``jablonowski_williamson(grid, vgrid, cfg, *, static, ...)`` builds the JW initial
-state as a valid symcon state dict. Reference algorithm: the icon4py driver testcase
+state as a valid ICON-sc state dict. Reference algorithm: the icon4py driver testcase
 ``model_initialization_jabw`` (REFERENCES.lock ``icon4py-driver-jw``), which
 transcribes ICON's ``mo_nh_jabw_exp.f90::init_nh_state_prog_jabw`` (REFERENCES.lock
 ``icon-fortran-diffusion-jabw``); DCMIP/JW-paper constants are byte-identical between
@@ -19,7 +19,7 @@ delegated with a configurable perturbation); with
 1e-12 — asserted by the S13 delegation-parity datatest, not assumed.
 
 The upstream fit runs against the **serialized** ``geopot`` metric field (the donor is
-not fully analytic); symcon takes it through the ``static`` mapping under the
+not fully analytic); ICON-sc takes it through the ``static`` mapping under the
 registry name ``icon:geopot`` (from the archive's metrics savepoint or a metrics
 source that provides it).
 """
@@ -33,11 +33,11 @@ from typing import Any, Final
 
 import numpy as np
 
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.time import datetime
-from symcon.icon import names as _names  # noqa: F401  (registry seed side effect)
-from symcon.icon.grid.grid import IconGrid
-from symcon.icon.grid.vertical import VerticalGrid
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.time import datetime
+from icon_sc.icon import names as _names  # noqa: F401  (registry seed side effect)
+from icon_sc.icon.grid.grid import IconGrid
+from icon_sc.icon.grid.vertical import VerticalGrid
 
 __all__ = ["JablonowskiWilliamsonConfig", "jablonowski_williamson"]
 
@@ -129,9 +129,9 @@ def jablonowski_williamson(
     edge_geometry: Any | None = None,
     cell_geometry: Any | None = None,
 ) -> dict[str, Any]:
-    """The JW initial state as a symcon state dict (frozen interface, SPEC S13).
+    """The JW initial state as a ICON-sc state dict (frozen interface, SPEC S13).
 
-    ``grid``/``vgrid`` follow the S12/S13 component convention (symcon objects or
+    ``grid``/``vgrid`` follow the S12/S13 component convention (ICON-sc objects or
     raw icon4py ones — raw grids need explicit geometry). ``static`` must provide
     :data:`STATIC_FIELDS` (S11 DataArrays, icon4py fields or ndarrays).
 

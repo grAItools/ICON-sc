@@ -1,6 +1,6 @@
 """S13 acceptance 1 (marker ``data``): ``HorizontalDiffusion`` savepoint parity.
 
-icon4py's diffusion integration tests rerun through the symcon component boundary
+icon4py's diffusion integration tests rerun through the ICON-sc component boundary
 (REFERENCES.lock ``icon4py-diffusion-tests``):
 
 - ``test_run_diffusion_single_step`` — EXCLAIM_APE (global R02B04, the archive S11/S12
@@ -12,7 +12,7 @@ icon4py's diffusion integration tests rerun through the symcon component boundar
 Grid construction mirrors upstream *exactly*: upstream builds the grid from the grid
 **file** with ``keep_skip_values=True`` and derives Cell/EdgeParams from
 ``GridGeometry`` (test_diffusion.py ``_get_or_initialize``) — which is precisely the
-symcon production path (``from_file`` + geometry derived inside the component), so
+ICON-sc production path (``from_file`` + geometry derived inside the component), so
 these tests double as the S13 production-path leg. Note the contrast with the S12
 pentagon dossier: upstream diffusion parity **passes deterministically on the
 file-built global grid with the 12 pentagon ``-1``s retained** — the granule's only
@@ -33,17 +33,17 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.core import ComputeContext
-from symcon.core.ingress.gt4py import make_backend
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.core.testing import assert_allclose
-from symcon.icon.components import DiffusionConfig, HorizontalDiffusion
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core import ComputeContext
+from icon_sc.core.ingress.gt4py import make_backend
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.components import DiffusionConfig, HorizontalDiffusion
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
     from icon4py.model.testing import definitions as icon4py_definitions
 
-    from symcon.icon.testing import (  # noqa: F401  (re-exported icon4py fixtures)
+    from icon_sc.icon.testing import (  # noqa: F401  (re-exported icon4py fixtures)
         backend,
         data_provider,
         download_ser_data,
@@ -67,7 +67,7 @@ pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -117,8 +117,8 @@ def _static_from_savepoints(metrics_savepoint: Any, interpolation_savepoint: Any
 
 def _file_grid(experiment: Any, ctx: ComputeContext) -> Any:
     """The upstream grid construction: grid file, ``keep_skip_values=True`` (S11 path)."""
-    from symcon.icon.grid import from_file
-    from symcon.icon.testing import download_grid_file
+    from icon_sc.icon.grid import from_file
+    from icon_sc.icon.testing import download_grid_file
 
     return from_file(
         download_grid_file(experiment.grid),
@@ -132,12 +132,12 @@ def _make_component(
     *,
     experiment: Any,
     data_provider: Any,
-    symcon_backend: str,
+    icon_sc_backend: str,
 ) -> tuple[HorizontalDiffusion, DiffusionConfig, ComputeContext]:
     """Component construction mirroring upstream ``test_run_diffusion_single_step``."""
     from icon4py.model.common.grid import vertical as v_grid
 
-    ctx = ComputeContext(backend=make_backend(symcon_backend))
+    ctx = ComputeContext(backend=make_backend(icon_sc_backend))
     grid = _file_grid(experiment, ctx)
     config = DiffusionConfig.from_icon4py(experiment.config.diffusion)
     vertical_config = experiment.config.vertical_grid
@@ -199,7 +199,7 @@ def _verify(
         sp_exit.vn().asnumpy(),
         rtol=1.0e-9,
         atol=1.0e-8,
-        names=("symcon vn", "icon4py diffusion exit"),
+        names=("ICON-sc vn", "icon4py diffusion exit"),
         equal_nan=False,
     )
     # w: atol=1e-14 (l.49)
@@ -208,7 +208,7 @@ def _verify(
         sp_exit.w().asnumpy(),
         rtol=1e-12,
         atol=1e-14,
-        names=("symcon w", "icon4py diffusion exit"),
+        names=("ICON-sc w", "icon4py diffusion exit"),
         equal_nan=False,
     )
     # theta_v, exner: dallclose defaults rtol=1e-12 (l.50-51)
@@ -221,7 +221,7 @@ def _verify(
             getattr(sp_exit, accessor)().asnumpy(),
             rtol=1e-12,
             atol=0.0,
-            names=(f"symcon {accessor}", "icon4py diffusion exit"),
+            names=(f"ICON-sc {accessor}", "icon4py diffusion exit"),
             equal_nan=False,
         )
     # diagnostics only when shear_type >= VERTICAL_HORIZONTAL_OF_HORIZONTAL_WIND
@@ -239,7 +239,7 @@ def _verify(
                 getattr(sp_exit, accessor)().asnumpy(),
                 rtol=1e-12,
                 atol=atol,
-                names=(f"symcon {accessor}", "icon4py diffusion exit"),
+                names=(f"ICON-sc {accessor}", "icon4py diffusion exit"),
                 equal_nan=False,
             )
 
@@ -247,14 +247,14 @@ def _verify(
 # -- acceptance 1: savepoint parity -----------------------------------------------------------
 
 
-@pytest.mark.parametrize("symcon_backend", BACKENDS)
+@pytest.mark.parametrize("icon_sc_backend", BACKENDS)
 def test_run_diffusion_single_step_parity(
-    symcon_backend: str,
+    icon_sc_backend: str,
     data_provider: Any,
     experiment: Any,
 ) -> None:
     """Upstream ``test_run_diffusion_single_step`` through the component boundary."""
-    if symcon_backend == "gtfn_gpu":
+    if icon_sc_backend == "gtfn_gpu":
         pytest.importorskip("cupy")
     date = _SINGLE_STEP_DATE[experiment.name]
     sp_init = data_provider.from_savepoint_diffusion_init(linit=False, date=date)
@@ -262,7 +262,7 @@ def test_run_diffusion_single_step_parity(
     dtime = float(sp_init.get_metadata("dtime").get("dtime"))
 
     component, config, ctx = _make_component(
-        experiment=experiment, data_provider=data_provider, symcon_backend=symcon_backend
+        experiment=experiment, data_provider=data_provider, icon_sc_backend=icon_sc_backend
     )
     _load_diagnostics(component, sp_init)
 
@@ -289,7 +289,7 @@ def test_run_diffusion_initial_step_parity(
     dtime = float(sp_init.get_metadata("dtime").get("dtime"))
 
     component, config, ctx = _make_component(
-        experiment=experiment, data_provider=data_provider, symcon_backend="gtfn_cpu"
+        experiment=experiment, data_provider=data_provider, icon_sc_backend="gtfn_cpu"
     )
     _load_diagnostics(component, sp_init)
     assert float(sp_init.fac_bdydiff_v()) == component._diffusion.fac_bdydiff_v
@@ -301,7 +301,7 @@ def test_run_diffusion_initial_step_parity(
 
 def test_config_provenance_roundtrip(experiment: Any, data_provider: Any) -> None:
     """The archive's namelist-derived DiffusionConfig mirrors losslessly through the
-    symcon config (the PLAN 'config congruence' pitfall — asserted, not assumed)."""
+    ICON-sc config (the PLAN 'config congruence' pitfall — asserted, not assumed)."""
     del data_provider  # only here to gate on the downloaded archive
     theirs = experiment.config.diffusion
     ours = DiffusionConfig.from_icon4py(theirs).to_icon4py()

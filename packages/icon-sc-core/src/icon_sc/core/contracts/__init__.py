@@ -1,6 +1,6 @@
 """Contracts: property-dict schema, static/dynamic checkers, ingress/egress plans."""
 
-from symcon.core.contracts.checkers import (
+from icon_sc.core.contracts.checkers import (
     ContractViolation,
     ContractViolationError,
     DynamicChecker,
@@ -8,9 +8,9 @@ from symcon.core.contracts.checkers import (
     StateSchema,
     StaticChecker,
 )
-from symcon.core.contracts.conversion import ConversionError, apply_conversion_plan
-from symcon.core.contracts.operators import ConversionPlan, ConversionStep, EgressPlan, IngressPlan
-from symcon.core.contracts.properties import (
+from icon_sc.core.contracts.conversion import ConversionError, apply_conversion_plan
+from icon_sc.core.contracts.operators import ConversionPlan, ConversionStep, EgressPlan, IngressPlan
+from icon_sc.core.contracts.properties import (
     Differentiable,
     HaloPolicy,
     PropertyDictError,

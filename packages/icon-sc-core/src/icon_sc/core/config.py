@@ -21,7 +21,7 @@ __all__ = ["Config", "provenance_stamp"]
 _C = TypeVar("_C", bound="Config")
 
 #: Packages whose versions are stamped (extended per artifact by callers).
-_STAMPED_PACKAGES: tuple[str, ...] = ("symcon-core", "numpy", "xarray", "pint", "cftime")
+_STAMPED_PACKAGES: tuple[str, ...] = ("icon-sc-core", "numpy", "xarray", "pint", "cftime")
 
 
 @dataclasses.dataclass(frozen=True)

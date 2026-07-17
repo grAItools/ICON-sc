@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from symcon.core.profiling import Timer, TimerError
+from icon_sc.core.profiling import Timer, TimerError
 
 
 def test_nested_sections_and_cumulative_stats() -> None:

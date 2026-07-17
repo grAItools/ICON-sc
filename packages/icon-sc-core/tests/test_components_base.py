@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core import (
+from icon_sc.core import (
     ComputeContext,
     DiagnosticComponent,
     IngressPlan,
@@ -18,7 +18,7 @@ from symcon.core import (
     PropertyDictError,
     make_dataarray,
 )
-from symcon.core.testing.toys import Damping, ImplicitDamping, Relaxation, WindSpeed, column_state
+from icon_sc.core.testing.toys import Damping, ImplicitDamping, Relaxation, WindSpeed, column_state
 
 DT = timedelta(minutes=1)
 
@@ -112,7 +112,7 @@ class TestOutPath:
             damping(state, DT, out=out)
 
     def test_out_with_wrong_units_is_rejected_strictly(self) -> None:
-        from symcon.core import ContractViolationError
+        from icon_sc.core import ContractViolationError
 
         state = column_state()
         damping = Damping(tau=timedelta(minutes=10))
@@ -148,7 +148,7 @@ class TestKindContracts:
                 ) -> None: ...
 
     def test_flat_out_namespace_rejects_cross_dict_collisions(self) -> None:
-        from symcon.core import Stepper
+        from icon_sc.core import Stepper
 
         with pytest.raises(PropertyDictError, match="cannot disambiguate"):
 
@@ -265,7 +265,7 @@ class TestEgressDeviceForwarding:
     """Regression (review round 1, m2): out= egress must validate against ctx device."""
 
     def test_resolve_outputs_forwards_ctx_device(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        from symcon.core.contracts.operators import EgressPlan
+        from icon_sc.core.contracts.operators import EgressPlan
 
         captured: list[Any] = []
         real_build = EgressPlan.build.__func__  # underlying classmethod function

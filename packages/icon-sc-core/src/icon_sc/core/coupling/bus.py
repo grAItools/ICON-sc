@@ -3,7 +3,7 @@
 Architecture §4.2 ("the bus, reframed"): slow processes publish piecewise-constant
 tendencies into named state slots (``icon:ddt_*`` convention) under
 ``CallingFrequency``; the dynamical core and transport declare those slots as
-inputs (the :class:`~symcon.core.components.dycore.DynamicalCore` slow-tendency
+inputs (the :class:`~icon_sc.core.components.dycore.DynamicalCore` slow-tendency
 port). The bus is the *naming-and-checking convention* for that port — pure
 composition-time bookkeeping, never on the step path:
 
@@ -20,8 +20,8 @@ from __future__ import annotations
 import dataclasses
 from typing import Any
 
-from symcon.core.contracts.properties import PropertySpec
-from symcon.core.coupling.concurrent import (
+from icon_sc.core.contracts.properties import PropertySpec
+from icon_sc.core.coupling.concurrent import (
     name_of,
     output_dict_names_of,
     parsed_properties_of,

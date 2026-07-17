@@ -1,8 +1,8 @@
 """State layer: names/units registries, boundary DataArrays, and the S05 vault."""
 
-from symcon.core.state.dataarray import make_dataarray
-from symcon.core.state.facade import VaultFacade
-from symcon.core.state.names import (
+from icon_sc.core.state.dataarray import make_dataarray
+from icon_sc.core.state.facade import VaultFacade
+from icon_sc.core.state.names import (
     INTERFACE_LEVEL_SUFFIX,
     NamesRegistryError,
     QuantityDef,
@@ -13,14 +13,14 @@ from symcon.core.state.names import (
     on_interface_levels,
     register_quantity,
 )
-from symcon.core.state.units import (
+from icon_sc.core.state.units import (
     UnitsError,
     canonical_units,
     convert_array,
     units_identical,
     verify_noop,
 )
-from symcon.core.state.vault import SlotMeta, StateVault
+from icon_sc.core.state.vault import SlotMeta, StateVault
 
 __all__ = [
     "INTERFACE_LEVEL_SUFFIX",

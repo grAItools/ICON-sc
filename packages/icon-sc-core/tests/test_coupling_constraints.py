@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from symcon.core.coupling import (
+from icon_sc.core.coupling import (
     CouplingConstraintError,
     CouplingConstraints,
     constraints_of,

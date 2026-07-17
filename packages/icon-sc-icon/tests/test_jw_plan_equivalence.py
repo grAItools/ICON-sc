@@ -31,14 +31,14 @@ from typing import Any
 import numpy as np
 import pytest
 
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 pytestmark = [
     pytest.mark.data,
     pytest.mark.slow,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -61,7 +61,7 @@ STATE_ENV = "SYMCON_S14_EQUIV_STATE"
 
 
 def _build(backend: str) -> Any:
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     return build_jw(JWConfig(backend=backend))
 
@@ -120,7 +120,7 @@ def test_jw_t0_t1_bitwise_24h(backend: str) -> None:
     # T1 leg: bind against the (possibly resumed) state; a fresh vault holds
     # every live value in its canonical cell, so the plan starts at phase 0
     # regardless of the resumed trajectory position.
-    from symcon.core import ExecutionPlan, StateSchema, StateVault
+    from icon_sc.core import ExecutionPlan, StateSchema, StateVault
 
     bind_ctx = dataclasses.replace(t1_model.dycore.ctx, tier="plan", timestep=dt)
     vault = StateVault.from_state(t1_state)
@@ -164,7 +164,7 @@ def test_jw_t0_t1_bitwise_24h(backend: str) -> None:
 
 def test_jw_composition_matches_step_closure_first_steps() -> None:
     """The S14 composition and the S13 ``model.step`` closure are the same
-    model, bitwise (ties the plan work to the 9-day L4 cache's symcon leg)."""
+    model, bitwise (ties the plan work to the 9-day L4 cache's ICON-sc leg)."""
     closure_model = _build("gtfn_cpu")
     composed_model = _build("gtfn_cpu")
     dt = closure_model.dtime

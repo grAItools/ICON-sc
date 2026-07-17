@@ -9,15 +9,15 @@ from typing import Any, ClassVar
 import numpy as np
 import pytest
 
-from symcon.core import (
+from icon_sc.core import (
     ComputeContext,
     ContractViolationError,
     DiagnosticComponent,
     PropertyDictError,
     make_dataarray,
 )
-from symcon.core.testing import assert_allclose
-from symcon.core.testing.toys import Relaxation, WindSpeed, column_state
+from icon_sc.core.testing import assert_allclose
+from icon_sc.core.testing.toys import Relaxation, WindSpeed, column_state
 
 
 class TestStaticStrictness:

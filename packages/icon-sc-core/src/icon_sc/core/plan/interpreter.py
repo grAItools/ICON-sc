@@ -8,10 +8,10 @@ step (the SPEC's tracemalloc criterion: traced memory is step-invariant after
 warmup).
 
 Every arithmetic op executes the exact ufunc sequence its
-:mod:`symcon.core.plan.ops` docstring declares (normative; bitwise T0≡T1).
+:mod:`icon_sc.core.plan.ops` docstring declares (normative; bitwise T0≡T1).
 
 **The host-step seam (S14).** ``run_ops(..., on_segment=...)`` yields to a host
-callback at every :class:`~symcon.core.plan.ops.SegmentMarker` — the minimal
+callback at every :class:`~icon_sc.core.plan.ops.SegmentMarker` — the minimal
 seam the T2 graph-replay tier needs: under stream capture each exchange-free
 segment becomes one captured graph, and the interpreter's per-marker yield is
 exactly where T2 stops replaying and returns control to Python (monitors, time
@@ -28,7 +28,7 @@ from typing import Any
 
 import numpy as np
 
-from symcon.core.plan.ops import (
+from icon_sc.core.plan.ops import (
     Axpy,
     BoundCall,
     CadenceMask,
@@ -48,7 +48,7 @@ def run_ops(
     """Interpret one pre-bound op list (one step signature) at ``step_index``.
 
     ``on_segment`` (S14, additive) is invoked with every
-    :class:`~symcon.core.plan.ops.SegmentMarker` reached — the host-step seam
+    :class:`~icon_sc.core.plan.ops.SegmentMarker` reached — the host-step seam
     described in the module docstring.
     """
     for op in ops:

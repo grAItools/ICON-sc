@@ -23,7 +23,7 @@ from typing import Any
 
 import array_api_compat
 
-from symcon.icon._constants import (
+from icon_sc.icon._constants import (
     CPD_O_RD,
     P0REF,
     RD_O_CPD,

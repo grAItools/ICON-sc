@@ -4,8 +4,8 @@ coordinate table of an icon4py datatest grid savepoint to 1e-12.
 Experiment: GAUSS3D (``exclaim_gauss3d``) — the smallest serialized archive (~57 MB;
 the alternatives are 4-7 GB). Download/caching is handled by icon4py's own datatest
 machinery (pooch-style, cached under ``ICON4PY_TEST_DATA_PATH``, default
-``~/.cache/symcon/icon4py-testdata``); no data touches git. Requires the
-``symcon-icon[datatest]`` extra — skips cleanly without it.
+``~/.cache/icon-sc/icon4py-testdata``); no data touches git. Requires the
+``icon-sc-icon[datatest]`` extra — skips cleanly without it.
 """
 
 from __future__ import annotations
@@ -13,15 +13,15 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from symcon.core.testing import assert_allclose
-from symcon.icon.grid.vertical import SleveConfig, VerticalGrid
-from symcon.icon.testing import DATATEST_AVAILABLE
+from icon_sc.core.testing import assert_allclose
+from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
     # Re-exported icon4py fixtures (fixture *names* are what pytest resolves — the
-    # icon4py `backend` fixture intentionally shadows symcon's string-valued one
+    # icon4py `backend` fixture intentionally shadows ICON-sc's string-valued one
     # inside this module). experiment_description defaults to GAUSS3D via the bridge.
-    from symcon.icon.testing import (  # noqa: F401
+    from icon_sc.icon.testing import (  # noqa: F401
         backend,
         data_provider,
         download_ser_data,
@@ -35,7 +35,7 @@ pytestmark = [
     pytest.mark.data,
     pytest.mark.skipif(
         not DATATEST_AVAILABLE,
-        reason="icon4py datatest stack not installed (symcon-icon[datatest])",
+        reason="icon4py datatest stack not installed (icon-sc-icon[datatest])",
     ),
 ]
 
@@ -55,7 +55,7 @@ def test_vertical_grid_reproduces_savepoint_table(
     savepoint_tables: tuple[np.ndarray, np.ndarray],
     experiment,
 ) -> None:
-    """Compute vct_a/vct_b from the experiment's namelist parameters through symcon's
+    """Compute vct_a/vct_b from the experiment's namelist parameters through ICON-sc's
     SLEVE path and compare against the serialized ICON table."""
     vct_a_ref, vct_b_ref = savepoint_tables
     i4_cfg = experiment.config.vertical_grid

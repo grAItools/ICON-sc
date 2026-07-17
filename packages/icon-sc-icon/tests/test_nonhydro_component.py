@@ -4,7 +4,7 @@ stubbed granule.
 The component is constructed **for real** (icon4py ``SolveNonhydro`` on the icon4py
 ``SimpleGrid`` with a zero static state — construction wires programs but computes
 nothing beyond the ctor-time divdamp profile); the predictor/corrector stage bodies
-are then monkeypatched with recorders, so these tests exercise exactly the symcon
+are then monkeypatched with recorders, so these tests exercise exactly the ICON-sc
 orchestration layer: tier nesting, tendency-pair reuse swaps, time-level swaps, bus
 zero-fill, restart/functional-state plumbing. The hand-written expected hook
 sequences transcribe ICON's documented substepping (REFERENCES.lock
@@ -23,25 +23,25 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from symcon.core.components.base import TendencyComponent
-from symcon.core.context import ComputeContext
-from symcon.core.coupling.concurrent import ConcurrentCoupling
-from symcon.core.state import canonical_units, make_dataarray
-from symcon.icon.components import NonhydroConfig, NonhydroSolver, icon_namelist_origins
-from symcon.icon.components.dycore import (
+from icon_sc.core.components.base import TendencyComponent
+from icon_sc.core.context import ComputeContext
+from icon_sc.core.coupling.concurrent import ConcurrentCoupling
+from icon_sc.core.state import canonical_units, make_dataarray
+from icon_sc.icon.components import NonhydroConfig, NonhydroSolver, icon_namelist_origins
+from icon_sc.icon.components.dycore import (
     _RESTART_SCHEMA,
     STATIC_FIELDS,
     STATIC_INTERPOLATION_FIELDS,
     STATIC_METRIC_FIELDS,
 )
-from symcon.icon.grid import SleveConfig, VerticalGrid
+from icon_sc.icon.grid import SleveConfig, VerticalGrid
 
 pytest.importorskip("icon4py.model.atmosphere.dycore", reason="icon4py dycore not installed")
 
 NLEV = 10
 DT = timedelta(seconds=10.0)
 
-#: symcon dims -> (SimpleGrid axis length resolver); sparse sizes are SimpleGrid's.
+#: ICON-sc dims -> (SimpleGrid axis length resolver); sparse sizes are SimpleGrid's.
 _STATIC_TABLE: dict[str, tuple[tuple[str, ...], Any]] = {
     "icon:mask_prog_halo_c": (("cell",), bool),
     "icon:rayleigh_w": (("height_interface",), float),
@@ -341,7 +341,7 @@ def test_static_enumeration_covers_icon4py_state_dataclasses_exactly() -> None:
 
 def test_static_enumeration_is_the_s11_production_set() -> None:
     """Every required static name is produced by S11 metrics()/interpolation()."""
-    from symcon.icon.grid import INTERPOLATION_FIELDS, METRICS_FIELDS
+    from icon_sc.icon.grid import INTERPOLATION_FIELDS, METRICS_FIELDS
 
     produced = set(METRICS_FIELDS) | set(INTERPOLATION_FIELDS)
     assert set(STATIC_FIELDS) <= produced
@@ -450,10 +450,10 @@ def test_plan_unrolled_hook_order_matches_t0() -> None:
     """
     import dataclasses as _dataclasses
 
-    from symcon.core.contracts.checkers import StateSchema
-    from symcon.core.plan.bind import ExecutionPlan
-    from symcon.core.state.vault import StateVault
-    from symcon.core.time import datetime
+    from icon_sc.core.contracts.checkers import StateSchema
+    from icon_sc.core.plan.bind import ExecutionPlan
+    from icon_sc.core.state.vault import StateVault
+    from icon_sc.core.time import datetime
 
     bus = {"icon:ddt_vn_phy": 0.0, "icon:ddt_exner_phy": 0.0}
 
@@ -746,10 +746,10 @@ def test_plan_tier_binds_and_runs_the_component() -> None:
     """
     import dataclasses as _dataclasses
 
-    from symcon.core.contracts.checkers import StateSchema
-    from symcon.core.plan.bind import ExecutionPlan
-    from symcon.core.state.vault import StateVault
-    from symcon.core.time import datetime
+    from icon_sc.core.contracts.checkers import StateSchema
+    from icon_sc.core.plan.bind import ExecutionPlan
+    from icon_sc.core.state.vault import StateVault
+    from icon_sc.core.time import datetime
 
     solver = _make_solver()
     _stub_stages(solver)

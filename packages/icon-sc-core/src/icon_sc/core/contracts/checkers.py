@@ -11,7 +11,7 @@ The static/dynamic split is the internal structure of the negotiation phase (§8
   any ingress that would allocate — unit conversion, dim transpose, dtype cast,
   host↔device transfer — into an exception naming field and component;
   ``strict=False`` collects the needed conversions into a
-  :class:`~symcon.core.contracts.operators.ConversionPlan` instead.
+  :class:`~icon_sc.core.contracts.operators.ConversionPlan` instead.
 
 Neither checker runs on the step path.
 """
@@ -24,19 +24,19 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from symcon.core.contracts.properties import (
+from icon_sc.core.contracts.properties import (
     PropertyDictError,
     PropertySpec,
     parse_properties,
 )
-from symcon.core.state.names import lookup_quantity
-from symcon.core.state.units import units_identical
-from symcon.core.typing import FieldBuffer, Location
+from icon_sc.core.state.names import lookup_quantity
+from icon_sc.core.state.units import units_identical
+from icon_sc.core.typing import FieldBuffer, Location
 
 if TYPE_CHECKING:
     import xarray as xr
 
-    from symcon.core.contracts.operators import ConversionPlan
+    from icon_sc.core.contracts.operators import ConversionPlan
 
 __all__ = [
     "PROPERTY_DICT_NAMES",
@@ -207,8 +207,8 @@ class StaticChecker:
                     )
 
     def _check_canonical_units(self) -> None:
-        from symcon.core.state.names import NamesRegistryError
-        from symcon.core.state.units import UnitsError, verify_noop
+        from icon_sc.core.state.names import NamesRegistryError
+        from icon_sc.core.state.units import UnitsError, verify_noop
 
         for dict_name in _STATE_VALUED_DICTS:
             for name, spec in self.specs.get(dict_name, {}).items():
@@ -231,7 +231,7 @@ class DynamicChecker:
     mismatches raise unconditionally (no conversion exists). Convertible
     mismatches — units, dim order, dtype, device — raise under ``strict=True``
     (each named by field + component) and are collected into ``self.plan`` (a
-    :class:`~symcon.core.contracts.operators.ConversionPlan`) under
+    :class:`~icon_sc.core.contracts.operators.ConversionPlan`) under
     ``strict=False``.
 
     Device expectation: ``device`` (a DLPack device tuple) is normally supplied by
@@ -251,7 +251,7 @@ class DynamicChecker:
         strict: bool = True,
         device: tuple[int, int] | None = None,
     ) -> None:
-        from symcon.core.contracts.operators import ConversionPlan, ConversionStep
+        from icon_sc.core.contracts.operators import ConversionPlan, ConversionStep
 
         self.component = component
         self.strict = strict

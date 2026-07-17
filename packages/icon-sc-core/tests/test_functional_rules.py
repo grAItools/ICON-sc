@@ -10,8 +10,8 @@ jax.config.update("jax_enable_x64", True)
 
 import jax.numpy as jnp  # noqa: E402
 
-from symcon.core.functional.rules import implicit_fixed_point, masked_newton_solve  # noqa: E402
-from symcon.core.testing import assert_allclose  # noqa: E402
+from icon_sc.core.functional.rules import implicit_fixed_point, masked_newton_solve  # noqa: E402
+from icon_sc.core.testing import assert_allclose  # noqa: E402
 
 
 def _sqrt_via_ift(a: jax.Array) -> jax.Array:
@@ -47,7 +47,7 @@ def test_primal_and_both_ad_modes_match_analytic() -> None:
 
 
 def test_adjoint_consistency_through_the_rule() -> None:
-    from symcon.core.testing.gradients import dot_product_test
+    from icon_sc.core.testing.gradients import dot_product_test
 
     a = jnp.asarray([1.7, 4.2, 0.9])
     v = jnp.asarray([0.3, -1.1, 0.7])
