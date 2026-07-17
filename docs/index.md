@@ -1,11 +1,11 @@
-# symcon
+# ICON-sc
 
-symcon re-expresses the ICON-NWP atmosphere model as a composition of
+ICON-sc re-expresses the ICON-NWP atmosphere model as a composition of
 self-describing components in Python. The model is a set of fields (the
 *state*) evolved by processes (*components*), and one legible run script says
 which schemes run, in what order, at what cadences, and where output goes —
 the same information a namelist holds, but readable, checkable by machine,
-and safe to recompose. The heavy numerics stay compiled: symcon is a host
+and safe to recompose. The heavy numerics stay compiled: ICON-sc is a host
 layer for [icon4py](https://github.com/C2SM/icon4py) granules (GT4Py
 stencils), not a NumPy rewrite of ICON.
 
@@ -26,11 +26,11 @@ canonical):
 
 ## Install
 
-symcon is developed as a [uv](https://docs.astral.sh/uv/) workspace and is not
+ICON-sc is developed as a [uv](https://docs.astral.sh/uv/) workspace and is not
 yet published to PyPI. From a clone:
 
 ```bash
-git clone <repository-url> symcon && cd symcon
+git clone <repository-url> ICON-sc && cd ICON-sc
 uv sync            # resolves the pinned working set from uv.lock
 uv run python examples/01_scm_column.py --hours 1 --output scm_column.nc
 ```
@@ -44,7 +44,7 @@ laptop.
   weather and climate scientists, software concepts introduced only as needed.
 - Looking up a class or function? The [API reference](api/index.md).
 - The full design, with every tension and decision recorded: the
-  [architecture document](architecture/symcon_architecture.md) (v1.3,
+  [architecture document](architecture/icon-sc_architecture.md) (v1.3,
   canonical). The repository-layout policy lives with the developer process
   documents in the repository (`development/policies/repo-layout.md`) and is
   deliberately not part of this site.
@@ -71,7 +71,7 @@ api/index
 :hidden:
 :caption: Architecture
 
-architecture/symcon_architecture
+architecture/icon-sc_architecture
 ```
 
 ```{toctree}

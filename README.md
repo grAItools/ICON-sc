@@ -1,4 +1,4 @@
-# symcon
+# ICON-sc
 
 A sympl-conformant Python architecture for the ICON model: sympl/Tasmania-lineage composition
 (property-contracted components, a general dynamics–physics coupling algebra) over a zero-copy
@@ -19,7 +19,7 @@ a Sphinx documentation site builds from `docs/` (work unit 028).
 
 | path | what |
 |---|---|
-| `docs/architecture/symcon_architecture.md` | the architecture, v1.3 — canonical; §-refs everywhere point here |
+| `docs/architecture/icon-sc_architecture.md` | the architecture, v1.3 — canonical; §-refs everywhere point here |
 | `development/` | repo-internal process memory (map in its README): policies, ADRs, the work lifecycle (proposals/specs/plans/reports), reference cards |
 | `development/REGISTRY.md` | living registry: work ids, the old→new name remap tables, trunk decisions and human sign-offs |
 | `development/policies/` | living rules: agent workflow, naming, document kinds, gates, reference mining, review protocol, docs boundary, repo layout |

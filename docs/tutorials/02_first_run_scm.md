@@ -62,7 +62,7 @@ once it is created — like a namelist that cannot be edited mid-run, so the
 settings a run started with are exactly the settings it finished with. Here
 it is, from the preset module itself:
 
-```{literalinclude} ../../packages/symcon-icon/src/symcon/icon/presets/scm.py
+```{literalinclude} ../../packages/icon-sc-icon/src/icon_sc/icon/presets/scm.py
 :language: python
 :pyobject: SCMConfig
 ```

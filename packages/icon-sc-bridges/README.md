@@ -1,3 +1,3 @@
-# symcon-bridges
+# icon-sc-bridges
 
 CFFI-wrapped Fortran bridge components. Optional; needs a Fortran toolchain once real bridges land.

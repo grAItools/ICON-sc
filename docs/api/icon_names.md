@@ -1,6 +1,6 @@
-# symcon.icon.names — the ICON variable registry
+# icon_sc.icon.names — the ICON variable registry
 
 ```{eval-rst}
-.. automodule:: symcon.icon.names
+.. automodule:: icon_sc.icon.names
    :members:
 ```

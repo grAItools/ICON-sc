@@ -1,23 +1,23 @@
-# symcon.icon.grid — grid, geometry, metrics
+# icon_sc.icon.grid — grid, geometry, metrics
 
 ```{eval-rst}
-.. automodule:: symcon.icon.grid
+.. automodule:: icon_sc.icon.grid
 
-.. automodule:: symcon.icon.grid.grid
+.. automodule:: icon_sc.icon.grid.grid
    :members:
 
-.. automodule:: symcon.icon.grid.vertical
+.. automodule:: icon_sc.icon.grid.vertical
    :members:
 
-.. automodule:: symcon.icon.grid.geometry
+.. automodule:: icon_sc.icon.grid.geometry
    :members:
 
-.. automodule:: symcon.icon.grid.metrics
+.. automodule:: icon_sc.icon.grid.metrics
    :members:
 
-.. automodule:: symcon.icon.grid.interpolation
+.. automodule:: icon_sc.icon.grid.interpolation
    :members:
 
-.. automodule:: symcon.icon.grid.reader
+.. automodule:: icon_sc.icon.grid.reader
    :members:
 ```

@@ -1,3 +1,3 @@
-# symcon-icon
+# icon-sc-icon
 
-ICON model built on symcon-core. See `docs/architecture/symcon_architecture.md`.
+ICON model built on icon-sc-core. See `docs/architecture/icon-sc_architecture.md`.

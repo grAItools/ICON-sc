@@ -1,4 +1,4 @@
-# symcon — Claude Code project memory
+# ICON-sc — Claude Code project memory
 
 @AGENTS.md
 

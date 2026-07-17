@@ -14,7 +14,7 @@ tested files, never copied by hand.
 ```{toctree}
 :maxdepth: 1
 
-00_what_is_symcon
+00_what_is_icon-sc
 01_state_fields_grids
 02_first_run_scm
 ```

@@ -1,6 +1,6 @@
-# symcon.icon.thermo — thermodynamic relations
+# icon_sc.icon.thermo — thermodynamic relations
 
 ```{eval-rst}
-.. automodule:: symcon.icon.thermo
+.. automodule:: icon_sc.icon.thermo
    :members:
 ```

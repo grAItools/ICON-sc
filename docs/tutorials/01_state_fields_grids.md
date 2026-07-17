@@ -11,7 +11,7 @@ state, what must it carry with it so that handing it to the wrong scheme, in
 the wrong units, at the wrong grid location, is an *error message* rather
 than a wrong forecast?
 
-symcon's answer: every field in the
+ICON-sc's answer: every field in the
 [state dictionary](../glossary.md#state-dictionary) is an array plus
 three pieces of metadata the machinery enforces — a canonical name, canonical
 units, and a mesh location.
@@ -23,7 +23,7 @@ runs) and inspect one field. Start `uv run python` in a repository checkout
 and paste:
 
 ```pycon
->>> from symcon.icon.presets import SCMConfig, build_scm
+>>> from icon_sc.icon.presets import SCMConfig, build_scm
 >>> composition, state, cfg = build_scm(SCMConfig())
 >>> t = state["air_temperature"]
 >>> t.dims
@@ -57,7 +57,7 @@ temperature tendency always K s⁻¹ — so $\partial_t T$ published by a slow
 process and consumed by the core needs no conversion, ever. This is a
 deliberate break with frameworks that convert units silently at every
 component boundary: convenient interactively, but on a GPU a hidden
-conversion is a hidden allocation and copy. In symcon's strict (production)
+conversion is a hidden allocation and copy. In ICON-sc's strict (production)
 mode, any ingress that would allocate — a unit conversion, a dimension
 transpose, a host↔device transfer — raises an error naming the component and
 the field.
@@ -71,7 +71,7 @@ cell-center reconstruction by accident: location mismatches are contract
 errors. And because nothing regrids silently, the edge→cell wind
 reconstruction the physics needs is a visible, named step in the
 composition — architecture
-[§3.3, "Staggering as API, not convention"](../architecture/symcon_architecture.md).
+[§3.3, "Staggering as API, not convention"](../architecture/icon-sc_architecture.md).
 
 ## The contract that ties it together
 

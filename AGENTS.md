@@ -1,7 +1,7 @@
 # Agent Working Agreement (canonical)
 
-You are implementing the symcon architecture. Authority order on any conflict:
-`docs/architecture/symcon_architecture.md` (v1.3) > `development/work/specs/spec-NNNN-*.md`
+You are implementing the ICON-sc architecture. Authority order on any conflict:
+`docs/architecture/icon-sc_architecture.md` (v1.3) > `development/work/specs/spec-NNNN-*.md`
 > `development/work/plans/plan-NNNN-*.md`. Never silently resolve a contradiction — record it
 in the work unit's report and stop if it blocks acceptance criteria.
 
@@ -19,7 +19,7 @@ naming (`work/NNNN-<kebab>`), and the implementer/reviewer loop live in
 - **No data in git.** Reference datasets via icon4py datatest fixtures or pooch manifests.
 - **No dependency bumps.** gt4py/icon4py pins are set in work unit 001's `constraints/`;
   changing them is a trunk decision.
-- **No cross-boundary imports.** `symcon.core` must not import `symcon.icon`/`symcon.bridges`
+- **No cross-boundary imports.** `icon_sc.core` must not import `icon_sc.icon`/`icon_sc.bridges`
   (import-linter enforces it, in place since work unit 001).
 - **No tolerance creep, no reduction-order changes** in equivalence tests (bitwise T0≡T1 is
   required where the spec says bitwise).

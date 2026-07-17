@@ -1,17 +1,17 @@
-# symcon.core.plan — execution plans
+# icon_sc.core.plan — execution plans
 
 ```{eval-rst}
-.. automodule:: symcon.core.plan
+.. automodule:: icon_sc.core.plan
 
-.. automodule:: symcon.core.plan.bind
+.. automodule:: icon_sc.core.plan.bind
    :members:
 
-.. automodule:: symcon.core.plan.ops
+.. automodule:: icon_sc.core.plan.ops
    :members:
 
-.. automodule:: symcon.core.plan.interpreter
+.. automodule:: icon_sc.core.plan.interpreter
    :members:
 
-.. automodule:: symcon.core.plan.guards
+.. automodule:: icon_sc.core.plan.guards
    :members:
 ```

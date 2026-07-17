@@ -1,4 +1,4 @@
-# T0 — What symcon is: a weather model as a run script
+# T0 — What ICON-sc is: a weather model as a run script
 
 **The science question first.** During one timestep Δt of ICON-NWP, which
 processes act on the atmosphere, in what order, and how often? You can answer
@@ -9,7 +9,7 @@ coupling strategy (who sees whose update within the step) is documented prose.
 The experiment you are actually running is spread across three places, only
 one of which you edit.
 
-symcon re-expresses ICON-NWP so that this answer is one readable object. The
+ICON-sc re-expresses ICON-NWP so that this answer is one readable object. The
 premise, inherited from the [sympl](https://sympl.readthedocs.io) framework
 family, is that an atmospheric model is two things:
 
@@ -29,7 +29,7 @@ claim in it is checked by machine before the first step runs.
 
 ## What that looks like
 
-Here is the heart of the smallest real symcon model — the single-column
+Here is the heart of the smallest real ICON-sc model — the single-column
 experiment you will run yourself in
 [T2](02_first_run_scm.md), taken verbatim from the tested script
 `examples/01_scm_column.py`:
@@ -44,16 +44,16 @@ build a model composition and an initial state, attach a NetCDF output
 monitor, loop over timesteps for an hour. The full global NWP configuration
 has exactly the same shape, just with more components — the architecture
 document shows it in
-[§5.1, "The canonical run script"](../architecture/symcon_architecture.md):
+[§5.1, "The canonical run script"](../architecture/icon-sc_architecture.md):
 dycore, diffusion, tracer transport, the fast-physics sequence, and the slow
 processes each at their own calling period, all on one screen.
 
 ## Why re-express ICON in Python at all?
 
-The heavy numerics do not move to Python. symcon is a *host* layer: inside
+The heavy numerics do not move to Python. ICON-sc is a *host* layer: inside
 the components run [icon4py](https://github.com/C2SM/icon4py) granules —
 GT4Py stencils compiled for CPU or GPU, the same code paths the ICON
-modernization effort itself builds on. What symcon adds is the layer where
+modernization effort itself builds on. What ICON-sc adds is the layer where
 science mistakes actually happen and where experiments are actually
 expressed:
 

@@ -15,11 +15,11 @@ is physics, not a defect.
   table and writes remainder-decay plots to `artifacts/` (gitignored).
 
 The CI-gating form of these checks lives in the package test suites
-(`packages/symcon-icon/tests/test_satad_functional.py`,
+(`packages/icon-sc-icon/tests/test_satad_functional.py`,
 `test_graupel_functional.py`, `test_scm_functional.py`,
-`packages/symcon-core/tests/test_functional_*.py`); this directory is the
+`packages/icon-sc-core/tests/test_functional_*.py`); this directory is the
 human-runnable/plotting harness on top of the same
-`symcon.core.testing.gradients` machinery, extended per level as later steps
+`icon_sc.core.testing.gradients` machinery, extended per level as later steps
 add components (P6 wires it into the ladder proper).
 
 ## Run

@@ -1,3 +1,3 @@
-# symcon-core
+# icon-sc-core
 
-Model-agnostic composition framework. See `docs/architecture/symcon_architecture.md`.
+Model-agnostic composition framework. See `docs/architecture/icon-sc_architecture.md`.

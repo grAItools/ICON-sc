@@ -1,14 +1,14 @@
-# symcon.core.functional — the functional (JAX) lowering
+# icon_sc.core.functional — the functional (JAX) lowering
 
 ```{eval-rst}
-.. automodule:: symcon.core.functional
+.. automodule:: icon_sc.core.functional
 
-.. automodule:: symcon.core.functional.compile
+.. automodule:: icon_sc.core.functional.compile
    :members:
 
-.. automodule:: symcon.core.functional.pytree
+.. automodule:: icon_sc.core.functional.pytree
    :members:
 
-.. automodule:: symcon.core.functional.rules
+.. automodule:: icon_sc.core.functional.rules
    :members:
 ```
