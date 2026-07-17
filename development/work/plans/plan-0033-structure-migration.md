@@ -69,7 +69,7 @@ references/                  DELETED (content absorbed into development/referenc
 - **`development/references/lock.toml` is not modified** — not even path strings; its `step` fields are bare
   IDs and its `paths` fields describe *external* repos.
 - **`docs/architecture/*` is never edited** (deny-listed). The one planning-path reference in
-  `docs/architecture/symcon_repo_layout.md:104` is handled as a proposed-diff artifact for
+  `docs/architecture/repository-layout.md:104` is handled as a proposed-diff artifact for
   owner sign-off (§5.13, TD-33.4) — not as an edit.
 - Frozen documents (SPECs, PLANs, STATUS files, executed prompts/reports, the outlines'
   bodies, IMPLEMENTATION_REPORT) receive **only** path-string retargeting per the table in
@@ -134,7 +134,7 @@ locations either move to the archive (plan/README.md) or are thinned to pointers
    - **TD-33.2** — content-frozen amendment (ADR-0002).
    - **TD-33.3** — register renamed/moved to `development/DECISIONS.md`; ledger/ADR
      no-merge relationship (ADR-0003).
-   - **TD-33.4** — proposed revision of `docs/architecture/symcon_repo_layout.md` repo tree
+   - **TD-33.4** — proposed revision of `docs/architecture/repository-layout.md` repo tree
      (§5.13 diff artifact); owner applies or rejects. Marks the re-draft of TD-29.7 —
      add to TD-29.7's Status cell: `superseded(TD-33.4)`.
 4. Flip statuses: TD-29.1 → `superseded(TD-33.1)`, TD-29.6 → `superseded(TD-33.1)`,
@@ -304,7 +304,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
     found at plan-writing time; verify).
 13. **Layout-doc diff artifact** (do NOT edit the doc): produce
     `development/work/reports/report-0033-structure-migration/layout-doc-revision.diff` — a unified diff
-    against `docs/architecture/symcon_repo_layout.md` replacing the `plan/` node in the §4
+    against `docs/architecture/repository-layout.md` replacing the `plan/` node in the §4
     repo tree (line ~104) with the `development/` tree (one line per folder) and deleting
     the top-level `references/` node if present. The owner applies it (TD-33.4).
 
@@ -322,7 +322,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
 ## 7. Verification gates (all must pass; run from the repo root)
 
 1. **Residual-path grep** — must return exactly one hit
-   (`docs/architecture/symcon_repo_layout.md:104`, owner-owned via TD-33.4):
+   (`docs/architecture/repository-layout.md:104`, owner-owned via TD-33.4):
 
    ```bash
    grep -rnE "plan/(steps|prompts|outlines|README\.md|00_OVERVIEW|IMPLEMENTATION_REPORT|TRUNK_DECISIONS)" . \

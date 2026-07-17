@@ -33,7 +33,7 @@ the **Frozen interfaces** map below. Only references to the **current system** a
    `icon-sc_architecture.md`; `00_what_is_symcon.md` → `00_what_is_icon-sc.md`.
 6. **Git remote** `grAItools/symcon` → `grAItools/ICON-sc` (`.git/config`; GitHub repo rename +
    working-copy root-dir rename are owner-manual, out of the branch diff).
-7. **Living `development/` prose** naming the current system: `policies/*` (incl. `repo-layout.md`
+7. **Living `development/` prose** naming the current system: `policies/*` (incl. `repository-layout.md`
    and `review-protocol.md`), `REGISTRY.md` header/rules prose, folder READMEs, PR template,
    `.claude`/`.opencode` command prose; and — per the owner's ratified scope — the work-unit
    **specs** (`spec-0001..spec-0052`), whose `symcon.*` refs are current-system acceptance criteria.
@@ -45,7 +45,7 @@ the **Frozen interfaces** map below. Only references to the **current system** a
   `development/work/proposals/*` wording; `development/references/lock.toml` evidence strings; the
   tracked artifact `development/work/reports/report-0033-structure-migration/layout-doc-revision.diff`.
   Retro-renaming these would falsify signed-off history and destroy the remap bridge (e.g.
-  `REGISTRY.md:150` names `symcon_repo_layout.md`, a file that no longer exists). Matches
+  `REGISTRY.md` §2 names `symcon_repo_layout.md`, a path that no longer exists). Matches
   `plan-0035` ("frozen records keep historical wording") and AGENTS.md. The ~30 by-design residual
   `symcon` hits are enumerated in the report and the residual-grep allowlist, not rewritten.
 - Any functional/behavioral change; dependency-pin bumps; `constraints/*` edits; tolerance,

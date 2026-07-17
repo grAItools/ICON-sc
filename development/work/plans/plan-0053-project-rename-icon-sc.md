@@ -110,7 +110,7 @@ returns nothing; namespace test reads correctly.
   technical change".
 - **`packages/*/README.md`** (3; packaged wheel metadata: H1 `# icon-sc-core` etc.).
 - **`validation/L4_idealized/README.md`, `validation/L8_gradients/README.md`**.
-- `development/policies/*` incl. `repo-layout.md` (package/module/tree/cache/arch-doc-filename) and
+- `development/policies/*` incl. `repository-layout.md` (package/module/tree/cache/arch-doc-filename) and
   **`review-protocol.md:4`** (hardcoded `…/grAItools/symcon` absolute path → `…/grAItools/ICON-sc`);
   `REGISTRY.md` header/rules prose **only** (not §2* remap columns / signed-off TD wording) + the §1
   row + TD-53.1/2/3 rows; living folder READMEs; `.github/PULL_REQUEST_TEMPLATE.md`;

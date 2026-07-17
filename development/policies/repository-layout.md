@@ -1,10 +1,10 @@
-# repo-layout — the repository layout, packaging boundaries, and layout conventions
+# repository-layout — the repository layout, packaging boundaries, and layout conventions
 
 Scope: the monorepo tree, the three-distribution packaging and import-boundary
 structure, and the layout conventions that carry architectural weight. Section
 references (§) point into `docs/architecture/icon-sc_architecture.md` (v1.3).
-Formerly `docs/architecture/symcon_repo_layout.md` (moved and made a living policy in
-work unit 035, TD-35.2).
+Relocated from `docs/architecture/` and made a living policy in work unit 035
+(TD-35.2); renamed to `repository-layout.md` in work unit 0053.
 
 ## 0. Top-level decisions
 

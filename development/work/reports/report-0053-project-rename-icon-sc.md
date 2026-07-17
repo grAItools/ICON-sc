@@ -1,6 +1,6 @@
 # Report — work unit 0053: project rename `symcon` → `ICON-sc`
 
-**Branch:** `work/0053-project-rename-icon-sc` (from `main`) · **Date:** 2026-07-17 · **State:** implemented; gates green (final `data+slow` partition completing); owner-manual follow-ups outstanding (GitHub repo rename, working-copy dir rename)
+**Branch:** `work/0053-project-rename-icon-sc` (from `main`) · **Date:** 2026-07-17 · **State:** implemented; full gate battery green (848 tests, baseline-matching); owner-manual follow-ups outstanding (GitHub repo rename, working-copy dir rename)
 
 ## 1. What was built
 
@@ -29,6 +29,8 @@ runtime/external artifacts, each renamed per the `spec-0053` Frozen-interfaces m
 | `589020c` | C3 — 4 `pyproject.toml`, pre-commit, workflows, `uv.lock` regenerated (no pin moved) |
 | `6cbc7fa` | C4 — living root docs, published `docs/` site, policies, architecture doc rebrand, REGISTRY TD-53.1/2/3 rows |
 | `1a9127d` | C4b — frozen specs + plans (owner-extended scope; migration-plan history preserved) |
+| `71e1d2a` | C5 — this report |
+| _(this commit)_ | C6 — layout doc `repo-layout.md` → `repository-layout.md`; `symcon_repo_layout` de-branded (TD-53.4); report finalized with full-battery gate results |
 
 ## 2. Acceptance criteria → tests
 
@@ -38,7 +40,7 @@ Per `spec-0053`:
    passes (`roots == {"icon-sc-core","icon-sc-icon","icon-sc-bridges"}`, `not hasattr(icon_sc,"__file__")`). ✅
 2. **Importability** — `uv run python -c "import icon_sc.core, icon_sc.icon, icon_sc.bridges"` → OK;
    `icon_sc.__path__` spans the three `icon-sc-*` dirs. ✅
-3. **Gates green, counts identical to baseline** — see §5. ✅ (final `data+slow` completing)
+3. **Gates green, counts identical to baseline** — see §5 (848 tests, all baseline-matching). ✅
 4. **No dependency change** — `git diff main -- constraints/` empty; `uv.lock` registry
    `(name,version)` set identical (only the 4 workspace members renamed); `uv sync --locked` resolves. ✅
 5. **Residual grep = enumerated by-design set** — see §3; zero on live surfaces. ✅
@@ -56,11 +58,15 @@ Per `spec-0053`:
    migration-plan history). Result: specs (0001–0052) and plans (0001–0052) renamed; **reports,
    proposals, ADRs, `references/lock.toml`, `REGISTRY.md` §2 remap columns, and the
    `layout-doc-revision.diff` artifact remain exempt** as frozen history.
-2. **`symcon_repo_layout.md` preserved verbatim** in `plan-0033`, `plan-0035`, `policies/repo-layout.md`,
-   `policies/README.md`, and `REGISTRY.md` §2 — that file was renamed to `repo-layout.md` in work 0035
-   and **never had an `icon-sc` name**; renaming the token would falsify the historical remap bridge.
-   The `symcon_architecture.md` path was retargeted to `icon-sc_architecture.md` (sanctioned path
-   retarget, `document-kinds` content-frozen rule).
+2. **Layout policy doc renamed + `symcon_repo_layout` de-branded** (owner-instructed 2026-07-17, TD-53.4).
+   The living layout policy `development/policies/repo-layout.md` was `git mv`'d to `repository-layout.md`
+   (kebab, TD-51.1) with references updated in living policies, `docs/index.md`, and the 0053 docs; the
+   historical `symcon_repo_layout` token was de-branded to `repository-layout` in `plan-0033`, `plan-0035`,
+   and the living policy files. **`REGISTRY.md` §2 remap "Old" column + `TD-33.4`, the 7 frozen reports,
+   and `layout-doc-revision.diff` keep `symcon_repo_layout.md` verbatim** — de-branding the §2 "Old"
+   column would falsify the historical remap bridge *and* collide with the new current filename
+   `repository-layout.md`. `symcon_architecture.md` was path-retargeted to `icon-sc_architecture.md`
+   (sanctioned path retarget, `document-kinds` content-frozen rule).
 3. **Spec-freeze guard bypass mechanism.** The `spec_freeze_guard.py` PreToolUse hook blocks edits to
    frozen specs. Disabling it via `.claude/settings.json` was declined by the harness auto-mode
    classifier. With owner approval to bypass the guard for this migration, the frozen specs/plans were
@@ -84,8 +90,10 @@ LICENSE` = empty):
 - **Frozen history (exempt):** 26 `reports/*` (top: `report-0027` 32, `report-0013` 22, `report-0006` 20),
   2 `proposals/*` (`proposal-0052` 5, `proposal-0038` 1), 1 ADR (`0005-gridgen` 3),
   `references/lock.toml` (29), `layout-doc-revision.diff` (5), `REGISTRY.md` §2 remap (2).
-- **Historical filename preserved:** `symcon_repo_layout` in `plan-0033` (4), `plan-0035` (5),
-  `policies/repo-layout.md` (1), `policies/README.md` (1).
+- **Historical filename preserved (`symcon_repo_layout.md`):** `REGISTRY.md` §2 remap + `TD-33.4`, the
+  7 frozen reports (`report-0027/0028/0029/0033/0034/0035/0051`), and `layout-doc-revision.diff` — the
+  true pre-0035 name, kept to preserve the remap bridge and avoid colliding with the renamed current file
+  `repository-layout.md`.
 
 ## 4. Tolerances & sign-off flags
 
@@ -94,6 +102,7 @@ No tolerance, reduction-order, `pytest.mark`, or test-assertion changes. Sign-of
 - `TD-PENDING: TD-53.1` — sanctioned rebrand of trunk-frozen `icon-sc_architecture.md` (v1.3 retained + rev-note).
 - `TD-PENDING: TD-53.2` — import namespace `icon_sc`; distributions `icon-sc-*`; brand ICON-sc (PEP 420 preserved).
 - `TD-PENDING: TD-53.3` — current-system-vs-frozen-history scope boundary, as amended (specs + plans renamed; reports/proposals/ADRs/lock/remap exempt).
+- `TD-PENDING: TD-53.4` — frozen plans also renamed; layout doc → `repository-layout.md`; `symcon_repo_layout` de-branded in living/current-unit, kept verbatim in §2 remap + frozen reports.
 
 ## 5. Gates (dated 2026-07-17, host: 16-core/31 GB; warm cache via `~/.cache/icon-sc` symlink)
 
@@ -105,7 +114,8 @@ No tolerance, reduction-order, `pytest.mark`, or test-assertion changes. Sign-of
   - `fast` (`not gpu and not slow and not data`) → **696 passed, 1 skipped** (baseline 696/1) — 2:30
   - `slow-nodata` (`slow and not gpu and not data`) → **31 passed** (baseline 31) — 4:40
   - `data-noslow` (`data and not slow and not gpu`) → **43 passed** (baseline 43) — 7:32
-  - `data-slow` (`data and slow and not gpu`, incl. the 1519 s bitwise T0≡T1 test) → **[completing]** (baseline 76/1 skip)
+  - `data-slow` (`data and slow and not gpu`, incl. the 1519 s bitwise T0≡T1 test) → **76 passed, 1 skipped** (baseline 76/1) — 36:38
+  - **Full battery: 848 tests, all baseline-matching; the bitwise T0≡T1 equivalence test passed (no numerical perturbation).**
 - `git diff main -- constraints/ development/references/lock.toml` → empty
 
 ## 6. Follow-ups (owner-manual)

@@ -46,7 +46,7 @@ laptop.
 - The full design, with every tension and decision recorded: the
   [architecture document](architecture/icon-sc_architecture.md) (v1.3,
   canonical). The repository-layout policy lives with the developer process
-  documents in the repository (`development/policies/repo-layout.md`) and is
+  documents in the repository (`development/policies/repository-layout.md`) and is
   deliberately not part of this site.
 - Software terms defined science-in: the [glossary](glossary.md).
 - Contributing or running the implementation plan? See `AGENTS.md` and
