@@ -11,15 +11,16 @@ Every work unit must leave ALL of these green.
 **Canonical invocation (work unit 0052):**
 
 ```
-uv run python tools/run_gate.py            # the whole battery, in two waves; exits non-zero iff anything failed
+uv run python tools/run_gate.py            # the whole battery, sequentially; exits non-zero iff anything failed
 ```
 
 The driver is an accelerated *executor* of the commands below, never a redefinition of them:
-it runs each marker command verbatim and adds only `-n`/`--dist`. The marker expressions here
-remain the canonical statement of *what* the gate runs. See "Parallelism" below.
+it runs each marker command **verbatim**, adding nothing. It adds one command instead of
+eight, verbatim failure output, exit aggregation, and an enforced RSS budget. The marker
+expressions here remain the canonical statement of *what* the gate runs. See "Why the gate is
+sequential" below before attempting to speed it up.
 
-**Serial fallback and baseline oracle** — the same battery, no parallelism
-(`uv run python tools/run_gate.py --serial` runs exactly these). Run them exactly as written;
+**The commands themselves** — identical to what the driver runs. Run them exactly as written;
 where a runtime exceeds your shell limit, split by marker or by file — never skip a partition.
 
 ```
@@ -40,49 +41,87 @@ move, **not** a removal: the union across the four partitions is **848 tests bef
 after**, `fast ∩ data-noslow = ∅`, and the 43-test delta is exactly the `data, not slow` set.
 Under the reading rules below, this is the one sanctioned way a passed count may fall.
 
-Baseline after the work-unit-026 merge (`main` = `a38ca01`, warm caches — see "Caches"
-below). Keep this table current: a merged work unit that adds tests must update it in
+Baseline after the work-unit-0052 merge (warm caches — see "Caches" below; timings 2026-07-17). Keep this table current: a merged work unit that adds tests must update it in
 the same commit (the ruff-format file count moves with any new file):
 
 | Command | Baseline |
 |---|---|
-| fast (`not gpu and not slow`) | 739 passed, 1 skipped (mpi), ~13–15 min warm |
-| slow, no data | 31 passed, ~5–13 min |
-| data, not slow | 43 passed, ~7 min |
-| data and slow | 76 passed, 1 skipped, ~32 min |
-| ruff check / format | `All checks passed!` / `173 files already formatted` |
+| fast (`not gpu and not slow and not data`) | 696 passed, 1 skipped (mpi), ~2:28 warm (was 739/1 and ~13–15 min under the old expression, which double-ran the 43 `data` tests — work unit 0052) |
+| slow, no data | 31 passed, ~6:44 |
+| data, not slow | 43 passed, ~6:21 (6:21–>10:00 observed: page-cache bound) |
+| data and slow | 76 passed, 1 skipped, ~33:32 |
+| ruff check / format | `All checks passed!` / `175 files already formatted` |
 | mypy | `Success: no issues found in 50 source files` |
 | lint-imports | `Contracts: 2 kept, 0 broken` |
 
-## Parallelism (work unit 0052)
+Timings are ±15 % run-to-run on this host and the `data` rows swing further (page cache); treat
+them as orders of magnitude, not as a regression signal. **Counts** are the signal.
 
-`tools/run_gate.py` runs the four partitions in two waves. `--dist`/`-n` are chosen per
-partition by resource profile; the authoritative table is `spec-0052`'s, transcribed into the
-driver's `PARTITIONS` constant so a change lands in exactly one place.
+## Why the gate is sequential — do not "parallelize" it (work unit 0052)
 
-| Partition | `--dist` | `-n` | Why |
-|---|---|---|---|
-| fast | `load` | 10 | No reference loads → low RAM. `load` spreads the 89-test `test_scheme_constants.py` group that `loadscope` would pin to one worker. |
-| slow, no data | `load` | 6 | Only ~7 module groups; `load` splits the three 9-test convergence modules that would otherwise serialize. |
-| data, not slow | `loadscope` | 3 | Reference loads (RAM/IO); keep a module's savepoints on one worker. RAM-bounded — calibrated. |
-| data + slow | — | **1 (serial)** | **Does not scale — measured.** One test, `test_jw_t0_t1_bitwise_24h[gtfn_cpu]`, is 1519 s of the partition's 2012 s (75 %), and no worker count splits a single test. Serial is both fastest and lowest-RAM (33:04/5.0 GiB vs `-n 2` 33:08/6.4 GiB vs `-n 4` 35:13/9.0 GiB): `EXCLAIM_APE` is loaded once instead of per worker. |
+**This battery does not parallelize. Every attempt has been made and measured; none worked.**
+`tools/run_gate.py` runs the four partitions one at a time, and that is a measured decision,
+not an omission.
 
-**Waves:** W1 = `fast` ‖ `data+slow`, W2 = `slow-nodata` ‖ `data-noslow`. **At most one
-reference-loading partition per wave** — asserted by `_check_waves()`, and sound only because
-0052 made the partitions disjoint (before that, `fast` silently carried all 43 `data` tests and
-the pairing would have stacked reference loads). `data+slow` stays in a wave despite running
-serially: overlapping `fast` is precisely where its parallelism comes from.
+| Attempt | Wall-time | vs sequential (51.9 min) |
+|---|---|---|
+| pytest-xdist, per-partition worker counts | — | every gain inside the noise floor |
+| Two waves (`fast‖data-slow`, then `slow-nodata‖data-noslow`) | 50.4 min | nothing |
+| Two lanes (`data-slow` ‖ the other three chained) | 51.1 min | nothing |
 
-Calibration rule: each RAM-bounded cap is the largest `-n` whose **wave** peak RSS — measured
-on the wave as actually run, not on the partition alone — stays under 75 % of 31 GB (≈ 23 GB).
-Caps may only be lowered without new per-wave RSS evidence.
+The whole battery, sequential, measures **~50 min** (49.6 min on 2026-07-17; 51.9 min on
+2026-07-16 — the same schedule, 4.4 % apart, which is the noise floor breathing).
 
-**gt4py concurrent compile — safe, no warm-up needed.** gt4py 1.1.10 wraps the whole
-read-check-build-recheck of the persistent build cache in a `filelock.UnixFileLock`
+**What is measured.** A single pytest process uses **~1.1 of 16 cores with the host 90 % idle
+and `wa=0`** — the gate is neither CPU- nor IO-bound. Two processes therefore cannot be
+contending for CPU, yet running them concurrently slows each by **1.5–3.2×** and **conserves
+total wall-time**. Something serializes them.
+
+**What is NOT known: why.** The mechanism is unidentified, and no one should act as though it
+is. Work unit 0052 blamed gt4py's build-cache lock; that claim was checked against the source
+and is **wrong as stated** — `compiler.py:73` locks `cache.get_cache_folder(inp, ...)`, the
+*per-program* directory (490 lock files across 218 dirs; a global lock would be one), and a
+`workflow.CachedStep` in-memory dict sits above the `Compiler`, so warm in-process lookups
+never reach it. A briefly-held per-program lock cannot account for a 3.2× stretch.
+
+**So the prerequisite for any future gate parallelism is to identify the serializing resource
+first** — profile two concurrent partitions (`py-spy dump` on both, `strace -c`, `perf stat`
+for memory-bandwidth saturation) rather than reasoning from plausible mechanisms. Candidates:
+memory bandwidth; page-cache eviction between partitions that each want 8.7 GB of references
+against ~10 GB of cache; same-program lock contention. **Until it is identified and removed,
+xdist / wave / lane schedules and single-host CI sharding are all measured to buy nothing** —
+that part is empirical and does not depend on knowing why.
+
+**Where the win actually came from.** Not parallelism: **the disjointness fix** (`fast` gaining
+`and not data`). The old ~13–15 min `fast` was `fast` silently re-running the 43 duplicated
+`data` tests; without them it is ~2:28, and the battery is ~62 → ~50 min. That rests on set
+arithmetic (union 848 before and after), not timing — which is why it is the one result here
+that survived scrutiny.
+
+**Measurement discipline — read before optimising anything here.** Run-to-run variance on this
+host is **±15 %**, and the `data` partitions swing further: they are page-cache bound
+(`EXCLAIM APE` is 8.7 GB extracted against ~10 GB of cache), so their timings track cache
+warmth as much as scheduling. Work unit 0052 twice drew conclusions from single-sample
+comparisons and twice had them reverse on re-measurement (`fast` serial-vs-`-n 10` flipped
+sign; `data-noslow` went 6:38 → >10:00 in the *same* configuration). **A single-sample timing
+comparison on this battery measures the page cache.** Anything proposing to change the gate's
+scheduling needs multiple samples per configuration, a controlled page cache, and one variable
+at a time — or a structural argument that needs no timing at all.
+
+**RAM.** Sequential peak is **5.0 GiB** against a **23 GiB budget** (75 % of 31 GB), enforced
+rather than assumed: the driver samples the process tree's peak RSS every second and **fails
+the gate** if the budget is exceeded.
+
+**gt4py concurrent compile — safe; no warm-up needed.** gt4py 1.1.10 wraps the
+read-check-build-recheck of a program's build directory in a `filelock` lock
 (`gt4py/next/otf/compilation/compiler.py:73`, comment cites "multiple MPI ranks");
-`read_data()` is re-checked *inside* the lock, so a worker blocked on a peer's build skips the
-build rather than repeating it. Live in this cache: 490 lock files across 218 cache dirs. Note
-`--collect-only` executes no test body and so compiles nothing — it is not a warm-up.
+`read_data()` is re-checked *inside* the lock, so a process blocked on a peer's build skips the
+build rather than repeating it. The lock is **per-program** — keyed on that program's cache
+folder (`_core/locking.py`), which is why this cache holds 490 lock files across 218 dirs — and
+a `workflow.CachedStep` in-memory dict above the `Compiler` means warm in-process lookups do
+not reach it. Concurrent compilation is therefore safe, and this lock is **not** a
+demonstrated bottleneck (see "What is NOT known" above). `--collect-only` executes no test body
+and so compiles nothing — it is not a warm-up.
 
 Rules for reading gate output:
 - **Passed counts may only grow** (you added tests). Any `failed`, any `error`, or a

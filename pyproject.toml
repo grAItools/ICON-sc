@@ -27,9 +27,6 @@ dev = [
   "pytest>=8.0",
   "pytest-cov>=5.0",
   "pytest-mpi>=0.6",
-  # work unit 0052: parallel gate partitions (tools/run_gate.py). Lower bound only —
-  # no pin in constraints/cpu-ci.txt, which pins no pytest plugin (TD-52.1).
-  "pytest-xdist>=3.6",
   "ruff>=0.9",
   "mypy>=1.13",
   "import-linter>=2.1",

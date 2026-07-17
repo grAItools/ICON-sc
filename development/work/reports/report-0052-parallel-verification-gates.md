@@ -1,6 +1,21 @@
 # Work unit 0052 — Parallel verification gates
 
-**Branch:** `work/0052-parallel-verification-gates` · **Date:** 2026-07-16 · **State:** **blocked — one gate run outstanding** (§5 "Outstanding"). Not ready for review or PR.
+**Branch:** `work/0052-parallel-verification-gates` · **Date:** 2026-07-17 · **State:** ready for review
+
+> **Headline: this work unit delivers no parallelism, because the battery does not
+> parallelize.** A single pytest process uses ~1.1 of 16 cores with the host 90 % idle and
+> `wa=0` — neither CPU- nor IO-bound — yet concurrent processes serialize on *something*
+> (identified: no; see §5). pytest-xdist, two-wave
+> scheduling, and lane concurrency were each built and each measured to **nothing**
+> (50.4 / 51.1 min against a 51.9 min sequential baseline, all inside a ±15 % noise floor).
+> All three were withdrawn; the gate ships **sequential**.
+>
+> What it does deliver is **Item A**: the `fast` marker expression never excluded `data`, so
+> 43 tests ran twice every gate. Removing them takes the battery from ~62 to ~50 min — and
+> that result is proven by *set arithmetic*, not by timing, so none of the noise touches it.
+> The work unit's title is now a misnomer: these are *disjoint* gates, not parallel ones.
+> The negative results are recorded (TD-52.1 `rejected`; §6) so the next attempt starts by
+> identifying what actually serializes, instead of rediscovering that nothing helps.
 
 ## 1. What was built
 
@@ -15,26 +30,45 @@ profiles" premise any wave scheduling rests on. `fast` is now
 change; §2 criterion 1 carries the proof.
 
 **Item B — the gt4py concurrent-compile question: no mitigation needed, with evidence.** gt4py
-1.1.10 wraps the whole read-check-build-recheck of its persistent build cache in a
-`filelock.UnixFileLock` (`gt4py/next/otf/compilation/compiler.py:73`, whose own comment cites
-"multiple MPI ranks" as the motivating case). Crucially `read_data()` is re-checked *inside*
-the lock, so a worker that blocks on a peer's in-progress build skips the build entirely
-rather than redundantly repeating it. This is live, not theoretical: the cache carries 490
-lock files across 218 cache directories. No warm-up was built. A warm-up would also have been
+1.1.10 wraps the read-check-build-recheck of **a given program's** build directory in a
+`filelock` lock (`gt4py/next/otf/compilation/compiler.py:73` — `locking.lock(src_dir)`, where
+`src_dir = cache.get_cache_folder(inp, …)`; its own comment cites "multiple MPI ranks" as the
+motivating case). Crucially `read_data()` is re-checked *inside* the lock, so a process that
+blocks on a peer's in-progress build skips the build entirely rather than redundantly repeating
+it. This is live, not theoretical: the cache carries 490 lock files across 218 cache
+directories — which is also the proof that the lock is **per-program**, since a global one
+would be a single file. No warm-up was built. A warm-up would also have been
 unprovable here — the gate baseline is warm caches — and the plan explicitly notes that
 `--collect-only` runs no test body and so compiles nothing, making it a non-warm-up.
 
-**Item C — `tools/run_gate.py`.** An accelerated *executor* of the gate, never a redefinition
-of it: every pytest invocation is the policy's marker command verbatim plus `-n`/`--dist` and
-nothing else. `_assert_no_selection_flags` enforces that in code (`-x`, `--exitfirst`, `-k`,
-`--ignore`, `--deselect`, `-p` are refused), and `_check_waves` asserts every partition is
-scheduled exactly once with at most one RAM-heavy partition per wave, so the invariant Item A
-established cannot silently regress. Failures reproduce the offending partition's output
-verbatim, never a summary. Modes: default (lint battery as cheap fail-fast, then the two
-waves), `--serial` (the baseline oracle), `--partition` (+ `--workers` for calibration).
+**But Item B asked the wrong question, and that is this work unit's central lesson.** "Is
+concurrent compilation *safe*?" — yes. The question that decided the outcome was "is it
+*free*?" — and measurement says no (§5), for reasons still unidentified. Asking *that* in Item
+B, before building anything, would have failed the work unit's premise on day one and saved
+three designs. Note the lock is **per-program**, not global (`locking.py` keys it on the
+program's cache folder — hence 490 lock files across 218 dirs), and a `workflow.CachedStep`
+in-memory dict above the `Compiler` means warm in-process lookups never reach it: it is *not*
+a demonstrated bottleneck. Identifying the real one is the top follow-up (§6).
 
-**Item D — calibration, which invalidated part of the spec.** See §3 D1. The short version:
-`data+slow` does not scale and now runs serially; `fast` carries the win.
+**Item C — `tools/run_gate.py`.** An accelerated *executor* of the gate, never a redefinition
+of it: every pytest invocation is the policy's marker command **verbatim, with nothing added**
+(Amendment 4 removed even `-n`/`--dist`). `_assert_no_selection_flags` enforces that in code
+(`-x`, `--exitfirst`, `-k`, `--ignore`, `--deselect`, `-p` are refused) and `_check_order`
+asserts every partition is scheduled exactly once, so the invariant Item A established cannot
+silently regress. Failures reproduce the offending partition's output verbatim, never a
+summary. The RSS budget is enforced rather than documented: the driver samples the process
+tree each second and fails the gate above 23 GiB. Modes: default (lint battery as cheap
+fail-fast, then every partition in sequence), `--partition` (one alone), and `--serial` —
+which the spec's frozen CLI names, and which is now an explicit **alias of the default**: with
+concurrency withdrawn (D6), the gate and its own baseline oracle are the same command.
+
+**The schedule: sequential.** `fast` → `slow-nodata` → `data-noslow` → `data-slow`, one
+process at a time. Concurrency was built twice (waves, then lanes) and measured to buy nothing
+— see §3 D6 and §5.
+
+**Item D — calibration, which invalidated the work unit's premise.** See §3 D1, D5, D6. The
+short version: **no form of parallelism helps this battery**, because it does not parallelize —
+concurrent processes serialize on an unidentified shared resource. The win is Item A, which needs none.
 
 ## 2. Acceptance criteria → tests
 
@@ -43,10 +77,10 @@ waves), `--serial` (the baseline oracle), `--partition` (+ `--workers` for calib
 | 1 | Coverage invariance — union 848, `fast ∩ data-noslow = ∅` | §5 collection proof: both unions 848, intersection 0, delta exactly 43 |
 | 2 | Driver green, counts identical to `--serial` | §5 independence table |
 | 3 | Independence: serial ≡ parallel ≡ parallel | §5 independence table |
-| 4 | Per-wave peak RSS < 23 GB, measured on the waves as run | §5 wave RSS |
-| 5 | gt4py concurrent-compile answered with evidence | §1 Item B — `compiler.py:73`, 490 lock files / 218 dirs |
+| 4 | Peak RSS of the schedule < 23 GB, measured as it runs (amended) | §5 — measured *and* enforced in code (driver fails the gate above budget) |
+| 5 | gt4py concurrent-compile answered with evidence | §1 Item B — safe; lock is per-program (`locking.py`), 490 lock files / 218 dirs. Moot for the shipped gate (nothing runs concurrently), but answered as asked |
 | 6 | `verification-gates.md` updated in the same PR | Item F commit |
-| 7 | `pytest-xdist` dev lower bound; `uv.lock` regenerated; `constraints/cpu-ci.txt` untouched | §4 TD-52.1 |
+| 7 | **Inverted (Amendment 4): no dependency added.** `git diff main -- pyproject.toml uv.lock` empty; `uv sync --locked` resolves; `import xdist` → `ModuleNotFoundError` | §3 D5; TD-52.1 `rejected` |
 | 8 | Wall-time materially reduced vs the *measured* serial baseline (amended) | §5 wall-time |
 
 ## 3. Deviations
@@ -92,13 +126,77 @@ Both the reviewer and I had verified the *count* (55 of 77) and neither of us ch
 *time distribution*; the count was true and the inference drawn from it was worthless. Per
 AGENTS.md ("never silently resolve a contradiction") the options were put to the owner, who
 instructed: take the real win, and correct the spec rather than leave a false claim as merged
-truth. `data+slow` is now serial — fastest *and* lowest-RAM, so it wins on both axes — and
-stays in wave 1, where overlapping `fast` remains its only real parallelism. The spec carries
-an inline amendment banner; TD-52.2 records the sanction (same class as TD-35.5, an
+truth. `data+slow` became serial — fastest *and* lowest-RAM, so it won on both axes. The spec
+carries an inline amendment banner; TD-52.2 records the sanction (same class as TD-35.5, an
 owner-instructed edit of a frozen document).
+
+*(D1 kept `data+slow` inside a wave, on the reasoning that overlapping `fast` was still its
+only real parallelism. D5 and D6 later removed that too: there is no wave, because there is no
+useful concurrency anywhere. D1 stands as the record of the first correction, not as the
+shipped design.)*
 
 **No target was retrofitted to the achieved figure.** That is the substitution the gate-reading
 rules exist to prevent, and the amended criterion 8 forbids it explicitly.
+
+**D5 — pytest-xdist withdrawn entirely: the work unit's own premise did not survive
+measurement** (owner-instructed 2026-07-17; TD-52.1 → `rejected`; spec Amendment 4).
+
+D1's calibration was re-measured on a verifiably idle host (load 0.70, 23 GB free) and **did
+not reproduce**:
+
+| Measurement | D1's figure | Re-measured (idle) | |
+|---|---|---|---|
+| `fast` serial | 2:29 | 2:10, 2:40, 2:32 → **~2:28** (n=4) | |
+| `fast` `-n 10` | 2:22 | 2:49, 2:57 → **~2:43** (n=3) | serial now *ahead*; the "5 % xdist gain" was noise |
+| `data-noslow` `-n 3` | 6:38 | **>10:00** (timed out, 39/43 done) | the 19 % gain — xdist's last justification — evaporated |
+
+**Run-to-run variance is ±15 %, and worse on the `data` partitions.** The cause is the page
+cache: `EXCLAIM_APE` is 8.7 GB extracted against ~10 GB of `buff/cache`, so those partitions'
+timings track cache warmth as much as scheduling — and back-to-back calibration runs silently
+guarantee a warm cache, which a fresh run does not. Every xdist effect ever claimed in this
+work unit (5–19 %) sits *inside* that noise floor. They were measurements of the page cache.
+
+Consequences, and they are the deliverable:
+
+- **No dependency.** `pyproject.toml` and `uv.lock` end **byte-identical to main**
+  (`git diff main -- pyproject.toml uv.lock` is empty). `uv sync --locked` resolves;
+  `import xdist` → `ModuleNotFoundError`. TD-52.1 is `rejected`, not pending: there is
+  nothing to sign off.
+- **No knobs.** No `-n`, no `--dist`, no per-partition caps, no calibration table. Every
+  partition runs its marker command verbatim. The `--workers` flag is gone.
+- **The schedule rests on structure instead.** `data-slow` holds one core for ~33 min; the
+  other three chain alongside it. "Don't idle 15 cores for half an hour" needs no statistics.
+- **Amendment 3 was wrong and is superseded by Amendment 4.** It "calibrated" `slow-nodata` to
+  serial on a 37 s difference and kept `data-noslow` at `-n 3` on a 94 s one — both inside the
+  noise. It was fitted to a single sample per configuration. Recorded rather than quietly
+  corrected, because the failure mode is the reusable lesson: **a single-sample comparison on
+  this battery measures the page cache**, and the spec's own "starting targets… calibration"
+  language invited exactly that error by presenting the knobs as things to be tuned rather
+  than justified.
+
+The reusable rule now lives in `policies/verification-gates.md`: do not re-add xdist without a
+benchmark that beats the noise floor — multiple samples per configuration, controlled page
+cache, one variable at a time.
+
+**D6 — concurrency withdrawn too: the gate ships sequential** (owner-instructed 2026-07-17;
+spec Amendment 5). With xdist gone, the lane schedule was the remaining idea, and it rested on
+a structural argument I believed needed no statistics: `data-slow` holds one core for ~33 min,
+so the other 15 idle. It was implemented, measured, and **rejected — 51.1 min vs 51.9 min
+sequential**, with every partition 1.5–3.2× slower and total wall-time conserved (§5).
+
+The root cause (§5) is that the battery does not parallelize at all: one partition uses ~1.1
+of 16 cores with the host 90 % idle and `wa=0`, so it is neither CPU- nor IO-bound, and
+concurrent processes serialize on *something* — and what, precisely, is **not identified**
+(§5). Item B asked whether concurrent compilation was *safe* (yes) and never asked whether it
+was *free* (no). Had that question been asked first, the work unit's premise would have failed
+on day one, before any xdist, waves, lanes, or calibration were built.
+
+**The shipped design therefore contains no parallelism of any kind**, and the work unit's title
+is a misnomer: it delivers *disjoint* verification gates, not parallel ones. What it delivers
+is Item A, which needs none of it, plus a documented negative result so the next person does
+not rebuild this. `tools/run_gate.py` survives on its non-parallel merits — one command,
+verbatim capture, exit aggregation, an enforced RSS budget, and the marker expressions encoded
+so they cannot drift from the policy.
 
 **D2 — `spec-0052` is in the diff, which plan acceptance-7 does not list.** Acceptance-7
 enumerates an exhaustive file set (`pyproject.toml`, `uv.lock`, `tools/run_gate.py`,
@@ -121,19 +219,25 @@ not edited.
 
 ## 4. Tolerances & sign-off flags
 
-`TD-PENDING: TD-52.1` — `pytest-xdist>=3.6` added to `[dependency-groups].dev` as a
-lower-bound declaration; `execnet` arrives transitively; `uv.lock` regenerated with no other
-pin moved. `constraints/cpu-ci.txt` is deliberately untouched: it pins no pytest plugin at all
-(`pytest`, `pytest-cov`, `pytest-mpi`, `ruff`, `mypy`, `hypothesis` are all absent from it),
-so xdist does not belong there — now or in the CI follow-up. This is not a gt4py/icon4py pin
-bump. Registered: `REGISTRY.md` §3.
+**No dependency flag is raised: this work unit adds no dependency.** TD-52.1 proposed
+`pytest-xdist>=3.6` as a `dev` lower bound; it was measured, rejected, and withdrawn (D5), so
+`pyproject.toml`/`uv.lock` end byte-identical to main and `constraints/cpu-ci.txt` was never a
+question. Its `REGISTRY.md` §3 row is `rejected` and carries the evidence, so the negative
+result stays visible to whoever next reaches for xdist here.
 
-`TD-PENDING: TD-52.2` — the sanctioned `spec-0052` amendment (D1). Owner-instructed
-2026-07-16. Registered: `REGISTRY.md` §3.
+`TD-PENDING: TD-52.2` — the sanctioned `spec-0052` amendment, **Amendments 1–5** (D1, D5, D6).
+Owner-instructed 2026-07-16 (Amendments 1–2) and 2026-07-17 (Amendments 3–5, the withdrawal of
+xdist and of all concurrency). Registered: `REGISTRY.md` §3.
+
+**No tolerance, reduction-order, or marker change was made anywhere.** The 1519 s
+`test_jw_t0_t1_bitwise_24h[gtfn_cpu]` is the battery's floor and was left exactly as it is: it
+is a bitwise T0≡T1 equivalence test, which AGENTS.md protects. Making the gate faster by
+weakening it was never on the table.
 
 ## 5. Gates (dated)
 
-All 2026-07-16, gate host 16-core / 31 GB, warm caches.
+Gate host 16-core / 31 GB, warm caches. Dated per subsection: the calibration and the wave
+run are 2026-07-16; the re-measurement, the lane run, and the shipped gate are 2026-07-17.
 
 ### Coverage invariance — acceptance 1, the load-bearing proof
 
@@ -203,64 +307,167 @@ alone is that contention, and is why this run's wall-time is not quoted as the h
 | data-slow | `-n 2 --dist load` | 33:08 | 6.4 GiB |
 | data-slow | `-n 4 --dist load` | 35:13 | 9.0 GiB |
 
-Three findings, all counter to the spec's expectations:
+**These figures are single samples and were later shown unreliable — see the re-measurement
+below.** They are kept because the errors built on them are the record.
 
-1. **xdist helps exactly one partition.** `data-noslow` gains 19 % (6:38 vs 8:12). `fast`
-   gains 5 %. `slow-nodata` and `data-slow` are better serial. The corpus is dominated by
-   per-worker fixed costs (gt4py/icon4py import, reference loads) that xdist duplicates
-   rather than divides.
-2. **Wave contention dwarfs any xdist effect.** `data-noslow` runs 6:38 alone but **14:02**
-   paired with `slow-nodata` at `-n 6`. Those two, run alone and back-to-back, total 14:54 —
-   the pairing bought 0.8 min. A 2× stretch is not explained by core count on a 16-core host
-   with 9 workers, so the contended resource is elsewhere (memory bandwidth, or Item B's
-   gt4py cache lock). This is the battery's real cost driver and the spec did not anticipate it.
-3. **Almost the entire win is Item A, not parallelism.** The old `fast` baseline of ~13–15 min
-   was not `fast` being slow — it was `fast` silently running the 43 duplicated `data` tests
-   (~8:12 of work). With them removed, `fast` is 2:29 *serial*. Serial-with-Item-A is 51.9 min
-   against the ~62 min original; the entire xdist + wave apparatus then moves 51.9 → 50.4.
+### Re-measurement on a verifiably idle host — the calibration does not reproduce
+
+Prompted by the owner's question of whether the above was perturbed by other system activity.
+Host confirmed idle first (load 0.70, nothing but desktop + editor, 23 GB available):
+
+| Config | Calibration | Re-measured (idle) | |
+|---|---|---|---|
+| `fast` serial | 2:29 | 2:10 · 2:40 · 2:32 → **~2:28** (n=4) | |
+| `fast` `-n 10` | 2:22 | 2:49 · 2:57 → **~2:43** (n=3) | **sign flipped** — serial now ahead |
+| `data-noslow` `-n 3` | 6:38 | **>10:00** (timed out, 39/43 done) | **+50 %**, same config |
+
+**Run-to-run variance is ±15 %, worse on the `data` partitions.** They are page-cache bound:
+`EXCLAIM_APE` is 8.7 GB extracted against ~10 GB of `buff/cache`, so their timings track cache
+warmth — and back-to-back calibration runs silently guarantee a warm cache where a fresh run
+does not. **Every xdist effect claimed above (5–19 %) sits inside that noise floor.** They were
+measurements of the page cache. Consequence: xdist withdrawn (§3 D5, TD-52.1 `rejected`).
+
+### The lane schedule — built, measured, rejected
+
+With xdist gone, the remaining idea was structural: `data-slow` holds one core for ~33 min, so
+run the other three beside it. Implemented and measured:
+
+```
+lanes (concurrent): data-slow | fast -> slow-nodata -> data-noslow
+  [ok ] fast          696 passed, 1 skipped, 186 deselected, 41 warnings in 263.85s (0:04:23)
+  [ok ] slow-nodata   31 passed, 852 deselected, 5 warnings in 1190.94s (0:19:50)
+  [ok ] data-slow     76 passed, 1 skipped, 806 deselected, 28 warnings in 3006.33s (0:50:06)
+  [ok ] data-noslow   43 passed, 840 deselected, 11 warnings in 1595.90s (0:26:35)
+
+peak RSS: 7.7 GiB  (budget 23 GiB)
+wall-time: 51.1 min
+GATE: green
+```
+
+**51.1 min against the 51.9 min sequential oracle — nothing**, while every partition slowed
+1.5–3.2× (`data-slow` 33:04 → 50:06; `slow-nodata` 7:39 → 19:50; `data-noslow` 8:12 → 26:35).
+Total wall-time was *conserved*. That is the signature of a shared serializing resource, not of
+parallel work. Concurrency withdrawn (§3 D6).
+
+### Why nothing concurrent works — measured, and NOT explained
+
+Measured on a single `fast` partition, host otherwise idle:
+
+```
+real pytest pid: 2088077
+pytest %cpu=113  threads=101
+   vmstat: r=2 b=0 us=9 sy=1 id=90 wa=0     (repeated across 5 samples)
+```
+
+**One partition uses ~1.1 of 16 cores while the host is 90 % idle, with `wa=0` and `b=0`.** The
+gate is neither CPU-bound nor IO-bound. Two processes using ~2 of 16 cores *cannot* contend for
+CPU — so the 1.5–3.2× slowdowns above are not resource exhaustion. **Something serializes the
+partitions. What, is not established, and this report does not claim otherwise.**
+
+**A retracted claim, and the lesson in it.** An earlier draft of this report asserted the cause
+was gt4py's build-cache lock — "a global `filelock.UnixFileLock`, acquired on every program
+lookup, warm hits included". The reviewer checked it against the source and it is **wrong on
+both counts**:
+
+- `compiler.py:73` is `with locking.lock(src_dir)` where `src_dir = cache.get_cache_folder(inp, …)`.
+  `_core/locking.py` places the lock file *inside that program's* cache folder. The lock is
+  **per-program**, not global — and this report's own evidence refutes the "global" reading:
+  490 lock files across 218 directories. A global lock would be **one** file.
+  `development/references/lock.toml` recorded "keyed on the per-program cache folder" from the
+  start; the draft contradicted the work unit's own ledger.
+- `gtx.gtfn_cpu` resolves to `run_gtfn_cpu_cached`, whose executor is a `workflow.CachedStep`
+  holding an **in-memory dict** *above* the `Compiler`. A warm in-process lookup returns from
+  that dict and never reaches the lock. It is taken once per distinct program per process
+  (~218×), briefly — which cannot account for a 3.2× stretch over 33 minutes.
+
+So the mechanism is unknown. Candidates worth profiling: memory bandwidth; page-cache eviction
+between partitions that each want 8.7 GB of references against ~10 GB of cache; same-program
+lock contention. The honest instrument is a profiler (`py-spy dump` on both partitions mid-run,
+`strace -c`, `perf stat`), not reasoning from plausible mechanisms.
+
+**This changes no decision.** The withdrawal of xdist, waves, and lanes rests on the
+measurements, which stand without any mechanism. What it changes is the *guidance*: the
+prerequisite for future gate parallelism is to identify the serializing resource, not to "fix
+the gt4py lock". Beneath whatever it turns out to be lies the 1519 s single test.
+
+**The lesson, stated plainly because it is the one worth keeping.** This work unit's whole
+story is claims that felt obvious and dissolved under measurement — the 55-test module, the
+xdist gains, the lane schedule. Then the explanation that *replaced* them was asserted without
+verification and got the same treatment. Reaching for a mechanism that fits the data is not the
+same as checking it, and the mistake survives right up to the moment someone reads the source.
 
 ### Independence — Item E / acceptance 2 & 3
 
-| Partition | Serial (oracle) | Parallel (starting targets) |
-|---|---|---|
-| fast | 696 passed, 1 skipped | 696 passed, 1 skipped |
-| slow-nodata | 31 passed | 31 passed |
-| data-noslow | 43 passed | 43 passed |
-| data-slow | 76 passed, 1 skipped | 76 passed, 1 skipped |
+Counts across **every** execution mode measured in this work unit — sequential, xdist at four
+different worker configurations, and two concurrent schedules (waves and lanes):
 
-Identical throughout. Skips are the permitted set (1 mpi opt-in; the 1 upstream MCH diffusion
-skip; gpu-marked tests deselected by marker, no CUDA device on this host). No new skip.
+| Partition | Sequential | xdist (all configs) | Waves | Lanes |
+|---|---|---|---|---|
+| fast | 696 passed, 1 skipped | 696 passed, 1 skipped | 696 passed, 1 skipped | 696 passed, 1 skipped |
+| slow-nodata | 31 passed | 31 passed | 31 passed | 31 passed |
+| data-noslow | 43 passed | 43 passed | 43 passed | 43 passed |
+| data-slow | 76 passed, 1 skipped | 76 passed, 1 skipped | 76 passed, 1 skipped | 76 passed, 1 skipped |
 
-### Outstanding — why this report is not ready for review
+Identical throughout — a stronger result than the criterion asks for, since the shipped design
+has only one execution mode. Skips are the permitted set (1 mpi opt-in; the 1 upstream MCH
+diffusion skip; gpu-marked tests deselected by marker, no CUDA device). No new skip.
 
-**The full gate has not been run at the Amendment-3 calibrated caps.** Three consecutive
-attempts were killed by the environment within ~1 min each (the three earlier long runs above
-completed normally); foreground execution caps below the ~44 min the battery needs. No
-partial or estimated figure is substituted here. Still required:
+### The shipped gate — `tools/run_gate.py` (sequential), 2026-07-17
 
-1. `tools/run_gate.py` at the calibrated caps, **twice** — for the headline wall-time, and for
-   Item E's parallel-repeat leg (serial ≡ parallel ≡ parallel).
-2. **Per-wave peak RSS at the calibrated caps** — acceptance 4 demands the waves be measured
-   *as actually run*. The 7.8 / 5.4 GiB above are the *starting-target* caps; the calibrated
-   caps use strictly fewer workers, so the true figures can only be lower — but "can only be
-   lower" is an inference, and this criterion explicitly refuses inference. It is unmet until
-   measured.
+```
+logs: .../gate_final
+lint battery (cheap fail-fast):
+  [ok ] ruff-check     0.0 min  All checks passed!
+  [ok ] ruff-format    0.0 min  175 files already formatted
+  [ok ] mypy           0.0 min  Success: no issues found in 50 source files
+  [ok ] lint-imports   0.0 min  Contracts: 2 kept, 0 broken.
+partitions (sequential): fast -> slow-nodata -> data-noslow -> data-slow
+  [ok ] fast           2.8 min  696 passed, 1 skipped, 186 deselected, 41 warnings in 164.01s (0:02:44)
+  [ok ] slow-nodata    6.8 min  31 passed, 852 deselected, 5 warnings in 404.75s (0:06:44)
+  [ok ] data-noslow    6.4 min  43 passed, 840 deselected, 11 warnings in 381.52s (0:06:21)
+  [ok ] data-slow     33.6 min  76 passed, 1 skipped, 806 deselected, 28 warnings in 2012.35s (0:33:32)
 
-Projection, recorded as a projection and **not** a result: wave 1 ≈ 36 min (`data-slow`
-serial + contention), wave 2 ≈ 8 min (max of 7:39 and 6:38, now only 4 processes), total
-≈ **44 min** against the ~62 min original ≈ 1.4×.
+peak RSS: 5.0 GiB  (budget 23 GiB)
+wall-time: 49.6 min
+GATE: green
+```
+
+**49.6 min against the ~62 min original battery** (acceptance 8), with peak RSS 5.0 GiB against
+the 23 GiB budget (acceptance 4 — measured on the schedule as actually run, and enforced in
+code). Counts match the oracle and every other configuration exactly (acceptance 2, 3).
+
+**All of that reduction is Item A.** The sequential oracle measured 51.9 min and this run 49.6
+— the same schedule, 4.4 % apart, which is simply the ±15 % noise floor breathing. Nothing in
+this work unit's scheduling contributes; the disjointness fix does all the work, and it is the
+one claim here that never needed a stopwatch.
 
 ## 6. Follow-ups
 
-- **Restructure the waves — needs a trunk decision, worth ~8 min.** The measured per-wave RSS
-  (7.8 / 5.4 GiB against the ≈ 23 GB budget) shows "one reference-loading partition per wave"
-  is far more conservative than this host requires: the two RAM-heavy partitions together peak
-  around 9 GiB, comfortably inside budget. `data-slow` is a 33-min serial critical path with
-  most of the machine idle beside it. Chaining the other three alongside it in a single wave
-  (2:22 + 7:39 + 6:38 = 16:39 of work) projects to ≈ 36 min rather than ≈ 44. This is a
-  structural change to the spec's wave design, not a calibration output, so it was recorded
-  rather than taken. It must be validated against per-wave RSS, and note finding 2 in §5:
-  concurrency on this host is *not* free, so the projection needs measuring, not assuming.
+- **Identify what serializes concurrent partitions — the precondition for *any* future gate
+  parallelism.** The fact is measured and solid (§5): a host at 90 % idle with `wa=0` cannot
+  run two partitions at once for free — each slows 1.5–3.2× and total wall-time is conserved.
+  The *cause* is unknown, and this work unit's guess (gt4py's cache lock) was checked against
+  the source and does not hold: the lock is per-program, not global, and warm in-process
+  lookups never reach it. **Profile before theorising** — `py-spy dump` on two concurrent
+  partitions mid-run, `strace -c`, `perf stat` for memory-bandwidth saturation. Candidates:
+  memory bandwidth; page-cache eviction between partitions each wanting 8.7 GB of references
+  against ~10 GB of cache; same-program lock contention. Until it is identified and removed,
+  **no xdist, no waves, no lanes, and no single-host CI sharding will help this battery** —
+  which is empirical and holds regardless of the cause. Start here rather than rebuilding
+  schedules, as this work unit did four times.
+- **A real benchmark harness, if gate timing is ever to be optimised again.** Every timing
+  conclusion in this work unit that wasn't structural turned out to be noise (D5). Anyone
+  revisiting this needs: multiple samples per configuration, a controlled page cache (the
+  `data` partitions are dominated by whether 8.7 GB of `EXCLAIM_APE` is warm), and one
+  variable at a time. Without that, single-sample comparisons on this battery measure the
+  page cache and nothing else. This is the prerequisite for re-opening xdist (TD-52.1) or
+  tuning the lane schedule — not a nice-to-have.
+- **`data+slow`'s 1519 s test is the floor beneath everything.** Even if the gt4py lock were
+  fixed tomorrow, no schedule beats 25.3 min while `test_jw_t0_t1_bitwise_24h[gtfn_cpu]` runs
+  as one test. It is a protected bitwise T0≡T1 test (AGENTS.md), so it cannot be weakened —
+  any real gain has to come from making it *cheaper*, not from scheduling around it. Out of
+  scope here and noted only so the ordering is clear: gt4py lock first, this second, and
+  everything else in this work unit was noise.
 - **Shorten `data+slow`'s critical path — the only lever left, and it is worth ~8 min.**
   `data+slow` measures 33:08 at `-n 2` but its theoretical floor is 25.3 min (the single long
   test). The gap is scheduling: `test_jw_t0_t1_bitwise_24h` sits late in collection order, so
