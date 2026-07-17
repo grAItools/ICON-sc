@@ -8,11 +8,11 @@ repos:
   - repo: local
     hooks:
       - id: mypy-core
-        name: mypy --strict on symcon-core
-        entry: uv run mypy --strict -p symcon.core
+        name: mypy --strict on icon-sc-core
+        entry: uv run mypy --strict -p icon_sc.core
         language: system
         types: [python]
-        files: ^packages/symcon-core/src/
+        files: ^packages/icon-sc-core/src/
         pass_filenames: false
       - id: lint-imports
         name: import-linter contracts

@@ -1,25 +1,25 @@
-# symcon workspace root — virtual project (not installable); members under packages/.
+# ICON-sc workspace root — virtual project (not installable); members under packages/.
 # Dependency pins live in constraints/ (S01); packages declare lower bounds only.
 
 [project]
-name = "symcon-workspace"
+name = "icon-sc-workspace"
 version = "0.0.0"
-description = "symcon monorepo workspace root"
+description = "ICON-sc monorepo workspace root"
 # Upper bound from gt4py 1.1.10 (requires-python <3.15); see constraints/README.md.
 requires-python = ">=3.10,<3.15"
 dependencies = [
-  "symcon-core",
-  "symcon-icon",
-  "symcon-bridges",
+  "icon-sc-core",
+  "icon-sc-icon",
+  "icon-sc-bridges",
 ]
 
 [dependency-groups]
 dev = [
   "hypothesis>=6.100",
   # S06 datatest bridge: icon4py serialbox fixtures (pinned pair, constraints/cpu-ci.txt).
-  "symcon-icon[datatest]",
+  "icon-sc-icon[datatest]",
   # task 26: synthetic grid fixtures (pin in constraints/cpu-ci.txt).
-  "symcon-icon[gridgen]",
+  "icon-sc-icon[gridgen]",
   # S10 F-tier: CPU jax for the functional lowering + L8 gradient tests (pin recorded in
   # constraints/cpu-ci.txt). mpi4jax (the rest of the [jax] extra) arrives with the
   # distributed F-tier step; pulling it here would drag an MPI toolchain into the CPU gate.
@@ -47,17 +47,17 @@ prerelease = "allow"
 members = ["packages/*"]
 
 [tool.uv.sources]
-symcon-core = { workspace = true }
-symcon-icon = { workspace = true }
-symcon-bridges = { workspace = true }
+icon-sc-core = { workspace = true }
+icon-sc-icon = { workspace = true }
+icon-sc-bridges = { workspace = true }
 
 [tool.ruff]
 line-length = 100
 target-version = "py310"
 src = [
-  "packages/symcon-core/src",
-  "packages/symcon-icon/src",
-  "packages/symcon-bridges/src",
+  "packages/icon-sc-core/src",
+  "packages/icon-sc-icon/src",
+  "packages/icon-sc-bridges/src",
 ]
 
 [tool.ruff.lint]
@@ -77,19 +77,19 @@ ignore = [
 convention = "google"
 
 [tool.ruff.lint.isort]
-known-first-party = ["symcon"]
+known-first-party = ["icon_sc"]
 
 [tool.mypy]
 python_version = "3.10"
 namespace_packages = true
 explicit_package_bases = true
 mypy_path = [
-  "packages/symcon-core/src",
-  "packages/symcon-icon/src",
-  "packages/symcon-bridges/src",
+  "packages/icon-sc-core/src",
+  "packages/icon-sc-icon/src",
+  "packages/icon-sc-bridges/src",
 ]
 
-# The AGENTS.md gate is `mypy --strict -p symcon.core` (strict is not a per-module
+# The AGENTS.md gate is `mypy --strict -p icon_sc.core` (strict is not a per-module
 # option); icon/bridges tighten later.
 [[tool.mypy.overrides]]
 module = "cupy.*"

@@ -27,10 +27,10 @@ prerelease-mode = "allow"
 
 [manifest]
 members = [
-    "symcon-bridges",
-    "symcon-core",
-    "symcon-icon",
-    "symcon-workspace",
+    "icon-sc-bridges",
+    "icon-sc-core",
+    "icon-sc-icon",
+    "icon-sc-workspace",
 ]
 
 [[package]]
@@ -2116,6 +2116,182 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/88/2f/f10a3c315b86407325a7e5f33bde52c054c1562f69217020591e2e43c0cb/icon_grid_generator-0.3.2.tar.gz", hash = "sha256:984b7c4c686444ccf5d2bcec13cc4c742bbe22d0276910819bd6b3d4c4ca017d", size = 1039507, upload-time = "2026-07-07T11:50:44.127Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e8/df/65f85ac03a209768184f0ff3c063f2f656279d3b6edf2b547fa89ef99e0c/icon_grid_generator-0.3.2-py3-none-any.whl", hash = "sha256:f25628432f75ea31d36727b454577b44a0b543b449b76f5df20e82478e99ca66", size = 63872, upload-time = "2026-07-07T11:50:42.771Z" },
+]
+
+[[package]]
+name = "icon-sc-bridges"
+version = "0.1.0"
+source = { editable = "packages/icon-sc-bridges" }
+dependencies = [
+    { name = "cffi" },
+    { name = "icon-sc-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cffi", specifier = ">=1.16" },
+    { name = "icon-sc-core", editable = "packages/icon-sc-core" },
+]
+
+[[package]]
+name = "icon-sc-core"
+version = "0.1.0"
+source = { editable = "packages/icon-sc-core" }
+dependencies = [
+    { name = "cftime" },
+    { name = "netcdf4", version = "1.7.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
+    { name = "netcdf4", version = "1.7.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or platform_machine != 'ARM64' or sys_platform != 'win32'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pint", version = "0.24.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "pint", version = "0.25.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "xarray" },
+]
+
+[package.optional-dependencies]
+gpu = [
+    { name = "cupy-cuda12x" },
+]
+gt4py = [
+    { name = "gt4py" },
+]
+jax = [
+    { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "jax", version = "0.10.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "mpi4jax" },
+]
+mpi = [
+    { name = "ghex" },
+    { name = "mpi4py" },
+]
+native = [
+    { name = "cffi" },
+    { name = "cmake" },
+    { name = "scikit-build-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cffi", marker = "extra == 'native'", specifier = ">=1.16" },
+    { name = "cftime", specifier = ">=1.6" },
+    { name = "cmake", marker = "extra == 'native'", specifier = ">=3.28" },
+    { name = "cupy-cuda12x", marker = "extra == 'gpu'", specifier = ">=13.0" },
+    { name = "ghex", marker = "extra == 'mpi'", specifier = ">=0.7.0" },
+    { name = "gt4py", marker = "extra == 'gt4py'", specifier = ">=1.1.10" },
+    { name = "jax", marker = "extra == 'jax'", specifier = ">=0.6.0" },
+    { name = "mpi4jax", marker = "extra == 'jax'", specifier = ">=0.6.0" },
+    { name = "mpi4py", marker = "extra == 'mpi'", specifier = ">=3.1.5" },
+    { name = "netcdf4", specifier = ">=1.6" },
+    { name = "numpy", specifier = ">=1.23.3" },
+    { name = "pint", specifier = ">=0.23" },
+    { name = "scikit-build-core", marker = "extra == 'native'", specifier = ">=0.10" },
+    { name = "xarray", specifier = ">=2024.1" },
+]
+provides-extras = ["gt4py", "gpu", "jax", "mpi", "native"]
+
+[[package]]
+name = "icon-sc-icon"
+version = "0.1.0"
+source = { editable = "packages/icon-sc-icon" }
+dependencies = [
+    { name = "array-api-compat" },
+    { name = "icon-sc-core" },
+    { name = "icon4py-atmosphere-microphysics" },
+    { name = "icon4py-common" },
+    { name = "netcdf4", version = "1.7.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
+    { name = "netcdf4", version = "1.7.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or platform_machine != 'ARM64' or sys_platform != 'win32'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+
+[package.optional-dependencies]
+datatest = [
+    { name = "icon4py-atmosphere-diffusion" },
+    { name = "icon4py-atmosphere-dycore" },
+    { name = "icon4py-atmosphere-microphysics" },
+    { name = "icon4py-driver" },
+    { name = "icon4py-standalone-driver" },
+    { name = "icon4py-testing" },
+]
+gridgen = [
+    { name = "icon-grid-generator" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "array-api-compat", specifier = ">=1.4" },
+    { name = "icon-grid-generator", marker = "extra == 'gridgen'", specifier = ">=0.3.2" },
+    { name = "icon-sc-core", editable = "packages/icon-sc-core" },
+    { name = "icon4py-atmosphere-diffusion", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "icon4py-atmosphere-dycore", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "icon4py-atmosphere-microphysics", specifier = ">=0.2.0" },
+    { name = "icon4py-atmosphere-microphysics", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "icon4py-common", specifier = ">=0.2.0" },
+    { name = "icon4py-driver", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "icon4py-standalone-driver", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "icon4py-testing", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
+    { name = "netcdf4", specifier = ">=1.6" },
+    { name = "numpy", specifier = ">=1.23.3" },
+]
+provides-extras = ["gridgen", "datatest"]
+
+[[package]]
+name = "icon-sc-workspace"
+version = "0.0.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "icon-sc-bridges" },
+    { name = "icon-sc-core" },
+    { name = "icon-sc-icon" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "furo" },
+    { name = "hypothesis" },
+    { name = "icon-sc-icon", extra = ["datatest", "gridgen"] },
+    { name = "import-linter" },
+    { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "jax", version = "0.10.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "matplotlib", version = "3.11.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "mypy" },
+    { name = "myst-parser", version = "4.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "myst-parser", version = "5.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-mpi" },
+    { name = "ruff" },
+    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "sphinx", version = "9.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "icon-sc-bridges", editable = "packages/icon-sc-bridges" },
+    { name = "icon-sc-core", editable = "packages/icon-sc-core" },
+    { name = "icon-sc-icon", editable = "packages/icon-sc-icon" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "furo", specifier = ">=2025.12.19" },
+    { name = "hypothesis", specifier = ">=6.100" },
+    { name = "icon-sc-icon", extras = ["datatest"], editable = "packages/icon-sc-icon" },
+    { name = "icon-sc-icon", extras = ["gridgen"], editable = "packages/icon-sc-icon" },
+    { name = "import-linter", specifier = ">=2.1" },
+    { name = "jax", specifier = ">=0.6.0" },
+    { name = "matplotlib", specifier = ">=3.8" },
+    { name = "mypy", specifier = ">=1.13" },
+    { name = "myst-parser", specifier = ">=4.0" },
+    { name = "pre-commit", specifier = ">=4.0" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-cov", specifier = ">=5.0" },
+    { name = "pytest-mpi", specifier = ">=0.6" },
+    { name = "ruff", specifier = ">=0.9" },
+    { name = "sphinx", specifier = ">=8.1" },
 ]
 
 [[package]]
@@ -5676,182 +5852,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/3b/44/6716b257b0aa6bfd51a1b31665d1c205fb12cb5ad56de752dfa15657de2f/sphinxcontrib_serializinghtml-2.0.0.tar.gz", hash = "sha256:e9d912827f872c029017a53f0ef2180b327c3f7fd23c87229f7a8e8b70031d4d", size = 16080, upload-time = "2024-07-29T01:10:09.332Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/52/a7/d2782e4e3f77c8450f727ba74a8f12756d5ba823d81b941f1b04da9d033a/sphinxcontrib_serializinghtml-2.0.0-py3-none-any.whl", hash = "sha256:6e2cb0eef194e10c27ec0023bfeb25badbbb5868244cf5bc5bdc04e4464bf331", size = 92072, upload-time = "2024-07-29T01:10:08.203Z" },
-]
-
-[[package]]
-name = "symcon-bridges"
-version = "0.1.0"
-source = { editable = "packages/symcon-bridges" }
-dependencies = [
-    { name = "cffi" },
-    { name = "symcon-core" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "cffi", specifier = ">=1.16" },
-    { name = "symcon-core", editable = "packages/symcon-core" },
-]
-
-[[package]]
-name = "symcon-core"
-version = "0.1.0"
-source = { editable = "packages/symcon-core" }
-dependencies = [
-    { name = "cftime" },
-    { name = "netcdf4", version = "1.7.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
-    { name = "netcdf4", version = "1.7.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or platform_machine != 'ARM64' or sys_platform != 'win32'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "pint", version = "0.24.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "pint", version = "0.25.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "xarray" },
-]
-
-[package.optional-dependencies]
-gpu = [
-    { name = "cupy-cuda12x" },
-]
-gt4py = [
-    { name = "gt4py" },
-]
-jax = [
-    { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "jax", version = "0.10.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "mpi4jax" },
-]
-mpi = [
-    { name = "ghex" },
-    { name = "mpi4py" },
-]
-native = [
-    { name = "cffi" },
-    { name = "cmake" },
-    { name = "scikit-build-core" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "cffi", marker = "extra == 'native'", specifier = ">=1.16" },
-    { name = "cftime", specifier = ">=1.6" },
-    { name = "cmake", marker = "extra == 'native'", specifier = ">=3.28" },
-    { name = "cupy-cuda12x", marker = "extra == 'gpu'", specifier = ">=13.0" },
-    { name = "ghex", marker = "extra == 'mpi'", specifier = ">=0.7.0" },
-    { name = "gt4py", marker = "extra == 'gt4py'", specifier = ">=1.1.10" },
-    { name = "jax", marker = "extra == 'jax'", specifier = ">=0.6.0" },
-    { name = "mpi4jax", marker = "extra == 'jax'", specifier = ">=0.6.0" },
-    { name = "mpi4py", marker = "extra == 'mpi'", specifier = ">=3.1.5" },
-    { name = "netcdf4", specifier = ">=1.6" },
-    { name = "numpy", specifier = ">=1.23.3" },
-    { name = "pint", specifier = ">=0.23" },
-    { name = "scikit-build-core", marker = "extra == 'native'", specifier = ">=0.10" },
-    { name = "xarray", specifier = ">=2024.1" },
-]
-provides-extras = ["gt4py", "gpu", "jax", "mpi", "native"]
-
-[[package]]
-name = "symcon-icon"
-version = "0.1.0"
-source = { editable = "packages/symcon-icon" }
-dependencies = [
-    { name = "array-api-compat" },
-    { name = "icon4py-atmosphere-microphysics" },
-    { name = "icon4py-common" },
-    { name = "netcdf4", version = "1.7.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'" },
-    { name = "netcdf4", version = "1.7.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or platform_machine != 'ARM64' or sys_platform != 'win32'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "symcon-core" },
-]
-
-[package.optional-dependencies]
-datatest = [
-    { name = "icon4py-atmosphere-diffusion" },
-    { name = "icon4py-atmosphere-dycore" },
-    { name = "icon4py-atmosphere-microphysics" },
-    { name = "icon4py-driver" },
-    { name = "icon4py-standalone-driver" },
-    { name = "icon4py-testing" },
-]
-gridgen = [
-    { name = "icon-grid-generator" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "array-api-compat", specifier = ">=1.4" },
-    { name = "icon-grid-generator", marker = "extra == 'gridgen'", specifier = ">=0.3.2" },
-    { name = "icon4py-atmosphere-diffusion", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
-    { name = "icon4py-atmosphere-dycore", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
-    { name = "icon4py-atmosphere-microphysics", specifier = ">=0.2.0" },
-    { name = "icon4py-atmosphere-microphysics", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
-    { name = "icon4py-common", specifier = ">=0.2.0" },
-    { name = "icon4py-driver", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
-    { name = "icon4py-standalone-driver", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
-    { name = "icon4py-testing", marker = "extra == 'datatest'", specifier = ">=0.2.0" },
-    { name = "netcdf4", specifier = ">=1.6" },
-    { name = "numpy", specifier = ">=1.23.3" },
-    { name = "symcon-core", editable = "packages/symcon-core" },
-]
-provides-extras = ["gridgen", "datatest"]
-
-[[package]]
-name = "symcon-workspace"
-version = "0.0.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "symcon-bridges" },
-    { name = "symcon-core" },
-    { name = "symcon-icon" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "furo" },
-    { name = "hypothesis" },
-    { name = "import-linter" },
-    { name = "jax", version = "0.6.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "jax", version = "0.10.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "matplotlib", version = "3.11.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "mypy" },
-    { name = "myst-parser", version = "4.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "myst-parser", version = "5.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-mpi" },
-    { name = "ruff" },
-    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
-    { name = "sphinx", version = "9.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "symcon-icon", extra = ["datatest", "gridgen"] },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "symcon-bridges", editable = "packages/symcon-bridges" },
-    { name = "symcon-core", editable = "packages/symcon-core" },
-    { name = "symcon-icon", editable = "packages/symcon-icon" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "furo", specifier = ">=2025.12.19" },
-    { name = "hypothesis", specifier = ">=6.100" },
-    { name = "import-linter", specifier = ">=2.1" },
-    { name = "jax", specifier = ">=0.6.0" },
-    { name = "matplotlib", specifier = ">=3.8" },
-    { name = "mypy", specifier = ">=1.13" },
-    { name = "myst-parser", specifier = ">=4.0" },
-    { name = "pre-commit", specifier = ">=4.0" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-cov", specifier = ">=5.0" },
-    { name = "pytest-mpi", specifier = ">=0.6" },
-    { name = "ruff", specifier = ">=0.9" },
-    { name = "sphinx", specifier = ">=8.1" },
-    { name = "symcon-icon", extras = ["datatest"], editable = "packages/symcon-icon" },
-    { name = "symcon-icon", extras = ["gridgen"], editable = "packages/symcon-icon" },
 ]
 
 [[package]]

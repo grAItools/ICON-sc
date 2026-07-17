@@ -3,9 +3,9 @@ requires = ["hatchling>=1.25"]
 build-backend = "hatchling.build"
 
 [project]
-name = "symcon-core"
+name = "icon-sc-core"
 version = "0.1.0"
-description = "symcon composition framework: state/vault/plan, contracts, coupling algebra, comm, context, driver, generic I/O"
+description = "ICON-sc composition framework: state/vault/plan, contracts, coupling algebra, comm, context, driver, generic I/O"
 readme = "README.md"
 license = { text = "BSD-3-Clause" }
 requires-python = ">=3.10"
@@ -17,7 +17,7 @@ dependencies = [
   "pint>=0.23",
   "cftime>=1.6",
   # S03 io/netcdf.py (NetCDFMonitor): xarray's netcdf4 engine. Generic I/O is part of
-  # symcon-core's mandate (package description); lower bound only.
+  # icon-sc-core's mandate (package description); lower bound only.
   "netcdf4>=1.6",
 ]
 
@@ -32,4 +32,4 @@ mpi = ["mpi4py>=3.1.5", "ghex>=0.7.0"]
 native = ["cffi>=1.16", "cmake>=3.28", "scikit-build-core>=0.10"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/symcon"]
+packages = ["src/icon_sc"]

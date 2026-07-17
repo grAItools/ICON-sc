@@ -7,16 +7,16 @@ requires = ["hatchling>=1.25"]
 build-backend = "hatchling.build"
 
 [project]
-name = "symcon-bridges"
+name = "icon-sc-bridges"
 version = "0.1.0"
-description = "symcon Fortran bridge components (CFFI): ecRad reference, Tiedtke-Bechtold, TERRA"
+description = "ICON-sc Fortran bridge components (CFFI): ecRad reference, Tiedtke-Bechtold, TERRA"
 readme = "README.md"
 license = { text = "BSD-3-Clause" }
 requires-python = ">=3.10"
 dependencies = [
-  "symcon-core",
+  "icon-sc-core",
   "cffi>=1.16",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/symcon"]
+packages = ["src/icon_sc"]

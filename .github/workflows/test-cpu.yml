@@ -36,7 +36,7 @@ jobs:
         run: |
           uv venv --python ${{ matrix.python }}
           uv pip install --prerelease=allow \
-            -e packages/symcon-core -e packages/symcon-icon -e packages/symcon-bridges \
+            -e packages/icon-sc-core -e packages/icon-sc-icon -e packages/icon-sc-bridges \
             -c constraints/${{ matrix.constraints }}.txt \
             pytest pytest-mpi
       - name: pinned icon4py imports (SPEC S01 acceptance 5)
@@ -66,5 +66,5 @@ jobs:
           python-version: "3.10"
       - run: |
           uv venv
-          uv pip install -e packages/symcon-core
-          .venv/bin/python -c "import symcon.core, symcon.core.testing"
+          uv pip install -e packages/icon-sc-core
+          .venv/bin/python -c "import icon_sc.core, icon_sc.core.testing"
