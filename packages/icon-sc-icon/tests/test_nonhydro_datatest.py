@@ -891,7 +891,7 @@ def test_production_path_from_s11_grid_and_factories(
     the 2nd-order divergence damping. The 1e-4 bound is a regression guard on
     that characterization (not an upstream tolerance; S13 STATUS §5).
     """
-    from icon_sc.icon.grid import VerticalGrid as SymconVerticalGrid
+    from icon_sc.icon.grid import VerticalGrid as IconScVerticalGrid
     from icon_sc.icon.grid import from_file, interpolation, metrics
     from icon_sc.icon.testing import download_grid_file
 
@@ -909,7 +909,7 @@ def test_production_path_from_s11_grid_and_factories(
         num_levels=vertical_config.num_levels,
         keep_skip_values=False,
     )
-    vgrid = SymconVerticalGrid(
+    vgrid = IconScVerticalGrid(
         np.asarray(grid_savepoint.vct_a().asnumpy(), dtype=np.float64),
         np.asarray(grid_savepoint.vct_b().asnumpy(), dtype=np.float64),
         vertical_config.num_levels,

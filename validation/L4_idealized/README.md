@@ -12,7 +12,7 @@ R02B04, 35 levels, Δt = 300 s, 5 dynamics substeps, archive-namelist provenance
    the 9-day reference trajectory **plus its ε-perturbed twin** (initial `vn`
    shifted by 1e-13 m/s — the probtest idea at minimum viable scale, PLAN S13
    item 4) under `~/.cache/icon-sc/l4_reference/` (override:
-   `SYMCON_L4_CACHE`). Checkpoints every 6 h: surface-pressure field, vn L2/L∞,
+   `ICON_SC_L4_CACHE`). Checkpoints every 6 h: surface-pressure field, vn L2/L∞,
    850 hPa vertex-vorticity field. sha256 checksums + full config provenance land in
    `manifest.json`. **Never run in CI** (hours of compute; AGENTS.md) — the test
    skips with instructions when the cache is absent.

@@ -313,7 +313,7 @@ def generate_icon_sc(days: float) -> pathlib.Path:
                 }
                 for i in range(done_chunks + 1)
             ]
-            for name in _SYMCON_PROGNOSTICS:
+            for name in _ICON_SC_PROGNOSTICS:
                 state[name].data[...] = data[f"st::{name}"]
             for prefix, component in (("dyc", model.dycore), ("dif", model.diffusion)):
                 blob = component.restart_state()
@@ -335,7 +335,7 @@ def generate_icon_sc(days: float) -> pathlib.Path:
         for i, cp in enumerate(checkpoints):
             for key, value in cp.items():
                 payload[f"cp{i}_{key}"] = np.asarray(value)
-        for name in _SYMCON_PROGNOSTICS:
+        for name in _ICON_SC_PROGNOSTICS:
             payload[f"st::{name}"] = np.asarray(state[name].data)
         for prefix, component in (("dyc", model.dycore), ("dif", model.diffusion)):
             for key, array in component.restart_state().items():
@@ -364,7 +364,7 @@ def generate_icon_sc(days: float) -> pathlib.Path:
     return out
 
 
-_SYMCON_PROGNOSTICS = (
+_ICON_SC_PROGNOSTICS = (
     "icon:normal_wind",
     "upward_air_velocity_on_interface_levels",
     "air_density",

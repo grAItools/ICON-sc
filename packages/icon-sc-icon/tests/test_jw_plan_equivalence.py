@@ -10,8 +10,8 @@ S14 composition to the ``model.step`` closure the S13 L4 cache legs ran.
 
 **Chunked execution** (the S13 ``make_reference.py`` pattern): schedulers with
 wall-time caps can split the 24 h across invocations —
-``SYMCON_S14_EQUIV_HOURS`` (simulated hours per invocation) +
-``SYMCON_S14_EQUIV_STATE`` (resume directory). Resume goes through the S12/S13
+``ICON_SC_S14_EQUIV_HOURS`` (simulated hours per invocation) +
+``ICON_SC_S14_EQUIV_STATE`` (resume directory). Resume goes through the S12/S13
 component restart protocols (bitwise, SPEC S12 acceptance 3) plus the boundary
 prognostics, per leg; every chunk re-asserts lockstep bitwise equality at each
 step, and the final chunk closes with the checkpoint-diagnostics comparison.
@@ -56,8 +56,8 @@ BACKENDS = [
 ]
 
 SIMULATED_HOURS = 24
-HOURS_ENV = "SYMCON_S14_EQUIV_HOURS"
-STATE_ENV = "SYMCON_S14_EQUIV_STATE"
+HOURS_ENV = "ICON_SC_S14_EQUIV_HOURS"
+STATE_ENV = "ICON_SC_S14_EQUIV_STATE"
 
 
 def _build(backend: str) -> Any:

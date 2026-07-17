@@ -22,7 +22,7 @@ in your report, and resolve only what is mechanical and obvious.
    unnumbered), all `README.md`, `REGISTRY.md`, `archive/*` contents.
 2. **`DECISIONS.md` → `REGISTRY.md`**, absorbing the document-number allocator from
    `plans/README.md`: one file, two registers (documents + trunk decisions).
-3. **`docs/architecture/repository-layout.md` → `development/policies/repo_layout.md`**,
+3. **`docs/architecture/symcon_repo_layout.md` → `development/policies/repo_layout.md`**,
    restructured as a living policy, removed from the published site.
 4. **Terminology sweep** (living files + tooling only): "step"/"task"/"prompt" vocabulary →
    kind vocabulary ("work unit NNN", spec/plan/record). Frozen records keep historical
@@ -102,7 +102,7 @@ against this table.
 
 **root of development/ (1):** `DECISIONS.md → REGISTRY.md`.
 
-**docs/ (1):** `git mv docs/architecture/repository-layout.md development/policies/repo_layout.md`
+**docs/ (1):** `git mv docs/architecture/symcon_repo_layout.md development/policies/repo_layout.md`
 (content restructure happens in C3, not here).
 
 Commit C1; verify: `git show --summary -M100 HEAD | grep -cE "^ rename"` = 72 and no
@@ -115,7 +115,7 @@ living root files. Old→new for every C1 rename (the §3 table *is* the mapping
 
 - `development/DECISIONS.md` → `development/REGISTRY.md` (and bare `DECISIONS.md` where it
   names the file).
-- `docs/architecture/repository-layout.md` → `development/policies/repo_layout.md`.
+- `docs/architecture/symcon_repo_layout.md` → `development/policies/repo_layout.md`.
 - `ADR-0001`/`ADR-0002`/`ADR-0003` **as citations in LIVING files** → `adr 043`/`adr 044`/
   `adr 045` (new citation form). In frozen records these tokens are wording, not paths —
   leave them; the remap table translates.
@@ -201,7 +201,7 @@ Verify purity (word-diff = path strings only), then commit C2.
    `records/004_coupling_algebra_record/artifacts`; `benchmarks/s05_dispatch.py:4` and
    `benchmarks/dispatch_overhead/jw_step.py:4` docstrings → the renamed record paths.
    `.gitignore`'s `development/records/*/artifacts/` still matches — no change.
-5. **`docs/index.md`** — remove toctree entry `architecture/repository-layout` (line ~73);
+5. **`docs/index.md`** — remove toctree entry `architecture/symcon_repo_layout` (line ~73);
    rewrite the line-47/48 sentence to link only the architecture document, with the layout
    policy mentioned in plain prose (no link — docs-boundary policy).
 
@@ -227,7 +227,7 @@ notification that will not come. Additional checks:
    `grep -rnE "records/(S[0-9]{2}_|00_OVERVIEW|IMPLEMENTATION_REPORT|[0-9]{2}_[a-z])" . --exclude-dir=.git`
    (two-digit prefixes must be gone as paths);
    `grep -rn "DECISIONS.md" . --exclude-dir=.git` (only formerly-lines/frozen prose);
-   `grep -rn "repository-layout" . --exclude-dir=.git` (only frozen prose + remap);
+   `grep -rn "symcon_repo_layout" . --exclude-dir=.git` (only frozen prose + remap);
    `grep -rnE "ideas/P[2-7]_|adr/000[1-3]" . --exclude-dir=.git`.
 2. The task-33 link checker (in `033_structure_migration_plan.md` §7.2) re-run: 0 BROKEN.
 3. `ls docs/architecture/` = `icon-sc_architecture.md` only; `docs/_build` sphinx green

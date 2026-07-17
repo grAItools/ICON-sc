@@ -89,9 +89,10 @@ but code spans/imports are identifiers → `icon_sc`.
    0 broken**, `sphinx-build -E -W --keep-going` exit 0.
 4. **No dependency change:** `git diff main -- constraints/` empty; `uv.lock` differs only by the
    distribution-name/editable-path rename (no version moved); `uv sync --locked` resolves.
-5. **Residual `symcon` grep** (excluding `.git`, `.venv`, `docs/_build`, `*_cache`, `__pycache__`,
-   `node_modules`) equals the enumerated by-design frozen-history hits (§ Out of scope), each named
-   in the report — nothing else.
+5. **Residual `symcon` grep — case-insensitive** (`grep -rIniE 'symcon'`, excluding `.git`, `.venv`,
+   `docs/_build`, `*_cache`, `__pycache__`, `node_modules`) equals the enumerated by-design
+   frozen-history hits (§ Out of scope), each named in the report — nothing else. The `-i` is required:
+   a case-sensitive grep leaks UPPERCASE/TitleCase brand tokens (env vars, aliases, module constants).
 6. `docs/architecture/icon-sc_architecture.md` exists with H1
    `# ICON-sc: A sympl-Conformant Python Architecture for the ICON Model`, v1.3 retained + a
    rebrand rev-note; no technical-content change (TD-53.1). `docs/architecture/symcon_architecture.md`

@@ -30,7 +30,8 @@ runtime/external artifacts, each renamed per the `spec-0053` Frozen-interfaces m
 | `6cbc7fa` | C4 — living root docs, published `docs/` site, policies, architecture doc rebrand, REGISTRY TD-53.1/2/3 rows |
 | `1a9127d` | C4b — frozen specs + plans (owner-extended scope; migration-plan history preserved) |
 | `71e1d2a` | C5 — this report |
-| _(this commit)_ | C6 — layout doc `repo-layout.md` → `repository-layout.md`; `symcon_repo_layout` de-branded (TD-53.4); report finalized with full-battery gate results |
+| `585a692` | C6 — layout doc `repo-layout.md` → `repository-layout.md`; `symcon_repo_layout` de-branded in living files only (TD-53.4); report finalized with full-battery gate results |
+| _(this commit)_ | R1 review fixes — case-insensitive brand residuals (FIX 1), dead env var in L4 README (FIX 2), frozen-plan history restored in plans 0033/0035 (FIX 3), meta-docs corrected + AC5 grep made case-insensitive (FIX 4) |
 
 ## 2. Acceptance criteria → tests
 
@@ -58,14 +59,15 @@ Per `spec-0053`:
    migration-plan history). Result: specs (0001–0052) and plans (0001–0052) renamed; **reports,
    proposals, ADRs, `references/lock.toml`, `REGISTRY.md` §2 remap columns, and the
    `layout-doc-revision.diff` artifact remain exempt** as frozen history.
-2. **Layout policy doc renamed + `symcon_repo_layout` de-branded** (owner-instructed 2026-07-17, TD-53.4).
+2. **Layout policy doc renamed + `symcon_repo_layout` de-branded in living files only** (owner-instructed 2026-07-17, TD-53.4).
    The living layout policy `development/policies/repo-layout.md` was `git mv`'d to `repository-layout.md`
    (kebab, TD-51.1) with references updated in living policies, `docs/index.md`, and the 0053 docs; the
-   historical `symcon_repo_layout` token was de-branded to `repository-layout` in `plan-0033`, `plan-0035`,
-   and the living policy files. **`REGISTRY.md` §2 remap "Old" column + `TD-33.4`, the 7 frozen reports,
-   and `layout-doc-revision.diff` keep `symcon_repo_layout.md` verbatim** — de-branding the §2 "Old"
-   column would falsify the historical remap bridge *and* collide with the new current filename
-   `repository-layout.md`. `symcon_architecture.md` was path-retargeted to `icon-sc_architecture.md`
+   historical `symcon_repo_layout` token was de-branded to `repository-layout` **only in the reworded
+   "formerly" clauses of the living policy files** (`policies/repository-layout.md` + `policies/README.md`),
+   plus the current-file rename itself. **All frozen records keep `symcon_repo_layout.md` verbatim** —
+   `REGISTRY.md` §2 remap "Old" column + `TD-33.4`, the migration plans `plan-0033`/`plan-0035`, the 7
+   frozen reports, and `layout-doc-revision.diff` — de-branding the §2 "Old" column would falsify the
+   historical remap bridge *and* collide with the new current filename `repository-layout.md`. `symcon_architecture.md` was path-retargeted to `icon-sc_architecture.md`
    (sanctioned path retarget, `document-kinds` content-frozen rule).
 3. **Spec-freeze guard bypass mechanism.** The `spec_freeze_guard.py` PreToolUse hook blocks edits to
    frozen specs. Disabling it via `.claude/settings.json` was declined by the harness auto-mode
@@ -82,17 +84,18 @@ Per `spec-0053`:
 
 ### By-design residual `symcon` (tracked files; enumerated per AC5)
 
-All in `development/` — none on a live surface (`git grep symcon -- packages examples benchmarks
+All in `development/` — none on a live surface (`git grep -i symcon -- packages examples benchmarks
 validation tools docs *.toml *.yaml *.yml conftest.py .importlinter AGENTS.md CLAUDE.md README.md
-LICENSE` = empty):
+LICENSE` = empty, case-insensitive):
 
 - **Intentional (describe the rename):** `spec-0053` (34), `plan-0053` (24), `REGISTRY.md` TD-53 rows.
-- **Frozen history (exempt):** 26 `reports/*` (top: `report-0027` 32, `report-0013` 22, `report-0006` 20),
+- **Frozen history (exempt):** 25 `reports/*` (top: `report-0027` 32, `report-0013` 22, `report-0006` 20),
   2 `proposals/*` (`proposal-0052` 5, `proposal-0038` 1), 1 ADR (`0005-gridgen` 3),
   `references/lock.toml` (29), `layout-doc-revision.diff` (5), `REGISTRY.md` §2 remap (2).
-- **Historical filename preserved (`symcon_repo_layout.md`):** `REGISTRY.md` §2 remap + `TD-33.4`, the
-  7 frozen reports (`report-0027/0028/0029/0033/0034/0035/0051`), and `layout-doc-revision.diff` — the
-  true pre-0035 name, kept to preserve the remap bridge and avoid colliding with the renamed current file
+- **Historical filename preserved (`symcon_repo_layout.md`):** `REGISTRY.md` §2 remap + `TD-33.4`,
+  the migration plans `plan-0033`/`plan-0035`, the 7 frozen reports
+  (`report-0027/0028/0029/0033/0034/0035/0051`), and `layout-doc-revision.diff` — the true pre-0035 name,
+  kept to preserve the remap bridge and avoid colliding with the renamed current file
   `repository-layout.md`.
 
 ## 4. Tolerances & sign-off flags
@@ -135,6 +138,28 @@ No tolerance, reduction-order, `pytest.mark`, or test-assertion changes. Sign-of
 
 None beyond the diff. Gate logs under `/tmp/icon-sc-gate-*` / the run-`buaq5ybfy` capture.
 
-## 8. Review fixes (round N)
+## 8. Review fixes (round 1)
 
-(pending review)
+Two independent reviewers verified findings; all applied in one commit.
+
+1. **FIX 1 (major) — case-insensitive brand residuals on live surfaces.** The C2 substitution was
+   case-sensitive, so UPPERCASE/TitleCase brand tokens leaked through. Renamed (identifier casing
+   preserved): env vars `SYMCON_S14_EQUIV_HOURS`/`SYMCON_S14_EQUIV_STATE` → `ICON_SC_*` in
+   `test_jw_plan_equivalence.py` (docstring + `HOURS_ENV`/`STATE_ENV`); import alias
+   `VerticalGrid as SymconVerticalGrid` → `IconScVerticalGrid` in `test_nonhydro_datatest.py`;
+   module constant `_SYMCON_PROGNOSTICS` → `_ICON_SC_PROGNOSTICS` in `validation/L4_idealized/make_reference.py`.
+   Repo-wide case-insensitive sweep of live surfaces now empty. (The remaining `SYMCON_*` mentions
+   live only in frozen history — `plan-0021`, `report-0014` — kept verbatim.)
+2. **FIX 2 (major) — dead env var in docs.** `validation/L4_idealized/README.md` told users to set
+   `SYMCON_L4_CACHE`; the code reads `ICON_SC_L4_CACHE`. Corrected.
+3. **FIX 3 (major) — frozen-plan history restored.** The historical filename `symcon_repo_layout.md`
+   had been wrongly de-branded to `repository-layout.md` in the frozen plans `plan-0033`/`plan-0035`,
+   falsifying history. Restored `symcon_repo_layout` verbatim there (move-target `repo_layout.md` and
+   the `symcon.*`→`icon_sc.*` identifier renames untouched).
+4. **FIX 4 (minor) — meta-docs reconciled.** `REGISTRY.md` TD-53.4(b) and §3 deviation #2 above now
+   state that `symcon_repo_layout.md` is preserved in **all** frozen records (incl. plans 0033/0035),
+   with de-branding limited to living files + the current-file rename; §3 residual enumeration adds
+   the plans to the preserved list and corrects the frozen-report count (26 → **25**).
+   **Case-sensitivity bug in the acceptance criterion:** the spec-0053 AC5 residual grep and the §3
+   live-surface grep are now case-insensitive (`grep -rIniE 'symcon'` / `git grep -i`). The original
+   case-sensitive grep is what let the FIX-1 tokens slip through.
