@@ -16,7 +16,7 @@ identically, because `_DraftCall` carries only tag/slots/dt (`component` is
 
 ## Hard rules (restated; full list in development/work/plans/README.md)
 
-- This touches S05 core code (`packages/symcon-core/src/symcon/core/plan/bind.py`).
+- This touches S05 core code (`packages/icon-sc-core/src/icon_sc/core/plan/bind.py`).
   The **frozen interfaces may not change**: `ExecutionPlan.bind(composition, schema,
   ctx)`, `plan.signatures`, `plan.run_step(vault, step_index)`, `plan.plan_hash`
   (property, returns a hex string). Only the hash PREIMAGE grows.
@@ -65,7 +65,7 @@ identically, because `_DraftCall` carries only tag/slots/dt (`component` is
    - any OTHER type: its `str()` is NOT acceptable — raise `PlanCompileError`
      naming the component, the key, and the type, so unstable configs fail loudly
      at bind time instead of hashing unstably.
-4. **Tests to add** (extend `packages/symcon-core/tests/test_plan_hash.py`):
+4. **Tests to add** (extend `packages/icon-sc-core/tests/test_plan_hash.py`):
    - two toy loops differing ONLY in `Relaxation(tau=...)` now produce DIFFERENT
      `plan_hash` (this is the S05-documented blind-spot closure — cite it in the
      test docstring);
@@ -76,7 +76,7 @@ identically, because `_DraftCall` carries only tag/slots/dt (`component` is
      type raises `PlanCompileError` naming component+key+type;
    - unit tests for `_canonical_config_bytes` covering every rule-3 type incl.
      float `.hex()` stability and nested-mapping sorting.
-   And in `packages/symcon-icon/tests/`: extend the existing S14 knob tests
+   And in `packages/icon-sc-icon/tests/`: extend the existing S14 knob tests
    minimally — `test_scm_plan.py`/`test_jw_plan.py` already vary 3 knobs each; add
    ONE more knob case per file that previously hashed identically (e.g. graupel
    `GraupelConfig` scalar for SCM; a `NonhydroConfig` scalar for JW) and assert the
@@ -111,10 +111,10 @@ identically, because `_DraftCall` carries only tag/slots/dt (`component` is
 
 All 8 README commands, plus explicitly:
 ```
-uv run pytest packages/symcon-core/tests/test_plan_hash.py -q                       # all pass incl. new
-uv run pytest packages/symcon-core/tests/test_plan_equivalence.py -q                # 34+ passed, bitwise untouched
-uv run pytest packages/symcon-icon/tests/test_scm_plan.py packages/symcon-icon/tests/test_jw_plan.py -q -m "not gpu and not slow"
-PYTHONHASHSEED=1 uv run pytest packages/symcon-core/tests/test_plan_hash.py -q      # rerun; then PYTHONHASHSEED=7
+uv run pytest packages/icon-sc-core/tests/test_plan_hash.py -q                       # all pass incl. new
+uv run pytest packages/icon-sc-core/tests/test_plan_equivalence.py -q                # 34+ passed, bitwise untouched
+uv run pytest packages/icon-sc-icon/tests/test_scm_plan.py packages/icon-sc-icon/tests/test_jw_plan.py -q -m "not gpu and not slow"
+PYTHONHASHSEED=1 uv run pytest packages/icon-sc-core/tests/test_plan_hash.py -q      # rerun; then PYTHONHASHSEED=7
 ```
 
 ## Review checklist (appended to 10_REVIEW_PROTOCOL.md for this task)
@@ -128,7 +128,7 @@ PYTHONHASHSEED=1 uv run pytest packages/symcon-core/tests/test_plan_hash.py -q  
   accidentally include object identity).
 - Read `_canonical_config_bytes` against rule 3 line by line; any `str(obj)`
   fallback for arbitrary objects is a MAJOR finding.
-- Confirm zero diffs in `packages/symcon-core/src/symcon/core/plan/interpreter.py`,
+- Confirm zero diffs in `packages/icon-sc-core/src/icon_sc/core/plan/interpreter.py`,
   `ops.py` (except possibly none at all), and zero test-file modifications other
   than ADDITIONS to the named files.
 - Run the bitwise equivalence file yourself; any change in its assertions is MAJOR.

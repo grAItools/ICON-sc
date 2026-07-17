@@ -16,7 +16,7 @@
   scheme (rk2/rk3ws/ssprk3) is rejected at bind time. T0 handles it fine (the
   stepper re-evaluates its coupling once per stage; CF replays its cache on
   stage > 0 because `state["time"]` has not advanced).
-- The rejection lives in `packages/symcon-core/src/symcon/core/plan/bind.py`,
+- The rejection lives in `packages/icon-sc-core/src/icon_sc/core/plan/bind.py`,
   `visit_calling_frequency` — the `_seen_cf` guard (search `_seen_cf`). Its error
   message already names this task as the fix ("per-stage cache-slot aliasing").
 - **The failed quick fix (do not repeat):** keying `_seen_cf` by
@@ -27,9 +27,9 @@
   `development/work/reports/report-0005-vault-plan-t1.md` "Review fixes (round 1)" for the record.
 - Loud-rejection regression tests exist and MUST keep passing until the feature
   works, then be CONVERTED (not deleted):
-  `packages/symcon-core/tests/test_plan_equivalence.py::test_calling_frequency_under_multi_stage_scheme_is_rejected_loudly`
+  `packages/icon-sc-core/tests/test_plan_equivalence.py::test_calling_frequency_under_multi_stage_scheme_is_rejected_loudly`
   and the forward_euler-variant bitwise test next to it. The builder they use is
-  `make_cf_multistage(scheme)` in `packages/symcon-core/tests/_plan_toys.py`.
+  `make_cf_multistage(scheme)` in `packages/icon-sc-core/tests/_plan_toys.py`.
 
 ## The design requirement (what "per-stage cache-slot aliasing" must mean)
 
@@ -103,7 +103,7 @@ is not.
 
 - Outcome A: run the converted bitwise tests 3× (flake check); diff-inspect that
   the corruption guard block is byte-identical to main
-  (`git diff main..HEAD -- packages/symcon-core/src/symcon/core/plan/bind.py` and
+  (`git diff main..HEAD -- packages/icon-sc-core/src/icon_sc/core/plan/bind.py` and
   read every hunk); verify no `allclose` entered any equivalence test; run the
   full fast gate + `test_plan_*` files yourself; verify the true-duplicate case
   still raises.

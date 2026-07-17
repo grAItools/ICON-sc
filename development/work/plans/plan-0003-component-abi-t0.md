@@ -5,6 +5,6 @@
 3. Wrappers: implement `CallingFrequency` cache as a component-private field surfaced in `restart_state()` and declared in `functional_state()` (S10 relies on this being carry).
 4. Minimal `ComputeContext`: `backend` is an opaque string in this step (real backend objects arrive with the first gt4py component in S07); allocator chooses numpy/cupy.
 5. NetCDFMonitor: xarray-based, one file, append on `store`; enough for the SCM example, nothing more.
-6. Toy components + the acceptance test suite; add the toy pair to `symcon.core.testing.toys` — S04/S05 reuse them.
+6. Toy components + the acceptance test suite; add the toy pair to `icon_sc.core.testing.toys` — S04/S05 reuse them.
 
 **Pitfalls:** resist adding vault/plan concepts here; T0 must remain the fully dynamic reference semantics that S05 diffes against. Keep `Monitor` out of the component call path (no diagnostics side-channel).

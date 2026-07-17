@@ -36,7 +36,7 @@ verify with `git diff uv.lock | grep -E '^[-]' | grep -v "^---"` showing no remo
 version lines for gt4py/icon4py/jax). Create `docs/conf.py`:
 
 ```python
-project = "symcon"
+project = "ICON-sc"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
@@ -55,7 +55,7 @@ html_theme = "furo"
 ```
 
 No `sys.path` manipulation — autodoc imports the *installed* workspace packages
-(verified: `uv run python -c "import symcon.core, symcon.icon"` succeeds).
+(verified: `uv run python -c "import icon_sc.core, icon_sc.icon"` succeeds).
 
 **Verify:**
 ```
@@ -66,7 +66,7 @@ uv run sphinx-build -b html docs docs/_build/html                               
 
 ## Item B — site skeleton + nav
 
-**Change:** create `docs/index.md` (landing: what symcon is, install, links),
+**Change:** create `docs/index.md` (landing: what ICON-sc is, install, links),
 `docs/tutorials/index.md` (curriculum T0–T8 as titles; T0–T2 linked, T3–T8 marked
 "planned" with their §1.2 abstracts), `docs/glossary.md` (seed with the terms
 introduced by T0–T2), and a toctree that includes `docs/architecture/*.md`
@@ -82,12 +82,12 @@ render or are recorded as excluded.
 
 **Change:** `docs/api/index.md` plus one page per curated module group, each a MyST
 file wrapping `{eval-rst}` `automodule` blocks with `:members:`. Curated set for
-this task (not full coverage): `symcon.core` top-level (`context`, `registry`,
-`time`, `config`), `symcon.core.state`, `symcon.core.contracts`,
-`symcon.core.components`, `symcon.core.coupling`, `symcon.core.plan`,
-`symcon.core.functional`, `symcon.core.io`; `symcon.icon.presets`,
-`symcon.icon.names`, `symcon.icon.thermo`, `symcon.icon.grid`,
-`symcon.icon.components` (public modules only). `symcon.bridges` is out (optional
+this task (not full coverage): `icon_sc.core` top-level (`context`, `registry`,
+`time`, `config`), `icon_sc.core.state`, `icon_sc.core.contracts`,
+`icon_sc.core.components`, `icon_sc.core.coupling`, `icon_sc.core.plan`,
+`icon_sc.core.functional`, `icon_sc.core.io`; `icon_sc.icon.presets`,
+`icon_sc.icon.names`, `icon_sc.icon.thermo`, `icon_sc.icon.grid`,
+`icon_sc.icon.components` (public modules only). `icon_sc.bridges` is out (optional
 toolchain).
 
 **Verify:**
@@ -98,14 +98,14 @@ python -c "import pathlib; t=pathlib.Path('docs/_build/html/api/core.html').read
 ```
 Spot-check in the built HTML (record in report): one page where a `` :class:` ` ``
 role from the existing corpus renders as a hyperlink, and (after item D exists or
-via `symcon.core.testing` if it has one) any Google-section docstring rendering as
+via `icon_sc.core.testing` if it has one) any Google-section docstring rendering as
 Parameters/Returns. **Stop rule:** if a module *import* fails under autodoc (e.g.,
 an optional dep missing in your env), add it to `autodoc_mock_imports` and record —
 never restructure the module.
 
 ## Item D — tutorials T0–T2
 
-**Change:** `docs/tutorials/00_what_is_symcon.md`, `01_state_fields_grids.md`,
+**Change:** `docs/tutorials/00_what_is_icon-sc.md`, `01_state_fields_grids.md`,
 `02_first_run_scm.md` per the abstracts and audience contract of plan §1. All code
 shown for T2 comes from `examples/01_scm_column.py` via `{literalinclude}` with
 `:lines:`/`:pyobject:` selectors — no hand-copied code blocks. Each page: the 2–3

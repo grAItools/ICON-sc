@@ -30,10 +30,10 @@ venv under /tmp:
 ```
 uv venv /tmp/task21-venv --python 3.10
 VIRTUAL_ENV=/tmp/task21-venv uv pip install --prerelease=allow \
-  -e packages/symcon-core -e packages/symcon-icon -e packages/symcon-bridges \
+  -e packages/icon-sc-core -e packages/icon-sc-icon -e packages/icon-sc-bridges \
   -c constraints/cpu-ci.txt pytest pytest-mpi jax
 /tmp/task21-venv/bin/python -c "import jax; print(jax.__version__)"   # must print 0.6.2
-/tmp/task21-venv/bin/pytest packages/symcon-core/tests/test_functional_compile.py -q  # must run, not skip
+/tmp/task21-venv/bin/pytest packages/icon-sc-core/tests/test_functional_compile.py -q  # must run, not skip
 ```
 
 ## Item B — fast-gate margin: move the three embedded graupel L2 cases to `slow`
@@ -41,7 +41,7 @@ VIRTUAL_ENV=/tmp/task21-venv uv pip install --prerelease=allow \
 **Problem** (S14 STATUS §5): the fast gate (`-m "not gpu and not slow"`) budget is
 ≤15 min (SPEC S14 acceptance 5) and currently lands ~14 min warm; ~10 of those
 minutes are the three `embedded`-backend cases of
-`packages/symcon-icon/tests/test_graupel_datatest.py::test_graupel_l2_parity_against_icon4py_savepoints`
+`packages/icon-sc-icon/tests/test_graupel_datatest.py::test_graupel_l2_parity_against_icon4py_savepoints`
 (~190–210 s each).
 
 **Change**: mark ONLY the `embedded` parametrization legs of that one test with
@@ -53,32 +53,32 @@ fast-gate margin; embedded graupel is covered in the slow tier".
 
 **Verify**:
 ```
-uv run pytest packages/symcon-icon/tests/test_graupel_datatest.py --collect-only -q -m "not gpu and not slow"   # embedded legs GONE
-uv run pytest packages/symcon-icon/tests/test_graupel_datatest.py --collect-only -q -m "slow and not gpu"       # embedded legs PRESENT
-uv run pytest packages/symcon-icon/tests/test_graupel_datatest.py -q -m "slow and not gpu"                      # they still PASS (~10 min)
+uv run pytest packages/icon-sc-icon/tests/test_graupel_datatest.py --collect-only -q -m "not gpu and not slow"   # embedded legs GONE
+uv run pytest packages/icon-sc-icon/tests/test_graupel_datatest.py --collect-only -q -m "slow and not gpu"       # embedded legs PRESENT
+uv run pytest packages/icon-sc-icon/tests/test_graupel_datatest.py -q -m "slow and not gpu"                      # they still PASS (~10 min)
 ```
 Then the full fast gate: expect **733 passed** (736 − 3 moved), 1 skipped, and a
 runtime several minutes below the old ~14 min. The `data and slow` partition grows
 by exactly 3. Record both new counts in your report — they become the new baseline
 and you must say so explicitly.
 
-## Item C — `make_reference.py --run all` must include the symcon leg
+## Item C — `make_reference.py --run all` must include the ICON-sc leg
 
 **Problem** (S13 STATUS follow-up): `validation/L4_idealized/make_reference.py`
-`--run all` generates reference + twin + manifest but NOT the symcon leg (which
-needs a separate `--run symcon`). This cost the orchestrator a full cycle during
+`--run all` generates reference + twin + manifest but NOT the ICON-sc leg (which
+needs a separate `--run ICON-sc`). This cost the orchestrator a full cycle during
 S13.
 
 **Change**: in `main()` of that file, make `run == "all"` also call
-`generate_symcon(days)` AFTER the reference/twin loop and BEFORE the manifest
+`generate_icon_sc(days)` AFTER the reference/twin loop and BEFORE the manifest
 block. Update the module docstring's usage lines accordingly. DO NOT run a 9-day
 generation to test this (it costs ~7 h and must not touch
-`~/.cache/symcon/l4_reference`).
+`~/.cache/icon-sc/l4_reference`).
 
 **Verify** without touching the real cache:
 ```
 SYMCON_L4_CACHE=/tmp/task21-l4 uv run python validation/L4_idealized/make_reference.py --days 0.25 --force --run all
-ls /tmp/task21-l4/   # must contain jw_l4_reference.npz, jw_l4_twin.npz, jw_l4_symcon.npz, manifest.json
+ls /tmp/task21-l4/   # must contain jw_l4_reference.npz, jw_l4_twin.npz, jw_l4_icon_sc.npz, manifest.json
 uv run pytest validation/L4_idealized/test_jw.py -q   # against the REAL (untouched) cache: 3 passed
 ```
 (The script reads `SYMCON_L4_CACHE` for its cache dir — confirm that env hook at
@@ -87,35 +87,35 @@ the current default is in scope for this item.)
 
 ## Item D — replace the `VerticalGrid._i4_grid` friend access in satad
 
-**Problem** (S07 deviation, S11 provided the fix): `packages/symcon-icon/src/symcon/icon/components/fast/satad.py`
+**Problem** (S07 deviation, S11 provided the fix): `packages/icon-sc-icon/src/icon_sc/icon/components/fast/satad.py`
 still reads the private `VerticalGrid._i4_grid`; S11 added the public
 `VerticalGrid.icon4py_grid` property for exactly this.
 
 **Change**: replace the `_i4_grid` access(es) in satad.py (find them with
-`grep -n "_i4_grid" packages/symcon-icon/src/`) with `.icon4py_grid`. No other
+`grep -n "_i4_grid" packages/icon-sc-icon/src/`) with `.icon4py_grid`. No other
 change. If grep shows OTHER files using `_i4_grid`, list them in the report but
 touch only satad.py.
 
-**Verify**: `uv run pytest packages/symcon-icon/tests/test_satad_component.py -q`
-(all pass) and `grep -rn "_i4_grid" packages/symcon-icon/src/symcon/icon/components/`
+**Verify**: `uv run pytest packages/icon-sc-icon/tests/test_satad_component.py -q`
+(all pass) and `grep -rn "_i4_grid" packages/icon-sc-icon/src/icon_sc/icon/components/`
 returns nothing.
 
 ## Item E — extend the names-registry re-assert check to `cf_name`
 
 **Problem** (S06 review MINOR-1, declared follow-up): the consistency check in
-`packages/symcon-icon/src/symcon/icon/names.py` that re-asserts S02-seeded rows
+`packages/icon-sc-icon/src/icon_sc/icon/names.py` that re-asserts S02-seeded rows
 compares only `units` and `icon_name`; a drift in a core row's `cf_name` passes
 silently.
 
 **Change**: extend that check to also compare `cf_name` (locate the compare in
 names.py — S06 STATUS "Review fixes" describes it; keep the error type
 `NamesRegistryError` and its message style). Add one unit test in
-`packages/symcon-icon/tests/test_names.py`: pre-register a core-seeded name with a
+`packages/icon-sc-icon/tests/test_names.py`: pre-register a core-seeded name with a
 conflicting `cf_name`, import/trigger the re-assert, expect `NamesRegistryError`
 (mirror the existing conflicting-units test in that file, including its
 registry save/restore fixture).
 
-**Verify**: `uv run pytest packages/symcon-icon/tests/test_names.py -q` (all pass,
+**Verify**: `uv run pytest packages/icon-sc-icon/tests/test_names.py -q` (all pass,
 one more test than before).
 
 ## Acceptance criteria
@@ -135,7 +135,7 @@ one more test than before).
   a MAJOR finding: check total collected counts across all four partitions sum to
   the old total + any new tests.
 - For item C, confirm the REAL l4_reference cache is bit-identical to before:
-  `sha256sum ~/.cache/symcon/l4_reference/*` must match the manifest's recorded
+  `sha256sum ~/.cache/icon-sc/l4_reference/*` must match the manifest's recorded
   hashes (read `manifest.json` and compare).
 - Diff discipline: `git diff main..HEAD --stat` must touch only: test-cpu.yml,
   test_graupel_datatest.py, make_reference.py, satad.py, names.py,

@@ -5,7 +5,7 @@
 + driver + dependency + docs, and
 `development/work/reports/report-0052-disjoint-verification-gates.md`.
 
-Authority: `docs/architecture/symcon_architecture.md` > `spec-0052-disjoint-verification-gates.md`
+Authority: `docs/architecture/icon-sc_architecture.md` > `spec-0052-disjoint-verification-gates.md`
 > this plan. **The spec's per-partition table is the single source of truth for every
 `--dist`/`-n` value** — this plan deliberately restates none of them; read them there and
 encode exactly those. The spec's *Frozen interfaces* bind. Parallelism changes **scheduling
@@ -23,10 +23,10 @@ only**; the partition-boundary change (Item A) changes *which partition* runs a 
   decisions. Item A adds one *lower-bound dev declaration*, which `plans/README.md` permits
   only because this plan says so. If `uv lock` moves any pin other than xdist/execnet:
   **STOP**, mark blocked, do not "fix and continue".
-- No data in git. Caches (`~/.cache/symcon/gt4py`, `~/.cache/symcon/icon4py-testdata`,
-  `~/.cache/symcon/l4_reference`) are read-only context — never regenerated, never pointed
+- No data in git. Caches (`~/.cache/icon-sc/gt4py`, `~/.cache/icon-sc/icon4py-testdata`,
+  `~/.cache/icon-sc/l4_reference`) are read-only context — never regenerated, never pointed
   cold (verification-gates.md "Caches").
-- No `symcon.*` source change; import-linter contracts stay `2 kept, 0 broken`.
+- No `icon_sc.*` source change; import-linter contracts stay `2 kept, 0 broken`.
 - Do not edit `docs/architecture/*` or any other work unit's spec. If an item needs more than
   its scope: STOP, mark it "blocked — needs trunk decision" in the report, continue the rest.
 
@@ -66,12 +66,12 @@ Both unions **must** print 848; a mismatch means coverage moved and the item is 
 ## Item B — the gt4py concurrent-compile question (decide before building anything)
 
 **Problem:** xdist workers first-compiling the same gtfn variant into the shared persistent
-cache (`~/.cache/symcon/gt4py`) may race or redundantly compile. This is an *assumption*, not
+cache (`~/.cache/icon-sc/gt4py`) may race or redundantly compile. This is an *assumption*, not
 an observation — and the gate baseline is warm caches, so a warm-up may buy nothing.
 
 **Change:** answer it with evidence, then act. Read gt4py 1.1.10's build-cache implementation
 (the `GT4PY_BUILD_CACHE_DIR`/`GT4PY_BUILD_CACHE_LIFETIME` path, set in
-`packages/symcon-core/src/symcon/core/testing/plugin.py`) and establish whether concurrent
+`packages/icon-sc-core/src/icon_sc/core/testing/plugin.py`) and establish whether concurrent
 writers are locked/atomic. Then:
 - **If safe:** record the finding with file/function evidence; add no warm-up. Done.
 - **If unsafe:** implement the narrowest mitigation — a serial pre-pass that *executes* a
@@ -90,7 +90,7 @@ provides:
 - `--serial` — the marker commands verbatim, no `-n`/`--dist`: the baseline oracle.
 - `--partition <fast|slow-nodata|data-noslow|data-slow>` — one partition at its table `-n`.
 - default — the full parallel gate: lint battery (`ruff check` / `ruff format --check` /
-  `mypy --strict -p symcon.core` / `lint-imports`) first as cheap fail-fast, then Wave 1
+  `mypy --strict -p icon_sc.core` / `lint-imports`) first as cheap fail-fast, then Wave 1
   (`fast` ‖ `data-slow`), then Wave 2 (`slow-nodata` ‖ `data-noslow`).
 
 Requirements:

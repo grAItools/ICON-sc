@@ -6,7 +6,7 @@
 `HorizontalDiffusion(Stepper)` (icon4py diffusion granule) and the JW baroclinic-wave initializer; the composed dry model (dycore + diffusion) reproduces the JW evolution against an icon4py-driver reference run — ladder L4 for the slice.
 
 ## In scope
-`symcon/icon/components/diffusion.py` (savepoint-verified like S12) · `symcon/icon/ingest/idealized.py` (`jablonowski_williamson(grid, vgrid, cfg)` initial state; reference: ICON `mo_nh_testcases`/DCMIP formulas and icon4py's driver initializer — delegate to the latter if importable) · `examples/02_jw_baroclinic.py` (dycore + diffusion loop, NetCDF output, no physics; bus slots zero) · `validation/L4_idealized/test_jw.py`.
+`icon_sc/icon/components/diffusion.py` (savepoint-verified like S12) · `icon_sc/icon/ingest/idealized.py` (`jablonowski_williamson(grid, vgrid, cfg)` initial state; reference: ICON `mo_nh_testcases`/DCMIP formulas and icon4py's driver initializer — delegate to the latter if importable) · `examples/02_jw_baroclinic.py` (dycore + diffusion loop, NetCDF output, no physics; bus slots zero) · `validation/L4_idealized/test_jw.py`.
 
 ## Acceptance criteria
 1. Diffusion savepoint parity at icon4py tolerances (marker `data`).

@@ -16,7 +16,7 @@ mechanical-and-obvious.
 - `git branch --show-current` = `work/0051-kebab-and-flat-reports` before every commit;
   never commit to main; never push; `Co-Authored-By:` trailer.
 - No data, no pins, no tolerances. `lock.toml` untouched entirely this time (no header
-  edits). `docs/architecture/symcon_architecture.md` untouched.
+  edits). `docs/architecture/icon-sc_architecture.md` untouched.
 - Frozen documents: path-string retargets only; the flattening renames (STATUS.md →
   report file) are pure `git mv`, content byte-identical.
 - `README.md` files keep their name everywhere (conventional, not snake). `lock.toml`,
@@ -119,7 +119,7 @@ Purity: word-diff = path strings only. Commit C2.
    twins): the report deliverable is `development/work/reports/report-$ARGUMENTS.md`,
    with artifacts (if any) in `development/work/reports/report-$ARGUMENTS/`.
 3. **Code path strings** (only these):
-   `packages/symcon-core/tests/test_order_ode.py` (docstring + path line) and
+   `packages/icon-sc-core/tests/test_order_ode.py` (docstring + path line) and
    `test_order_burgers.py`: `…/report-0004-coupling-algebra/artifacts` →
    `…/report-0004-coupling-algebra`;
    `benchmarks/s05_dispatch.py:4`: `report-0005-vault-plan-t1/STATUS.md` →
@@ -143,7 +143,7 @@ must write the S04 PNGs at the NEW location
 grep -rnE "development/(policies|references)/[a-z0-9]+_[a-z0-9_]+\.md" . --exclude-dir=.git --exclude-dir=docs/_build
 grep -rnE "report-[0-9]{4}-[a-z0-9-]+/(STATUS\.md|REPORT\.md|[0-9]{2}_)" . --exclude-dir=.git --exclude-dir=docs/_build
 grep -rn "plan_tree_map\|layout_doc_revision" . --exclude-dir=.git --exclude-dir=docs/_build
-grep -rn "artifacts/" .gitignore development/work/reports/ packages/symcon-core/tests/
+grep -rn "artifacts/" .gitignore development/work/reports/ packages/icon-sc-core/tests/
 ```
 
 Each: hits only in frozen by-design (plans/reports own tables + quoted output — the

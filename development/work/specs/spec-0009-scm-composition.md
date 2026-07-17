@@ -3,10 +3,10 @@
 **Lane:** A · **Depends on:** S04, S07, S08 · **Unblocks:** S10
 
 ## Goal
-The first scientifically meaningful symcon model: a single-column configuration coupling satad → graupel → satad by `SequentialUpdateSplitting`, with a `CallingFrequency`-wrapped toy slow forcing publishing to the tendency bus — the entire §5.1 shape at column scale, running under T0.
+The first scientifically meaningful ICON-sc model: a single-column configuration coupling satad → graupel → satad by `SequentialUpdateSplitting`, with a `CallingFrequency`-wrapped toy slow forcing publishing to the tendency bus — the entire §5.1 shape at column scale, running under T0.
 
 ## In scope
-`symcon/icon/presets/scm.py` (`SCM_FAST_ORDER = ["satad", "mphys", "satad"]` with constraints; preset builder returning composition + initial state) · `examples/01_scm_column.py` (legible script, runs in <60 s CPU) · a `PrescribedCooling(TendencyComponent)` slow process (radiative-cooling stand-in publishing `icon:ddt_temperature_slow`) consumed by a trivial `ApplySlowTendencies(Stepper)` — the bus mechanics exercised end-to-end before a real dycore consumes them · NetCDFMonitor output wired.
+`icon_sc/icon/presets/scm.py` (`SCM_FAST_ORDER = ["satad", "mphys", "satad"]` with constraints; preset builder returning composition + initial state) · `examples/01_scm_column.py` (legible script, runs in <60 s CPU) · a `PrescribedCooling(TendencyComponent)` slow process (radiative-cooling stand-in publishing `icon:ddt_temperature_slow`) consumed by a trivial `ApplySlowTendencies(Stepper)` — the bus mechanics exercised end-to-end before a real dycore consumes them · NetCDFMonitor output wired.
 
 ## Acceptance criteria
 1. `examples/01_scm_column.py` runs green as a CI smoke test; output NetCDF contains declared variables with registry units.

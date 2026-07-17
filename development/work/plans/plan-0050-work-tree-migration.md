@@ -42,7 +42,7 @@ record, resolve only the mechanical-and-obvious.
   never commit to main; never push; `Co-Authored-By:` trailer.
 - No data, no pins, no tolerances. `lock.toml` entries are append-only — this migration
   edits ONLY the header comment's title line (`REFERENCES.lock` → `lock.toml`), nothing
-  below line ~14. `docs/architecture/symcon_architecture.md` untouched.
+  below line ~14. `docs/architecture/icon-sc_architecture.md` untouched.
 - Frozen documents: path-string retargets only. Sanctioned non-path edits, exhaustively:
   the lock header title; ADR `0003-document-naming-scheme.md`'s `Status:` line (the
   Status field is mutable by the kinds policy) →
@@ -99,8 +99,8 @@ files. Additional mappings and cautions:
 - `adr 043`…`adr 048` citations → `ADR-0000`…`ADR-0005` (living files); in frozen files
   they are wording — leave, the REGISTRY remap translates.
 - `records_and_liveness.md` → `document_kinds.md`.
-- Never touch: `symcon/core/plan/` and other source paths; `lock.toml` entries;
-  `docs/architecture/symcon_architecture.md`; the §3 map inside THIS plan; the
+- Never touch: `icon_sc/core/plan/` and other source paths; `lock.toml` entries;
+  `docs/architecture/icon-sc_architecture.md`; the §3 map inside THIS plan; the
   self-exempt frozen documents already established (the 033/035 plans' and records' own
   mapping tables and quoted outputs, the 034/049 evaluations' analyses, the layout diff
   artifact) — same judgment as 035's C2, every left-alone case listed in the record.
@@ -145,7 +145,7 @@ Purity: word-diff = path strings only. Commit C2.
 ## 6. Living-file edits and tooling (commit C4)
 
 1. **AGENTS.md**: authority order →
-   `docs/architecture/symcon_architecture.md (v1.3) > development/work/specs/spec-NNNN-*.md
+   `docs/architecture/icon-sc_architecture.md (v1.3) > development/work/specs/spec-NNNN-*.md
    > development/work/plans/plan-NNNN-*.md`; lock path; kind vocabulary.
    **CLAUDE.md**: paths + `/implement-plan <NNNN-kebab>` wording. **Root README**:
    repo-map rows (work/, ADRs/, references incl. lock.toml). **PR template**: spec path.
@@ -160,7 +160,7 @@ Purity: word-diff = path strings only. Commit C2.
    `.claude/settings.json` deny glob → `"Edit(development/work/specs/spec-*.md)"`.
    `.gitignore`: `development/records/*/artifacts/` →
    `development/work/reports/*/artifacts/`.
-4. **Code path strings** (only these): `packages/symcon-core/tests/test_order_ode.py`
+4. **Code path strings** (only these): `packages/icon-sc-core/tests/test_order_ode.py`
    (docstring + path line) and `test_order_burgers.py` →
    `development/work/reports/report-0004-coupling-algebra/artifacts`;
    `benchmarks/s05_dispatch.py:4` → `…/report-0005-vault-plan-t1/STATUS.md`;

@@ -14,7 +14,7 @@ the SPECs before any implementation prompt is issued against them.
 
 1. `development/ideas/<phase>.md` — the frozen scope sketch (your contract: cover
    everything it names; add nothing it doesn't, except mechanically implied glue).
-2. `docs/architecture/symcon_architecture.md` — ONLY the §§ the outline cites.
+2. `docs/architecture/icon-sc_architecture.md` — ONLY the §§ the outline cites.
 3. `development/work/reports/report-0000-overview.md` §1 (agent contract) and 2–3 EXISTING step folders as
    templates — the best exemplars are `development/{specs,plans}/S05_vault_plan_t1.md`,
    `development/{specs,plans}/S08_graupel_component.md`, `development/{specs,plans}/S12_nonhydro_hosting.md`
