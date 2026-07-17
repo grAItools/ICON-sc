@@ -28,7 +28,7 @@ proposal/spec/plan/report files (`<kind>-<NNNN>-<kebab-slug>`); single-kind docu
 consume one number. ADRs are no longer registered here: they number independently in
 `development/ADRs/` (index: `ADRs/README.md`); the former ADR rows 043–048 remapped to
 ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
-**Next free number: 0053.**
+**Next free number: 0054.**
 
 | NNNN | slug | kinds | status |
 |---|---|---|---|
@@ -74,6 +74,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0050 | work-tree-migration | plan + report | executed |
 | 0051 | kebab-and-flat-reports | plan + report | executed |
 | 0052 | disjoint-verification-gates | proposal + spec + plan + report | executed |
+| 0053 | project-rename-icon-sc | spec + plan + report | pending |
 
 **Slug rename (work 0052, TD-52.3):** 0052's slug was `parallel-verification-gates`
 until 2026-07-17 — the name under which its proposal, spec and plan were merged to main, and
