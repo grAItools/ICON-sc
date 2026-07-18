@@ -1,7 +1,7 @@
 # Variable registry
 
 <!-- GENERATED FILE — do not edit. Regenerate with `uv run python tools/names_audit.py`
-     after changing the seed tables in symcon.core.state.names / symcon.icon.names. -->
+     after changing the seed tables in icon_sc.core.state.names / icon_sc.icon.names. -->
 
 Canonical quantity names (architecture §2.5): CF standard names are canonical and
 unprefixed; solver-internal quantities live in the `icon:` namespace. The GRIB2

@@ -60,7 +60,7 @@ production any conversion that would silently allocate and copy is an error.
 
 On ICON's triangular C-grid the normal wind lives on cell *edges* while
 temperature and moisture live at cell *centers* — mixing them up is a physics
-error, not a formatting one. symcon makes the mesh location (cell / edge /
+error, not a formatting one. ICON-sc makes the mesh location (cell / edge /
 vertex) part of every field's contract, so the machinery catches location
 mismatches, and any reconstruction between locations (e.g. edge winds to
 cell-center u, v for physics) is a visible, named step — never a hidden

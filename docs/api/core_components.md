@@ -1,14 +1,14 @@
-# symcon.core.components — component taxonomy
+# icon_sc.core.components — component taxonomy
 
 ```{eval-rst}
-.. automodule:: symcon.core.components
+.. automodule:: icon_sc.core.components
 
-.. automodule:: symcon.core.components.base
+.. automodule:: icon_sc.core.components.base
    :members:
 
-.. automodule:: symcon.core.components.dycore
+.. automodule:: icon_sc.core.components.dycore
    :members:
 
-.. automodule:: symcon.core.components.wrappers
+.. automodule:: icon_sc.core.components.wrappers
    :members:
 ```

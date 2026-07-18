@@ -23,7 +23,7 @@ in the S07/S08/S12/S14 STATUS files.
   (prove with the CPU gate).
 - No data in git; no pin changes. Installing the gpu extras is environment work, not
   a pin change: use the existing extras/constraints, do not edit them.
-- Do not regenerate any cache under `~/.cache/symcon/`.
+- Do not regenerate any cache under `~/.cache/icon-sc/`.
 
 ## Procedure
 
@@ -45,7 +45,7 @@ in the S07/S08/S12/S14 STATUS files.
 4. Run them in file-sized chunks (each command <10 min where possible; the first
    gtfn_gpu compile per program variant can take minutes — that is expected):
    `uv run pytest <file> -m gpu -q` for each file from step 3, data files last
-   (they need the archives in `~/.cache/symcon/icon4py-testdata`).
+   (they need the archives in `~/.cache/icon-sc/icon4py-testdata`).
 5. For every failure: capture the FULL pytest failure block verbatim into
    `development/plans/artifacts/` is NOT allowed (gitignored artifacts live outside plan/)
    — instead paste it into your task report and, if a product-code fix is warranted,

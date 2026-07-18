@@ -36,7 +36,7 @@ in your report, and resolve only what is mechanical and obvious.
   Never commit to `main`. Never `git push`. Commits end with the `Co-Authored-By:` trailer.
 - **No data files, no pin changes, no tolerance changes.** `REFERENCES.lock` is untouched
   (its historical `step` ids like "S08" stay; the REGISTRY remap table is the bridge).
-- `docs/architecture/symcon_architecture.md` is never edited. The layout doc is the ONLY
+- `docs/architecture/icon-sc_architecture.md` is never edited. The layout doc is the ONLY
   file leaving `docs/architecture/` (sanctioned trunk decision TD-35.2). Note: the Edit
   deny-glob covers `docs/architecture/**`, so perform the move with `git mv` + write the
   new policy file fresh (Bash/Write on the new path only; never Edit the old path).
@@ -119,8 +119,8 @@ living root files. Old→new for every C1 rename (the §3 table *is* the mapping
 - `ADR-0001`/`ADR-0002`/`ADR-0003` **as citations in LIVING files** → `adr 043`/`adr 044`/
   `adr 045` (new citation form). In frozen records these tokens are wording, not paths —
   leave them; the remap table translates.
-- Never touch: `symcon/core/plan/`, `plan/ops.py`, plan-hash cache paths, `REFERENCES.lock`,
-  `docs/architecture/symcon_architecture.md`, prose words ("the plan", "step" as wording in
+- Never touch: `icon_sc/core/plan/`, `plan/ops.py`, plan-hash cache paths, `REFERENCES.lock`,
+  `docs/architecture/icon-sc_architecture.md`, prose words ("the plan", "step" as wording in
   frozen files), and the §3 table inside THIS plan (self-referential, like 033's).
 - The self-exemptions from 033 carry forward: `plans/033_structure_migration_plan.md` keeps
   its old-tree tables verbatim except where a string names a file that C1 just renamed
@@ -152,7 +152,7 @@ Verify purity (word-diff = path strings only), then commit C2.
    - **TD-35.1** — `NNN_<slug>_<kind>` scheme + global sequence + number-per-work-unit +
      exemptions, per 034 evaluation §3/§9. Source: `adr 046`. pending/(merge).
    - **TD-35.2** — repo-layout doc moved to `policies/repo_layout.md`, unpublished; the
-     canonical set is now `symcon_architecture.md` alone. Source: 034 evaluation §2.
+     canonical set is now `icon-sc_architecture.md` alone. Source: 034 evaluation §2.
    - **TD-35.3** — REGISTRY rename + allocator absorption. Source: 034 evaluation §1.
 3. **Three ADRs** (Nygard sections, ≤60 lines, facts from the named sources only):
    - `adr/046_document_naming_scheme_adr.md` — from 034 evaluation §3 (+ its decision
@@ -165,7 +165,7 @@ Verify purity (word-diff = path strings only), then commit C2.
      considered per the 027 record (MkDocs et al.).
    - `adr/048_gridgen_adoption_adr.md` — from `records/026_gridgen_integration_record.md`:
      icon-grid-generator as archive-independent fixture source; **not-for-parity
-     boundary**; version-keyed cache; quarantine in `symcon.icon.testing`; version bumps
+     boundary**; version-keyed cache; quarantine in `icon_sc.icon.testing`; version bumps
      are trunk decisions.
 4. **`development/README.md`** — add: the naming convention (≤6 lines); the lifecycle
    (idea → spec → plan → record, with one-line kind definitions and liveness); the
@@ -184,7 +184,7 @@ Verify purity (word-diff = path strings only), then commit C2.
    `README.md`, `.github/PULL_REQUEST_TEMPLATE.md`, all `development/policies/*.md`,
    `development/README.md`, folder READMEs, `REGISTRY.md` headers/columns. Replace
    step/task/prompt vocabulary with work-unit/kind vocabulary; update the authority-order
-   sentence to `docs/architecture/symcon_architecture.md (v1.3) > development/specs/NNN_*_spec.md
+   sentence to `docs/architecture/icon-sc_architecture.md (v1.3) > development/specs/NNN_*_spec.md
    > development/plans/NNN_*_plan.md`; branch convention → `work/NNN-<slug>` in
    `agent_workflow.md` + `naming_conventions.md` (which also gets the full scheme +
    exemptions, replacing the S/P/N-series section — history explained via the remap
@@ -196,7 +196,7 @@ Verify purity (word-diff = path strings only), then commit C2.
    record at `development/records/$ARGUMENTS_record/`. Update `CLAUDE.md`'s
    `/implement-step` line.
 4. **Code path strings** (the only `packages/`/`benchmarks/` edits):
-   `packages/symcon-core/tests/test_order_ode.py` (docstring line ~9 + path line ~101) and
+   `packages/icon-sc-core/tests/test_order_ode.py` (docstring line ~9 + path line ~101) and
    `test_order_burgers.py` (~87): `records/S04_coupling_algebra/artifacts` →
    `records/004_coupling_algebra_record/artifacts`; `benchmarks/s05_dispatch.py:4` and
    `benchmarks/dispatch_overhead/jw_step.py:4` docstrings → the renamed record paths.
@@ -230,12 +230,12 @@ notification that will not come. Additional checks:
    `grep -rn "symcon_repo_layout" . --exclude-dir=.git` (only frozen prose + remap);
    `grep -rnE "ideas/P[2-7]_|adr/000[1-3]" . --exclude-dir=.git`.
 2. The task-33 link checker (in `033_structure_migration_plan.md` §7.2) re-run: 0 BROKEN.
-3. `ls docs/architecture/` = `symcon_architecture.md` only; `docs/_build` sphinx green
+3. `ls docs/architecture/` = `icon-sc_architecture.md` only; `docs/_build` sphinx green
    (the dropped page must not orphan any reference — `-W` catches it).
 4. Terminology check on living files:
    `grep -rniE "\b(step S[0-9]|task [0-9]{2}|prompt)\b" AGENTS.md CLAUDE.md README.md development/policies/ development/README.md .github/PULL_REQUEST_TEMPLATE.md`
    → zero hits (kind vocabulary only). Frozen files excluded by construction.
-5. `git diff main -- docs/architecture/symcon_architecture.md REFERENCES.lock constraints/ uv.lock` empty.
+5. `git diff main -- docs/architecture/icon-sc_architecture.md REFERENCES.lock constraints/ uv.lock` empty.
 
 ## 8. Record — `development/work/reports/report-0035-naming-migration.md`
 

@@ -15,7 +15,7 @@ open issues yourself.
 - Reproduce every number you quote by actually running the cited test or reading
   the cited STATUS. Do not copy numbers you have not seen produced.
 - Style: factual, minimal, upstream-maintainer-friendly. Reproduction steps must
-  be runnable with icon4py alone (no symcon imports) wherever a wrapper-free
+  be runnable with icon4py alone (no ICON-sc imports) wherever a wrapper-free
   reproduction exists.
 
 ## Draft 1 — `graupel_cold_glaciation_budget_leak.md`
@@ -23,14 +23,14 @@ open issues yourself.
 Source material: `development/work/reports/report-0008-graupel-component.md` (the leak dossier and
 its Review-fixes round), and the committed wrapper-free reproduction
 `test_cold_leak_reproduces_in_bare_granule` in
-`packages/symcon-icon/tests/test_graupel_component.py` (read `_raw_granule_budget_defect`
+`packages/icon-sc-icon/tests/test_graupel_component.py` (read `_raw_granule_budget_defect`
 — it uses only public icon4py APIs; translate it into a standalone snippet for the
 report). Content: symptom (fixed absolute column water-path leak ~1.6e-4 kg/m² per
 30 s step at reference conditions, growing to ~1.05e-3 kg/m² at qv_scale=0.1;
 relative worst 4.32e-4 at the dry edge), trigger (supercooled qc at T≲233 K, no
 coexisting ice-phase hydrometeor above QMIN), suppression conditions, the
 measured-not-theorized characterization method, and the runnable reproduction.
-RUN the cited test once (`uv run pytest packages/symcon-icon/tests/test_graupel_component.py::test_cold_leak_reproduces_in_bare_granule -q`)
+RUN the cited test once (`uv run pytest packages/icon-sc-icon/tests/test_graupel_component.py::test_cold_leak_reproduces_in_bare_granule -q`)
 and quote its pass line.
 
 ## Draft 2 — `wgtfacq_shifted_k_domain_footgun.md`
@@ -69,7 +69,7 @@ as a data point upstream may want.
 
 1. Three drafts committed under `development/records/023_upstream_reports_record/`, every claim
    double-cited (in-repo + upstream file:line at the pinned SHA).
-2. Draft 1's reproduction snippet is icon4py-only (no symcon import) and you have
+2. Draft 1's reproduction snippet is icon4py-only (no ICON-sc import) and you have
    verified it runs (`uv run python <<the snippet>>` in a scratch file under /tmp)
    producing the reported magnitudes.
 3. No product/test/doc file outside `development/records/023_upstream_reports_record/` is touched.

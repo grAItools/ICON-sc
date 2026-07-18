@@ -2,14 +2,14 @@
 
 Generated with Sphinx autodoc from the installed, typed sources. This is a
 *curated* reference: the modules a model builder or tutorial reader touches.
-Internal helpers, the optional `symcon.bridges` toolchain, and test-support
+Internal helpers, the optional `icon_sc.bridges` toolchain, and test-support
 modules are deliberately not listed here — see the source tree for those.
 
 Most classes and functions re-exported at package level (e.g.
-`symcon.core.SequentialUpdateSplitting`) are documented under their defining
+`icon_sc.core.SequentialUpdateSplitting`) are documented under their defining
 module below.
 
-## symcon.core — the model-agnostic framework
+## icon_sc.core — the model-agnostic framework
 
 ```{toctree}
 :maxdepth: 1
@@ -24,7 +24,7 @@ core_functional
 core_io
 ```
 
-## symcon.icon — ICON hosted on symcon.core
+## icon_sc.icon — ICON hosted on icon_sc.core
 
 ```{toctree}
 :maxdepth: 1

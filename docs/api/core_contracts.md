@@ -1,17 +1,17 @@
-# symcon.core.contracts — property contracts
+# icon_sc.core.contracts — property contracts
 
 ```{eval-rst}
-.. automodule:: symcon.core.contracts
+.. automodule:: icon_sc.core.contracts
 
-.. automodule:: symcon.core.contracts.properties
+.. automodule:: icon_sc.core.contracts.properties
    :members:
 
-.. automodule:: symcon.core.contracts.checkers
+.. automodule:: icon_sc.core.contracts.checkers
    :members:
 
-.. automodule:: symcon.core.contracts.conversion
+.. automodule:: icon_sc.core.contracts.conversion
    :members:
 
-.. automodule:: symcon.core.contracts.operators
+.. automodule:: icon_sc.core.contracts.operators
    :members:
 ```

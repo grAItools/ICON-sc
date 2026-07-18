@@ -1,23 +1,23 @@
-# symcon.core.coupling — the coupling algebra
+# icon_sc.core.coupling — the coupling algebra
 
 ```{eval-rst}
-.. automodule:: symcon.core.coupling
+.. automodule:: icon_sc.core.coupling
 
-.. automodule:: symcon.core.coupling.federations
+.. automodule:: icon_sc.core.coupling.federations
    :members:
 
-.. automodule:: symcon.core.coupling.concurrent
+.. automodule:: icon_sc.core.coupling.concurrent
    :members:
 
-.. automodule:: symcon.core.coupling.steppers
+.. automodule:: icon_sc.core.coupling.steppers
    :members:
 
-.. automodule:: symcon.core.coupling.bus
+.. automodule:: icon_sc.core.coupling.bus
    :members:
 
-.. automodule:: symcon.core.coupling.constraints
+.. automodule:: icon_sc.core.coupling.constraints
    :members:
 
-.. automodule:: symcon.core.coupling.dictops
+.. automodule:: icon_sc.core.coupling.dictops
    :members:
 ```

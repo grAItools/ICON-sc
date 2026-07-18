@@ -1,4 +1,4 @@
-"""symcon example 07 — gradients through the SCM window (the §8.5-8.6 F-tier).
+"""ICON-sc example 07 — gradients through the SCM window (the §8.5-8.6 F-tier).
 
 The S09 single-column composition, lowered to a pure JAX function and
 differentiated end-to-end: ``jax.vjp`` of the **accumulated surface rain**
@@ -28,9 +28,9 @@ jax.config.update("jax_enable_x64", True)  # fp64 is the contract for gradient w
 
 import jax.numpy as jnp  # noqa: E402
 
-from symcon.core.functional import functional_compile, scan_window  # noqa: E402
-from symcon.core.functional.pytree import mapping_of, tree_of  # noqa: E402
-from symcon.icon.presets import SCMConfig, build_scm  # noqa: E402
+from icon_sc.core.functional import functional_compile, scan_window  # noqa: E402
+from icon_sc.core.functional.pytree import mapping_of, tree_of  # noqa: E402
+from icon_sc.icon.presets import SCMConfig, build_scm  # noqa: E402
 
 #: The ParamTree leaf the example differentiates (§8.6 params declaration of the
 #: graupel scheme: the Seifert-Beheng autoconversion kernel coefficient).

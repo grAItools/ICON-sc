@@ -211,9 +211,9 @@ Rewrite path strings left→right. Longest-prefix wins (apply top to bottom):
 | `references/` (the top-level PDF-drop dir) | `development/references/local/` |
 | bare `plan/` meaning the tree (e.g. "the plan/ folder") | `development/` |
 
-**Never touch** (source code, not the planning tree): `symcon/core/plan/`, `core/plan/`,
-`plan/ops.py`, `plan/bind.py`, `symcon.core.plan`, `plans/<plan-hash>`,
-`$XDG_CACHE_HOME/symcon/plans/`, the words "plan"/"plans" not part of a repo path, and
+**Never touch** (source code, not the planning tree): `icon_sc/core/plan/`, `core/plan/`,
+`plan/ops.py`, `plan/bind.py`, `icon_sc.core.plan`, `plans/<plan-hash>`,
+`$XDG_CACHE_HOME/icon-sc/plans/`, the words "plan"/"plans" not part of a repo path, and
 anything inside `docs/architecture/`. When a match is ambiguous, read the sentence; if
 still ambiguous, leave it and list it in your report.
 
@@ -278,14 +278,14 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
    (no hyperlink — boundary policy). **`docs/conf.py:2`**: update the comment's report path.
    Nothing else under `docs/` changes.
 10. **AGENTS.md + CLAUDE.md** (thin, keep binding content): AGENTS.md keeps authority order
-    (updated: `docs/architecture/symcon_architecture.md` (v1.3) > `development/specs/SXX_*.md`
+    (updated: `docs/architecture/icon-sc_architecture.md` (v1.3) > `development/specs/SXX_*.md`
     > `development/plans/SXX_*.md`), the Hard rules verbatim (with `plan/steps` → new paths
     in rule 5's wording), Environment, and replaces the Workflow and Reference-corpus bodies
     with 2–3-line summaries pointing at `development/policies/agent_workflow.md`,
     `reference_mining.md`, and `development/references/`. CLAUDE.md line 9 → "Specs/plans
     live in `development/specs/` and `development/plans/`". Do not delete any rule that has
     no policy-file home.
-11. **Test/benchmark path strings**: `packages/symcon-core/tests/test_order_ode.py` lines
+11. **Test/benchmark path strings**: `packages/icon-sc-core/tests/test_order_ode.py` lines
     9 and 101, `test_order_burgers.py` line 87 →
     `development/records/S04_coupling_algebra/artifacts` (the `parents[3]` depth is
     unchanged — verify the resulting path exists at runtime via the gate run);
@@ -361,7 +361,7 @@ archive header §5.4). **C4** = living md rewrites (§5.5–§5.7, register edit
    uv run pytest packages -m "data and not slow and not gpu" -q
    uv run pytest packages -m "data and slow and not gpu" -q
    uv run ruff check . && uv run ruff format --check .
-   uv run mypy --strict -p symcon.core
+   uv run mypy --strict -p icon_sc.core
    uv run lint-imports
    ```
 

@@ -6,7 +6,7 @@
 `Microphysics(Stepper)` (single-moment graupel scheme) via the icon4py graupel granule; L2 parity against serialized ICON reference; the second — and structurally last — pattern-setting gt4py physics component.
 
 ## In scope
-`symcon/icon/components/fast/microphysics.py`: contracts (T, ρ, p/exner, qv qc qi qr qs qg in/out; precipitation-rate diagnostics; dz from VerticalGrid via static-state input); scheme selectable by registry name (`"graupel"` only, for now); `differentiable:"native"` declared (JAX core lands in S10); sedimentation/level-loop structure preserved exactly as the granule has it.
+`icon_sc/icon/components/fast/microphysics.py`: contracts (T, ρ, p/exner, qv qc qi qr qs qg in/out; precipitation-rate diagnostics; dz from VerticalGrid via static-state input); scheme selectable by registry name (`"graupel"` only, for now); `differentiable:"native"` declared (JAX core lands in S10); sedimentation/level-loop structure preserved exactly as the granule has it.
 
 ## Acceptance criteria
 1. L2 parity vs icon4py graupel reference data at icon4py's own tolerances (embedded + gtfn_cpu; gpu marker for gtfn_gpu).

@@ -5,12 +5,12 @@ Runs ``icon4py.model.driver.icon4py_driver.TimeLoop`` (v0.2.0 — REFERENCES.loc
 and caches checkpoints (6-hourly surface-pressure field, vn L2/L∞, 850 hPa vertex
 vorticity) plus an ε-perturbed twin (initial vn + 1e-13 m/s: the perturbed-IC pair
 that defines the chaotic-growth envelope, PLAN S13 item 4 — the probtest idea at
-minimum viable scale) under ``~/.cache/symcon/l4_reference/`` with sha256 checksums
+minimum viable scale) under ``~/.cache/icon-sc/l4_reference/`` with sha256 checksums
 and full config provenance. CI never runs this (AGENTS.md); ``test_jw.py`` skips
 when the cache is missing.
 
 Construction notes (documented deviation, STATUS S13): the granules handed to the
-upstream ``TimeLoop`` are the instances hosted inside the symcon preset
+upstream ``TimeLoop`` are the instances hosted inside the ICON-sc preset
 (``model.dycore._solve`` / ``model.diffusion._diffusion``) — genuine icon4py
 ``SolveNonhydro``/``Diffusion`` objects built from the archive's savepoint fields
 and namelist config, i.e. byte-identical inputs to an upstream-built granule; the
@@ -38,14 +38,14 @@ from typing import Any
 # without it, gt4py recompiles the ~70 dycore+diffusion programs on every run.
 os.environ.setdefault("GT4PY_BUILD_CACHE_LIFETIME", "persistent")
 os.environ.setdefault(
-    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "symcon" / "gt4py")
+    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "icon-sc" / "gt4py")
 )
 
 import numpy as np
 
 CACHE_DIR = pathlib.Path(
     os.environ.get(
-        "SYMCON_L4_CACHE", str(pathlib.Path.home() / ".cache" / "symcon" / "l4_reference")
+        "ICON_SC_L4_CACHE", str(pathlib.Path.home() / ".cache" / "icon-sc" / "l4_reference")
     )
 )
 CHECKPOINT_HOURS = 6.0
@@ -62,7 +62,7 @@ def sha256_of(path: pathlib.Path) -> str:
 
 
 def _icon4py_states(model: Any, *, vn_shift: float) -> tuple[Any, Any, Any, Any]:
-    """icon4py state objects for TimeLoop from the preset's initial symcon state.
+    """icon4py state objects for TimeLoop from the preset's initial ICON-sc state.
 
     Mirrors what the driver's ``read_initial_state``/``model_initialization_jabw``
     returns: prognostic now == next, zeroed diffusion diagnostics, a nonhydro
@@ -282,22 +282,22 @@ def _wrap(field: Any) -> _Wrapped:
     return _Wrapped(field)
 
 
-def generate_symcon(days: float) -> pathlib.Path:
-    """The symcon composed-model trajectory (the L4 test's subject), chunk-resumable.
+def generate_icon_sc(days: float) -> pathlib.Path:
+    """The ICON-sc composed-model trajectory (the L4 test's subject), chunk-resumable.
 
     Same checkpoints/cadence as the reference; resume goes through the S12/S13
     component restart protocols (bitwise, SPEC S12 acceptance 3) plus the boundary
     prognostics. ``test_jw.py`` prefers this cached trajectory and recomputes
     in-test only when it is absent.
     """
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
-    print("building the JW model for the symcon run...", flush=True)
+    print("building the JW model for the ICON-sc run...", flush=True)
     model = build_jw(JWConfig(perturbation_amplitude=PERTURBATION, backend="gtfn_cpu"))
     steps_per_chunk = round(CHECKPOINT_HOURS * 3600.0 / model.dtime.total_seconds())
     n_chunks = round(days * 24.0 / CHECKPOINT_HOURS)
 
-    partial_path = CACHE_DIR / "jw_l4_symcon.partial.npz"
+    partial_path = CACHE_DIR / "jw_l4_icon_sc.partial.npz"
     state = dict(model.state)
     hours: list[float] = [0.0]
     checkpoints: list[dict[str, np.ndarray]] = [model.checkpoint(state)]
@@ -313,14 +313,14 @@ def generate_symcon(days: float) -> pathlib.Path:
                 }
                 for i in range(done_chunks + 1)
             ]
-            for name in _SYMCON_PROGNOSTICS:
+            for name in _ICON_SC_PROGNOSTICS:
                 state[name].data[...] = data[f"st::{name}"]
             for prefix, component in (("dyc", model.dycore), ("dif", model.diffusion)):
                 blob = component.restart_state()
                 for key in blob:
                     blob[key].data[...] = data[f"{prefix}::{key}"]
                 component.load_restart_state(blob)
-        print(f"  [symcon] resuming after chunk {done_chunks} (+{hours[-1]:.1f} h)", flush=True)
+        print(f"  [ICON-sc] resuming after chunk {done_chunks} (+{hours[-1]:.1f} h)", flush=True)
 
     for index in range(done_chunks, n_chunks):
         t0 = time.time()
@@ -335,21 +335,21 @@ def generate_symcon(days: float) -> pathlib.Path:
         for i, cp in enumerate(checkpoints):
             for key, value in cp.items():
                 payload[f"cp{i}_{key}"] = np.asarray(value)
-        for name in _SYMCON_PROGNOSTICS:
+        for name in _ICON_SC_PROGNOSTICS:
             payload[f"st::{name}"] = np.asarray(state[name].data)
         for prefix, component in (("dyc", model.dycore), ("dif", model.diffusion)):
             for key, array in component.restart_state().items():
                 payload[f"{prefix}::{key}"] = np.asarray(array.data)
         np.savez(partial_path, **payload)
         print(
-            f"  [symcon] +{hours[-1]:6.1f} h ({steps_per_chunk} steps in "
+            f"  [ICON-sc] +{hours[-1]:6.1f} h ({steps_per_chunk} steps in "
             f"{time.time() - t0:6.1f} s)  ps range "
             f"[{checkpoints[-1]['surface_pressure'].min():10.2f}, "
             f"{checkpoints[-1]['surface_pressure'].max():10.2f}] Pa",
             flush=True,
         )
 
-    out = CACHE_DIR / "jw_l4_symcon.npz"
+    out = CACHE_DIR / "jw_l4_icon_sc.npz"
     np.savez_compressed(
         out,
         hours=np.asarray(hours),
@@ -360,11 +360,11 @@ def generate_symcon(days: float) -> pathlib.Path:
         provenance=np.asarray(json.dumps(dict(model.provenance), sort_keys=True, default=str)),
     )
     partial_path.unlink(missing_ok=True)
-    print(f"symcon trajectory written: {out}")
+    print(f"ICON-sc trajectory written: {out}")
     return out
 
 
-_SYMCON_PROGNOSTICS = (
+_ICON_SC_PROGNOSTICS = (
     "icon:normal_wind",
     "upward_air_velocity_on_interface_levels",
     "air_density",
@@ -375,15 +375,15 @@ _SYMCON_PROGNOSTICS = (
 
 def main(days: float = 9.0, force: bool = False, run: str = "all") -> None:
     """``run``: 'all' (both trajectories + manifest), or one of 'reference'/'twin'/
-    'symcon'/'manifest' — one trajectory per invocation, so long generations can be
+    'icon_sc'/'manifest' — one trajectory per invocation, so long generations can be
     driven by an outer scheduler; 'manifest' finalizes checksums once both reference
     files exist."""
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     manifest_path = CACHE_DIR / "manifest.json"
-    if run == "symcon":
-        generate_symcon(days)
+    if run == "icon_sc":
+        generate_icon_sc(days)
         return
     if manifest_path.exists() and not force:
         print(f"reference already cached at {CACHE_DIR} (use --force to regenerate)")
@@ -430,7 +430,7 @@ if __name__ == "__main__":
     parser.add_argument("--days", type=float, default=9.0)
     parser.add_argument("--force", action="store_true")
     parser.add_argument(
-        "--run", choices=("all", "reference", "twin", "symcon", "manifest"), default="all"
+        "--run", choices=("all", "reference", "twin", "icon_sc", "manifest"), default="all"
     )
     args = parser.parse_args()
     main(days=args.days, force=args.force, run=args.run)

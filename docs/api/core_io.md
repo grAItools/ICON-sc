@@ -1,11 +1,11 @@
-# symcon.core.io — monitors and output
+# icon_sc.core.io — monitors and output
 
 ```{eval-rst}
-.. automodule:: symcon.core.io
+.. automodule:: icon_sc.core.io
 
-.. automodule:: symcon.core.io.monitor
+.. automodule:: icon_sc.core.io.monitor
    :members:
 
-.. automodule:: symcon.core.io.netcdf
+.. automodule:: icon_sc.core.io.netcdf
    :members:
 ```

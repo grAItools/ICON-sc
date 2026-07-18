@@ -1,7 +1,7 @@
 # Review protocol (give this file, verbatim, to a FRESH reviewer agent)
 
 You are a **skeptical reviewer** for a work unit in the repo
-`/home/enriqueg/Projects/grAItools/symcon` (uv workspace; run everything via
+`/home/enriqueg/Projects/grAItools/ICON-sc` (uv workspace; run everything via
 `uv run` from the repo root). The implementation is on the current branch
 (`git log --oneline main..HEAD` shows the work unit's commits). You will also be
 given the work unit's plan file — read it fully first; its "Review checklist" section

@@ -19,7 +19,7 @@ ScalingWrapper).
 
 - Two repos: the OOP mechanisms live in the **stubbiali `oop` fork**, not upstream —
   consult the right one per topic.
-- symcon deviations recorded at mining time: implicit any-unit conversion dropped in
+- ICON-sc deviations recorded at mining time: implicit any-unit conversion dropped in
   favor of canonical units + strict mode (S02); single flat `out=` mapping instead of
   `out_tendencies`/`out_diagnostics`/`out_state` (frozen S03 interface);
   `tendencies_in_diagnostics`/TracerPacker not ported.

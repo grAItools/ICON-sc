@@ -3,9 +3,9 @@
 **Lane:** trunk · **Depends on:** S01 · **Unblocks:** S03, S06, S11
 
 ## Goal
-The §2 boundary exists: FieldBuffer protocol, canonical names/units registries, boundary DataArray construction, property-dict schema with the symcon extensions (location, halo, differentiable, params), and the Checker/Operator machinery (static/dynamic split per §4.2 ← Ubbiali).
+The §2 boundary exists: FieldBuffer protocol, canonical names/units registries, boundary DataArray construction, property-dict schema with the ICON-sc extensions (location, halo, differentiable, params), and the Checker/Operator machinery (static/dynamic split per §4.2 ← Ubbiali).
 
-## In scope (module map = layout doc `symcon/core/`)
+## In scope (module map = layout doc `icon_sc/core/`)
 `typing.py` (FieldBuffer protocol via `__dlpack__`; `Location`, `HaloState` enums) · `registry.py` (`Factory`/`MetaFactory`, name-keyed, register-on-import; port semantics from stubbiali/sympl `oop`) · `state/names.py` (registry machinery + `_on_interface_levels` convention; namespacing `cf:`-implicit vs `icon:`) · `state/units.py` (canonical-units table keyed by name; `verify_noop(component_units, canonical)`; Pint only at negotiation) · `state/dataarray.py` (constructors stamping units/location/halo/grid_uuid attrs) · `contracts/properties.py` (typed property-dict schema incl. `differentiable: native|custom|none` and `params`; validation of the dicts themselves) · `contracts/checkers.py` + `contracts/operators.py` (static checkers: definition-only; dynamic checkers/operators: definition × data; ingress/egress plan objects that S03 executes and S05 pre-resolves) · `config.py` (frozen-dataclass base + provenance stamp helper) · `time.py` (cftime-aware datetime handling; cadence arithmetic: lcm of timedeltas, phase) · `profiling.py` (labelled nested Timer, device-sync hook).
 
 ## Out of scope

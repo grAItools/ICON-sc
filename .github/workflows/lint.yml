@@ -19,8 +19,8 @@ jobs:
         run: |
           uv run ruff check .
           uv run ruff format --check .
-      - name: mypy --strict on symcon-core
-        run: uv run mypy --strict -p symcon.core
+      - name: mypy --strict on icon-sc-core
+        run: uv run mypy --strict -p icon_sc.core
       - name: import-linter contracts
         run: uv run lint-imports
       # task 28: a PR that breaks the docs build fails lint, not just the docs workflow.

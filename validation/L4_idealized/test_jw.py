@@ -3,14 +3,14 @@
 SPEC S13 acceptance 3 + 4. Requires the cached reference from
 ``make_reference.py`` (skips with instructions otherwise — CI never generates it,
 AGENTS.md) and the JW datatest archive. Markers: ``data`` + ``slow`` — the 9-day
-symcon trajectory runs inside the test (hours of CPU; not part of the package
+ICON-sc trajectory runs inside the test (hours of CPU; not part of the package
 gates, which cover ``packages/`` only).
 
 Tolerance schedule (documented per PLAN item 4): icon4py's own driver tests verify
 exactly ONE timestep at this grid (vn atol=6e-12 etc. — adopted verbatim in
-``packages/symcon-icon/tests/test_jw_datatest.py``); no upstream multi-day schedule
+``packages/icon-sc-icon/tests/test_jw_datatest.py``); no upstream multi-day schedule
 exists, so the day-9 envelope is derived from the reference's ε-perturbed twin
-(initial vn + 1e-13 m/s): at every checkpoint the symcon-vs-reference surface
+(initial vn + 1e-13 m/s): at every checkpoint the ICON-sc-vs-reference surface
 pressure deviation must stay within ``max(10 x twin-envelope(t), 0.1 Pa)`` — the
 0.1 Pa floor is the SPEC's own day-1 criterion (rtol 1e-6 of ~1e5 Pa) and the
 factor 10 covers the different (rounding-level vs 1e-13) seeding of the two
@@ -32,7 +32,7 @@ pytestmark = [pytest.mark.data, pytest.mark.slow]
 
 CACHE_DIR = pathlib.Path(
     os.environ.get(
-        "SYMCON_L4_CACHE", str(pathlib.Path.home() / ".cache" / "symcon" / "l4_reference")
+        "ICON_SC_L4_CACHE", str(pathlib.Path.home() / ".cache" / "icon-sc" / "l4_reference")
     )
 )
 ARTIFACTS = pathlib.Path(__file__).parent / "artifacts"
@@ -75,32 +75,32 @@ def _load_run(manifest: dict[str, Any], tag: str) -> dict[str, np.ndarray]:
 
 @pytest.fixture(scope="module")
 def manifest() -> dict[str, Any]:
-    pytest.importorskip("icon4py.model.testing", reason="symcon-icon[datatest] required")
+    pytest.importorskip("icon4py.model.testing", reason="icon-sc-icon[datatest] required")
     return _load_manifest()
 
 
 @pytest.fixture(scope="module")
 def jw_trajectories(manifest: dict[str, Any]) -> dict[str, Any]:
-    """Reference + twin from the cache; symcon from the cache (``make_reference.py
-    --run symcon``, the chunk-resumable runner) or computed here as a fallback.
+    """Reference + twin from the cache; ICON-sc from the cache (``make_reference.py
+    --run icon_sc``, the chunk-resumable runner) or computed here as a fallback.
 
     Config congruence (the PLAN pitfall) is asserted before any trajectory
     comparison, against the manifest's provenance in both modes.
     """
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     reference = _load_run(manifest, "reference")
     twin = _load_run(manifest, "twin")
     theirs = {k: v for k, v in manifest["provenance"].items() if k != "backend"}
 
-    cached = CACHE_DIR / "jw_l4_symcon.npz"
+    cached = CACHE_DIR / "jw_l4_icon_sc.npz"
     if cached.exists():
         with np.load(cached) as data:
-            symcon = {key: np.asarray(data[key]) for key in data.files if key != "provenance"}
+            icon_sc = {key: np.asarray(data[key]) for key in data.files if key != "provenance"}
             cached_provenance = json.loads(str(data["provenance"]))
         ours = {k: v for k, v in cached_provenance.items() if k != "backend"}
-        assert ours == theirs, "cached symcon trajectory provenance != reference provenance"
-        return {"reference": reference, "twin": twin, "symcon": symcon}
+        assert ours == theirs, "cached ICON-sc trajectory provenance != reference provenance"
+        return {"reference": reference, "twin": twin, "icon_sc": icon_sc}
 
     model = build_jw(
         JWConfig(
@@ -125,20 +125,20 @@ def jw_trajectories(manifest: dict[str, Any]) -> dict[str, Any]:
         hours.append((index + 1) * checkpoint_hours)
         checkpoints.append(model.checkpoint(state))
 
-    symcon = {
+    icon_sc = {
         "hours": np.asarray(hours),
         "surface_pressure": np.stack([c["surface_pressure"] for c in checkpoints]),
         "vn_l2": np.asarray([c["vn_l2"] for c in checkpoints]),
         "vn_linf": np.asarray([c["vn_linf"] for c in checkpoints]),
         "vorticity_850": np.stack([c["vorticity_850"] for c in checkpoints]),
     }
-    return {"reference": reference, "twin": twin, "symcon": symcon}
+    return {"reference": reference, "twin": twin, "icon_sc": icon_sc}
 
 
 def test_l4_day1_surface_pressure(jw_trajectories: dict[str, Any]) -> None:
     """SPEC acceptance 3, day-1 leg: ps rtol <= 1e-6 vs the driver reference."""
-    reference, symcon = jw_trajectories["reference"], jw_trajectories["symcon"]
-    np.testing.assert_array_equal(reference["hours"], symcon["hours"])
+    reference, icon_sc = jw_trajectories["reference"], jw_trajectories["icon_sc"]
+    np.testing.assert_array_equal(reference["hours"], icon_sc["hours"])
     matches = np.argwhere(np.isclose(reference["hours"], 24.0))
     if matches.size == 0:
         pytest.skip(
@@ -147,7 +147,7 @@ def test_l4_day1_surface_pressure(jw_trajectories: dict[str, Any]) -> None:
         )
     day1 = int(matches[0, 0])
     np.testing.assert_allclose(
-        symcon["surface_pressure"][day1],
+        icon_sc["surface_pressure"][day1],
         reference["surface_pressure"][day1],
         rtol=DAY1_RTOL,
         atol=0.0,
@@ -160,10 +160,10 @@ def test_l4_trajectory_within_twin_envelope(jw_trajectories: dict[str, Any]) -> 
     derived from the reference's ε-perturbed twin (see module docstring)."""
     reference = jw_trajectories["reference"]
     twin = jw_trajectories["twin"]
-    symcon = jw_trajectories["symcon"]
+    icon_sc = jw_trajectories["icon_sc"]
 
     envelope = np.max(np.abs(twin["surface_pressure"] - reference["surface_pressure"]), axis=1)
-    deviation = np.max(np.abs(symcon["surface_pressure"] - reference["surface_pressure"]), axis=1)
+    deviation = np.max(np.abs(icon_sc["surface_pressure"] - reference["surface_pressure"]), axis=1)
     bound = np.maximum(ENVELOPE_FACTOR * envelope, ENVELOPE_FLOOR_PA)
 
     ARTIFACTS.mkdir(exist_ok=True)
@@ -171,7 +171,7 @@ def test_l4_trajectory_within_twin_envelope(jw_trajectories: dict[str, Any]) -> 
     np.savetxt(
         ARTIFACTS / "l4_ps_deviation.txt",
         table,
-        header="hours  max|ps_symcon-ps_ref| [Pa]  twin_envelope [Pa]  bound [Pa]",
+        header="hours  max|ps_icon_sc-ps_ref| [Pa]  twin_envelope [Pa]  bound [Pa]",
     )
     _plot(reference["hours"], deviation, envelope, bound)
 
@@ -183,12 +183,12 @@ def test_l4_trajectory_within_twin_envelope(jw_trajectories: dict[str, Any]) -> 
     )
     # secondary norms: same criterion shape on the vorticity proxy and vn norms.
     vort_envelope = np.max(np.abs(twin["vorticity_850"] - reference["vorticity_850"]), axis=1)
-    vort_deviation = np.max(np.abs(symcon["vorticity_850"] - reference["vorticity_850"]), axis=1)
+    vort_deviation = np.max(np.abs(icon_sc["vorticity_850"] - reference["vorticity_850"]), axis=1)
     vort_floor = 1e-6 * max(1.0, float(np.max(np.abs(reference["vorticity_850"]))))
     assert (vort_deviation <= np.maximum(ENVELOPE_FACTOR * vort_envelope, vort_floor)).all()
     for norm in ("vn_l2", "vn_linf"):
         norm_envelope = np.abs(twin[norm] - reference[norm])
-        norm_deviation = np.abs(symcon[norm] - reference[norm])
+        norm_deviation = np.abs(icon_sc[norm] - reference[norm])
         norm_floor = 1e-6 * max(1.0, float(np.max(np.abs(reference[norm]))))
         within = norm_deviation <= np.maximum(ENVELOPE_FACTOR * norm_envelope, norm_floor)
         assert within.all(), norm
@@ -206,12 +206,12 @@ def _plot(
         return
     fig, ax = plt.subplots(figsize=(7, 4.5))
     positive = np.maximum.reduce([deviation, np.full_like(deviation, 1e-16)])
-    ax.semilogy(hours / 24.0, positive, label="max|ps symcon - ps reference|")
+    ax.semilogy(hours / 24.0, positive, label="max|ps ICON-sc - ps reference|")
     ax.semilogy(hours / 24.0, np.maximum(envelope, 1e-16), "--", label="twin envelope (ε=1e-13)")
     ax.semilogy(hours / 24.0, bound, ":", label="bound (10x envelope, 0.1 Pa floor)")
     ax.set_xlabel("days")
     ax.set_ylabel("surface pressure deviation [Pa]")
-    ax.set_title("L4: JW baroclinic wave, symcon vs icon4py driver (R02B04L35)")
+    ax.set_title("L4: JW baroclinic wave, ICON-sc vs icon4py driver (R02B04L35)")
     ax.legend()
     fig.tight_layout()
     fig.savefig(ARTIFACTS / "l4_ps_deviation.png", dpi=150)
@@ -235,9 +235,9 @@ def test_l4_zonal_symmetry_12h() -> None:
     hour, 1.7e-5 after 12 h — a property of the R2B4 discretization, not an
     orchestration error) and is reported to the artifacts file as context, not
     asserted."""
-    pytest.importorskip("icon4py.model.testing", reason="symcon-icon[datatest] required")
+    pytest.importorskip("icon4py.model.testing", reason="icon-sc-icon[datatest] required")
 
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     model = build_jw(JWConfig(perturbation_amplitude=0.0, backend="gtfn_cpu"))
 

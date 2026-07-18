@@ -1,20 +1,20 @@
-# symcon.core.state — state layer
+# icon_sc.core.state — state layer
 
 ```{eval-rst}
-.. automodule:: symcon.core.state
+.. automodule:: icon_sc.core.state
 
-.. automodule:: symcon.core.state.names
+.. automodule:: icon_sc.core.state.names
    :members:
 
-.. automodule:: symcon.core.state.units
+.. automodule:: icon_sc.core.state.units
    :members:
 
-.. automodule:: symcon.core.state.dataarray
+.. automodule:: icon_sc.core.state.dataarray
    :members:
 
-.. automodule:: symcon.core.state.vault
+.. automodule:: icon_sc.core.state.vault
    :members:
 
-.. automodule:: symcon.core.state.facade
+.. automodule:: icon_sc.core.state.facade
    :members:
 ```

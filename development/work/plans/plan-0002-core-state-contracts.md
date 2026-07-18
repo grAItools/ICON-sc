@@ -1,6 +1,6 @@
 # S02 — Plan
 
-1. **Mine sympl first.** Read upstream sympl `_core` (property mechanics, units, alias handling) and the stubbiali fork's Checkers/Operators/Factory (branch `oop`). Port *semantics*, not code: symcon's schema adds location/halo/differentiable/params and drops sympl's implicit any-unit conversion in favor of canonical units + strict mode. Record files read in `development/references/lock.toml`.
+1. **Mine sympl first.** Read upstream sympl `_core` (property mechanics, units, alias handling) and the stubbiali fork's Checkers/Operators/Factory (branch `oop`). Port *semantics*, not code: ICON-sc's schema adds location/halo/differentiable/params and drops sympl's implicit any-unit conversion in favor of canonical units + strict mode. Record files read in `development/references/lock.toml`.
 2. Implement `typing.py`, `registry.py` (metaclass registration; keep it ~40 lines — resist cleverness).
 3. `state/names.py` + `state/units.py`: table-driven; canonical units stored as strings, compared via a cached Pint identity check at registration time only.
 4. `contracts/`: `PropertySpec` as frozen slotted dataclass; static checker validates spec dicts at class definition (invoked from a `__init_subclass__` hook that S03 will wire); dynamic checker + `IngressPlan` operate on a lightweight `StateSchema` (name → (dims, units, dtype, device, location)) so S05 can reuse them without real data.

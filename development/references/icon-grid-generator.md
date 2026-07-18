@@ -9,7 +9,7 @@
 
 Pure-numpy ICON-style grid generator for synthetic-grid tests, convergence ladders,
 torus experiments, and LAM/P2 fixtures (task 26). Generated grids load through the
-symcon grid stack (GridManager path) with offset providers, metrics, and
+ICON-sc grid stack (GridManager path) with offset providers, metrics, and
 interpolation factory fields computing all-finite.
 
 ## Gotchas

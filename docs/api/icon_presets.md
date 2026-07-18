@@ -1,11 +1,11 @@
-# symcon.icon.presets — validated composition presets
+# icon_sc.icon.presets — validated composition presets
 
 ```{eval-rst}
-.. automodule:: symcon.icon.presets
+.. automodule:: icon_sc.icon.presets
 
-.. automodule:: symcon.icon.presets.scm
+.. automodule:: icon_sc.icon.presets.scm
    :members:
 
-.. automodule:: symcon.icon.presets.jw
+.. automodule:: icon_sc.icon.presets.jw
    :members:
 ```

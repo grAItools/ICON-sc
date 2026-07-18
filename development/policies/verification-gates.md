@@ -30,7 +30,7 @@ uv run pytest packages -m "data and not slow and not gpu" -q
 uv run pytest packages -m "data and slow and not gpu" -q
 uv run ruff check .
 uv run ruff format --check .
-uv run mypy --strict -p symcon.core
+uv run mypy --strict -p icon_sc.core
 uv run lint-imports
 ```
 
@@ -137,15 +137,15 @@ Rules for reading gate output:
 
 ## Caches (read-only context; do not delete or regenerate)
 
-- `~/.cache/symcon/gt4py` — persistent gtfn program cache. First runs after code
+- `~/.cache/icon-sc/gt4py` — persistent gtfn program cache. First runs after code
   changes may recompile (minutes per variant); reruns are fast. Never point tests at
   a cold cache except where a plan explicitly says so.
-- `~/.cache/symcon/icon4py-testdata` — serialized reference archives (GAUSS3D 57 MB,
+- `~/.cache/icon-sc/icon4py-testdata` — serialized reference archives (GAUSS3D 57 MB,
   WK-torus ~1.6 GB, EXCLAIM APE **~4.0 GB compressed / 8.7 GB extracted**, JW ~14 GB,
   MCH ~11 GB). Downloaded via icon4py's own machinery on first use. The extracted APE
   figure is the load-bearing one for worker-count calibration (work unit 0052): it is what
   each reference-loading worker actually holds.
-- `~/.cache/symcon/l4_reference` — the 9-day JW reference/twin/symcon trajectories
+- `~/.cache/icon-sc/l4_reference` — the 9-day JW reference/twin/ICON-sc trajectories
   with a sha256 manifest. **Regenerating costs ~7 h and invalidates the recorded
   bitwise results — never regenerate** unless a plan explicitly instructs it
   (none of the current plans do).

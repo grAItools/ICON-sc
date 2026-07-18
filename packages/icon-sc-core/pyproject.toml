@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "icon-sc-core"
+version = "0.1.0"
+description = "ICON-sc composition framework: state/vault/plan, contracts, coupling algebra, comm, context, driver, generic I/O"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.23.3",
+  # S02 state layer: boundary DataArrays, canonical-units identity checks (negotiation
+  # only), cftime-aware time handling. Lower bounds only; constraints/ pins exact sets.
+  "xarray>=2024.1",
+  "pint>=0.23",
+  "cftime>=1.6",
+  # S03 io/netcdf.py (NetCDFMonitor): xarray's netcdf4 engine. Generic I/O is part of
+  # icon-sc-core's mandate (package description); lower bound only.
+  "netcdf4>=1.6",
+]
+
+# Extras per the repo layout document §1. Lower bounds only; constraints/ pins exact sets.
+[project.optional-dependencies]
+# S07 ingress/gt4py.py (Backend + zero-copy as_field); imported lazily, so core
+# works without it. Exact pin (gt4py==1.1.10, the icon4py-0.2.0 pair) in constraints/.
+gt4py = ["gt4py>=1.1.10"]
+gpu = ["cupy-cuda12x>=13.0"]
+jax = ["jax>=0.6.0", "mpi4jax>=0.6.0"]
+mpi = ["mpi4py>=3.1.5", "ghex>=0.7.0"]
+native = ["cffi>=1.16", "cmake>=3.28", "scikit-build-core>=0.10"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/icon_sc"]

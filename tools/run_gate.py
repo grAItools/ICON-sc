@@ -109,7 +109,7 @@ ORDER: tuple[str, ...] = ("fast", "slow-nodata", "data-noslow", "data-slow")
 LINT: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("ruff-check", ("uv", "run", "ruff", "check", ".")),
     ("ruff-format", ("uv", "run", "ruff", "format", "--check", ".")),
-    ("mypy", ("uv", "run", "mypy", "--strict", "-p", "symcon.core")),
+    ("mypy", ("uv", "run", "mypy", "--strict", "-p", "icon_sc.core")),
     ("lint-imports", ("uv", "run", "lint-imports")),
 )
 
@@ -258,11 +258,11 @@ def main() -> int:
     )
     mode.add_argument("--partition", choices=sorted(PARTITIONS), help="run one partition alone")
     ap.add_argument("--no-lint", action="store_true", help="skip the lint battery")
-    ap.add_argument("--logdir", type=pathlib.Path, help="default: /tmp/symcon-gate-<pid>")
+    ap.add_argument("--logdir", type=pathlib.Path, help="default: /tmp/icon-sc-gate-<pid>")
     args = ap.parse_args()
 
     _check_order()
-    logdir = args.logdir or pathlib.Path(f"/tmp/symcon-gate-{os.getpid()}")
+    logdir = args.logdir or pathlib.Path(f"/tmp/icon-sc-gate-{os.getpid()}")
     logdir.mkdir(parents=True, exist_ok=True)
     print(f"logs: {logdir}", flush=True)
 

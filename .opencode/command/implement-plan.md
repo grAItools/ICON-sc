@@ -1,5 +1,5 @@
 ---
-description: Implement a symcon work unit end-to-end per the agent working agreement
+description: Implement a ICON-sc work unit end-to-end per the agent working agreement
 ---
 Implement work unit $ARGUMENTS ($ARGUMENTS = NNNN-<kebab>, e.g. 0025-cf-multistage-t1).
 

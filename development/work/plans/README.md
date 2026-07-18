@@ -45,7 +45,7 @@ there. Full naming convention and file taxonomy:
 ## Invariants that apply to EVERY work unit (also restated inside each plan)
 
 - Authority order on any conflict:
-  `docs/architecture/symcon_architecture.md` (v1.3) >
+  `docs/architecture/icon-sc_architecture.md` (v1.3) >
   `development/work/specs/spec-NNNN-*.md` > `development/work/plans/plan-NNNN-*.md`.
   Never silently resolve a contradiction — record it and stop.
 - Branch from `main`, name `work/NNNN-<kebab>`, verify with

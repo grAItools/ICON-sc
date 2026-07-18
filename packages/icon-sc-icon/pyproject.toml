@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "icon-sc-icon"
+version = "0.1.0"
+description = "ICON-sc ICON model: grid stack, ICON components, presets, ingestion, variable registry"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.10"
+dependencies = [
+  "icon-sc-core",
+  "icon4py-common>=0.2.0",
+  # S07 satad component wraps the icon4py saturation-adjustment granule (already
+  # pinned at 0.2.0 by constraints/; a new member of the pinned set, not a bump).
+  "icon4py-atmosphere-microphysics>=0.2.0",
+  # thermo.py array-namespace genericity (numpy/cupy now, JAX in S10 — PLAN S06 item 3).
+  "array-api-compat>=1.4",
+  "numpy>=1.23.3",
+  # S11 grid/reader.py ingests ICON grid NetCDF directly (same floor as icon-sc-core's
+  # io/netcdf.py; already in the resolved lock via icon-sc-core — a declaration, not a bump).
+  "netcdf4>=1.6",
+]
+
+[project.optional-dependencies]
+# Synthetic ICON-style grid generation for tests (task 26): reader/factory/convergence
+# fixtures without archive downloads. Exact pin in constraints/cpu-ci.txt. Test-tier
+# only — generated grids are NOT numerically equivalent to official DWD gridgen output
+# and must never substitute for the archive grids in savepoint-parity work.
+gridgen = ["icon-grid-generator>=0.3.2"]
+# icon4py serialbox datatest bridge (icon_sc.icon.testing); versions pinned by
+# constraints/cpu-ci.txt. icon4py-testing imports diffusion/dycore/microphysics and the
+# standalone driver at import time, hence the transitive members appear explicitly.
+datatest = [
+  "icon4py-testing>=0.2.0",
+  "icon4py-atmosphere-diffusion>=0.2.0",
+  "icon4py-atmosphere-dycore>=0.2.0",
+  "icon4py-atmosphere-microphysics>=0.2.0",
+  "icon4py-standalone-driver>=0.2.0",
+  # S13: the classic driver is the JW-initializer donor (delegation target of
+  # icon_sc.icon.ingest.idealized) and the L4 reference-trajectory generator
+  # (already pinned at 0.2.0 by constraints/cpu-ci.txt line 12 — a new member of
+  # the pinned set, not a bump).
+  "icon4py-driver>=0.2.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/icon_sc"]

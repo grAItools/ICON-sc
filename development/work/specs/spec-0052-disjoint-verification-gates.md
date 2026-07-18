@@ -104,7 +104,7 @@ Changing what any test asserts, its tolerances, its `pytest.mark` markers, or it
 
 ## Frozen interfaces
 - `tools/run_gate.py` CLI: default = the full gate (lint battery, then every partition **in sequence**), exiting non-zero iff any partition/check fails **or the measured peak RSS exceeds the 23 GiB budget**; `--partition <fast|slow-nodata|data-noslow|data-slow>` = one partition alone. **(Amendments 4–5:** the `-n`/`--dist` wording is withdrawn along with xdist and the calibration-only `--workers` flag is gone. `--serial` is still accepted — the frozen CLI names it — but is now an explicit **alias of the default**, since the default *is* sequential: with concurrency withdrawn, the gate and its own baseline oracle are the same command. The CLI surface is otherwise as frozen.**)** The marker commands in `policies/verification-gates.md` remain the canonical definition of *what* the gate runs; the driver is only an accelerated executor of them.
-- No `symcon.*` source, public API, or import-graph change: **none**. import-linter contracts stay `2 kept, 0 broken`.
+- No `icon_sc.*` source, public API, or import-graph change: **none**. import-linter contracts stay `2 kept, 0 broken`.
 
 ## Acceptance criteria
 1. **Coverage invariance (the load-bearing one).** The union of tests collected across the four partitions is **848**, identical to the union before the `fast` expression changed, and `fast ∩ data-noslow = ∅`. Demonstrated by comparing collection *sets*, not by counting. Per-partition counts otherwise unchanged: `slow-nodata` 31, `data-noslow` 43, `data-slow` 77; `fast` 697 (was 740 — the 43-test delta is exactly the `data, not slow` set, accounted for line-by-line).

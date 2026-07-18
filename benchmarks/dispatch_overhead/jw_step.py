@@ -41,12 +41,12 @@ import warnings
 
 os.environ.setdefault("GT4PY_BUILD_CACHE_LIFETIME", "persistent")
 os.environ.setdefault(
-    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "symcon" / "gt4py")
+    "GT4PY_BUILD_CACHE_DIR", str(pathlib.Path.home() / ".cache" / "icon-sc" / "gt4py")
 )
 
 
 def bench_t0(backend: str, n_steps: int, repeats: int) -> list[float]:
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     model = build_jw(JWConfig(backend=backend))
     state = dict(model.state)
@@ -62,8 +62,8 @@ def bench_t0(backend: str, n_steps: int, repeats: int) -> list[float]:
 
 
 def bench_t1(backend: str, n_steps: int, repeats: int) -> tuple[list[float], float]:
-    from symcon.core import ExecutionPlan, StateSchema, StateVault
-    from symcon.icon.presets import JWConfig, build_jw
+    from icon_sc.core import ExecutionPlan, StateSchema, StateVault
+    from icon_sc.icon.presets import JWConfig, build_jw
 
     model = build_jw(JWConfig(backend=backend))
     ctx = dataclasses.replace(model.dycore.ctx, tier="plan", timestep=model.dtime)

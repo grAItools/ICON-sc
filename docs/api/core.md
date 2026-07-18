@@ -1,18 +1,18 @@
-# symcon.core — top level
+# icon_sc.core — top level
 
 The execution context, the component registry, time handling, and
 configuration/provenance.
 
 ```{eval-rst}
-.. automodule:: symcon.core.context
+.. automodule:: icon_sc.core.context
    :members:
 
-.. automodule:: symcon.core.registry
+.. automodule:: icon_sc.core.registry
    :members:
 
-.. automodule:: symcon.core.time
+.. automodule:: icon_sc.core.time
    :members:
 
-.. automodule:: symcon.core.config
+.. automodule:: icon_sc.core.config
    :members:
 ```

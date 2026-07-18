@@ -14,13 +14,13 @@ ops generalize.
 
 ## Gotchas
 
-- tasmania's `rk2` is the **midpoint** scheme; symcon deviates to Heun per SPEC S04
+- tasmania's `rk2` is the **midpoint** scheme; ICON-sc deviates to Heun per SPEC S04
   (cross-checked against sympl SSPRungeKutta 2-stage).
 - Substepped PS/STS/SUS sections raise `NotImplementedError` in tasmania too — not
   ported.
 - Not ported either: execution policies (`'as_parallel'`),
   `enforce_horizontal_boundary`, promoter components, `DataArrayDictOperator` gt4py
-  stencil dispatch (symcon: numpy-level `dict_axpy` at T0).
+  stencil dispatch (ICON-sc: numpy-level `dict_axpy` at T0).
 
 ## Consultation ledger
 

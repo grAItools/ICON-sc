@@ -1,24 +1,24 @@
-# symcon.icon.components — ICON process components
+# icon_sc.icon.components — ICON process components
 
 Public modules only; solver-internal helpers are not part of the reference.
 
 ```{eval-rst}
-.. automodule:: symcon.icon.components
+.. automodule:: icon_sc.icon.components
 
-.. automodule:: symcon.icon.components.fast
+.. automodule:: icon_sc.icon.components.fast
 
-.. automodule:: symcon.icon.components.fast.satad
+.. automodule:: icon_sc.icon.components.fast.satad
    :members:
 
-.. automodule:: symcon.icon.components.fast.microphysics
+.. automodule:: icon_sc.icon.components.fast.microphysics
    :members:
 
-.. automodule:: symcon.icon.components.dycore
+.. automodule:: icon_sc.icon.components.dycore
    :members:
 
-.. automodule:: symcon.icon.components.diffusion
+.. automodule:: icon_sc.icon.components.diffusion
    :members:
 
-.. automodule:: symcon.icon.components.idealized
+.. automodule:: icon_sc.icon.components.idealized
    :members:
 ```

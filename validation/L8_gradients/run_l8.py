@@ -23,14 +23,14 @@ jax.config.update("jax_enable_x64", True)
 import jax.numpy as jnp  # noqa: E402
 import numpy as np  # noqa: E402
 
-from symcon.core.functional import functional_compile, scan_window  # noqa: E402
-from symcon.core.functional.pytree import mapping_of, tree_of  # noqa: E402
-from symcon.core.testing.gradients import (  # noqa: E402
+from icon_sc.core.functional import functional_compile, scan_window  # noqa: E402
+from icon_sc.core.functional.pytree import mapping_of, tree_of  # noqa: E402
+from icon_sc.core.testing.gradients import (  # noqa: E402
     TaylorResult,
     dot_product_test,
     taylor_test,
 )
-from symcon.icon.presets import SCMConfig, build_scm  # noqa: E402
+from icon_sc.icon.presets import SCMConfig, build_scm  # noqa: E402
 
 ARTIFACTS = Path(__file__).parent / "artifacts"
 
