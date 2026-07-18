@@ -38,7 +38,7 @@ jobs:
           uv pip install --prerelease=allow \
             -e packages/symcon-core -e packages/symcon-icon -e packages/symcon-bridges \
             -c constraints/${{ matrix.constraints }}.txt \
-            pytest pytest-mpi
+            pytest pytest-mpi hypothesis import-linter
       - name: pinned icon4py imports (SPEC S01 acceptance 5)
         run: .venv/bin/python -c "import icon4py.model.common"
       - run: .venv/bin/pytest packages -m "not gpu and not mpi" -ra
