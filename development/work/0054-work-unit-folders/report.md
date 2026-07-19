@@ -1,10 +1,11 @@
 # Work unit 0054 — per-unit work folders: execution report
 
 **Branch:** `claude/reorganize-work-folder-w0gpge` (task-pinned; the conventional name would be
-`work/0054-work-unit-folders`) · **Date:** 2026-07-19 · **State:** executed; lint/type gates
-green, `fast`+`slow` pytest **running** at report time (numbers folded in below when they
-land), `data`/`data-slow` deferred (no testdata cache — §3/§5); the first document set migrated
-by the convention it implements.
+`work/0054-work-unit-folders`) · **Date:** 2026-07-19 · **State:** executed; lint/type +
+`slow` green (31), `fast` 695 passed / 1 skipped with **one pre-existing fp64 hardware-fingerprint
+failure that is not a migration regression** (byte-identical package, env-bound — §5),
+`data`/`data-slow` deferred (no testdata cache — §3/§5); the first document set migrated by the
+convention it implements.
 
 Spec: `development/work/0054-work-unit-folders/spec.md`. Plan:
 `development/work/0054-work-unit-folders/plan.md` (both migrated into this folder by the very
@@ -113,21 +114,37 @@ No tolerances touched. Two trunk decisions await sign-off:
 - `TD-PENDING:` TD-54.2 — `tools/spec_freeze_guard.py` path-shape change + the sanctioned
   migration-time neuter (transient, unstaged, never committed; restored to new-path logic).
 
-## 5. Gates (dated 2026-07-19)
+## 5. Gates (dated 2026-07-19 UTC)
 
 - ruff check: `All checks passed!`; ruff format --check: `175 files already formatted`;
   lint-imports: `Contracts: 2 kept, 0 broken`; mypy: `Success: no issues found in 50 source
   files`. (all baseline)
 - Collection: fast partition `697/883 collected` = 696 pass + 1 mpi skip = baseline, unchanged.
-- fast (`not gpu and not slow and not data`): _pending — background run, see final update_.
-- slow (`slow and not gpu and not data`): _pending — includes the S04 order tests writing
-  `0004-coupling-algebra/artifacts/convergence_{ode,burgers}.png` at the retargeted path._
-- data / data-slow: **not run in-container** (§3 dev. 2); orthogonal to the diff.
+- **fast** (`not gpu and not slow and not data`): `1 failed, 695 passed, 1 skipped, 186
+  deselected in 573.72s`, EXIT:1. The single failure is
+  `test_scm_preset.py::test_column_regression_fingerprint` — an **fp64-exact hardware
+  fingerprint** (docstring: "fp64-exact change detector on the same platform"; keyed on
+  `(sys.platform, platform.machine())`, asserting an exact hash). **Not a migration
+  regression:** `git diff main -- packages/icon-sc-icon` is **empty** (the failing test's whole
+  package is byte-identical to `main`), the test/SCM source reference **no** `work/` path, and
+  `constraints/`/`uv.lock` are untouched — so the identical bytes fail identically on `main` in
+  this container. The golden was baked on the baseline host (`platform.machine()` = `x86_64` is
+  coarse; this ephemeral CPU rounds fp64 differently); there the test is green and sits in the
+  696 baseline. The **695 pass** = baseline − this one env-bound test; nothing else moved.
+- **slow** (`slow and not gpu and not data`): `31 passed, 852 deselected in 543.60s`, EXIT:0 —
+  baseline. The S04 order tests wrote
+  `development/work/0004-coupling-algebra/artifacts/convergence_{ode,burgers}.png` (mtime 18:28)
+  — the **retargeted artifact path is exercised** and correct.
+- **data / data-slow**: **not run in-container** (§3 dev. 2) — no icon4py testdata / gt4py
+  caches (tens of GB; `data-slow`'s bitwise test needs the ~7 h `l4_reference`); orthogonal to
+  the diff (`git diff main -- packages/` = only the two S04 path lines).
 
 ## 6. Follow-ups
 
-- **F1:** re-run `data` + `data-slow` green on a testdata-cache-equipped host before merge
-  (unaffected by this diff; required for spec acceptance 7 in full).
+- **F1:** on the baseline host before merge, re-run the full battery green — `data` +
+  `data-slow` (unrunnable here for lack of the caches) and confirm `fast` is **696/1** there
+  (the `test_column_regression_fingerprint` fp64 golden matches that CPU). All are unaffected by
+  this diff; required for spec acceptance 7 in full.
 - **F2:** owner decision on authoring **ADR-0008** for the per-unit-folder decision (parity
   with 0006/0007), or letting TD-54.1 stand alone.
 - **F3:** the six bare-stem `report-000N-...` references left inside frozen docs/ADRs/REGISTRY
