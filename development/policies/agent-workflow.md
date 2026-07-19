@@ -6,9 +6,9 @@ implementer/reviewer loop.
 ## Workflow for a work unit
 
 1. Pick a work unit whose dependencies are merged (the 0001–0014 slice DAG:
-   `development/work/reports/report-0000-overview.md` §2). Branch: `work/NNNN-<kebab>`.
-2. Read the spec (`development/work/specs/spec-NNNN-<kebab>.md`) fully, then the plan
-   (`development/work/plans/plan-NNNN-<kebab>.md`). The spec's *Frozen interfaces* are
+   `development/work/0000-overview/report.md` §2). Branch: `work/NNNN-<kebab>`.
+2. Read the spec (`development/work/<NNNN>-<slug>/spec.md`) fully, then the plan
+   (`development/work/<NNNN>-<slug>/plan.md`). The spec's *Frozen interfaces* are
    load-bearing for concurrent lanes: implement them exactly; if a signature must
    change, that is a trunk decision, not a local fix.
 3. **Mine references before writing code** — per
@@ -19,7 +19,8 @@ implementer/reviewer loop.
    the PR.
 5. Gate before PR — the full battery and baselines in
    `development/policies/verification-gates.md`.
-6. Write the report `development/work/reports/report-NNNN-<kebab>{.md,/}` (STATUS
+6. Write the report `development/work/<NNNN>-<slug>/report.md` (artifacts, if any, in
+   `development/work/<NNNN>-<slug>/artifacts/`; STATUS
    template in `development/policies/document-kinds.md`): what was built, deviations +
    why, follow-ups, benchmark/plot artifacts if the spec asks. One PR per work unit;
    fill the PR template.

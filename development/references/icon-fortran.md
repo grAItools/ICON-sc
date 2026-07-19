@@ -4,7 +4,7 @@
 consulted via the canonical public mirror https://gitlab.dkrz.de/icon/icon-model
 **Pinned:** tag `icon-2026.04-public`
 (`8597da45ef4b86323f3fb844caedc4ae5e1ffc01`) — corpus pin, see `development/references/lock.toml`
-entries and `development/work/reports/report-0000-overview.md` §3.
+entries and `development/work/0000-overview/report.md` §3.
 **License:** BSD-3
 
 ## Role in the project

@@ -1,15 +1,15 @@
 # Agent Working Agreement (canonical)
 
 You are implementing the ICON-sc architecture. Authority order on any conflict:
-`docs/architecture/icon-sc_architecture.md` (v1.3) > `development/work/specs/spec-NNNN-*.md`
-> `development/work/plans/plan-NNNN-*.md`. Never silently resolve a contradiction — record it
+`docs/architecture/icon-sc_architecture.md` (v1.3) > `development/work/<NNNN>-<slug>/spec.md`
+> `development/work/<NNNN>-<slug>/plan.md`. Never silently resolve a contradiction — record it
 in the work unit's report and stop if it blocks acceptance criteria.
 
 ## Workflow for a work unit
 
 Read the spec fully, then the plan; mine references before writing code; implement with
 tests alongside; run the gates; record the outcome in the report
-`development/work/reports/report-NNNN-*.md` (artifacts, if any, in the sibling folder `report-NNNN-*/`); one PR per work unit. The full sequence, branch
+`development/work/<NNNN>-<slug>/report.md` (artifacts, if any, in the `<NNNN>-<slug>/artifacts/` subfolder); one PR per work unit. The full sequence, branch
 naming (`work/NNNN-<kebab>`), and the implementer/reviewer loop live in
 `development/policies/agent-workflow.md`; the gate battery and baselines in
 `development/policies/verification-gates.md`.
@@ -23,7 +23,7 @@ naming (`work/NNNN-<kebab>`), and the implementer/reviewer loop live in
   (import-linter enforces it, in place since work unit 001).
 - **No tolerance creep, no reduction-order changes** in equivalence tests (bitwise T0≡T1 is
   required where the spec says bitwise).
-- Do not modify `docs/architecture/*` or other work units' specs (`development/work/specs/`);
+- Do not modify `docs/architecture/*` or other work units' specs (`development/work/<NNNN>-<slug>/spec.md`);
   propose changes in your own report.
 
 ## Environment
@@ -35,7 +35,7 @@ rerun in CI.
 
 ## Reference corpus
 
-Pinned per `development/work/reports/report-0000-overview.md` §3: icon4py, gt4py, ICON
+Pinned per `development/work/0000-overview/report.md` §3: icon4py, gt4py, ICON
 open-source Fortran, sympl (upstream + stubbiali `oop` fork), tasmania, the ICON 2025
 tutorial and the Ubbiali thesis. Per-source cards: `development/references/` (local PDFs
 go in its gitignored `local/`); mining and `development/references/lock.toml` rules:
