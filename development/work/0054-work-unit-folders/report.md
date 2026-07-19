@@ -33,7 +33,7 @@ moved there; the target `0004-coupling-algebra/artifacts/` is created by the S04
 by-unit form across `AGENTS.md`, `CLAUDE.md`, both READMEs, the living policies
 (`naming-conventions`, `document-kinds`, `agent-workflow`, `review-protocol`,
 `repository-layout` incl. its ASCII tree, `docs-boundary`, `policies/README`), and the three
-reference cards. Living files now hold **zero** by-kind refs except three intentional
+reference cards. Living files now hold **zero** by-kind refs except two intentional
 historical-example mentions (`development/README.md`, `naming-conventions.md`, each naming the
 pre-0054 paths the remap bridges — the same class as the existing `S08_…` examples).
 
@@ -72,7 +72,7 @@ docstring, `.gitignore` (0004 artifacts path), the PR template, and the code pat
    committed neuter, only the new-path logic; scope still spec-only. ✓
 5. **Residual grep** — every remaining `work/{kind}s/` hit is by-design: frozen work-unit docs
    + ADRs + `archive/plan-tree-map.md` (historical, bridged by §2d), REGISTRY §2–§2d tables and
-   signed-off TD rows, and three intentional living-doc historical mentions. Zero stray living
+   signed-off TD rows, and two intentional living-doc historical mentions. Zero stray living
    refs. ✓
 6. **Register** — row 0054 present, "Next free number: 0055", §2d complete vs the filesystem,
    TD-54.1/54.2 recorded + mirrored by the `TD-PENDING:` lines in §4. ✓
