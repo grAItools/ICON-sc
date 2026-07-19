@@ -6,7 +6,7 @@ Wired as a Claude Code PreToolUse hook (``.claude/settings.json``) and as an Ope
 here so the rule has exactly one implementation.
 
 It enforces the REGISTRY invariant — "numbers are strictly monotonic, never reused; gaps
-are never backfilled" — at the tool layer. A ``development/work/specs/spec-NNNN-*.md``
+are never backfilled" — at the tool layer. A ``development/work/<NNNN>-<slug>/spec.md``
 write is DENIED when NNNN is frozen, so a retired id can never be re-created or edited
 (writing there reads as reviving history), while authoring the in-flight unit's spec and
 brand-new ids at the frontier stays free.
@@ -41,12 +41,12 @@ import re
 import shlex
 import sys
 
-_SPEC_PATH_RE = re.compile(r"/development/work/specs/spec-(\d{4})-[^/]*\.md$")
+_SPEC_PATH_RE = re.compile(r"/development/work/(\d{4})-[^/]*/spec\.md$")
 #: A whole shell *token* that is a spec path. Matched with fullmatch, never search: a token
 #: that merely quotes the path (a JSON payload, a heredoc body, a grep pattern) is not a
 #: write to it, and treating it as one blocks ordinary work.
-_SPEC_TOKEN_RE = re.compile(r"[\w./-]*development/work/specs/spec-(\d{4})-[^\s/]*\.md")
-_ID_RE = re.compile(r"^(?:spec|plan|proposal|report)-(\d{4})-")
+_SPEC_TOKEN_RE = re.compile(r"[\w./-]*development/work/(\d{4})-[^/\s]*/spec\.md")
+_ID_RE = re.compile(r"^(\d{4})-")
 _NEXTFREE_RE = re.compile(r"Next free number:\s*(\d+)")
 #: `| 0051 | kebab-and-flat-reports | plan + report | executed |`
 _ROW_RE = re.compile(r"^\|\s*(\d{4})\s*\|[^|]*\|[^|]*\|\s*([^|]*?)\s*\|\s*$", re.MULTILINE)
