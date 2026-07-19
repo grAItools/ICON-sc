@@ -64,11 +64,15 @@ mechanical-and-obvious.
      guard neutered.
   3. In **C4**, discard the transient neuter and rewrite the guard to its final new-path
      logic (§6.1); `git add tools/spec_freeze_guard.py`; commit.
-  4. **Prove** post-restore (record the outputs in the report): a crafted PreToolUse payload
-     for a frozen unit is DENIED and the in-flight unit is ALLOWED —
+  4. **Prove** post-restore (record the outputs in the report): frozen and gap ids are
+     DENIED, the next-free frontier id is ALLOWED. **Note:** once C3 flips row 0054's status
+     to non-pending, unit 0054 is itself frozen (`is_frozen(0054)` is True — it is *done*), so
+     the writable id is the register's next-free **0055**, not 0054. Do NOT assert 0054 is
+     writable.
      ```
-     echo '{"tool_name":"Edit","tool_input":{"file_path":"'"$PWD"'/development/work/0005-vault-plan-t1/spec.md"}}' | python3 tools/spec_freeze_guard.py   # → deny JSON
-     echo '{"tool_name":"Edit","tool_input":{"file_path":"'"$PWD"'/development/work/0054-work-unit-folders/spec.md"}}' | python3 tools/spec_freeze_guard.py   # → silent (allow)
+     echo '{"tool_name":"Edit","tool_input":{"file_path":"'"$PWD"'/development/work/0005-vault-plan-t1/spec.md"}}' | python3 tools/spec_freeze_guard.py   # frozen  → deny JSON
+     echo '{"tool_name":"Edit","tool_input":{"file_path":"'"$PWD"'/development/work/0015-gap/spec.md"}}'          | python3 tools/spec_freeze_guard.py   # gap     → deny JSON
+     echo '{"tool_name":"Edit","tool_input":{"file_path":"'"$PWD"'/development/work/0055-next/spec.md"}}'         | python3 tools/spec_freeze_guard.py   # frontier→ silent (allow)
      ```
   Record the whole maneuver in the report; it is TD-54.2.
 
@@ -128,15 +132,27 @@ map:
   the surrounding rule wording stays.
 - **Frozen files → mechanical path-string retargets only**, verified `git diff --word-diff`.
   Old→new per the table. Every added fragment a new path, every removed fragment an old path.
-- **Left byte-identical (self-exempt; §2d bridges them)** — same judgment class as the 0050
-  record §2: `development/work/0049-work-structure-iteration/report.md` (its subject is the
-  *previous* work/ layout analysis; retargets would falsify it — leave, except any pointer
-  already treated as a live path by prior migrations), the REGISTRY §2/§2b/§2c tables
-  (historical bridge — §2d is *added*, not applied to them), and the tracked
-  `0033-structure-migration/artifacts/layout-doc-revision.diff` (owner-applied artifact,
-  TD-33.4). Enumerate every left-alone file in the report with a one-line reason.
+- **Left byte-identical / partially self-exempt (§2d bridges them)** — same judgment class as
+  the 0050 record §2. Enumerate every left-alone file in the report with a one-line reason:
+  - `development/work/0049-work-structure-iteration/report.md` — its subject is the *previous*
+    work/ layout analysis; retargets would falsify it (leave, except any pointer already
+    treated as a live path by prior migrations).
+  - **`development/work/0054-work-unit-folders/spec.md` and `…/plan.md` (this plan)** — their
+    subject IS this transposition: the spec's before/after illustration and its
+    Frozen-interfaces old→new table, and this plan's §3 rename map and §4 old→new table,
+    intentionally show **both** the by-kind "before" and by-unit "after" forms. Retargeting the
+    "before" side would erase the contrast and falsify the contract/plan. Leave those mapping
+    columns verbatim; retarget only genuine live pointers to *other* documents (e.g. a
+    `policies/*` reference). Same self-exemption plan-0050 §4 gave its own §3 map.
+  - REGISTRY §2/§2b/§2c tables (historical bridge — §2d is *added*, not applied to them).
+  - the tracked `0033-structure-migration/artifacts/layout-doc-revision.diff` (owner-applied
+    artifact, TD-33.4).
 - **Never touch:** `icon_sc/**` source import paths; `development/references/lock.toml`
   entries; `docs/architecture/*`; the §3 map inside THIS plan; `constraints/`, `uv.lock`.
+
+Apply the substitutions **longest-token-first** (full `…/report-<NNNN>-<slug>.md` and the
+`…/report-<NNNN>-<slug>/` artifact-folder form before any bare `report-<NNNN>-<slug>` stem) so
+a folder-path prefix is never half-rewritten; the word-diff catches any residue.
 
 **C2 staging:** `git add` exactly the retargeted files (NOT `tools/spec_freeze_guard.py` — it
 stays neutered/unstaged until C4). Purity: word-diff over the staged set = path strings only.
@@ -175,10 +191,10 @@ stays neutered/unstaged until C4). Purity: word-diff over the staged set = path 
      spec-only scope (do NOT guard `plan.md`/`report.md`). Update the module docstring's one
      path example. This is a path-shape change only — the frozen-id invariant it enforces is
      identical.
-   - Verification: the two crafted-payload checks in §2 (deny 0005 / allow 0054), plus a
-     below-frontier gap check (e.g. 0015) DENY. Recorded in the report — **not** added as a
-     gate-collected pytest (keeps the fast baseline at 696; a `tools/`-level check may be
-     added but must stay outside `pytest packages`).
+   - Verification: the crafted-payload checks in §2 (deny frozen 0005 + deny gap 0015 + allow
+     next-free 0055 — **not** 0054, which is frozen once its status flips). Recorded in the
+     report — **not** added as a gate-collected pytest (keeps the fast baseline at 696; a
+     `tools/`-level check may be added but must stay outside `pytest packages`).
 2. **`.opencode/plugins/spec-freeze-guard.js`** — docstring path example
    `development/work/specs/spec-NNNN-*.md` → `development/work/<NNNN>-<slug>/spec.md`
    (delegation to the Python script is unchanged).
@@ -202,12 +218,14 @@ stays neutered/unstaged until C4). Purity: word-diff over the staged set = path 
 C1 renames → C2 retargets → C3 content → C4 living/tooling → C5 report. Purity checks per
 §3/§4. Guard neuter unstaged across C1–C3, finalized in C4 (§2).
 
-**Gates** — full battery, `uv run python tools/run_gate.py` (or the eight commands in
-`verification-gates.md` split by marker if a partition exceeds the shell limit). Baselines
+**Gates** — full battery, `uv run python tools/run_gate.py` (the eight commands in
+`verification-gates.md`; split by marker if a partition exceeds the shell limit). Baselines
 (must match exactly — no behavior change): fast **696 passed, 1 skipped**; slow **31**; data
 **43**; data+slow **76 passed, 1 skipped**; `ruff check` clean; `ruff format --check`
 **175 files**; `mypy --strict -p icon_sc.core` **50 source files**; `lint-imports`
-**2 kept, 0 broken**; `sphinx-build -E -W --keep-going` exit 0. The S04 `slow` order tests
+**2 kept, 0 broken**. `run_gate.py` does **not** build the docs — run
+`uv run sphinx-build -E -W --keep-going docs docs/_build` **separately** (exit 0) as a
+belt-and-suspenders check, since C4 retargets a `docs/conf.py` comment path (0053 precedent). The S04 `slow` order tests
 (`test_order_ode.py`/`test_order_burgers.py`) must write
 `…/0004-coupling-algebra/artifacts/convergence_{ode,burgers}.png` — check mtimes before/after
 the slow partition to prove the retargeted path is live. Long partitions: detached logs with
@@ -247,10 +265,11 @@ the freeze-guard neuter/restore maneuver and quote the deny/allow proofs.
 3. **Artifacts:** `0033-structure-migration/artifacts/layout-doc-revision.diff` tracked;
    `0004-coupling-algebra/artifacts/` gitignored; the slow gate wrote the two PNGs there
    (mtimes).
-4. **Guard proven, not just edited:** run the §2 crafted payloads yourself — frozen 0005 (and
-   a gap id) DENIED, in-flight 0054 ALLOWED; confirm the guard is enforcing at HEAD (no neuter
-   committed: `git log -p -- tools/spec_freeze_guard.py` shows only the final new-path logic);
-   `_ID_RE`/`_SPEC_PATH_RE` are the new shapes; scope still spec-only.
+4. **Guard proven, not just edited:** run the §2 crafted payloads yourself — frozen 0005 and
+   gap 0015 DENIED, next-free 0055 ALLOWED (0054 is now frozen — do not expect it writable);
+   confirm the guard is enforcing at HEAD (no neuter committed: `git log -p --
+   tools/spec_freeze_guard.py` shows only the final new-path logic); `_ID_RE`/`_SPEC_PATH_RE`
+   are the new shapes; scope still spec-only.
 5. **Residual greps** (§7) return only by-design hits; **REGISTRY §2d** complete vs the
    filesystem (every unit folder ↔ a §2d rule/row); TD-54.1/54.2 present + `TD-PENDING:`
    mirrored; row 0054 updated.
