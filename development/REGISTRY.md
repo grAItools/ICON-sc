@@ -223,6 +223,15 @@ folder survives in git as the artifacts folder holding the tracked sidecar.
 
 ## 3. Decision register
 
+**Trunk Decision (TD):** a decision that exceeds a work unit's local authority — tolerances
+and reduction-order, frozen-signature/interface changes, dependency pins, tree structure and
+naming, and edits to trunk-frozen docs — and so must be escalated to the trunk owner for
+sign-off rather than resolved as a local fix (`policies/agent-workflow.md`; `AGENTS.md` hard
+rules). It is raised as a `TD-PENDING:` line in a work unit's report and recorded here as
+`TD-<origin>.<k>` (origin = the raising work unit). The prefix is stable across this file's
+own renames (formerly `plan/TRUNK_DECISIONS.md`, then `DECISIONS.md`; TD-35.3) and its wording
+is content-frozen once signed off (ADR-0001).
+
 ### Sign-off items from the 001–014 slice (mirrors IMPLEMENTATION_REPORT §5, verbatim)
 
 | ID | Date | Decision (verbatim from source) | Status | Source | Evidence |
