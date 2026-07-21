@@ -24,8 +24,8 @@ is part of your instructions.
 1. **Scope check first.** `git diff main..HEAD --stat`. Every touched file must be
    plausibly required by the plan. Touches to any of the following are automatic
    MAJOR findings unless the plan explicitly authorized them:
-   `docs/architecture/*`, any `development/work/specs/*.md` or executed plan
-   (`development/work/plans/plan-NNNN-*.md`), any merged work unit's report,
+   `docs/architecture/*`, any `development/work/<NNNN>-<slug>/spec.md` or executed plan
+   (`development/work/<NNNN>-<slug>/plan.md`), any merged work unit's report,
    `constraints/*.txt` version changes, `uv.lock` version bumps, any test tolerance
    value, any deleted/weakened assertion, any marker change on an existing test.
 2. **Run the full gate battery yourself** (commands and baselines in

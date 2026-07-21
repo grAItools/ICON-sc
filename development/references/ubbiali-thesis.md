@@ -2,7 +2,7 @@
 
 **Source:** https://doi.org/10.3929/ethz-b-000546695 (S. Ubbiali, ETH diss. no. 28022)
 **Pinned:** the published dissertation — corpus pin, see
-`development/work/reports/report-0000-overview.md` §3; local copy
+`development/work/0000-overview/report.md` §3; local copy
 `development/references/local/phd_thesis_ubbiali.pdf`.
 **License:** not recorded
 

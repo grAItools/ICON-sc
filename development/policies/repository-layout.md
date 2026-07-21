@@ -287,10 +287,10 @@ development/                             # repo-internal process memory — neve
 ├── policies/                            # living rules: workflow, naming, kinds, gates, mining, review, docs boundary, repo layout
 ├── ADRs/                                # architecture decision records (NNNN-<kebab-title>.md, own sequence from 0000)
 ├── work/
-│   ├── proposals/                       # future proposals; phase outlines P2–P7 (proposal-NNNN-<kebab>.md)
-│   ├── specs/                           # frozen work-unit contracts (spec-NNNN-<kebab>.md)
-│   ├── plans/                           # frozen work-unit plans (plan-NNNN-<kebab>.md)
-│   └── reports/                         # outcome documents frozen at merge (report-NNNN-<kebab>.md + sibling artifacts folders)
+│   ├── README.md                        # lifecycle (proposal→spec→plan→report) + how plans are used
+│   └── <NNNN>-<slug>/                    # one folder per work unit:
+│       ├── proposal.md / spec.md / plan.md / report.md   #   only those that exist
+│       └── artifacts/                   #   optional: tracked sidecars or gitignored generated files
 ├── archive/                             # dead documents of any kind
 └── references/                          # per-source reference cards + lock.toml (machine ledger) + local/ (gitignored)
 

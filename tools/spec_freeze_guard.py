@@ -6,7 +6,7 @@ Wired as a Claude Code PreToolUse hook (``.claude/settings.json``) and as an Ope
 here so the rule has exactly one implementation.
 
 It enforces the REGISTRY invariant — "numbers are strictly monotonic, never reused; gaps
-are never backfilled" — at the tool layer. A ``development/work/specs/spec-NNNN-*.md``
+are never backfilled" — at the tool layer. A ``development/work/<NNNN>-<slug>/spec.md``
 write is DENIED when NNNN is frozen, so a retired id can never be re-created or edited
 (writing there reads as reviving history), while authoring the in-flight unit's spec and
 brand-new ids at the frontier stays free.
@@ -41,12 +41,12 @@ import re
 import shlex
 import sys
 
-_SPEC_PATH_RE = re.compile(r"/development/work/specs/spec-(\d{4})-[^/]*\.md$")
+_SPEC_PATH_RE = re.compile(r"/development/work/(\d{4})-[^/]*/spec\.md$")
 #: A whole shell *token* that is a spec path. Matched with fullmatch, never search: a token
 #: that merely quotes the path (a JSON payload, a heredoc body, a grep pattern) is not a
 #: write to it, and treating it as one blocks ordinary work.
-_SPEC_TOKEN_RE = re.compile(r"[\w./-]*development/work/specs/spec-(\d{4})-[^\s/]*\.md")
-_ID_RE = re.compile(r"^(?:spec|plan|proposal|report)-(\d{4})-")
+_SPEC_TOKEN_RE = re.compile(r"[\w./-]*development/work/(\d{4})-[^/\s]*/spec\.md")
+_ID_RE = re.compile(r"^(\d{4})-")
 _NEXTFREE_RE = re.compile(r"Next free number:\s*(\d+)")
 #: `| 0051 | kebab-and-flat-reports | plan + report | executed |`
 _ROW_RE = re.compile(r"^\|\s*(\d{4})\s*\|[^|]*\|[^|]*\|\s*([^|]*?)\s*\|\s*$", re.MULTILINE)
@@ -65,11 +65,18 @@ class _Frontier:
 
     def __init__(self, work_dir: str, registry: str) -> None:
         ids: list[int] = []
-        for _root, dirs, files in os.walk(work_dir):
-            for name in (*files, *dirs):
-                m = _ID_RE.match(name)
-                if m:
-                    ids.append(int(m.group(1)))
+        # The id lives once, in the unit *folder* name (`<NNNN>-<slug>/`), so scan only the
+        # immediate children of work/ — never recurse. A recursive walk would fold any
+        # four-digit-prefixed artifact filename (e.g. `2026-metrics.json` under a unit's
+        # artifacts/) into the frontier and could freeze every real id below it.
+        try:
+            for entry in os.scandir(work_dir):
+                if entry.is_dir():
+                    m = _ID_RE.match(entry.name)
+                    if m:
+                        ids.append(int(m.group(1)))
+        except OSError:
+            pass
 
         self.status: dict[int, str] = {}
         self.next_free: int | None = None

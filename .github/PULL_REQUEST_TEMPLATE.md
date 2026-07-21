@@ -1,6 +1,6 @@
 ## Work unit
 
-`development/work/specs/____` / `development/work/plans/____` — one work unit per PR.
+`development/work/<NNNN>-<slug>/` (spec.md + plan.md) — one work unit per PR.
 
 ## Definition of done (AGENTS.md)
 
@@ -9,7 +9,7 @@
 - [ ] `development/references/lock.toml` updated for all mined sources (SHAs included)
 - [ ] Gate green: pytest (`not gpu` minimum + required markers), ruff, mypy (core strict), lint-imports
 - [ ] No data files, no dependency pin changes
-- [ ] Report written (`development/work/reports/report-NNNN-*.md`; artifacts, if any, in `report-NNNN-*/`): built / deviations / follow-ups / artifacts
+- [ ] Report written (`development/work/<NNNN>-<slug>/report.md`; artifacts, if any, in `<NNNN>-<slug>/artifacts/`): built / deviations / follow-ups / artifacts
 
 ## Deviations & notes for the reviewer
 

@@ -6,7 +6,7 @@ decision register: append-mostly (rows are added, and their `Status` field updat
 place; nothing else is edited); every new `TD-PENDING:` line in any report gets a row
 here **in the same PR**; decision text that quotes a tolerance or signature is copied
 verbatim from its source. This register supersedes
-`development/work/reports/report-0036-implementation-report.md` §5 (sign-off ledger) and §6
+`development/work/0036-implementation-report/report.md` §5 (sign-off ledger) and §6
 (standing follow-ups) going forward — that report stays frozen as the historical record.
 Conventions: ID `TD-<origin>.<k>` where origin is the work unit (`S08`, `27`, `35`) that
 raised it. Status: `pending` / `signed-off` / `rejected` / `superseded(TD-…)`. `Date` is the date the
@@ -14,7 +14,7 @@ decision entered main (the merge of its source).
 Formerly DECISIONS.md (renamed in work unit 035, TD-35.3); before that
 plan/TRUNK_DECISIONS.md.
 
-Seeded 2026-07-13 by work unit 031 (spec: `development/work/reports/report-0029-plan-structure.md` §8).
+Seeded 2026-07-13 by work unit 031 (spec: `development/work/0029-plan-structure/report.md` §8).
 
 ## 1. Document register (the single allocator)
 
@@ -28,7 +28,7 @@ proposal/spec/plan/report files (`<kind>-<NNNN>-<kebab-slug>`); single-kind docu
 consume one number. ADRs are no longer registered here: they number independently in
 `development/ADRs/` (index: `ADRs/README.md`); the former ADR rows 043–048 remapped to
 ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
-**Next free number: 0054.**
+**Next free number: 0055.**
 
 | NNNN | slug | kinds | status |
 |---|---|---|---|
@@ -75,6 +75,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0051 | kebab-and-flat-reports | plan + report | executed |
 | 0052 | disjoint-verification-gates | proposal + spec + plan + report | executed |
 | 0053 | project-rename-icon-sc | spec + plan + report | executed |
+| 0054 | work-unit-folders | spec + plan + report | this work unit |
 
 **Slug rename (work 0052, TD-52.3):** 0052's slug was `parallel-verification-gates`
 until 2026-07-17 — the name under which its proposal, spec and plan were merged to main, and
@@ -221,6 +222,24 @@ folder survives in git as the artifacts folder holding the tracked sidecar.
 | `work/reports/report-0033-structure-migration/layout_doc_revision.diff` | `work/reports/report-0033-structure-migration/layout-doc-revision.diff` |
 | `work/reports/report-0004-coupling-algebra/artifacts/*.png` (untracked) | `work/reports/report-0004-coupling-algebra/*.png` (untracked, plain `mv`) |
 
+## 2d. Remap table (work 0054 — by-kind subfolders → per-unit folders)
+
+Old→new for work unit 0054 (TD-54.1): the four per-kind subfolders collapse into one
+folder per work unit, `work/<NNNN>-<slug>/`, with bare-kind filenames. §2c's "New" column
+resolves onward via this table. Uniform bulk as rule-rows; the non-uniform enumerated.
+Frozen documents keep their pre-0054 by-kind path references verbatim (historical wording;
+spec-0054 acceptance 5) — this table is the bridge, exactly as §2/§2b/§2c bridge older names.
+
+| Old (0051 scheme) | New (work 0054) |
+|---|---|
+| `work/specs/spec-<NNNN>-<slug>.md` | `work/<NNNN>-<slug>/spec.md` |
+| `work/plans/plan-<NNNN>-<slug>.md` | `work/<NNNN>-<slug>/plan.md` |
+| `work/reports/report-<NNNN>-<slug>.md` | `work/<NNNN>-<slug>/report.md` |
+| `work/proposals/proposal-<NNNN>-<slug>.md` | `work/<NNNN>-<slug>/proposal.md` |
+| `work/reports/report-0033-structure-migration/layout-doc-revision.diff` (tracked) | `work/0033-structure-migration/artifacts/layout-doc-revision.diff` |
+| `work/reports/report-0004-coupling-algebra/*.png` (untracked) | `work/0004-coupling-algebra/artifacts/*.png` (untracked, plain `mv`) |
+| `work/{proposals,specs,plans,reports}/README.md` (4 files) | removed; durable content consolidated into `work/README.md` |
+
 ## 3. Decision register
 
 **Trunk Decision (TD):** a decision that exceeds a work unit's local authority — tolerances
@@ -317,3 +336,10 @@ is content-frozen once signed off (ADR-0001).
 | TD-53.2 | 2026-07-17 | **Import namespace `symcon` → `icon_sc`; distributions `symcon-{core,icon,bridges}`/`-workspace` → `icon-sc-*`; brand → ICON-sc** (owner-instructed 2026-07-17). `ICON-sc` is not a legal Python identifier, so the import root is `icon_sc` (`icon_sc.core/.icon/.bridges`). PEP 420 namespace-package semantics preserved (no top-level `__init__.py`); import-linter contracts hold 2 kept / 0 broken under the new names; no dependency pin moved (`uv.lock` regenerated, registry (name,version) set identical; `constraints/` untouched) | signed-off | `spec-0053-project-rename-icon-sc.md` Frozen interfaces | work-0053 merge `a2fab5d` |
 | TD-53.3 | 2026-07-17 | **Scope boundary — rename the current system, preserve frozen history** (owner-instructed 2026-07-17, "Preserve history"). Renamed: live code/config, living policies, root docs, the published `docs/` site (incl. the architecture doc), reference cards, and the work-unit **specs**. **Exempt** (kept verbatim as historical record): `REGISTRY.md` §2/§2b/§2c remap columns and signed-off `TD-*` wording; frozen `development/work/plans/*` (0001–0052), `reports/*`, `proposals/*`, `ADRs/*`; `references/lock.toml` evidence; the `layout-doc-revision.diff` artifact. Rewriting those would falsify signed-off history and break the remap bridge (e.g. `REGISTRY.md:151` names `symcon_repo_layout.md`, a file that no longer exists). The by-design residual `symcon` hits are enumerated in the report | signed-off | `report-0053-project-rename-icon-sc.md` | work-0053 merge `a2fab5d` |
 | TD-53.4 | 2026-07-17 | **Amendments to the TD-53.3 scope** (owner-instructed 2026-07-17). (a) The frozen work-unit **plans** (0001–0052) are also renamed (current-system identifiers only; migration-plan §3 rename tables carry no `symcon`; the historical `symcon_repo_layout.md` is preserved). (b) The living layout policy `development/policies/repo-layout.md` is renamed to `repository-layout.md` (kebab, TD-51.1); the historical `symcon_repo_layout` token is de-branded to `repository-layout` **only in the living policies + current-unit docs**, while every frozen record keeps `symcon_repo_layout.md` verbatim — this §2 remap "Old" column, `TD-33.4`, the migration **plans 0033/0035**, the frozen reports, and `layout-doc-revision.diff` — de-branding the §2 "Old" column would falsify the remap bridge and collide with the new current filename `repository-layout.md` | signed-off | `report-0053-project-rename-icon-sc.md` §3 | work-0053 merge `a2fab5d` |
+
+### Decisions from work unit 0054 (per-unit work folders)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-54.1 | 2026-07-19 | **`development/work/` regrouped into one folder per work unit** — `work/<NNNN>-<slug>/` holding bare-kind files `proposal.md`/`spec.md`/`plan.md`/`report.md` (only those that exist) + optional `artifacts/`, transposing the kind-major tree (`work/{specs,plans,reports,proposals}/<kind>-NNNN-slug.md`) of TD-50.1/TD-51.2. No content or behavior change; four-digit ids, never-reuse/never-backfill, and the REGISTRY single-allocator invariant preserved. Frozen work-unit docs keep their by-kind path refs as historical wording bridged by §2d (spec-0054 acceptance 5) | pending | `development/work/0054-work-unit-folders/spec.md`; `…/plan.md` | (merge) |
+| TD-54.2 | 2026-07-19 | **`tools/spec_freeze_guard.py` path-shape change** — spec-freeze match → `…/work/(\d{4})-[^/]*/spec\.md$`, id-frontier walk keys off the unit directory name `^(\d{4})-`; `is_frozen`/`advice`/fail-open and spec-only scope unchanged. The guard was deliberately neutered (transient, unstaged) to move the frozen spec files — the sanctioned "disable for a migration" path in its own docstring — then restored to the new-path logic; deny-frozen/allow-frontier proofs recorded in the report | pending | `development/work/0054-work-unit-folders/report.md`; `…/plan.md` §2/§6 | (merge) |

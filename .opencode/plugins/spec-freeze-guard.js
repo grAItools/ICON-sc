@@ -5,7 +5,7 @@
  * frozen-spec rule has exactly one implementation. This file only adapts OpenCode's
  * `tool.execute.before` calling convention to that script's stdin/stdout contract.
  *
- * Rule: writing `development/work/specs/spec-NNNN-*.md` is blocked when NNNN is frozen
+ * Rule: writing `development/work/<NNNN>-<slug>/spec.md` is blocked when NNNN is frozen
  * (below the frontier, or registered with a non-`pending` status). See the script's
  * docstring for the full rule.
  *

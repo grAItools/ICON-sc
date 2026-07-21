@@ -13,16 +13,16 @@ rule: TD-51.2 (`ADR-0007`).
 | Provenance ledger | append-only | `development/references/lock.toml` |
 | Policy | living, trunk-gated | `development/policies/*.md` |
 | ADR | frozen after accepted; `Status:` field mutable | `development/ADRs/NNNN-<kebab-title>.md` |
-| Proposal / phase outline | living until graduated (`Status:` header; graduated → spec NNNN) | `development/work/proposals/proposal-NNNN-*.md` |
-| Document + decision register | living | `development/REGISTRY.md` (work ids §1, remaps §2/§2b, TD rows) |
-| Work-unit contract (spec) | frozen at acceptance | `development/work/specs/spec-NNNN-*.md` |
-| Work-unit plan | frozen at assignment | `development/work/plans/plan-NNNN-*.md` |
-| Work-unit report | frozen at merge — never retro-edited | `development/work/reports/report-NNNN-*.md` (flat file; artifacts, only when they exist, in the sibling folder `report-NNNN-*/`) |
-| Design document / evaluation | frozen; decisions extracted to the register | `development/work/reports/report-NNNN-*.md` (the deliverable *is* the document) |
-| Process report (slice-level) | frozen | `development/work/reports/report-0036-implementation-report.md` (its §5/§6 are superseded going forward by `REGISTRY.md`) |
+| Proposal / phase outline | living until graduated (`Status:` header; graduated → spec NNNN) | `development/work/<NNNN>-<slug>/proposal.md` |
+| Document + decision register | living | `development/REGISTRY.md` (work ids §1, remaps §2–§2d, TD rows) |
+| Work-unit contract (spec) | frozen at acceptance | `development/work/<NNNN>-<slug>/spec.md` |
+| Work-unit plan | frozen at assignment | `development/work/<NNNN>-<slug>/plan.md` |
+| Work-unit report | frozen at merge — never retro-edited | `development/work/<NNNN>-<slug>/report.md` (artifacts, only when they exist, in the unit's `<NNNN>-<slug>/artifacts/` subfolder) |
+| Design document / evaluation | frozen; decisions extracted to the register | `development/work/<NNNN>-<slug>/report.md` (the deliverable *is* the document) |
+| Process report (slice-level) | frozen | `development/work/0036-implementation-report/report.md` (its §5/§6 are superseded going forward by `REGISTRY.md`) |
 | Reference card | living (updated on pin/corpus decisions) | `development/references/*.md` |
 | Archive | dead — kept for reference; accepts any kind; nothing authoritative | `development/archive/` |
-| Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed, headered); `docs/_build/`; untracked report-artifact folders (per-folder `.gitignore` line, e.g. `development/work/reports/report-0004-coupling-algebra/`) |
+| Generated artifact | regenerate, never hand-edit | `docs/names_registry.md` (committed, headered); `docs/_build/`; untracked report-artifact folders (per-folder `.gitignore` line, e.g. `development/work/0004-coupling-algebra/artifacts/`) |
 | Published site source | living | `docs/{conf.py,index.md,glossary.md,tutorials/,api/}` |
 | Agent tooling / CI templates | living | `.claude/`, `.opencode/`, `.github/` |
 
@@ -34,13 +34,13 @@ plan. All other edits to frozen documents remain violations.
 
 ## 2. Forward templates (new work units only; existing files are frozen — no retro-edits)
 
-- **Spec** (`development/work/specs/spec-NNNN-*.md`): Goal · In scope · Out of scope
+- **Spec** (`development/work/<NNNN>-<slug>/spec.md`): Goal · In scope · Out of scope
   (may be "nothing excluded") · **Frozen interfaces — mandatory; write "none"
   explicitly** · Acceptance criteria. An absent frozen-interface section is a template
   violation, not a statement.
-- **Report** (`development/work/reports/report-NNNN-*.md` — a flat file, TD-51.2;
-  artifacts, only when they exist, in the sibling folder `report-NNNN-*/` named like
-  the report file minus `.md`): header `**Branch:** … · **Date:** … · **State:** …` ·
+- **Report** (`development/work/<NNNN>-<slug>/report.md`; artifacts, only when they
+  exist, in the unit's `<NNNN>-<slug>/artifacts/` subfolder — TD-54.1): header
+  `**Branch:** … · **Date:** … · **State:** …` ·
   `## 1. What was built` · `## 2. Acceptance criteria → tests` · `## 3. Deviations` ·
   `## 4. Tolerances & sign-off flags` (each flag on a `TD-PENDING:` line) ·
   `## 5. Gates (dated)` · `## 6. Follow-ups` · `## 7. Artifacts` ·
@@ -51,5 +51,5 @@ plan. All other edits to frozen documents remain violations.
   a bare path.
 - **Plans** follow the register format (Hard rules → Items → Acceptance criteria →
   Verification gates → Review checklist,
-  cf. `development/work/plans/plan-0021-ci-hardening.md`);
-  how plans are used: `development/work/plans/README.md`.
+  cf. `development/work/0021-ci-hardening/plan.md`);
+  how plans are used: `development/work/README.md`.
