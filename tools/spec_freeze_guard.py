@@ -65,11 +65,18 @@ class _Frontier:
 
     def __init__(self, work_dir: str, registry: str) -> None:
         ids: list[int] = []
-        for _root, dirs, files in os.walk(work_dir):
-            for name in (*files, *dirs):
-                m = _ID_RE.match(name)
-                if m:
-                    ids.append(int(m.group(1)))
+        # The id lives once, in the unit *folder* name (`<NNNN>-<slug>/`), so scan only the
+        # immediate children of work/ — never recurse. A recursive walk would fold any
+        # four-digit-prefixed artifact filename (e.g. `2026-metrics.json` under a unit's
+        # artifacts/) into the frontier and could freeze every real id below it.
+        try:
+            for entry in os.scandir(work_dir):
+                if entry.is_dir():
+                    m = _ID_RE.match(entry.name)
+                    if m:
+                        ids.append(int(m.group(1)))
+        except OSError:
+            pass
 
         self.status: dict[int, str] = {}
         self.next_free: int | None = None
