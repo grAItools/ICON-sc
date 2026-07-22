@@ -24,7 +24,7 @@
       "rg *": "allow",
       "find *": "allow",
       "mpirun -n 4 *": "allow",
-      "git push*": "deny",
+      "git push*": "ask",
       "rm -rf *": "deny",
       "sudo *": "deny",
       "*": "ask"

@@ -28,7 +28,7 @@ proposal/spec/plan/report files (`<kind>-<NNNN>-<kebab-slug>`); single-kind docu
 consume one number. ADRs are no longer registered here: they number independently in
 `development/ADRs/` (index: `ADRs/README.md`); the former ADR rows 043–048 remapped to
 ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
-**Next free number: 0055.**
+**Next free number: 0056.**
 
 | NNNN | slug | kinds | status |
 |---|---|---|---|
@@ -76,6 +76,7 @@ ADRs 0000–0005 (§2b) and their work ids stay consumed, never reused.
 | 0052 | disjoint-verification-gates | proposal + spec + plan + report | executed |
 | 0053 | project-rename-icon-sc | spec + plan + report | executed |
 | 0054 | work-unit-folders | spec + plan + report | this work unit |
+| 0055 | push-guardrail-relaxation | report | owner-directed config change (plan ad hoc, not committed); both configs applied 2026-07-22, pending merge |
 
 **Slug rename (work 0052, TD-52.3):** 0052's slug was `parallel-verification-gates`
 until 2026-07-17 — the name under which its proposal, spec and plan were merged to main, and
@@ -343,3 +344,10 @@ is content-frozen once signed off (ADR-0001).
 |---|---|---|---|---|---|
 | TD-54.1 | 2026-07-19 | **`development/work/` regrouped into one folder per work unit** — `work/<NNNN>-<slug>/` holding bare-kind files `proposal.md`/`spec.md`/`plan.md`/`report.md` (only those that exist) + optional `artifacts/`, transposing the kind-major tree (`work/{specs,plans,reports,proposals}/<kind>-NNNN-slug.md`) of TD-50.1/TD-51.2. No content or behavior change; four-digit ids, never-reuse/never-backfill, and the REGISTRY single-allocator invariant preserved. Frozen work-unit docs keep their by-kind path refs as historical wording bridged by §2d (spec-0054 acceptance 5) | pending | `development/work/0054-work-unit-folders/spec.md`; `…/plan.md` | (merge) |
 | TD-54.2 | 2026-07-19 | **`tools/spec_freeze_guard.py` path-shape change** — spec-freeze match → `…/work/(\d{4})-[^/]*/spec\.md$`, id-frontier walk keys off the unit directory name `^(\d{4})-`; `is_frozen`/`advice`/fail-open and spec-only scope unchanged. The guard was deliberately neutered (transient, unstaged) to move the frozen spec files — the sanctioned "disable for a migration" path in its own docstring — then restored to the new-path logic; deny-frozen/allow-frontier proofs recorded in the report | pending | `development/work/0054-work-unit-folders/report.md`; `…/plan.md` §2/§6 | (merge) |
+
+### Decisions from work unit 0055 (push-guardrail relaxation)
+
+| ID | Date | Decision | Status | Source | Evidence |
+|---|---|---|---|---|---|
+| TD-55.1 | 2026-07-22 | **Agent `git push` guardrail relaxed `deny` → `ask`** in both permission configs (owner-directed 2026-07-22): `.claude/settings.json` moves `Bash(git push:*)` into a new `ask` array; `opencode.json` sets `"git push*": "ask"`. A push now prompts for human confirmation per invocation instead of being hard-blocked, matching the AO session-opens-its-own-PR model while keeping a human in the loop on every publish. Branch-scoped denial ("forbid only `main`") **rejected as unsound**: the permission matcher is a command-string prefix matcher and cannot determine a push's destination branch (`git push origin HEAD:main`, `feature:main`, `--all`, `--mirror`, and bare `git push` on `main` all evade a `*main*` glob, which also mis-fires on branches named `main-fix`) — it would give false safety. Rationale/alternatives: ADR-0008 | pending | ADR-0008; `development/work/0055-push-guardrail-relaxation/report.md` | both configs edited 2026-07-22; merge |
+| TD-55.2 | 2026-07-22 | **Protect `main` server-side via GitHub branch protection** (require a PR, disallow direct pushes) — the reliable guarantee for the "no direct writes to `main`" invariant, replacing the client-side blanket deny's role and independent of any command glob. Investigation on 2026-07-22 found `main` unprotected (`gh api repos/grAItools/ICON-sc/branches/main/protection` → `404 Branch not protected`); protection enabled and verified the same day: `enforce_admins`, `required_approving_review_count=1`, `dismiss_stale_reviews`, `allow_force_pushes=false`, `allow_deletions=false`, `required_conversation_resolution` | signed-off | ADR-0008; `development/work/0055-push-guardrail-relaxation/report.md` | branch protection enabled + verified 2026-07-22 |
