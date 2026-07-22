@@ -121,7 +121,7 @@ class TestIndicesMatchIcon4py:
         assert ours.kstart_moist == int(theirs.kstart_moist)
 
 
-class TestSleveComputation:
+class TestSLEVEComputation:
     def test_uniform_branch(self) -> None:
         """lowest_layer_thickness <= 0.01 → uniform table H·(N-k)/N (icon4py/ICON)."""
         cfg = SleveConfig(num_levels=10, lowest_layer_thickness=0.0, model_top_height=10_000.0)

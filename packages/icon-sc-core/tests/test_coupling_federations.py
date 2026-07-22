@@ -327,12 +327,12 @@ def test_constraints_bind_through_wrappers() -> None:
 
 
 def test_admissible_operators_checked_per_federation() -> None:
-    class SusOnly(Relaxation):
+    class SUSOnly(Relaxation):
         coupling_constraints: ClassVar[CouplingConstraints] = CouplingConstraints(
             admissible_operators=("sequential_update_splitting",)
         )
 
-    component = SusOnly(tau=timedelta(seconds=100))
+    component = SUSOnly(tau=timedelta(seconds=100))
     SequentialUpdateSplitting([(component, "rk2")])  # admitted
     with pytest.raises(CouplingConstraintError, match="does not admit"):
         ParallelSplitting([(component, "rk2")])
