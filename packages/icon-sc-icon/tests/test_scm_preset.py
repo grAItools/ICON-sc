@@ -59,12 +59,39 @@ RATES = (
 #: science claim): SHA-256 over the raw float64 bytes of the selected final-state
 #: fields after ``_FINGERPRINT_STEPS`` steps of the default preset on the
 #: embedded backend, fp64-exact on the same platform. Platform-tagged: unlisted
-#: platforms skip (fp contractions may differ across ISAs/BLAS builds).
+#: platforms skip (fp contractions may differ across ISAs/BLAS builds). The tag
+#: includes numpy's float64 ``exp`` SIMD dispatch family: on AVX-512 hosts numpy
+#: selects ``exp``/``log`` inner loops whose results differ in the last ULP from
+#: the AVX2/SSE loops, and CI's heterogeneous fleet draws both host kinds per-VM
+#: (issue #11). Each golden is bit-exact within its family. The AVX-512 hash is
+#: byte-identical across the CI failures and an Intel SDE ``-skx`` emulation of
+#: the avx2-family reference host; numpy ≤2.2 names the targets by ISA extension
+#: (``AVX2``/``AVX512_SKX``), numpy ≥2.5 by x86-64 microarchitecture level
+#: (``X86_V3``/``X86_V4``) — same two kernel families, so the hash pairs match.
 _FINGERPRINT_STEPS = 12  # covers one slow-physics refire (period = 10 steps)
 _FINGERPRINT_FIELDS = ("air_temperature", *TRACERS, *RATES, SLOW_TEMPERATURE_SLOT)
+_FINGERPRINT_AVX2 = "c4e0b5b776e03d5f4e8f56c9774da50aa3dac20095e7cbec8cae11202fb1aa68"
+_FINGERPRINT_AVX512 = "f6e575d1fc83e1191137b7e26a39a418a1e19fefceeb1e257115ae2f8950302d"
 _FINGERPRINT_GOLDEN = {
-    ("linux", "x86_64"): "c4e0b5b776e03d5f4e8f56c9774da50aa3dac20095e7cbec8cae11202fb1aa68",
+    ("linux", "x86_64", "avx2"): _FINGERPRINT_AVX2,
+    ("linux", "x86_64", "x86_v3"): _FINGERPRINT_AVX2,
+    ("linux", "x86_64", "avx512_skx"): _FINGERPRINT_AVX512,
+    ("linux", "x86_64", "x86_v4"): _FINGERPRINT_AVX512,
 }
+
+
+def _simd_family() -> str:
+    """The numpy float64 ``exp`` inner-loop dispatch family active in this process.
+
+    numpy picks the loop per process at import time by CPUID (honoring
+    ``NPY_DISABLE_CPU_FEATURES``), so this is exactly the discriminator the
+    fingerprint needs. An unknown family (new numpy dispatch target, non-x86
+    build, feature-disabling env vars) skips the test rather than mis-keying
+    a golden.
+    """
+    info = np.lib.introspect.opt_func_info(func_name="exp", signature="float64")
+    (loop,) = info["exp"].values()
+    return str(loop["current"]).split("(")[0].lower()
 
 
 def _load_example() -> Any:
@@ -307,10 +334,10 @@ def _fingerprint(final: dict[str, Any]) -> str:
 
 def test_column_regression_fingerprint() -> None:
     """SPEC acceptance 5: fp64-exact change detector on the same platform."""
-    key = (sys.platform, platform.machine())
+    key = (sys.platform, platform.machine(), _simd_family())
     golden = _FINGERPRINT_GOLDEN.get(key)
     if golden is None:
         pytest.skip(f"no golden fingerprint recorded for platform {key!r}")
     composition, state, cfg = build_scm()
     final = _run_steps(composition, state, cfg, n_steps=_FINGERPRINT_STEPS)
-    assert _fingerprint(final) == golden
+    assert _fingerprint(final) == golden, key
