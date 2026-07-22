@@ -5,6 +5,15 @@ You are implementing the ICON-sc architecture. Authority order on any conflict:
 > `development/work/<NNNN>-<slug>/plan.md`. Never silently resolve a contradiction — record it
 in the work unit's report and stop if it blocks acceptance criteria.
 
+## The `development/` tree
+
+`development/` is the repo-internal process memory: policies, registers, ADRs, reference
+cards, and the per-unit work documents. Before creating, moving, or renaming any file under
+it, read `development/README.md` (the map of the tree); the governing authorities are
+`development/policies/repository-layout.md` (layout), `development/policies/naming-conventions.md`
+(the `<NNNN>-<slug>/` folder scheme and its exemptions), and
+`development/policies/document-kinds.md` (file kinds, frozen vs. living, and the templates).
+
 ## Workflow for a work unit
 
 Read the spec fully, then the plan; mine references before writing code; implement with
