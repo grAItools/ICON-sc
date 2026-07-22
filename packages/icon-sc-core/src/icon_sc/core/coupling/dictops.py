@@ -52,8 +52,9 @@ def dict_fma(
 ) -> dict[str, Any]:
     """Out-of-place ``base[f].data + factor * increment[f].data`` per field.
 
-    Returns plain buffers (not DataArrays), keyed by field — the stage-state
-    payloads the tendency steppers thread between evaluations (tasmania ``fma``).
+    Returns:
+        Plain buffers (not DataArrays), keyed by field — the stage-state payloads
+        the tendency steppers thread between evaluations (tasmania ``fma``).
     """
     scale = float(factor)
     return {

@@ -32,6 +32,10 @@ naming (`work/NNNN-<kebab>`), and the implementer/reviewer loop live in
   (import-linter enforces it, in place since work unit 001).
 - **No tolerance creep, no reduction-order changes** in equivalence tests (bitwise T0≡T1 is
   required where the spec says bitwise).
+- **Code style.** Python source follows `development/policies/coding-conventions.md`: the
+  ruff/mypy-enforced baseline (PEP 8, import sorting, Google-docstring format, src-layout) plus
+  the rules the linter can't check — import modules not names, whole-acronym CapWords
+  identifiers, and Google docstring sections on non-trivial public APIs.
 - Do not modify `docs/architecture/*` or other work units' specs (`development/work/<NNNN>-<slug>/spec.md`);
   propose changes in your own report.
 

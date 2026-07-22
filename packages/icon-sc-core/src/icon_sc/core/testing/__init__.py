@@ -51,12 +51,13 @@ def assert_allclose(
 ) -> None:
     """``numpy.testing.assert_allclose`` with worst-offender reporting.
 
-    On failure the raised ``AssertionError`` additionally names the field(s) being
-    compared and pinpoints the single worst-offending element: its (multi-)index, the
-    actual and desired values there, and the absolute/relative errors.
-
     ``names`` is either one label for the compared field or an
     ``(actual_name, desired_name)`` pair.
+
+    Raises:
+        AssertionError: On mismatch. The message names the field(s) compared and
+            pinpoints the single worst-offending element: its (multi-)index, the
+            actual and desired values there, and the absolute/relative errors.
     """
     actual_arr = np.asarray(actual)
     desired_arr = np.asarray(desired)

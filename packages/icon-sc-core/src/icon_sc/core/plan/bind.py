@@ -1694,15 +1694,17 @@ class ExecutionPlan:
 
         ``step_index`` must advance sequentially from 0 (modulo the signature
         period): the ping-pong swap state of the vault is phase-dependent.
-        Materializes against ``vault`` on first use; raises
-        :class:`~icon_sc.core.plan.guards.StalePlanError` after any out-of-band
-        façade mutation.
+        Materializes against ``vault`` on first use.
 
         ``on_segment`` (S14, additive keyword with default) is the host-step
         seam: a callback invoked with every
         :class:`~icon_sc.core.plan.ops.SegmentMarker` the interpreter reaches
         (see :mod:`icon_sc.core.plan.interpreter`); monitors and time
         advancement live there, outside the plan.
+
+        Raises:
+            StalePlanError: After any out-of-band façade mutation (materialization
+                against ``vault`` detects a changed epoch).
         """
         bound = self._bound
         if bound is None or bound.vault is not vault:

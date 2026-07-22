@@ -35,7 +35,7 @@ reference — dead, never authoritative.
 | Folder / file | What |
 |---|---|
 | `REGISTRY.md` | living registry: work ids (§1), the old→new remap tables (§2–§2d), trunk decisions and sign-offs (the only living file at this level) |
-| `policies/` | living rules: workflow, naming, kinds/liveness, gates, mining, review, docs boundary, repo layout |
+| `policies/` | living rules: workflow, naming, kinds/liveness, gates, mining, review, docs boundary, repo layout, code style |
 | `ADRs/` | architecture decision records, `NNNN-<kebab-title>.md` (Nygard format, own sequence from 0000) |
 | `work/<NNNN>-<slug>/` | one folder per work unit holding its `proposal.md` / `spec.md` / `plan.md` / `report.md` (only those that exist) + optional `artifacts/`; e.g. `0000-overview/report.md`, `0036-implementation-report/report.md`, the P2–P7 phase proposals (`0037-…`–`0042-…`). Lifecycle + how plans are used: `work/README.md` |
 | `archive/` | dead documents of any kind; nothing here is authoritative |
@@ -45,6 +45,8 @@ Where to start:
 
 - **Implementing** a work unit: its `spec.md` and `plan.md` in `work/<NNNN>-<slug>/`,
   workflow in `policies/agent-workflow.md`.
+- **Writing code**: `policies/coding-conventions.md` (the style rules the linter can't
+  enforce) alongside the gate battery in `policies/verification-gates.md`.
 - **Reviewing**: `policies/review-protocol.md` plus the work unit's own review
   checklist.
 - **Deciding** (trunk/human): `REGISTRY.md` for the pending rows; `ADRs/` for the

@@ -35,8 +35,10 @@ def make_dataarray(
     by definition; the halo validator pass flips it) and, when given,
     ``attrs['grid_uuid']`` (provenance: refuse to mix grids, §2.2).
 
-    Raises ``TypeError``/``ValueError`` on non-conforming buffers, rank mismatch, or
-    a horizontal dim contradicting ``location``.
+    Raises:
+        TypeError: If ``buffer`` does not satisfy the ``FieldBuffer`` protocol.
+        ValueError: On a rank mismatch, multiple horizontal dims, or a horizontal
+            dim contradicting ``location``.
     """
     if not isinstance(buffer, FieldBuffer):
         raise TypeError(

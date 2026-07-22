@@ -224,8 +224,10 @@ def from_file(
     ``keep_skip_values=True`` preserves ``-1`` invalid neighbors in the raw index
     arrays (icon4py's geometry/factory convention).
 
-    Raises ``FileNotFoundError`` for a missing file; malformed files surface icon4py's
-    reader errors annotated with the file path.
+    Malformed files surface icon4py's reader errors annotated with the file path.
+
+    Raises:
+        FileNotFoundError: If the file is missing.
     """
     file_path = pathlib.Path(path)
     if not file_path.is_file():

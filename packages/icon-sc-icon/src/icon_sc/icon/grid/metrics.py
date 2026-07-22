@@ -174,8 +174,9 @@ def metrics(
     (``None`` → ICON namelist defaults); ``fields`` — registry-name subset of
     :data:`METRICS_FIELDS` (default: all).
 
-    Returns a read-only mapping registry-name → read-only DataArray with ``grid_uuid``
-    provenance; being static, the fields are exempt from halo tracking (§3.2).
+    Returns:
+        A read-only mapping registry-name → read-only DataArray with ``grid_uuid``
+        provenance; being static, the fields are exempt from halo tracking (§3.2).
     """
     from icon4py.model.common.decomposition import definitions as decomposition
     from icon4py.model.common.metrics import metrics_attributes, metrics_factory

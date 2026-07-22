@@ -147,8 +147,10 @@ class StaticChecker:
     (schema of the dicts themselves), cross-dict consistency (dims and canonical
     units of same-named state-valued entries, alias bijectivity) and — for names
     known to the canonical registry — that declared units are the canonical units.
-    Raises :class:`PropertyDictError` naming component and field; a constructed
-    instance means the definition passed and exposes the parsed specs.
+    A constructed instance means the definition passed and exposes the parsed specs.
+
+    Raises:
+        PropertyDictError: Naming the offending component and field.
     """
 
     def __init__(self, component_cls: type) -> None:

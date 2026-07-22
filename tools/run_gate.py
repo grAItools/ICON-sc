@@ -177,7 +177,7 @@ def _tree_rss_mib(root: int) -> int:
     return total // _MiB
 
 
-class _RssSampler(threading.Thread):
+class _RSSSampler(threading.Thread):
     """Peak RSS of this process tree while the gate runs."""
 
     def __init__(self, interval: float = 1.0) -> None:
@@ -268,7 +268,7 @@ def main() -> int:
 
     started = time.monotonic()
     results: list[Result] = []
-    sampler = _RssSampler()
+    sampler = _RSSSampler()
     sampler.start()
 
     if args.partition:

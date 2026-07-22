@@ -67,9 +67,12 @@ def renegotiate_and_diff(
     """Re-run the full negotiation and diff against ``plan`` (debug builds, §8.2).
 
     Binds the live ``composition`` afresh against the plan's schema and context
-    and compares plan hashes and the canonical op serialization. Raises
-    :class:`PlanDriftError` naming the first divergence; returns silently when
-    the plans agree.
+    and compares plan hashes and the canonical op serialization. Returns silently
+    when the plans agree.
+
+    Raises:
+        PlanDriftError: Naming the first divergence between the re-bound plan and
+            ``plan``.
     """
     from icon_sc.core.plan.bind import ExecutionPlan
 
