@@ -126,8 +126,11 @@ def compute_vct_a_and_vct_b(config: SleveConfig) -> tuple[_F64, _F64]:
     Delegates to pinned icon4py ``get_vct_a_and_vct_b`` (the ``init_vert_coord``
     algorithm: ``vct_a[k] = H*(2/π·arccos((k/N)^s))^d`` with the lowest-layer-thickness
     exponent, thickness limiting and stretching; uniform grid when
-    ``lowest_layer_thickness <= 0.01``; ``vct_b = exp(-vct_a/5000)``). Returns numpy
-    fp64 arrays of length ``num_levels + 1``, model top first.
+    ``lowest_layer_thickness <= 0.01``; ``vct_b = exp(-vct_a/5000)``).
+
+    Returns:
+        ``(vct_a, vct_b)`` as numpy fp64 arrays of length ``num_levels + 1``, model
+        top first.
     """
     from icon4py.model.common.grid import vertical as _i4
 

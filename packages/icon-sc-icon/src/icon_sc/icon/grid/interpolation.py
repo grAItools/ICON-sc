@@ -160,10 +160,13 @@ def interpolation(
 ) -> Mapping[str, xr.DataArray]:
     """Compute the static interpolation coefficients (frozen interface, SPEC S11).
 
-    Returns a read-only mapping registry-name → read-only DataArray (dims/location
-    stamped, ``grid_uuid`` provenance). ``config`` is an icon4py
-    ``InterpolationConfig`` (``None`` → ICON namelist defaults); ``fields`` selects a
-    subset of :data:`INTERPOLATION_FIELDS` by registry name (default: all).
+    ``config`` is an icon4py ``InterpolationConfig`` (``None`` → ICON namelist
+    defaults); ``fields`` selects a subset of :data:`INTERPOLATION_FIELDS` by registry
+    name (default: all).
+
+    Returns:
+        A read-only mapping registry-name → read-only DataArray (dims/location
+        stamped, ``grid_uuid`` provenance).
     """
     factory = build_interpolation_factory(grid, config)
     specs = select_specs(INTERPOLATION_FIELDS, fields)

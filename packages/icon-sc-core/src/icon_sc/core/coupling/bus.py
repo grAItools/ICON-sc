@@ -122,8 +122,10 @@ class SlowTendencyBus:
         """The single-consumer check (frozen interface, SPEC S04 acceptance 3).
 
         Every published slot must have exactly one consumer; every consumed slot
-        must have at least one publisher. Raises :class:`BusError` naming the slot
-        and the offending components.
+        must have at least one publisher.
+
+        Raises:
+            BusError: Naming the slot and the offending components.
         """
         problems: list[str] = []
         for slot_name, publishers in sorted(self._publishers.items()):

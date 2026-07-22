@@ -62,8 +62,10 @@ def measure_order(
     ``dts`` is the ladder in seconds (need not be sorted; at least two entries,
     three for self-convergence). ``exact`` is the reference solution at the final
     time, or ``None`` for self-convergence (errors between consecutive ladder
-    solutions, sorted from coarse to fine). Returns an :class:`OrderFit`; its
-    ``slope`` is the least-squares order estimate.
+    solutions, sorted from coarse to fine).
+
+    Returns:
+        An :class:`OrderFit`; its ``slope`` is the least-squares order estimate.
     """
     ladder = sorted((float(dt) for dt in dts), reverse=True)
     if len(ladder) < (2 if exact is not None else 3):

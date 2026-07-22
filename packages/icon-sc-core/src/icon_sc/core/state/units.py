@@ -80,8 +80,10 @@ def convert_array(values: Any, source: str, target: str) -> Any:
 
     **Negotiation-time only** (non-strict ingress executing a
     :class:`~icon_sc.core.contracts.operators.ConversionPlan`, S03); strict mode
-    forbids the call sites, and nothing on the apply path may reach this. Raises
-    :class:`UnitsError` when Pint cannot convert (undefined/incompatible units).
+    forbids the call sites, and nothing on the apply path may reach this.
+
+    Raises:
+        UnitsError: When Pint cannot convert (undefined/incompatible units).
     """
     if units_identical(source, target):
         return values

@@ -32,6 +32,20 @@ naming (`work/NNNN-<kebab>`), and the implementer/reviewer loop live in
   (import-linter enforces it, in place since work unit 001).
 - **No tolerance creep, no reduction-order changes** in equivalence tests (bitwise T0≡T1 is
   required where the spec says bitwise).
+- **Python code style.** New source stays under a package's `src/icon_sc/…` (src-layout; see
+  `development/policies/repository-layout.md`). `ruff check` / `ruff format` (pyproject
+  `[tool.ruff]`) enforce PEP 8, import sorting, and docstring *formatting* (`pydocstyle`
+  `convention = "google"`) — keep them green. Three conventions the linter does *not* check;
+  uphold them by hand:
+  - **Import packages/modules only, never individual classes/functions** (Google style §2.2) —
+    `import numpy as np` then `np.array(x)`, not `from numpy import array`.
+  - **PEP 8 descriptive naming, capitalizing whole acronyms in CapWords identifiers** —
+    `HTTPServerError`, not `HttpServerError`.
+  - **Google-style docstring sections on non-trivial public APIs** — `Args:` / `Returns:` /
+    `Raises:` / `Yields:` / `Attributes:`, per the [Napoleon Google example](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html#example-google).
+    `sphinx.ext.napoleon` is enabled (`docs/conf.py`, `napoleon_google_docstring = True`) and
+    renders these; ruff checks docstring *format*, not section presence, so the sections are the
+    author's job (TD-27.3: Google sections going forward, existing corpus converted on touch).
 - Do not modify `docs/architecture/*` or other work units' specs (`development/work/<NNNN>-<slug>/spec.md`);
   propose changes in your own report.
 

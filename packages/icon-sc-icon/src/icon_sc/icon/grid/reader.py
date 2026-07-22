@@ -213,8 +213,10 @@ class _Reader:
 def read_grid_file(path: str | pathlib.Path) -> GridFileData:
     """Read an ICON grid NetCDF file into :class:`GridFileData` (frozen surface, S11).
 
-    Raises ``FileNotFoundError`` for a missing file and :class:`GridFileError` (with
-    the offending file and variable/attribute named) for malformed content.
+    Raises:
+        FileNotFoundError: If the file is missing.
+        GridFileError: If the content is malformed (names the offending file and
+            variable/attribute).
     """
     from netCDF4 import Dataset
 
