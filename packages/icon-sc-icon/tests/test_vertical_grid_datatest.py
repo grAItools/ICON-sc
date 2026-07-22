@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 
 from icon_sc.core.testing import assert_allclose
-from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid
 from icon_sc.icon.testing import DATATEST_AVAILABLE
 
 if DATATEST_AVAILABLE:
@@ -59,7 +59,7 @@ def test_vertical_grid_reproduces_savepoint_table(
     SLEVE path and compare against the serialized ICON table."""
     vct_a_ref, vct_b_ref = savepoint_tables
     i4_cfg = experiment.config.vertical_grid
-    config = SleveConfig(
+    config = SLEVEConfig(
         num_levels=i4_cfg.num_levels,
         lowest_layer_thickness=i4_cfg.lowest_layer_thickness,
         maximal_layer_thickness=i4_cfg.maximal_layer_thickness,

@@ -149,9 +149,9 @@ _static_cache: dict[str, dict[str, Any]] = {}
 
 
 def _sleve_config(vertical_config: Any) -> Any:
-    from icon_sc.icon.grid import SleveConfig
+    from icon_sc.icon.grid import SLEVEConfig
 
-    return SleveConfig(
+    return SLEVEConfig(
         num_levels=vertical_config.num_levels,
         lowest_layer_thickness=vertical_config.lowest_layer_thickness,
         maximal_layer_thickness=vertical_config.maximal_layer_thickness,

@@ -29,7 +29,7 @@ from icon_sc.icon.components.diffusion import (
     STATIC_INTERPOLATION_FIELDS,
     STATIC_METRIC_FIELDS,
 )
-from icon_sc.icon.grid import SleveConfig, VerticalGrid
+from icon_sc.icon.grid import SLEVEConfig, VerticalGrid
 from icon_sc.icon.grid.interpolation import INTERPOLATION_FIELDS
 from icon_sc.icon.grid.metrics import METRICS_FIELDS
 
@@ -121,7 +121,7 @@ def _make_diffusion(**kwargs: Any) -> HorizontalDiffusion:
     i4_grid = simple.simple_grid(num_levels=NLEV)
     # a damping height below the default model top so the ctor-time
     # init_nabla2_factor_in_upper_damping_zone domain is non-degenerate at NLEV=10.
-    vgrid = VerticalGrid.from_config(SleveConfig(num_levels=NLEV, rayleigh_damping_height=12000.0))
+    vgrid = VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV, rayleigh_damping_height=12000.0))
     cell_params, edge_params = _stub_geometry(i4_grid)
     cfg = kwargs.pop("cfg", DiffusionConfig())
     static = kwargs.pop("static", _zero_static(i4_grid))
@@ -282,7 +282,7 @@ def test_raw_grid_requires_explicit_geometry() -> None:
     from icon4py.model.common.grid import simple
 
     i4_grid = simple.simple_grid(num_levels=NLEV)
-    vgrid = VerticalGrid.from_config(SleveConfig(num_levels=NLEV))
+    vgrid = VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))
     with pytest.raises(ValueError, match="edge_geometry"):
         HorizontalDiffusion(
             i4_grid,

@@ -14,7 +14,7 @@ import pytest
 from icon_sc.core.testing import assert_allclose
 from icon_sc.icon._constants import GRAV
 from icon_sc.icon.grid.vertical import (
-    SleveConfig,
+    SLEVEConfig,
     VerticalGrid,
     compute_vct_a_and_vct_b,
     reference_exner,
@@ -124,13 +124,13 @@ class TestIndicesMatchIcon4py:
 class TestSLEVEComputation:
     def test_uniform_branch(self) -> None:
         """lowest_layer_thickness <= 0.01 → uniform table H·(N-k)/N (icon4py/ICON)."""
-        cfg = SleveConfig(num_levels=10, lowest_layer_thickness=0.0, model_top_height=10_000.0)
+        cfg = SLEVEConfig(num_levels=10, lowest_layer_thickness=0.0, model_top_height=10_000.0)
         vct_a, vct_b = compute_vct_a_and_vct_b(cfg)
         assert_allclose(vct_a, np.linspace(10_000.0, 0.0, 11), rtol=0.0, atol=0.0, names="vct_a")
         assert np.array_equal(vct_b, np.exp(-vct_a / 5000.0))
 
     def test_stretched_branch_endpoints_and_lowest_thickness(self) -> None:
-        cfg = SleveConfig(num_levels=65)  # ICON namelist defaults
+        cfg = SLEVEConfig(num_levels=65)  # ICON namelist defaults
         vct_a, _ = compute_vct_a_and_vct_b(cfg)
         assert vct_a.shape == (66,)
         assert vct_a[0] == pytest.approx(cfg.model_top_height)
@@ -139,7 +139,7 @@ class TestSLEVEComputation:
         assert (vct_a[-2] - vct_a[-1]) == pytest.approx(cfg.lowest_layer_thickness)
 
     def test_from_config_roundtrip(self) -> None:
-        cfg = SleveConfig(num_levels=30)
+        cfg = SLEVEConfig(num_levels=30)
         grid = VerticalGrid.from_config(cfg)
         vct_a, vct_b = compute_vct_a_and_vct_b(cfg)
         assert np.array_equal(grid.vct_a, vct_a)
@@ -160,7 +160,7 @@ class TestReferenceAtmosphere:
         assert reference_temperature(z)[0] == pytest.approx(213.15, abs=1e-6)
 
     def test_profiles_dict_on_full_levels(self) -> None:
-        grid = VerticalGrid.from_config(SleveConfig(num_levels=25))
+        grid = VerticalGrid.from_config(SLEVEConfig(num_levels=25))
         profiles = grid.reference_profiles()
         z_mc = grid.full_level_heights
         assert set(profiles) == {"icon:exner_ref_mc", "icon:theta_ref_mc", "icon:rho_ref_mc"}

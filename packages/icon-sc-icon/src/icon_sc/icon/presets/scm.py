@@ -71,7 +71,7 @@ from icon_sc.icon.components.idealized import (
     PrescribedCooling,
     PrescribedCoolingConfig,
 )
-from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid
 from icon_sc.icon.testing import moist_test_column
 
 __all__ = [
@@ -244,7 +244,7 @@ def build_scm(
     ctx = ctx if ctx is not None else ComputeContext(backend="embedded")
     order = tuple(fast_order) if fast_order is not None else SCM_FAST_ORDER
 
-    grid = VerticalGrid.from_config(SleveConfig(num_levels=cfg.nlev))
+    grid = VerticalGrid.from_config(SLEVEConfig(num_levels=cfg.nlev))
 
     # -- fast suite: one instance per section name, constraints attached -----------
     sections_by_name: dict[str, Any] = {

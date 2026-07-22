@@ -28,7 +28,7 @@ from icon_sc.core import (
 from icon_sc.core.testing import assert_allclose
 from icon_sc.icon._constants import ALV, CLW, CVD, RV, TMELT
 from icon_sc.icon.components import SaturationAdjustment, SaturationAdjustmentConfig
-from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid
 from icon_sc.icon.testing import moist_test_column
 
 #: SPEC S07 acceptance-3 tolerance contract (idempotence on adjusted states).
@@ -52,7 +52,7 @@ def _qsat_rho(temperature: np.ndarray, rho: np.ndarray) -> np.ndarray:
 
 @pytest.fixture(scope="module")
 def vertical_grid() -> VerticalGrid:
-    return VerticalGrid.from_config(SleveConfig(num_levels=NLEV))
+    return VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))
 
 
 def _supersaturated_column(n_cell: int = 4) -> dict[str, Any]:
