@@ -12,10 +12,11 @@ in the same coarse "human-only verb" bucket as `rm -rf` and `sudo`.
 The rule encodes the **pre-AO, human-orchestrated publication model**: an implementer
 agent commits locally only, and a human (or the orchestrator) performs the push and
 opens the PR as a deliberate, review-gated act. That model is explicit in the frozen
-work documents — `work/0024-pr-publication/plan.md` ("You do NOT push, do NOT open
-PRs, do NOT create remotes — you produce … a … command script for the human to review
-and execute"), `work/0054-work-unit-folders/plan.md` ("no push — the orchestrator
-pushes"), and `policies/agent-workflow.md` ("Merge only after approve"). The denial's
+work documents — `development/work/0024-pr-publication/plan.md` ("You do NOT push, do
+NOT open PRs, do NOT create remotes — you produce … a … command script for the human to
+review and execute"), `development/work/0054-work-unit-folders/plan.md` ("no push — the
+orchestrator pushes"), and `development/policies/agent-workflow.md` ("Merge only after
+approve"). The denial's
 real purpose was never "protect `main`" specifically; it was "keep publication to the
 shared remote out of the implementer's hands entirely."
 

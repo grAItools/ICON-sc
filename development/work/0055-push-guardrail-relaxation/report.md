@@ -22,12 +22,15 @@ purpose was **not** "protect `main`" but "keep publication to the shared remote 
 the implementer agent's hands entirely" — publication is a deliberate, review-gated act
 owned by a human/orchestrator. Evidence in the frozen work documents:
 
-- `work/0024-pr-publication/plan.md` — agents *draft* a push/PR command script; a human
-  reviews and executes it ("You do NOT push, do NOT open PRs, do NOT create remotes").
-- `work/0054-work-unit-folders/plan.md` — "no push (the orchestrator pushes)".
-- `work/0053-…/plan.md`, `work/0035-…/plan.md` — "never `git push`", "`git push` is
+- `development/work/0024-pr-publication/plan.md` — agents *draft* a push/PR command
+  script; a human reviews and executes it ("You do NOT push, do NOT open PRs, do NOT
+  create remotes").
+- `development/work/0054-work-unit-folders/plan.md` — "no push (the orchestrator pushes)".
+- `development/work/0053-project-rename-icon-sc/plan.md`,
+  `development/work/0035-naming-migration/plan.md` — "never `git push`", "`git push` is
   denied — do not attempt".
-- `policies/agent-workflow.md` — implementer↔reviewer loop, "Merge only after approve".
+- `development/policies/agent-workflow.md` — implementer↔reviewer loop, "Merge only after
+  approve".
 
 ## Why blanket-deny is now the wrong shape
 
