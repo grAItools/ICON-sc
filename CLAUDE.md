@@ -1,6 +1,7 @@
 # ICON-sc — Claude Code project memory
 
 @AGENTS.md
+@development/README.md
 
 ## Claude Code specifics
 
