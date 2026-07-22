@@ -33,8 +33,15 @@ jobs:
           enable-cache: true
           python-version: ${{ matrix.python }}
       - name: install under constraints/${{ matrix.constraints }}.txt
+        # --managed-python (issue #8): without it, "3.12" resolves to the runner
+        # image's system /usr/bin/python3.12 (Ubuntu GCC 3.12.3), whose allocator
+        # layout intermittently lands in a churny steady state that fails the
+        # layout-sensitive tracemalloc bar of test_plan_zero_traffic.py (reproduced
+        # locally: GCC 3.12.3 ~15% dirty launches with the exact CI signature; uv's
+        # Clang builds 0/90 dirty). The 3.10 leg was always managed (no system 3.10),
+        # so the flake looked 3.12-only. Keep both legs on managed builds.
         run: |
-          uv venv --clear --python ${{ matrix.python }}
+          uv venv --clear --managed-python --python ${{ matrix.python }}
           uv pip install --prerelease=allow \
             -e packages/icon-sc-core -e packages/icon-sc-icon -e packages/icon-sc-bridges \
             -c constraints/${{ matrix.constraints }}.txt \
