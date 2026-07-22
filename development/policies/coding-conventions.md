@@ -1,6 +1,6 @@
 # coding-conventions — Python style for source code
 
-Scope: the conventions Python source under `packages/*/src` (and the test suites) follows,
+Scope: the conventions that Python source under `packages/*/src` (and the test suites) follows,
 beyond what tooling auto-enforces. Tool config lives in `pyproject.toml` (`[tool.ruff]`,
 `[tool.mypy]`); the src-layout and packaging boundaries in `repository-layout.md`; the gate
 that runs the checks in `verification-gates.md`. This file is the home for the *human-upheld*
