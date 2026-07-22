@@ -85,13 +85,16 @@ def _simd_family() -> str:
 
     numpy picks the loop per process at import time by CPUID (honoring
     ``NPY_DISABLE_CPU_FEATURES``), so this is exactly the discriminator the
-    fingerprint needs. An unknown family (new numpy dispatch target, non-x86
-    build, feature-disabling env vars) skips the test rather than mis-keying
-    a golden.
+    fingerprint needs. Anything unrecognized — a new dispatch target, a non-x86
+    build, feature-disabling env vars, or an introspection shape other than the
+    single float64 loop numpy currently reports — comes back as an unlisted
+    family and skips the test rather than mis-keying a golden.
     """
     info = np.lib.introspect.opt_func_info(func_name="exp", signature="float64")
-    (loop,) = info["exp"].values()
-    return str(loop["current"]).split("(")[0].lower()
+    loops = list(info.get("exp", {}).values())
+    if len(loops) != 1 or "current" not in loops[0]:
+        return "unknown"
+    return str(loops[0]["current"]).split("(")[0].lower()
 
 
 def _load_example() -> Any:
