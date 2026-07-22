@@ -839,10 +839,10 @@ def test_bus_constant_vn_tendency_linear_response(
 
 
 def _sleve_config(vertical_config: Any) -> Any:
-    """icon4py VerticalGridConfig -> S06 SleveConfig (as in the S11 parity tests)."""
-    from icon_sc.icon.grid import SleveConfig
+    """icon4py VerticalGridConfig -> S06 SLEVEConfig (as in the S11 parity tests)."""
+    from icon_sc.icon.grid import SLEVEConfig
 
-    return SleveConfig(
+    return SLEVEConfig(
         num_levels=vertical_config.num_levels,
         lowest_layer_thickness=vertical_config.lowest_layer_thickness,
         maximal_layer_thickness=vertical_config.maximal_layer_thickness,

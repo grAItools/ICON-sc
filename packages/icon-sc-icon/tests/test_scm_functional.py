@@ -193,10 +193,10 @@ class _OpaqueSatad(SaturationAdjustment):
 
 
 def _opaque_fast(cfg: Any) -> tuple[Any, dict[str, Any]]:
-    from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+    from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid
 
     composition, state, _ = build_scm(cfg)
-    grid = VerticalGrid.from_config(SleveConfig(num_levels=cfg.nlev))
+    grid = VerticalGrid.from_config(SLEVEConfig(num_levels=cfg.nlev))
     opaque = _OpaqueSatad(grid, cfg.satad, name="satad")
     fast = SequentialUpdateSplitting([opaque], name="opaque_fast")
     del composition

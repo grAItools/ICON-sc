@@ -39,7 +39,7 @@ from icon_sc.icon._constants import (
 )
 
 __all__ = [
-    "SleveConfig",
+    "SLEVEConfig",
     "VerticalGrid",
     "compute_vct_a_and_vct_b",
     "reference_exner",
@@ -56,7 +56,7 @@ _F64 = npt.NDArray[np.float64]
 
 
 @dataclasses.dataclass(frozen=True)
-class SleveConfig:
+class SLEVEConfig:
     """SLEVE vertical-coordinate namelist parameters (ICON ``mo_sleve_nml`` /
     ``nonhydrostatic_nml``; defaults = icon4py v0.2.0 ``VerticalGridConfig`` = the ICON
     namelist defaults).
@@ -96,7 +96,7 @@ class SleveConfig:
     decay_exponent: float = 1.2
 
 
-def _icon4py_config(config: SleveConfig) -> Any:
+def _icon4py_config(config: SLEVEConfig) -> Any:
     from icon4py.model.common.grid import vertical as _i4
 
     # icon4py annotates the namelist floats as wpfloat (np.float64); Python floats
@@ -120,7 +120,7 @@ def _icon4py_config(config: SleveConfig) -> Any:
     return _i4.VerticalGridConfig(**kwargs)
 
 
-def compute_vct_a_and_vct_b(config: SleveConfig) -> tuple[_F64, _F64]:
+def compute_vct_a_and_vct_b(config: SLEVEConfig) -> tuple[_F64, _F64]:
     """The analytic ICON vertical-coordinate table (SLEVE computation).
 
     Delegates to pinned icon4py ``get_vct_a_and_vct_b`` (the ``init_vert_coord``
@@ -159,7 +159,7 @@ class VerticalGrid:
         flat_height: float = 16000.0,
         rayleigh_damping_height: float = 45000.0,
         htop_moist_proc: float = 22500.0,
-        config: SleveConfig | None = None,
+        config: SLEVEConfig | None = None,
     ) -> None:
         vct_a_arr = np.array(vct_a, dtype=np.float64)  # copy: table is frozen below
         if vct_a_arr.ndim != 1 or vct_a_arr.shape[0] != nlev + 1:
@@ -191,7 +191,7 @@ class VerticalGrid:
                 )
             self._config = config
         else:
-            self._config = SleveConfig(
+            self._config = SLEVEConfig(
                 num_levels=self._nlev,
                 flat_height=flat_height,
                 rayleigh_damping_height=rayleigh_damping_height,
@@ -218,7 +218,7 @@ class VerticalGrid:
         )
 
     @classmethod
-    def from_config(cls, config: SleveConfig) -> VerticalGrid:
+    def from_config(cls, config: SLEVEConfig) -> VerticalGrid:
         """Compute ``vct_a``/``vct_b`` from SLEVE parameters and build the grid."""
         vct_a, vct_b = compute_vct_a_and_vct_b(config)
         return cls(
@@ -268,7 +268,7 @@ class VerticalGrid:
         return self._vct_a[:-1] - self._vct_a[1:]
 
     @property
-    def config(self) -> SleveConfig:
+    def config(self) -> SLEVEConfig:
         """The SLEVE namelist parameters this grid was built with."""
         return self._config
 

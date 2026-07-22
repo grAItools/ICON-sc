@@ -34,7 +34,7 @@ from icon_sc.icon.components.dycore import (
     STATIC_INTERPOLATION_FIELDS,
     STATIC_METRIC_FIELDS,
 )
-from icon_sc.icon.grid import SleveConfig, VerticalGrid
+from icon_sc.icon.grid import SLEVEConfig, VerticalGrid
 
 pytest.importorskip("icon4py.model.atmosphere.dycore", reason="icon4py dycore not installed")
 
@@ -163,7 +163,7 @@ def _make_solver(**kwargs: Any) -> NonhydroSolver:
     from icon4py.model.common.grid import simple
 
     i4_grid = simple.simple_grid(num_levels=NLEV)
-    vgrid = VerticalGrid.from_config(SleveConfig(num_levels=NLEV))
+    vgrid = VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))
     cell_params, edge_params, mask = _stub_geometry(i4_grid)
     kwargs.setdefault("cfg", NonhydroConfig(ndyn_substeps=2))
     cfg = kwargs.pop("cfg")
@@ -351,7 +351,7 @@ def test_missing_static_field_raises() -> None:
     from icon4py.model.common.grid import simple
 
     i4_grid = simple.simple_grid(num_levels=NLEV)
-    vgrid = VerticalGrid.from_config(SleveConfig(num_levels=NLEV))
+    vgrid = VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))
     static = _zero_static(i4_grid)
     static.pop("icon:wgtfac_c")
     cell_params, edge_params, mask = _stub_geometry(i4_grid)
@@ -372,7 +372,7 @@ def test_raw_icon4py_grid_requires_explicit_geometry() -> None:
     from icon4py.model.common.grid import simple
 
     i4_grid = simple.simple_grid(num_levels=NLEV)
-    vgrid = VerticalGrid.from_config(SleveConfig(num_levels=NLEV))
+    vgrid = VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))
     with pytest.raises(ValueError, match="edge_geometry"):
         NonhydroSolver(
             i4_grid,

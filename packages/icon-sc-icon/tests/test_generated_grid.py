@@ -25,7 +25,7 @@ import icon_sc.icon.names  # noqa: F401  (registry seed side effect)
 from icon_sc.core import ComputeContext
 from icon_sc.icon.grid import interpolation, metrics
 from icon_sc.icon.grid.reader import read_grid_file
-from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid
 from icon_sc.icon.testing import generated_grid, generated_grid_file
 
 #: Smallest spec exercising real global topology (12 pentagon points included).
@@ -88,7 +88,7 @@ def test_factories_all_finite_on_generated_grid(backend: str) -> None:
     """
     ctx = ComputeContext(backend)
     grid = generated_grid(SPEC, ctx=ctx, num_levels=NUM_LEVELS)
-    vgrid = VerticalGrid.from_config(SleveConfig(num_levels=NUM_LEVELS))
+    vgrid = VerticalGrid.from_config(SLEVEConfig(num_levels=NUM_LEVELS))
 
     metric_fields = metrics(grid, vgrid)
     interpolation_fields = interpolation(grid)

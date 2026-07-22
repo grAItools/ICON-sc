@@ -33,7 +33,7 @@ from icon_sc.core.state import canonical_units, make_dataarray
 from icon_sc.core.testing import assert_allclose
 from icon_sc.icon.components import Graupel, GraupelConfig, Microphysics
 from icon_sc.icon.components.fast.graupel_constants import CLOUD_NUM, GRAUPEL_QMIN
-from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid
+from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid
 from icon_sc.icon.testing import moist_test_column
 
 #: SPEC S08 acceptance-2 tolerance contracts:
@@ -86,7 +86,7 @@ DT = timedelta(seconds=30.0)
 
 @pytest.fixture(scope="module")
 def vertical_grid() -> VerticalGrid:
-    return VerticalGrid.from_config(SleveConfig(num_levels=NLEV))
+    return VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))
 
 
 def _with_qnc(state: dict[str, Any], n_cell: int) -> dict[str, Any]:
@@ -377,7 +377,7 @@ def _raw_granule_budget_defect(qv_scale: float, qc0: float) -> tuple[float, floa
     dz = np.ascontiguousarray(profile["icon:ddqz_z_full"].data, np.float64)
 
     grid_i4 = column_icon4py_grid(1, NLEV)
-    vertical_i4 = VerticalGrid.from_config(SleveConfig(num_levels=NLEV))._i4_grid
+    vertical_i4 = VerticalGrid.from_config(SLEVEConfig(num_levels=NLEV))._i4_grid
     granule = i4_graupel.SingleMomentSixClassIconGraupel(
         graupel_config=i4_graupel.SingleMomentSixClassIconGraupelConfig(),
         grid=grid_i4,
@@ -442,7 +442,7 @@ def test_perf_smoke_gtfn_cpu_vs_embedded() -> None:
     import time
 
     n_cell, nlev = 10_000, 5
-    grid = VerticalGrid.from_config(SleveConfig(num_levels=nlev))
+    grid = VerticalGrid.from_config(SLEVEConfig(num_levels=nlev))
     state = _precipitating_column(n_cell=n_cell, nlev=nlev)
 
     def steady_seconds(backend_name: str, warmup: bool) -> float:

@@ -23,7 +23,7 @@ from icon_sc.core import ComputeContext  # noqa: E402
 from icon_sc.core.testing import assert_allclose  # noqa: E402
 from icon_sc.core.testing.gradients import dot_product_test, taylor_test  # noqa: E402
 from icon_sc.icon.components.fast.satad import SaturationAdjustment  # noqa: E402
-from icon_sc.icon.grid.vertical import SleveConfig, VerticalGrid  # noqa: E402
+from icon_sc.icon.grid.vertical import SLEVEConfig, VerticalGrid  # noqa: E402
 from icon_sc.icon.testing import moist_test_column  # noqa: E402
 
 _DT = timedelta(seconds=30)
@@ -38,7 +38,7 @@ TAYLOR_TOL = 0.1
 
 @pytest.fixture(scope="module")
 def satad() -> SaturationAdjustment:
-    grid = VerticalGrid.from_config(SleveConfig(num_levels=_NLEV))
+    grid = VerticalGrid.from_config(SLEVEConfig(num_levels=_NLEV))
     return SaturationAdjustment(grid, None, ComputeContext(backend="embedded"), name="satad")
 
 

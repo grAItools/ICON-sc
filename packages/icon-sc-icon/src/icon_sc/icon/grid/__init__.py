@@ -11,7 +11,7 @@ from icon_sc.icon.grid.interpolation import INTERPOLATION_FIELDS, interpolation
 from icon_sc.icon.grid.metrics import METRICS_FIELDS, metrics
 from icon_sc.icon.grid.reader import GridFileData, GridFileError, read_grid_file
 from icon_sc.icon.grid.vertical import (
-    SleveConfig,
+    SLEVEConfig,
     VerticalGrid,
     compute_vct_a_and_vct_b,
     reference_exner,
@@ -28,7 +28,7 @@ __all__ = [
     "GridFileData",
     "GridFileError",
     "IconGrid",
-    "SleveConfig",
+    "SLEVEConfig",
     "VerticalGrid",
     "compute_vct_a_and_vct_b",
     "from_file",

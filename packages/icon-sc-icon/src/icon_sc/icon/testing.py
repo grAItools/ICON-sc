@@ -31,7 +31,7 @@ from icon_sc.icon import names as _names  # noqa: F401  (imported for its seedin
 from icon_sc.icon import thermo
 from icon_sc.icon._constants import GRAV, P0SL_BG, RD
 from icon_sc.icon.grid.vertical import (
-    SleveConfig,
+    SLEVEConfig,
     VerticalGrid,
     reference_pressure,
     reference_temperature,
@@ -128,7 +128,7 @@ def isothermal_column(
     ``p(z) = p_sfc · exp(-g·z / (rd·T))`` — the closed-form hydrostatic balance of an
     isothermal dry atmosphere (barometric formula with ICON's ``grav``/``rd``).
     """
-    grid = VerticalGrid.from_config(SleveConfig(num_levels=nlev))
+    grid = VerticalGrid.from_config(SLEVEConfig(num_levels=nlev))
     z_mc = grid.full_level_heights
     z_ifc = grid.interface_heights
     temp = np.full(nlev, float(temperature), dtype=np.float64)
@@ -164,7 +164,7 @@ def moist_test_column(
     """
     if profile_id not in MOIST_PROFILE_IDS:
         raise ValueError(f"unknown profile_id {profile_id!r}; known: {MOIST_PROFILE_IDS}")
-    grid = VerticalGrid.from_config(SleveConfig(num_levels=nlev))
+    grid = VerticalGrid.from_config(SLEVEConfig(num_levels=nlev))
     z_mc = grid.full_level_heights
     temp = reference_temperature(z_mc)
     pres = reference_pressure(z_mc)
